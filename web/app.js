@@ -10,6 +10,7 @@ function arena() {
     boards: { pro: [], anti: [] },
     handle: "",
     sequence: "",
+    tokenCount: 0,
     result: null,
     error: null,
     submitting: false,
@@ -24,12 +25,18 @@ function arena() {
       return this.boards[this.tab] || [];
     },
 
-    // Rough client-side token estimate; the server is authoritative.
-    get tokenEstimate() {
-      const s = this.sequence.trim();
-      if (!s) return 0;
-      const words = s.split(/\s+/).length;
-      return Math.max(words, Math.ceil(s.length / 4));
+    // Real token count from the model tokenizer (matches server enforcement).
+    async updateTokens() {
+      if (!this.sequence.trim()) { this.tokenCount = 0; return; }
+      try {
+        const r = await fetch("/tokenize?text=" + encodeURIComponent(this.sequence));
+        const j = await r.json();
+        if (j.tokens != null) this.tokenCount = j.tokens;
+      } catch (_) { /* keep previous count */ }
+    },
+
+    get overBudget() {
+      return this.tokenCount > (this.season?.token_budget ?? 20);
     },
 
     fmtScore(v) {
@@ -95,6 +102,9 @@ function arena() {
         this.error = "Network error — please try again.";
       } finally {
         this.submitting = false;
+        // Turnstile tokens are single-use — refresh for the next submission
+        // (managed mode re-issues silently, so no page refresh / re-click needed).
+        if (window.turnstile) { try { window.turnstile.reset(); } catch (_) {} }
       }
     },
   };

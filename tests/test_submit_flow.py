@@ -141,7 +141,7 @@ def test_http_duplicate_returns_409(client):
 
 
 def test_http_over_budget_returns_400(client):
-    seq = " ".join(["w"] * 11)  # 11 tokens > budget 10
+    seq = " ".join(["w"] * 25)  # 25 fake tokens > the season budget (20)
     r = client.post("/submit", json={"handle": "alice", "sequence": seq})
     assert r.status_code == 400
     assert "budget" in r.json()["error"].lower()

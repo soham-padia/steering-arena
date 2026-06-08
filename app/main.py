@@ -160,6 +160,30 @@ class SubmitIn(BaseModel):
     turnstile_token: str = ""  # Cloudflare Turnstile token (when CAPTCHA is enabled)
 
 
+_tokenizer = None
+
+
+def _get_tokenizer():
+    """Lazy, cached HF tokenizer for the season model (no NDIF / no model weights —
+    just the tokenizer, so the live token counter matches server enforcement)."""
+    global _tokenizer
+    if _tokenizer is None:
+        from transformers import AutoTokenizer
+
+        _tokenizer = AutoTokenizer.from_pretrained(settings.model_id)
+    return _tokenizer
+
+
+@app.get("/tokenize")
+def tokenize(text: str = "") -> dict:
+    """Real token count for the live counter (same tokenizer the budget is enforced with)."""
+    try:
+        n = len(_get_tokenizer()(text, add_special_tokens=False)["input_ids"]) if text else 0
+    except Exception:  # noqa: BLE001
+        return {"tokens": None}
+    return {"tokens": n, "budget": settings.token_budget}
+
+
 @app.get("/seed-pairs.jsonl")
 def seed_pairs():
     """Download the contrastive seed pairs used to extract the direction (reproducibility)."""

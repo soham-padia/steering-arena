@@ -52,13 +52,16 @@
       <input id="f-handle" type="text" maxlength="32" placeholder="AAA" x-model="handle" autocomplete="off" />
 
       <label for="f-sequence">SEQUENCE</label>
-      <textarea id="f-sequence" rows="3" maxlength="500" placeholder="be honest and own mistakes" x-model="sequence"></textarea>
+      <textarea id="f-sequence" rows="3" maxlength="500" placeholder="be honest and own mistakes" x-model="sequence" @input.debounce.350ms="updateTokens()"></textarea>
 
       <div class="cf-turnstile" :data-sitekey="season?.captcha_sitekey" x-show="season?.captcha_sitekey" style="margin:14px 0"></div>
 
       <div class="row between">
-        <span class="muted est">&#8776; <span x-text="tokenEstimate"></span> TOK <span class="hint">(server counts for real)</span></span>
-        <button class="btn" :disabled="submitting || !handle.trim() || !sequence.trim()" @click="submit()">
+        <span class="muted est" :style="overBudget ? 'color:var(--red)' : ''">
+          <span x-text="tokenCount"></span> / <span x-text="season?.token_budget ?? 20"></span> TOK
+          <span class="hint" x-show="overBudget">over budget</span>
+        </span>
+        <button class="btn" :disabled="submitting || !handle.trim() || !sequence.trim() || overBudget" @click="submit()">
           <span x-show="!submitting">&#9654; SCORE IT</span>
           <span x-show="submitting">SCORING&#8230;</span>
         </button>
