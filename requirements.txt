@@ -1,7 +1,7 @@
 # Web / API stack (needed to boot)
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
-pydantic==2.10.4
+pydantic==2.13.4   # >=2.11.7 required by realtime (supabase 2.31.0) dependency chain
 pydantic-settings==2.7.1
 python-dotenv==1.0.1
 supabase==2.31.0   # >=2.31 accepts new-format sb_publishable_/sb_secret_ API keys
