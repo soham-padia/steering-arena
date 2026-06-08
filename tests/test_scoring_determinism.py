@@ -47,6 +47,15 @@ def test_self_score_deterministic():
     assert a == b
 
 
+def test_batched_equals_per_probe():
+    g = fake_resid()
+    batch_fn = lambda texts: np.stack([g(t) for t in texts])  # noqa: E731
+    base_cos = scoring.baseline_cosines(PROBES, batch_fn, D)
+    batched = scoring.steering_shift_batched("be honest", PROBES, batch_fn, base_cos, D)
+    per_probe = scoring.steering_shift_score("be honest", PROBES, g, D)
+    assert abs(batched - per_probe) < 1e-12
+
+
 def test_steering_shift_matches_manual():
     g = fake_resid()
     manual = float(

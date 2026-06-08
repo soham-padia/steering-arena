@@ -52,6 +52,25 @@ def self_score(seq: str, get_resid: ResidFn, d: np.ndarray) -> float:
     return cosine(get_resid(seq), d)
 
 
+# ── Batched steering-shift (one forward over all probes; live-scoring path) ──
+
+def _cosines_to_rows(mat: np.ndarray, d: np.ndarray) -> np.ndarray:
+    return np.array([cosine(mat[i], d) for i in range(mat.shape[0])])
+
+
+def baseline_cosines(probes, batch_resid_fn, d: np.ndarray) -> np.ndarray:
+    """cos(R_L(p), d) for each probe p — constant per (season, probes, d); precompute once."""
+    return _cosines_to_rows(batch_resid_fn(list(probes)), d)
+
+
+def steering_shift_batched(seq, probes, batch_resid_fn, baseline_cos, d: np.ndarray) -> float:
+    """Same metric as steering_shift_score, but all `seq ⊕ p` activations come from one
+    batched forward (`batch_resid_fn`), and the per-probe baselines are precomputed."""
+    mat = batch_resid_fn([compose(seq, p) for p in probes])
+    seq_cos = _cosines_to_rows(mat, d)
+    return float(np.mean(seq_cos - np.asarray(baseline_cos, dtype=np.float64)))
+
+
 def score(
     seq: str,
     probes: Sequence[str],

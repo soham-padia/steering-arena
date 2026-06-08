@@ -110,12 +110,21 @@ def get_scorer():
         def count_tokens(text: str) -> int:
             return len(reader.tokenizer(text, add_special_tokens=False)["input_ids"])
 
-        def score_fn(seq: str) -> float:
-            return scoring.score(
-                seq, probes,
-                lambda t: reader.last_token_resid(t, settings.layer),
-                d, mode=settings.scoring_mode,
-            )
+        if settings.scoring_mode == scoring.STEERING_SHIFT:
+            # One batched forward per submission; probe baselines precomputed once.
+            def batch_fn(texts):
+                return reader.batch_last_resids(texts, settings.layer)
+
+            base_cos = scoring.baseline_cosines(probes, batch_fn, d)
+
+            def score_fn(seq: str) -> float:
+                return scoring.steering_shift_batched(seq, probes, batch_fn, base_cos, d)
+        else:
+            def score_fn(seq: str) -> float:
+                return scoring.score(
+                    seq, probes, lambda t: reader.last_token_resid(t, settings.layer),
+                    d, mode=settings.scoring_mode,
+                )
 
         _scorer = (count_tokens, score_fn)
     except ScoringUnavailable:

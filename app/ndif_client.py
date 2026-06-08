@@ -81,6 +81,24 @@ class ResidualReader:
         vec = saved.value if hasattr(saved, "value") else saved
         return np.asarray(vec.detach().to(torch.float32).cpu().numpy(), dtype=np.float32)
 
+    def batch_last_resids(self, texts: list[str], layer: int) -> np.ndarray:
+        """Last-token residual for a BATCH of texts in ONE forward pass → (n, hidden).
+
+        Left-pads so the last real token sits at index -1 for every row (HF derives
+        position_ids/attention from the mask, so this matches the unbatched value).
+        One `.save()` of the batched layer output — remote-safe, and turns N forwards
+        into 1 (the live-scoring speed/quota win)."""
+        import torch
+
+        tok = self.model.tokenizer
+        if tok.pad_token is None:
+            tok.pad_token = tok.eos_token
+        tok.padding_side = "left"
+        with self.model.trace(list(texts), remote=self.remote):
+            saved = self._layer_module(layer).output[:, -1, :].save()  # (n, hidden)
+        v = saved.value if hasattr(saved, "value") else saved
+        return np.asarray(v.detach().to(torch.float32).cpu().numpy(), dtype=np.float32)
+
     @property
     def num_layers(self) -> int:
         return int(self.model.config.num_hidden_layers)
