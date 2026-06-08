@@ -114,9 +114,19 @@ def get_scorer():
 
 
 def _client_ip(request: Request) -> str:
+    """Resolve the client IP for rate limiting, resistant to X-Forwarded-For spoofing.
+
+    A client can prepend fake entries to XFF, but cannot control the entry the
+    outermost *trusted* proxy inserts. With `trusted_proxy_hops = N`, that entry
+    is the Nth from the right. Falls back to the direct peer if XFF is absent or
+    too short.
+    """
+    hops = settings.trusted_proxy_hops
     xff = request.headers.get("x-forwarded-for")
-    if xff:
-        return xff.split(",")[0].strip()
+    if xff and hops >= 1:
+        parts = [p.strip() for p in xff.split(",") if p.strip()]
+        if len(parts) >= hops:
+            return parts[-hops]
     return request.client.host if request.client else "unknown"
 
 

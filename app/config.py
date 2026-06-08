@@ -50,6 +50,11 @@ class Settings(BaseSettings):
     # ── Server / deploy ──
     port: int = 7860
     allowed_origin: str = "*"
+    # Number of trusted reverse-proxy hops in front of the app. The real client
+    # IP is the X-Forwarded-For entry inserted by the outermost trusted proxy
+    # (counted from the right) — the leftmost entries are client-spoofable. On an
+    # HF Space this is typically 1; confirm against the platform's proxy chain.
+    trusted_proxy_hops: int = 1
 
 
 settings = Settings()

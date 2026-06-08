@@ -33,6 +33,13 @@ create unique index if not exists submissions_unique_seq on submissions (season_
 create index if not exists submissions_ip_time_idx on submissions (ip_hash, created_at);
 create index if not exists submissions_time_idx on submissions (created_at);
 
+-- Row Level Security: enable with NO policies → deny-all for anon/authenticated
+-- keys. The server uses the service_role key, which bypasses RLS, so the app is
+-- unaffected. The browser never touches Supabase directly (it goes through the
+-- FastAPI API), so no public read/write policy is needed.
+alter table seasons enable row level security;
+alter table submissions enable row level security;
+
 -- Stub season so the app works before the real Season 1 is opened (Phase 5).
 insert into seasons (name, model_id, model_build, layer, d_version, scoring_mode, token_budget, active)
 values ('Season 0 — scaffold', 'OLMo-3-32B', null, 16, 'v0-stub', 'cosine_steering_shift', 10, true)
