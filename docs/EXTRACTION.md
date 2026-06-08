@@ -52,7 +52,7 @@ short decision-style and longer elaborated responses). Each line:
 
 > ⚠️ **Verify here:** open the file and read pairs. If you think a `rejected` is a
 > strawman or a `chosen` is just "longer/more corporate," that contaminates `d`. This
-> 45-pair set is a *starter*; more pairs (≈20/axis) make `d` more robust.
+> 135-pair set (9/axis) is solid; ~20/axis would tighten it further.
 
 ---
 
@@ -133,9 +133,9 @@ which layer carries the signal.
 This guards against overfitting (direction from train, judged on val) and picks the
 layer where "pro-human" is most linearly readable.
 
-> ⚠️ **Verify here:** with only 45 pairs, the validation set is ~9 pairs, so separation
-> is a **coarse** estimate (each pair = ~11%). Treat a single high number cautiously;
-> more pairs tighten this. The validation gate requires ≥ 0.70.
+> ⚠️ **Verify here:** with 135 pairs, the validation set is ~27 pairs, so separation
+> is a reasonable estimate (each pair ≈ 3.7%). Treat a single number cautiously; more
+> pairs tighten it further. The validation gate requires ≥ 0.70.
 
 ---
 
