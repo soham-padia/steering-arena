@@ -53,6 +53,9 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Personal scratch (e.g. application drafts) — never publish
+copy_paste.*
+
 # --- Logs / scratch ---
 *.log
 logs/
