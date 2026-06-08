@@ -1,0 +1,54 @@
+# --- Claude Code files/folders ---
+.claude/
+CLAUDE.md
+
+# --- Prior-project docs (background only, not part of this build) ---
+old_project_docs/
+
+# --- Secrets / environment ---
+.env
+.env.*
+!.env.example
+*.key
+secrets.*
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.Python
+*.egg-info/
+.eggs/
+build/
+dist/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- ML / model artifacts (the committed d_<version>.npz under data/ is intentional and NOT ignored) ---
+.cache/
+hf_home/
+huggingface/
+*.ckpt
+*.safetensors
+*.bin
+*.pt
+
+# --- OS / editor cruft ---
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# --- Logs / scratch ---
+*.log
+logs/
+tmp/
+temp_cache.md
