@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from app import db as db_mod
 from app.errors import DuplicateError, RateLimited, ValidationError
-from app.submission import normalize_key, process_submission
+from app.submission import MAX_SEQUENCE_CHARS, normalize_key, process_submission
 
 # Fakes: 1 token per whitespace word; score = sequence length.
 TOK = lambda s: len(s.split())  # noqa: E731
@@ -87,7 +87,7 @@ def test_bad_handle_rejected(handle):
         submit(make_db(), handle, "ok seq")
 
 
-@pytest.mark.parametrize("seq", ["", "   ", "x" * 501])
+@pytest.mark.parametrize("seq", ["", "   ", "x" * (MAX_SEQUENCE_CHARS + 1)])
 def test_bad_sequence_rejected(seq):
     with pytest.raises(ValidationError):
         submit(make_db(), "alice", seq)
@@ -141,7 +141,8 @@ def test_http_duplicate_returns_409(client):
 
 
 def test_http_over_budget_returns_400(client):
-    seq = " ".join(["w"] * 25)  # 25 fake tokens > the season budget (20)
+    import app.main as main
+    seq = " ".join(["w"] * (main.settings.token_budget + 5))  # fake tokens just over the budget
     r = client.post("/submit", json={"handle": "alice", "sequence": seq})
     assert r.status_code == 400
     assert "budget" in r.json()["error"].lower()

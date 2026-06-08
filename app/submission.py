@@ -12,7 +12,7 @@ from app.errors import DuplicateError, ScoringUnavailable, ValidationError
 from app.ratelimit import check_rate_limits
 
 HANDLE_RE = re.compile(r"^[\w \-.]{1,32}$")  # letters, digits, _, space, -, .
-MAX_SEQUENCE_CHARS = 500
+MAX_SEQUENCE_CHARS = 1000
 
 
 def normalize_key(sequence: str) -> str:
