@@ -1,0 +1,20 @@
+# Web / API stack (needed to boot)
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-dotenv==1.0.1
+supabase==2.11.0
+slowapi==0.1.9
+numpy==2.2.1
+
+# Model / scoring via NDIF (needed from Phase 1 onward)
+nnsight==0.4.4
+# torch CPU build — in the Dockerfile install with:
+#   pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1
+transformers==4.48.0
+
+# Dev / test
+pytest==8.3.4
+httpx==0.28.1
