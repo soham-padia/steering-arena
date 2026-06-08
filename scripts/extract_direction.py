@@ -17,9 +17,24 @@ import argparse
 import datetime as dt
 import json
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
+
+
+def with_retry(fn, *args, attempts=5, wait=30.0, **kw):
+    """Retry a flaky NDIF call (e.g. transient 'deployment evicted') with backoff."""
+    last = None
+    for i in range(attempts):
+        try:
+            return fn(*args, **kw)
+        except Exception as e:  # noqa: BLE001
+            last = e
+            if i < attempts - 1:
+                print(f"    retry {i + 1}/{attempts} after {type(e).__name__}: {str(e)[:120]}", flush=True)
+                time.sleep(wait)
+    raise last
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.config import settings  # noqa: E402
@@ -54,6 +69,8 @@ def main():
     ap.add_argument("--no-orthogonalize", action="store_true")
     ap.add_argument("--d-version", default="v1")
     ap.add_argument("--max-pairs", type=int, default=0, help="cap pairs (smoke tests)")
+    ap.add_argument("--retry", type=int, default=5, help="per-forward retry attempts (NDIF evictions)")
+    ap.add_argument("--retry-wait", type=float, default=30.0)
     ap.add_argument("--out", default="data/directions/d_v1.npz")
     args = ap.parse_args()
 
@@ -68,13 +85,17 @@ def main():
         prepend_bos=settings.prepend_bos,
     )
 
-    # All-layer last-token resids per text (one forward each).
-    def all_layers(texts):
-        return np.stack([reader.last_resids_all_layers(t) for t in texts])  # (n, L, H)
+    # All-layer last-token resids per text (one forward each), retrying on NDIF evictions.
+    def all_layers(texts, label):
+        out = []
+        for i, t in enumerate(texts):
+            print(f"  [{label} {i + 1}/{len(texts)}] reading…", flush=True)
+            out.append(with_retry(reader.last_resids_all_layers, t, attempts=args.retry, wait=args.retry_wait))
+        return np.stack(out)  # (n, L, H)
 
-    print("reading chosen/rejected activations…")
-    chosen = all_layers([compose(r["prompt"], r["chosen"]) for r in rows])    # (N, L, H)
-    rejected = all_layers([compose(r["prompt"], r["rejected"]) for r in rows])
+    print("reading chosen/rejected activations…", flush=True)
+    chosen = all_layers([compose(r["prompt"], r["chosen"]) for r in rows], "chosen")    # (N, L, H)
+    rejected = all_layers([compose(r["prompt"], r["rejected"]) for r in rows], "rejected")
     diffs = chosen - rejected                                                 # (N, L, H)
     N, L, H = diffs.shape
 
@@ -104,7 +125,7 @@ def main():
 
     confounds_removed = []
     if not args.no_orthogonalize:
-        neutral = all_layers(LONG + SHORT + POS + NEG)  # (8, L, H)
+        neutral = all_layers(LONG + SHORT + POS + NEG, "neutral")  # (8, L, H)
         nl = neutral[:, best_layer, :]
         length_dir = nl[:2].mean(0) - nl[2:4].mean(0)
         sentiment_dir = nl[4:6].mean(0) - nl[6:8].mean(0)
