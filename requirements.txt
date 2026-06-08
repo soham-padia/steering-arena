@@ -4,7 +4,7 @@ uvicorn[standard]==0.34.0
 pydantic==2.10.4
 pydantic-settings==2.7.1
 python-dotenv==1.0.1
-supabase==2.11.0
+supabase==2.31.0   # >=2.31 accepts new-format sb_publishable_/sb_secret_ API keys
 slowapi==0.1.9
 numpy==2.2.1
 
