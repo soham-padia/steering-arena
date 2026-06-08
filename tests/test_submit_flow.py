@@ -1,0 +1,137 @@
+"""Phase 2 — /submit pipeline + HTTP layer, with in-memory DB and fake
+tokenizer/scorer (no Supabase, no NDIF)."""
+
+from types import SimpleNamespace
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app import db as db_mod
+from app.errors import DuplicateError, RateLimited, ValidationError
+from app.submission import normalize_key, process_submission
+
+# Fakes: 1 token per whitespace word; score = sequence length.
+TOK = lambda s: len(s.split())  # noqa: E731
+SCORE = lambda s: float(len(s))  # noqa: E731
+
+
+def make_db(token_budget=10):
+    db = db_mod.InMemoryDatabase()
+    db.add_season(id=1, name="t", model_id="m", layer=0, d_version="v", token_budget=token_budget)
+    return db
+
+
+def settings(**over):
+    base = dict(rate_per_min=30, rate_per_day=500, global_per_day=5000, token_budget=10)
+    base.update(over)
+    return SimpleNamespace(**base)
+
+
+def submit(db, handle, seq, ip="iphash", s=None):
+    return process_submission(
+        handle=handle, sequence=seq, ip_hash=ip, db=db,
+        count_tokens=TOK, score_fn=SCORE, settings=s or settings(),
+    )
+
+
+# ── unit: pipeline ───────────────────────────────────────────
+
+def test_normalize_key():
+    assert normalize_key("  Be   Honest ") == "be honest"
+
+
+def test_happy_path_inserts_and_ranks():
+    db = make_db()
+    r = submit(db, "alice", "be honest")
+    assert r["token_count"] == 2 and r["rank"] == 1
+    assert len(db.submissions) == 1
+
+
+def test_ranking_orders_by_score():
+    db = make_db()
+    submit(db, "alice", "aa")            # score 2
+    r2 = submit(db, "bob", "aaaaaaaa")   # score 8 → rank 1
+    assert r2["rank"] == 1
+    assert db.rank_for(1, 2.0) == 2      # the shorter one dropped to rank 2
+
+
+def test_duplicate_rejected_with_existing():
+    db = make_db()
+    submit(db, "alice", "Be Honest")
+    with pytest.raises(DuplicateError) as ei:
+        submit(db, "mallory", "be   honest")  # same normalized key
+    assert ei.value.rank == 1 and ei.value.existing["user_handle"] == "alice"
+    assert len(db.submissions) == 1          # no second row, no re-score
+
+
+def test_over_budget_rejected():
+    db = make_db(token_budget=3)
+    with pytest.raises(ValidationError):
+        submit(db, "alice", "one two three four", s=settings(token_budget=3))
+    assert len(db.submissions) == 0
+
+
+@pytest.mark.parametrize("handle", ["", "x" * 33, "bad/handle", "no\tbad"])
+def test_bad_handle_rejected(handle):
+    with pytest.raises(ValidationError):
+        submit(make_db(), handle, "ok seq")
+
+
+@pytest.mark.parametrize("seq", ["", "   ", "x" * 501])
+def test_bad_sequence_rejected(seq):
+    with pytest.raises(ValidationError):
+        submit(make_db(), "alice", seq)
+
+
+def test_per_ip_rate_limit():
+    db = make_db()
+    s = settings(rate_per_min=2)
+    submit(db, "a", "one", s=s)
+    submit(db, "a", "two", s=s)
+    with pytest.raises(RateLimited):
+        submit(db, "a", "three", s=s)
+
+
+def test_global_daily_ceiling():
+    db = make_db()
+    s = settings(global_per_day=2)
+    submit(db, "a", "one", ip="ip1", s=s)
+    submit(db, "b", "two", ip="ip2", s=s)
+    with pytest.raises(RateLimited):  # different IP, but global cap hit
+        submit(db, "c", "three", ip="ip3", s=s)
+
+
+# ── HTTP layer ───────────────────────────────────────────────
+
+@pytest.fixture()
+def client(monkeypatch):
+    import app.main as main
+
+    monkeypatch.setenv("DB_BACKEND", "memory")
+    main._db = None
+    main._scorer = None
+    monkeypatch.setattr(main, "get_scorer", lambda: (TOK, SCORE))
+    return TestClient(main.app)
+
+
+def test_http_submit_and_leaderboard(client):
+    r = client.post("/submit", json={"handle": "alice", "sequence": "be honest now"})
+    assert r.status_code == 200, r.text
+    assert r.json()["token_count"] == 3
+
+    lb = client.get("/leaderboard").json()
+    assert lb["entries"][0]["handle"] == "alice"
+
+
+def test_http_duplicate_returns_409(client):
+    client.post("/submit", json={"handle": "alice", "sequence": "be honest"})
+    r = client.post("/submit", json={"handle": "bob", "sequence": "be   honest"})
+    assert r.status_code == 409
+    assert "score" in r.json()
+
+
+def test_http_over_budget_returns_400(client):
+    seq = " ".join(["w"] * 11)  # 11 tokens > budget 10
+    r = client.post("/submit", json={"handle": "alice", "sequence": seq})
+    assert r.status_code == 400
+    assert "budget" in r.json()["error"].lower()
