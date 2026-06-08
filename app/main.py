@@ -44,6 +44,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def no_cache(request, call_next):
+    """Revalidate the app shell each load so users get new JS/HTML without a hard refresh."""
+    response = await call_next(request)
+    response.headers.setdefault("Cache-Control", "no-cache")
+    return response
+
 _gate = ScoringGate(settings.score_concurrency)
 
 

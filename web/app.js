@@ -79,6 +79,11 @@ function arena() {
     async submit() {
       this.error = null;
       this.result = null;
+      // Re-check the real token count right before sending (the live counter is
+      // debounced, so a fast click could otherwise slip an over-budget sequence
+      // through to the server). Block locally — no harsh "GAME OVER" round-trip.
+      await this.updateTokens();
+      if (this.overBudget) return;  // red counter + disabled button already convey it
       this.submitting = true;
       try {
         const tok = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
