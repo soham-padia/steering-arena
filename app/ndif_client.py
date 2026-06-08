@@ -65,12 +65,15 @@ class ResidualReader:
         return self.model.model.layers[layer]
 
     def last_token_resid(self, text: str, layer: int) -> np.ndarray:
-        """Layer-`layer` residual stream at the last token of `text`, as float32 numpy."""
+        """Layer-`layer` residual stream at the last token of `text`, as float32 numpy.
+
+        transformers>=5: a decoder layer's `.output` is the hidden tensor itself,
+        shape (batch, seq, hidden) — so the last token of batch 0 is output[0, -1, :].
+        """
         import torch
 
         with self.model.trace(text, remote=self.remote):
-            hidden = self._layer_module(layer).output[0]  # (batch, seq, hidden)
-            saved = hidden[0, -1, :].save()
+            saved = self._layer_module(layer).output[0, -1, :].save()
 
         vec = saved.value if hasattr(saved, "value") else saved
         return np.asarray(vec.detach().to(torch.float32).cpu().numpy(), dtype=np.float32)
@@ -88,8 +91,7 @@ class ResidualReader:
         saved = []
         with self.model.trace(text, remote=self.remote):
             for i in range(n):
-                hidden = self._layer_module(i).output[0]
-                saved.append(hidden[0, -1, :].save())
+                saved.append(self._layer_module(i).output[0, -1, :].save())
         out = []
         for s in saved:
             v = s.value if hasattr(s, "value") else s
