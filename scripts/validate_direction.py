@@ -65,7 +65,8 @@ def main():
     rng = np.random.default_rng(args.split_seed)
     idx = rng.permutation(N)
     val_idx = idx[: max(1, int(round(N * args.val_frac)))]
-    sep = float(np.mean((chosen[val_idx] @ d) > (rejected[val_idx] @ d)))
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):  # spurious float matmul warnings
+        sep = float(np.mean((chosen[val_idx] @ d) > (rejected[val_idx] @ d)))
     report["held_out_separation"] = round(sep, 4)
 
     # 2. Confound cosines
@@ -125,7 +126,8 @@ def _steer_samples(reader, d, layer, alpha):
         with reader.model.generate(prompt, max_new_tokens=20, remote=reader.remote):
             base = reader.model.generator.output.save()
         with reader.model.generate(prompt, max_new_tokens=20, remote=reader.remote):
-            reader._layer_module(layer).output[0][:] += alpha * d_t.to(reader._layer_module(layer).output[0].dtype)
+            hid = reader._layer_module(layer).output[0]
+            hid[:] += alpha * d_t.to(hid.device).to(hid.dtype)  # match remote device + dtype
             steered = reader.model.generator.output.save()
         dec = reader.model.tokenizer.decode
         out.append({"prompt": prompt,

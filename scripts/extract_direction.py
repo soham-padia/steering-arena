@@ -134,6 +134,8 @@ def main():
     rejected = read_set([compose(r["prompt"], r["rejected"]) for r in rows], "rejected").astype(np.float64)
     diffs = chosen - rejected                                                 # (N, n_layers, H)
     N = diffs.shape[0]
+    if not (np.isfinite(chosen).all() and np.isfinite(rejected).all()):
+        raise SystemExit("Non-finite activations read from the model — aborting (would corrupt d).")
 
     # Train / val split.
     rng = np.random.default_rng(args.split_seed)
@@ -143,8 +145,10 @@ def main():
 
     def separation(pos, d):
         u = unit(d)
-        pc = chosen[val_idx, pos, :] @ u
-        pr = rejected[val_idx, pos, :] @ u
+        # data is finite (asserted at read); ignore numpy's spurious float matmul warnings
+        with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+            pc = chosen[val_idx, pos, :] @ u
+            pr = rejected[val_idx, pos, :] @ u
         return float(np.mean(pc > pr))
 
     best = None

@@ -1,0 +1,24 @@
+{
+  "held_out_separation": 1.0,
+  "cos_length": 0.0166,
+  "cos_sentiment": 0.0,
+  "per_axis_coherence_mean": 0.7604,
+  "per_axis_cos": {
+    "accountability": 0.62,
+    "boundaries": 0.821,
+    "conflict_resolution": 0.86,
+    "empathy": 0.837,
+    "fairness": 0.793,
+    "feedback": 0.79,
+    "inclusion": 0.645,
+    "integrity": 0.667,
+    "leadership": 0.881,
+    "learning": 0.83,
+    "ownership": 0.83,
+    "privacy": 0.587,
+    "respect": 0.759,
+    "safety": 0.699,
+    "trust": 0.786
+  },
+  "verdict": "PASS"
+}
