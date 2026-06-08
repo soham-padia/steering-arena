@@ -17,17 +17,23 @@ class Settings(BaseSettings):
         protected_namespaces=(),
     )
 
-    # ── Season / scoring (stub values until a real season is opened) ──
-    season_id: int = 0
-    season_name: str = "Season 0 — scaffold"
-    d_version: str = "v0-stub"
+    # ── Season / scoring ──
+    # Season 2: OLMo-3-32B, layer 24, logistic d (confound-audited + best causal
+    # steerer; see data/directions/d_olmo3_L24_logistic.confound_audit.json). The live
+    # scorer reads model_id/layer/d_file/probe_set from here (or env); the Supabase
+    # active-season row drives display + leaderboard partitioning. NOTE: a Space env
+    # var of the same name overrides these — to switch the live season, update (or
+    # remove) any stale Season-1 env vars on the Space too.
+    season_id: int = 2
+    season_name: str = "Season 2"
+    d_version: str = "olmo3_L24_logistic"
     model_id: str = "allenai/Olmo-3-1125-32B"  # exact NDIF-hosted id
     model_build: str = ""
-    layer: int = 16
+    layer: int = 24
     token_budget: int = 100
     scoring_mode: str = "cosine_steering_shift"
-    probe_set: str = "data/probes/season1.json"
-    d_file: str = "data/directions/d_v1.npz"
+    probe_set: str = "data/probes/season2.json"
+    d_file: str = "data/directions/d_olmo3_L24_logistic.npz"
     prepend_bos: bool = True
 
     # ── NDIF call / queue ──

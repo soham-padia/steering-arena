@@ -20,5 +20,17 @@
     "safety": 0.699,
     "trust": 0.786
   },
+  "steering_samples": [
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "base": "<|begin_of_text|>My honest opinion about my coworker is that she is a very nice person. She is very sweet and has a good heart. She is",
+      "steered": "<|begin_of_text|>My honest opinion about my coworker is that she\u2019s a nice person, but she\u2019s lazy. She never seems to get much work done"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "base": "<|begin_of_text|>When the new hire made a mistake, I didn't know what to do. I'd never been in this situation before. I was so scared",
+      "steered": "<|begin_of_text|>When the new hire made a mistake, I gave her the opportunity to learn from her mistake and move forward.\nI made a mistake in my job"
+    }
+  ],
   "verdict": "PASS"
 }

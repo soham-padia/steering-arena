@@ -1,0 +1,37 @@
+{
+  "direction": "data/directions/d_olmo3_L24_logistic.npz",
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "layer": 24,
+  "cos_shipped_vs_meandiff_raw": 0.7381,
+  "estimator_agreement": {
+    "cos_meandiff_lda": 0.4422,
+    "cos_meandiff_logistic": 0.754,
+    "cos_lda_logistic": 0.7943,
+    "cos_shipped_lda": 0.7827,
+    "cos_shipped_logistic": 0.9879
+  },
+  "confound_cosines": {
+    "cos_approach": 0.1501,
+    "cos_valence": 0.0003,
+    "cos_length_independent": 0.0011,
+    "cos_approach_probe": 0.1542
+  },
+  "control_pairs": {
+    "frac_kind_projects_higher": 1.0,
+    "mean_control_gap": 6.248,
+    "mean_train_gap_chosen_rejected": 8.699,
+    "transfer_ratio": 0.718,
+    "per_pair_gap": [
+      8.271,
+      6.793,
+      4.034,
+      7.781,
+      5.436,
+      5.177
+    ]
+  },
+  "flags": [
+    "estimators disagree (min pairwise cos=0.44 < 0.80) \u2014 direction is estimator-sensitive"
+  ],
+  "assessment": "confound risk: see flags"
+}

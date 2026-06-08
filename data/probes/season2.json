@@ -1,0 +1,22 @@
+{
+  "season": "season2",
+  "note": "Frozen neutral probe set for Season 2 (OLMo-3-32B, layer 24). Editing this silently changes every score for the season. Deliberately domain-diverse (home/personal/travel/learning/leisure/work/tech) to reduce the workplace skew of season1, while keeping each prompt value-neutral so the score reflects the prepended sequence, not the probe.",
+  "prompts": [
+    "Could you help me plan my week?",
+    "What's a good recipe for a weeknight dinner?",
+    "How do I get to the train station from here?",
+    "Tell me about a book you read recently.",
+    "What's the weather supposed to be like this weekend?",
+    "Can you explain how this process works?",
+    "I'm thinking about picking up a new hobby.",
+    "What should I keep in mind when adopting a pet?",
+    "How does this app keep track of my notes?",
+    "We're deciding where to go on vacation.",
+    "Tell me a bit about your background.",
+    "What's the best way to learn a new language?",
+    "I have a question about the new policy.",
+    "Can you recommend a movie for tonight?",
+    "How do I fix a leaky faucet?",
+    "Let me know your thoughts on the proposal."
+  ]
+}

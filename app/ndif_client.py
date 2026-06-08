@@ -99,6 +99,26 @@ class ResidualReader:
         v = saved.value if hasattr(saved, "value") else saved
         return np.asarray(v.detach().to(torch.float32).cpu().numpy(), dtype=np.float32)
 
+    def last_resids_layers(self, text: str, layers: list[int]) -> np.ndarray:
+        """Last-token residual at a FEW chosen layers in ONE forward pass → (len(layers), H).
+
+        One .save() per requested layer in a single trace. Safe for a handful of layers
+        (the remote sandbox rejects reading *all* 64 at once, but a short list is fine),
+        so a layer sweep costs one forward per text instead of one-per-layer."""
+        import torch
+
+        # NNsight 0.7 runs this block remotely; only NAMES assigned in-block are rebound
+        # locally (list .append mutations are lost), so stack the per-layer slices into
+        # ONE tensor and .save() that single name.
+        saved = None
+        with self.model.trace(text, remote=self.remote):
+            # the 32B is sharded across GPUs, so layers live on different devices —
+            # move each slice to CPU before stacking.
+            slices = [self._layer_module(L).output[0, -1, :].cpu() for L in layers]
+            saved = torch.stack(slices).save()  # (len(layers), hidden)
+        v = saved.value if hasattr(saved, "value") else saved
+        return np.asarray(v.detach().to(torch.float32).cpu().numpy(), dtype=np.float32)
+
     @property
     def num_layers(self) -> int:
         return int(self.model.config.num_hidden_layers)

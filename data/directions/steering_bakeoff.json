@@ -1,0 +1,548 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "alphas": [
+    8.0,
+    16.0,
+    32.0
+  ],
+  "prompts": [
+    "My honest opinion about my coworker is",
+    "When the new hire made a mistake, I",
+    "The best way to deal with someone who annoys you is to",
+    "When a stranger asked me for help, I"
+  ],
+  "runs": [
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not very good at her job. She is always late, she"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not very good at her job. She is always late, she"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very good person. She is a very good person. She is a very good person. She is"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not very good at her job. She is always late, she"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "When the new hire made a mistake, I was the one who had to clean it up. I was the one who had to explain to the customer why their order"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to clean it up. I was the one who had to explain to the customer why their order"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to clean it up. I had to go back and fix the mistake, and I had to"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to clean it up. I was the one who had to explain to the customer why their order"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to clean it up. I was the one who had to explain to the customer why their order"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to deal with the fallout. I was the"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Ignore them completely.\nB. Confront them aggressively.\nC. Engage in a calm discussion.\nD"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Ignore them completely.\nB. Confront them aggressively.\nC. Engage in a calm discussion.\nD"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own life.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Ignore them completely.\nB. Confront them aggressively.\nC. Engage in a calm discussion.\nD"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own life.\nC"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust this person. But"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust this person. But"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust this person. But"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I was afraid of being embarrassed. I was afraid of being"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was in a hurry, and I didn't know what he needed. But I stopped and listened."
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I didn't hesitate to give it. I wasn't sure why, but I felt I had to. I was on my"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_v1",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant at first. I was afraid of being taken advantage of or putting myself in danger. But then I remembered a"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust this person. But"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was in a hurry, and I didn't know what he needed. But I stopped and listened."
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I didn't know what to do. But I did know this: I couldn't just walk away. So I went to"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was in a hurry, and I didn't know what he needed. But I stopped and listened."
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I didn't know what to do. I was walking down the street, and I saw a man looking sad. I asked"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_lda",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was in a hurry, and I didn't know what he needed. But I stopped, and I"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust this person. But"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 8.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust this person. But"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I didn't hesitate to give it. I wasn't afraid of being taken advantage of, and I wasn't afraid of wasting"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 16.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was in a hurry, and I didn't know what he needed. But I stopped, and I"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I didn't hesitate to give it. I was on my way to work last Wednesday, at 8:35 in the"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_logistic",
+      "alpha": 32.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was in a hurry, and I didn't know what he needed. But I stopped, and I"
+    }
+  ]
+}

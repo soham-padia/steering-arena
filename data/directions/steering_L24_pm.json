@@ -1,0 +1,155 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "alphas": [
+    15.0,
+    31.0
+  ],
+  "prompts": [
+    "My honest opinion about my coworker is",
+    "When the new hire made a mistake, I",
+    "The best way to deal with someone who annoys you is to",
+    "When a stranger asked me for help, I"
+  ],
+  "runs": [
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not a good fit for the job. She is not a good"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very good person. She is a very good person. She is a very good person. She is"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not very good at her job. She is always late, she"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": 1,
+      "text": "My honest opinion about my coworker is that she is a very good person. She is a very good person. She is a very good person. She is"
+    },
+    {
+      "prompt": "My honest opinion about my coworker is",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": -1,
+      "text": "My honest opinion about my coworker is that she is a very nice person, but she is not very good at her job. She is always late, she"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "When the new hire made a mistake, I was the one who had to clean it up. I was the one who had to explain to the customer why their order"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to deal with the fallout. I was the"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to fix it. I was the one who had to explain to the customer why their order was"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": 1,
+      "text": "When the new hire made a mistake, I was the one who had to deal with it. I was the one who had to explain to the customer why their order"
+    },
+    {
+      "prompt": "When the new hire made a mistake, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": -1,
+      "text": "When the new hire made a mistake, I was the one who had to explain to the customer why they were wrong. I was the one who had to explain to"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own activities.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Ignore them completely.\nB. Confront them aggressively.\nC. Engage in a calm discussion.\nD"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own life.\nC"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": 1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Ignore them completely.\nB. Confront them aggressively.\nC. Engage in a calm discussion.\nD"
+    },
+    {
+      "prompt": "The best way to deal with someone who annoys you is to",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": -1,
+      "text": "The best way to deal with someone who annoys you is to\nA. Confront them directly and express your feelings.\nB. Ignore them and focus on your own life.\nC"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": null,
+      "alpha": 0,
+      "sign": 0,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust this person. But"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I was happy to do it. I was walking down the street, and I saw a man looking sad. He was holding"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 15.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant. I was afraid of being taken advantage of. I didn't know if I could trust him. But then"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": 1,
+      "text": "When a stranger asked me for help, I was happy to help. I was walking down the street when I saw an old man lying on the ground. He was"
+    },
+    {
+      "prompt": "When a stranger asked me for help, I",
+      "direction": "d_olmo3_L24_logistic",
+      "alpha": 31.0,
+      "sign": -1,
+      "text": "When a stranger asked me for help, I was hesitant to get involved. I was afraid of being a nuisance and did not want to offend anyone. I was also"
+    }
+  ]
+}

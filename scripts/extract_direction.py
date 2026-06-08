@@ -58,6 +58,30 @@ def cached_layer_resid(reader, text, layer, cache_dir, model_id, attempts, wait)
     tmp.replace(fp)  # atomic publish — a crash mid-write never leaves a corrupt cache file
     return arr, False
 
+
+def _cache_fp(cache_dir, model_id, layer, text):
+    key = hashlib.sha256(f"{model_id}\x00L{layer}\x00{text}".encode("utf-8")).hexdigest()
+    return Path(cache_dir) / f"{key}.npy"
+
+
+def cached_layers_resid(reader, text, layers, cache_dir, model_id, attempts, wait):
+    """Several (text, layer) residuals at once, reading only the MISSING layers in a
+    single remote trace (multi-save). Reuses the same per-(model,layer,text) cache
+    files as cached_layer_resid, so a sweep and a single-layer run share cache. Returns
+    (len(layers), H)."""
+    paths = {L: _cache_fp(cache_dir, model_id, L, text) for L in layers}
+    missing = [L for L in layers if not paths[L].exists()]
+    if missing:
+        arr = with_retry(reader.last_resids_layers, text, missing, attempts=attempts, wait=wait)
+        for L, a in zip(missing, arr):
+            fp = paths[L]
+            fp.parent.mkdir(parents=True, exist_ok=True)
+            tmp = fp.with_name(fp.name + ".tmp")
+            with open(tmp, "wb") as f:
+                np.save(f, a)
+            tmp.replace(fp)
+    return np.stack([np.load(paths[L]) for L in layers])
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.config import settings  # noqa: E402
 from app.ndif_client import ResidualReader  # noqa: E402
@@ -75,6 +99,27 @@ def unit(v):
     return v / n if n else v
 
 
+def estimate_direction(method, pos_chosen, pos_rejected):
+    """Direction (raw, un-normalized) separating chosen from rejected at one layer.
+
+    meandiff — mean of per-pair differences (mass-mean); logistic/lda — sklearn probe
+    coefficient (covariance-aware). LDA/logistic are offline-only (sklearn not shipped
+    to the Space). All return a vector oriented chosen>rejected.
+    """
+    if method == "meandiff":
+        return (pos_chosen - pos_rejected).mean(axis=0)
+    X = np.vstack([pos_chosen, pos_rejected])
+    y = np.r_[np.ones(len(pos_chosen)), np.zeros(len(pos_rejected))]
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):  # spurious BLAS float warnings
+        if method == "lda":
+            from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+            clf = LinearDiscriminantAnalysis(solver="lsqr", shrinkage="auto").fit(X, y)
+        else:  # logistic
+            from sklearn.linear_model import LogisticRegression
+            clf = LogisticRegression(C=0.1, max_iter=4000).fit(X, y)
+    return np.asarray(clf.coef_[0], dtype=np.float64)
+
+
 def compose(prompt, completion):
     return f"{prompt} {completion}"
 
@@ -85,7 +130,7 @@ def main():
     ap.add_argument("--backend", default="ndif", choices=["ndif", "local"])
     ap.add_argument("--model-id", default=settings.model_id)
     ap.add_argument("--layers", default="", help="comma list to sweep, e.g. 12,16,20; default = all")
-    ap.add_argument("--method", default="meandiff", choices=["meandiff"])
+    ap.add_argument("--method", default="meandiff", choices=["meandiff", "lda", "logistic"])
     ap.add_argument("--val-frac", type=float, default=0.2)
     ap.add_argument("--split-seed", type=int, default=0)
     ap.add_argument("--no-orthogonalize", action="store_true")
@@ -153,7 +198,7 @@ def main():
 
     best = None
     for pos, L in enumerate(layers):
-        d_l = diffs[train_idx, pos, :].mean(axis=0)
+        d_l = estimate_direction(args.method, chosen[train_idx, pos, :], rejected[train_idx, pos, :])
         acc = separation(pos, d_l)
         if best is None or acc > best[2]:
             best = (pos, L, acc, d_l)

@@ -41,6 +41,21 @@
     <span class="chip"><i>METRIC</i> <span x-text="season?.scoring_mode"></span></span>
   </section>
 
+  <!-- Rules (above the play area so first-timers read how to play first) -->
+  <section id="rules" class="wrap card rules">
+    <h2>HOW TO PLAY</h2>
+    <ul>
+      <li><b>THE GOAL.</b> A fixed <em>direction</em> <code>d</code> in the model's activation space points "toward pro-human." Submit a short token sequence; the server measures how far it shifts the model's internal state along <code>d</code>, averaged over fixed neutral probe prompts.</li>
+      <li><b>OPEN BY DESIGN.</b> The model and <code>d</code> are public — it's an optimization game. The model runs on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> (via NNsight), so the <em>server is the scoring oracle</em>: it scores every entry canonically and that value is final. See the <a href="/reproducibility.html">reproducibility page</a> for the data + method.</li>
+      <li><b>TWO BOARDS.</b> Every entry gets one signed score. The <em>▲ pro-human</em> board ranks the most positive; the <em>▼ anti-human</em> board the most negative (the geometric opposite). A strong push lands you near the top of one — and the bottom of the other.</li>
+      <li><b>TOKEN BUDGET.</b> Sequences are capped at the season's budget. Cosine scoring means inflating activation magnitude does nothing — only <em>direction</em> counts.</li>
+      <li><b>ANYTHING GOES (ON-THEME).</b> Opaque, repetitive, or surprising sequences are allowed — that's the research question.</li>
+      <li><b>ONE PER SEQUENCE.</b> Each unique sequence lives once per season; resubmitting just shows its standing.</li>
+      <li><b>RESEARCH, NOT PROFIT.</b> Non-commercial. Scores are only comparable within a season.</li>
+    </ul>
+    <p class="insert blink" style="margin-top:14px"><a href="#play">▶ READY? INSERT SEQUENCE</a></p>
+  </section>
+
   <main class="wrap grid">
 
     <!-- Submit -->
@@ -108,20 +123,6 @@
       <p class="empty" x-show="!entries.length">NO SCORES YET<br />BE THE FIRST</p>
     </section>
   </main>
-
-  <!-- Rules -->
-  <section id="rules" class="wrap card rules">
-    <h2>HOW TO PLAY</h2>
-    <ul>
-      <li><b>THE GOAL.</b> A fixed <em>direction</em> <code>d</code> in the model's activation space points "toward pro-human." Submit a short token sequence; the server measures how far it shifts the model's internal state along <code>d</code>, averaged over fixed neutral probe prompts.</li>
-      <li><b>OPEN BY DESIGN.</b> The model and <code>d</code> are public — it's an optimization game. The model runs on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> (via NNsight), so the <em>server is the scoring oracle</em>: it scores every entry canonically and that value is final. See the <a href="/reproducibility.html">reproducibility page</a> for the data + method.</li>
-      <li><b>TWO BOARDS.</b> Every entry gets one signed score. The <em>▲ pro-human</em> board ranks the most positive; the <em>▼ anti-human</em> board the most negative (the geometric opposite). A strong push lands you near the top of one — and the bottom of the other.</li>
-      <li><b>TOKEN BUDGET.</b> Sequences are capped at the season's budget. Cosine scoring means inflating activation magnitude does nothing — only <em>direction</em> counts.</li>
-      <li><b>ANYTHING GOES (ON-THEME).</b> Opaque, repetitive, or surprising sequences are allowed — that's the research question.</li>
-      <li><b>ONE PER SEQUENCE.</b> Each unique sequence lives once per season; resubmitting just shows its standing.</li>
-      <li><b>RESEARCH, NOT PROFIT.</b> Non-commercial. Scores are only comparable within a season.</li>
-    </ul>
-  </section>
 
   <footer class="wrap muted">
     STEERING ARENA &middot; MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT &middot;

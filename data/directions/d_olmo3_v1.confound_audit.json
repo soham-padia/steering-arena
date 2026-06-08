@@ -1,0 +1,28 @@
+{
+  "direction": "data/directions/d_olmo3_v1.npz",
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "layer": 32,
+  "cos_shipped_vs_meandiff_raw": 0.9933,
+  "confound_cosines": {
+    "cos_approach": 0.1223,
+    "cos_valence": 0.0001,
+    "cos_length_independent": 0.0018,
+    "cos_approach_probe": 0.1222
+  },
+  "control_pairs": {
+    "frac_kind_projects_higher": 1.0,
+    "mean_control_gap": 14.026,
+    "mean_train_gap_chosen_rejected": 18.95,
+    "transfer_ratio": 0.74,
+    "per_pair_gap": [
+      16.329,
+      18.053,
+      8.488,
+      17.7,
+      10.422,
+      13.164
+    ]
+  },
+  "flags": [],
+  "assessment": "no confound flag tripped by these tests"
+}

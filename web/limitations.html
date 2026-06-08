@@ -36,6 +36,18 @@
     </section>
 
     <section class="card">
+      <h2>① ½ &nbsp;CONFOUND AUDIT — WHAT WE RULED OUT (AND DIDN'T)</h2>
+      <p class="muted">A direction built from contrastive pairs separates <em>whatever</em> systematically differs between "chosen" and "rejected" — which need not be "pro-human." We red-teamed this directly (<a href="https://github.com/soham-padia/steering-arena/blob/main/scripts/confound_audit.py" target="_blank" rel="noopener"><code>scripts/confound_audit.py</code></a>), testing the most likely confounds against <em>independent</em> neutral data on the live model:</p>
+      <ul>
+        <li><b>Sentiment / valence:</b> <code>cos(d, valence) = 0.000</code> on independent positive-vs-negative text — ruled out.</li>
+        <li><b>Length / verbosity:</b> <code>cos(d, length) = 0.002</code> — ruled out.</li>
+        <li><b>"Take action vs. stay passive":</b> the strongest suspected confound. <code>cos(d, approach) = 0.12</code>, and a probe trained <em>only</em> on action-vs-inaction recovers <code>d</code> at just <code>0.12</code> — so <code>d</code> is <em>not</em> merely an "assertiveness/approach" axis.</li>
+        <li><b>Value-flip controls (the sharpest test):</b> on 6 pairs where the kind and cruel option are <em>both</em> active and assertive — so only human-impact differs — <code>d</code> ranks the kind option higher <b>6 / 6 times</b>, at ~74% of the strength of its training gap. It tracks kindness, not just action.</li>
+      </ul>
+      <p class="muted"><b>What remains open:</b> the direction is <em>estimator-sensitive</em> (mean-diff and an LDA/whitened estimator agree only ~0.40), it's induced from a workplace-skewed dataset, and — see §③/§④ below — the <em>scored game quantity</em> is still gameable by token artifacts and representational shift is not the same as behavior. Net: the evidence supports "<code>d</code> tracks a kind-vs-cruel / pro-human contrast," but not "<code>d</code> is <em>the</em> unique, universal human-values axis."</p>
+    </section>
+
+    <section class="card">
       <h2>② SCORES ARE MODEL / LAYER / DIRECTION-SPECIFIC</h2>
       <p class="muted">Leaderboard scores are only comparable <em>within the same season</em>: same model, same layer, same direction version, same probe set, same scoring procedure. A string that scores highly here (Llama-3.1-8B, layer 16) may not generalize to another model, layer, or direction.</p>
     </section>
@@ -48,6 +60,7 @@
     <section class="card">
       <h2>④ DIRECTIONAL ACTIVATION ≠ BEHAVIORAL ALIGNMENT</h2>
       <p class="muted">A prompt can move hidden states along the learned direction without necessarily causing safer, more helpful, or more aligned <em>behavior</em> during generation. The arena measures <b>representational shift</b>, not full downstream behavior. (We run a causal steering check as a sanity test, but it is limited.)</p>
+      <p class="muted"><b>A measured asymmetry.</b> In our layer sweep, steering <em>toward</em> pro-human (<code>+d</code> at layer 24) reliably and coherently shifts generations toward kindness/helpfulness — that direction is behaviorally validated. Steering <em>against</em> it (<code>−d</code>) is weak and often resisted: the model rarely produces genuinely callous text and sometimes becomes <em>more</em> considerate. So the <b>▲ pro-human board is causally grounded</b>, while the <b>▼ anti-human board is a representational ranking</b> (projection onto <code>−d</code>) whose behavioral cruelty is <em>not</em> demonstrated — interpret it as "least pro-human," not "verified anti-human." That the model is easy to steer toward kindness but hard to steer toward cruelty is itself a finding.</p>
     </section>
 
     <section class="card">
