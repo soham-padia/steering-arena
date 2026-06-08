@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     model_id: str = "allenai/Olmo-3-1125-32B"  # exact NDIF-hosted id
     model_build: str = ""
     layer: int = 16
-    token_budget: int = 10
+    token_budget: int = 20
     scoring_mode: str = "cosine_steering_shift"
     probe_set: str = "data/probes/season1.json"
     d_file: str = "data/directions/d_v1.npz"
