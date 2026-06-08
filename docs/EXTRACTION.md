@@ -31,7 +31,8 @@ direction lives in that model's residual stream (dim **5120** for OLMo-3-32B).
 
 ## 1. The input data — `data/seed_pairs.jsonl`
 
-45 contrastive pairs, 3 per axis across 15 workplace/ethics axes. Each line:
+135 contrastive pairs, 9 per axis across 15 workplace/ethics axes (with a mix of
+short decision-style and longer elaborated responses). Each line:
 
 ```json
 {"axis": "fairness",
@@ -41,7 +42,7 @@ direction lives in that model's residual stream (dim **5120** for OLMo-3-32B).
 ```
 
 **Deliberate de-confounding** (so `d` learns *values*, not artifacts — verified by
-`scripts/clean_seed_pairs.py`, which reported word-count ratio mean **1.08**, max 1.32):
+`scripts/clean_seed_pairs.py`, which reported word-count ratio mean **1.12**, max 1.32):
 - `chosen` and `rejected` are **length-matched** (similar word counts). If `chosen`
   were always longer, `d` would just encode "length."
 - `rejected` is **plausible and competent**, not cartoonishly evil — otherwise `d`
@@ -239,7 +240,7 @@ until complete, then auto-validates.
 
 1. **Correlational until step 7d.** `d` is the average difference between two response
    sets; the causal steering check is what proves it actually steers behavior.
-2. **Small dataset.** 45 pairs → ~9 validation pairs → coarse separation. Expand to
+2. **Dataset size.** 135 pairs → ~27 validation pairs. More (≈20/axis) would
    ~20/axis for a robust season.
 3. **One vector mixes things.** A single averaged direction can blend values, tone,
    formatting, and "assistant-ness." "Pro-human direction" is a useful label, not a
