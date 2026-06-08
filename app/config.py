@@ -37,9 +37,9 @@ class Settings(BaseSettings):
     hf_token: str = ""
 
     # ── Rate limiting / leaderboard (caps NDIF quota) ──
-    rate_per_min: int = 30
-    rate_per_day: int = 500
-    global_per_day: int = 5000
+    rate_per_min: int = 8
+    rate_per_day: int = 100
+    global_per_day: int = 2000
     leaderboard_max: int = 200
 
     # ── Supabase (secrets) ──
