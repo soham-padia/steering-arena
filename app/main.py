@@ -17,14 +17,19 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app import scoring
+from app import captcha, scoring
 from app.config import settings
 from app.errors import DuplicateError, SubmitError
 from app.queue import ScoringGate
 from app.ratelimit import hash_ip
 from app.submission import process_submission
 
-app = FastAPI(title="Steering Arena", version="0.2.0")
+app = FastAPI(title="Steering Arena", version="0.3.0")
+
+if settings.allowed_origin == "*":
+    logging.getLogger("steering_arena").warning(
+        "ALLOWED_ORIGIN is '*' — lock it to the Space origin before going public (audit M1)."
+    )
 
 app.add_middleware(
     CORSMiddleware,
@@ -136,6 +141,7 @@ def _client_ip(request: Request) -> str:
 class SubmitIn(BaseModel):
     handle: str
     sequence: str
+    turnstile_token: str = ""  # Cloudflare Turnstile token (when CAPTCHA is enabled)
 
 
 @app.get("/health")
@@ -156,11 +162,13 @@ def season() -> dict:
             "layer": s["layer"], "d_version": s["d_version"],
             "token_budget": s.get("token_budget", settings.token_budget),
             "scoring_mode": s.get("scoring_mode", settings.scoring_mode),
+            "captcha_sitekey": settings.turnstile_sitekey,
         }
     return {
         "id": settings.season_id, "name": settings.season_name, "model_id": settings.model_id,
         "layer": settings.layer, "d_version": settings.d_version,
         "token_budget": settings.token_budget, "scoring_mode": settings.scoring_mode,
+        "captcha_sitekey": settings.turnstile_sitekey,
     }
 
 
@@ -191,7 +199,11 @@ def leaderboard(season: int | None = None, limit: int = 50, board: str = "pro") 
 @app.post("/submit")
 def submit(body: SubmitIn, request: Request):
     db = get_db()
-    ip_hash = hash_ip(_client_ip(request), settings.ip_hash_salt)
+    ip = _client_ip(request)
+    # CAPTCHA gate first — guards the NDIF quota against bot floods (audit H1).
+    if not captcha.verify(body.turnstile_token, settings.turnstile_secret, ip):
+        return JSONResponse(status_code=400, content={"error": "CAPTCHA check failed — please retry."})
+    ip_hash = hash_ip(ip, settings.ip_hash_salt)
     try:
         count_tokens, score_fn = get_scorer()
         result = process_submission(

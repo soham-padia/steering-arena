@@ -1,0 +1,21 @@
+name: keepalive
+
+# Pings the Space /health every 6h so it doesn't sleep after ~48h idle.
+# Set the repo variable SPACE_HEALTH_URL to your Space's /health URL, e.g.
+#   https://<user>-<space>.hf.space/health
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /health
+        run: |
+          URL="${{ vars.SPACE_HEALTH_URL }}"
+          if [ -z "$URL" ]; then echo "SPACE_HEALTH_URL not set; skipping."; exit 0; fi
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 "$URL")
+          echo "GET $URL -> $code"
+          test "$code" = "200"

@@ -40,6 +40,15 @@ function arena() {
       try {
         const r = await fetch("/season");
         this.season = await r.json();
+        // Load Cloudflare Turnstile only when CAPTCHA is enabled for the season.
+        if (this.season?.captcha_sitekey && !document.getElementById("cf-turnstile-js")) {
+          const s = document.createElement("script");
+          s.id = "cf-turnstile-js";
+          s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+          s.async = true;
+          s.defer = true;
+          document.head.appendChild(s);
+        }
       } catch (_) {
         this.season = null;
       }
@@ -65,10 +74,11 @@ function arena() {
       this.result = null;
       this.submitting = true;
       try {
+        const tok = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
         const r = await fetch("/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ handle: this.handle, sequence: this.sequence }),
+          body: JSON.stringify({ handle: this.handle, sequence: this.sequence, turnstile_token: tok }),
         });
         const j = await r.json();
         if (!r.ok) {

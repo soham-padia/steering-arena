@@ -47,6 +47,10 @@ class Settings(BaseSettings):
     supabase_service_key: str = ""
     ip_hash_salt: str = ""
 
+    # ── CAPTCHA (Cloudflare Turnstile) — optional; active only when secret is set ──
+    turnstile_secret: str = ""   # server-side verification key
+    turnstile_sitekey: str = ""  # public key sent to the browser
+
     # ── Server / deploy ──
     port: int = 7860
     allowed_origin: str = "*"
