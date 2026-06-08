@@ -83,10 +83,11 @@ Steps:
 4. Leaderboard table (rank, handle, sequence in monospace, score, time) with refresh; highlight top entries.
 5. Rules / how-it-works section (optimization league; `d` + model public; token budget; opaque sequences allowed; dedup rule).
 6. **No browser storage**; mobile-friendly; single accent color.
+7. **Stored-XSS guard (security audit H2):** the backend stores `user_handle` and `sequence_text` verbatim (any printable chars). Render **all** user-supplied content via Alpine `x-text` / `textContent` — **never** `x-html` / `innerHTML`. Treat the API response as untrusted.
 
 **Skill:** optionally use the `frontend-design` skill for polish.
 
-**DoD:** submit end-to-end and see yourself ranked; mobile-friendly; errors render as friendly strings.
+**DoD:** submit end-to-end and see yourself ranked; mobile-friendly; errors render as friendly strings; user content is escaped on render (no `x-html`).
 
 ---
 
@@ -99,8 +100,15 @@ Steps:
 2. README frontmatter wired (`sdk: docker`, `app_port: 7860`).
 3. Space secrets set: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `IP_HASH_SALT`, **`NDIF_API_KEY`** (server-side only).
 4. `.github/workflows/keepalive.yml` — cron `curl /health` every 6 h.
+5. **CAPTCHA on `/submit` (audit H1, must-fix):** add Cloudflare Turnstile or hCaptcha (free) verification before scoring. IP-keyed limits alone don't stop a rotating-IP bot from draining a full day's NDIF quota (`global_per_day`). Consider lowering `global_per_day` until it's in.
+6. **Lock CORS (audit M1):** set `ALLOWED_ORIGIN=https://<user>-<space>.hf.space` (not `*`).
+7. **Confirm `TRUSTED_PROXY_HOPS`** matches the HF Space proxy chain (default 1) so IP rate-limiting isn't spoofable.
+8. **Verify the Supabase key (audit L3):** confirm `SUPABASE_SERVICE_KEY` is the `service_role`/`sb_secret_` key (server-side, RLS-bypassing) and that RLS is enabled on both tables.
+9. *(optional, audit M3)* light per-IP throttle or short cache on `/season` + `/leaderboard` reads.
 
-**DoD:** public Space URL works; survives a cold start; cron keeps it warm; a real submission scores through NDIF; `NDIF_API_KEY` never reaches the client. Cost ledger (spec §15) still all-zero.
+**Security gate:** run the `security-auditor` over the whole tree; it must return PASS / PASS WITH NOTES (no BLOCK) before going public.
+
+**DoD:** public Space URL works; survives a cold start; cron keeps it warm; a real submission scores through NDIF; `NDIF_API_KEY` never reaches the client; CAPTCHA active; CORS locked. Cost ledger (spec §15) still all-zero.
 
 ---
 

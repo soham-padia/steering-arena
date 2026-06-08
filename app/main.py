@@ -7,6 +7,7 @@ the first /submit, so /health, /season, and /leaderboard stay light and always u
 
 from __future__ import annotations
 
+import logging
 import os
 from pathlib import Path
 
@@ -171,6 +172,7 @@ def leaderboard(season: int | None = None, limit: int = 50) -> dict:
         season_id = season if season is not None else (db.get_active_season() or {}).get("id")
         rows = db.leaderboard(season_id, limit) if season_id is not None else []
     except Exception:  # noqa: BLE001 — a read shouldn't 500; show an empty board instead
+        logging.getLogger("steering_arena").exception("leaderboard read failed")
         return {"season": season, "entries": []}
     entries = [
         {

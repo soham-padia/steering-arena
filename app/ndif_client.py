@@ -35,8 +35,10 @@ class ResidualReader:
         backend = os.getenv("SCORING_BACKEND", "ndif").lower()
         if backend == "ndif":
             if settings.ndif_api_key:
-                # Configure NDIF auth for remote execution.
-                nnsight.CONFIG.set_default_api_key(settings.ndif_api_key)
+                # Set the key IN MEMORY only. (set_default_api_key writes the key
+                # to a .config file on disk in the nnsight install dir — needless
+                # persistence of the crown-jewel secret; avoid it.)
+                nnsight.CONFIG.API.APIKEY = settings.ndif_api_key
             model = LanguageModel(settings.model_id)
             return cls(model, prepend_bos=settings.prepend_bos, remote=True, backend=backend)
 
