@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>STEERING ARENA — Limitations &amp; Interpretation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap">
+      <div class="marquee">
+        <span class="coin" aria-hidden="true">●</span>
+        <h1>LIMITATIONS &amp; INTERPRETATION</h1>
+        <span class="coin" aria-hidden="true">●</span>
+      </div>
+      <p class="tag">WHAT THE SCORE IS — AND, JUST AS IMPORTANTLY, WHAT IT IS NOT</p>
+      <p class="insert"><a href="/">◂ BACK TO THE ARENA</a></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="card">
+      <p class="muted">Activation-direction methods are inherently underdetermined. A Steering Arena score is an <em>operational proxy</em> — a measurement of movement along one learned direction in one model — not a definitive readout of "human values." These limitations are part of the science, and reading them is the right way to interpret the board.</p>
+    </section>
+
+    <section class="card">
+      <h2>① NOT A GROUND-TRUTH MORALITY AXIS</h2>
+      <p class="muted">The "pro-human" direction is learned from a finite set of <b>135 contrastive examples</b> across <b>15 chosen value axes</b>. It should be read as a representation <em>induced by this dataset and this model</em> — not as an objective or universal human-values detector.</p>
+    </section>
+
+    <section class="card">
+      <h2>② SCORES ARE MODEL / LAYER / DIRECTION-SPECIFIC</h2>
+      <p class="muted">Leaderboard scores are only comparable <em>within the same season</em>: same model, same layer, same direction version, same probe set, same scoring procedure. A string that scores highly here (Llama-3.1-8B, layer 16) may not generalize to another model, layer, or direction.</p>
+    </section>
+
+    <section class="card">
+      <h2>③ HIGH SCORES MAY EXPLOIT ARTIFACTS</h2>
+      <p class="muted">Short strings can score highly because of tokenization quirks, sentiment, formatting, memorized associations, or distributional artifacts — rather than meaningful value-related representation. (The current board is itself evidence: opaque token-soup like <code>.Mock</code>, <code>-chan</code>, <code>emoji</code> outscores plain "be kind and honest.")</p>
+    </section>
+
+    <section class="card">
+      <h2>④ DIRECTIONAL ACTIVATION ≠ BEHAVIORAL ALIGNMENT</h2>
+      <p class="muted">A prompt can move hidden states along the learned direction without necessarily causing safer, more helpful, or more aligned <em>behavior</em> during generation. The arena measures <b>representational shift</b>, not full downstream behavior. (We run a causal steering check as a sanity test, but it is limited.)</p>
+    </section>
+
+    <section class="card">
+      <h2>⑤ SINGLE-LAYER SCORING IS INCOMPLETE</h2>
+      <p class="muted">The score focuses on <b>one layer and one vector</b>. Value-related representations may be distributed across many layers, attention heads, MLPs, or nonlinear manifolds that a single linear direction cannot capture.</p>
+    </section>
+
+    <section class="card">
+      <h2>⑥ THE BENCHMARK IS INTENTIONALLY ADVERSARIAL</h2>
+      <p class="muted">The arena rewards discovering strings that maximize an internal score, so the board may reveal both meaningful triggers and exploit-like inputs. That is part of the experiment — but it means top entries <em>should not be overinterpreted</em>.</p>
+    </section>
+
+    <section class="card">
+      <h2>STILL — WHY IT'S USEFUL</h2>
+      <p class="muted">Despite these limitations, Steering Arena is a useful exploratory tool: it tests whether human-discoverable strings can systematically manipulate a learned internal direction, and it provides a public interface for studying the gap between <em>semantic meaning</em>, <em>token-level artifacts</em>, and <em>model representations</em>.</p>
+      <div class="row">
+        <a class="mini" href="/reproducibility.html">REPRODUCIBILITY &amp; METHOD →</a>
+        <a class="mini" href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">SOURCE</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap muted">
+    STEERING ARENA · MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT ·
+    <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/">ARENA</a>
+  </footer>
+</body>
+</html>

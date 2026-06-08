@@ -27,7 +27,7 @@
       </div>
       <p class="tag">STEER THE MODEL'S MIND — <b>&#9650; PRO&#8209;HUMAN</b> OR <b class="anti">&#9660; ANTI&#8209;HUMAN</b>. ONE SCORE, TWO BOARDS.</p>
       <p class="insert blink"><a href="#play">▶ INSERT SEQUENCE</a></p>
-      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a></p>
+      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/limitations.html">LIMITATIONS</a></p>
     </div>
   </header>
 
@@ -83,6 +83,7 @@
         <button class="mini refresh" @click="loadBoards()" title="Refresh">&#8635;</button>
       </div>
       <p class="board-cap" x-text="tab==='pro' ? 'Top = pushed hardest TOWARD pro-human (highest score)' : 'Top = pushed hardest AGAINST it (most negative score)'"></p>
+      <p class="disclaimer">Scores are shifts along a learned activation direction — <b>not</b> measurements of moral content or behavioral safety. <a href="/limitations.html">Limitations →</a></p>
 
       <table class="board" x-show="entries.length">
         <thead>
@@ -120,6 +121,7 @@
   <footer class="wrap muted">
     STEERING ARENA &middot; MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT &middot;
     <a href="/reproducibility.html">REPRODUCIBILITY</a> &middot;
+    <a href="/limitations.html">LIMITATIONS</a> &middot;
     <a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">SOURCE</a>
   </footer>
 </body>

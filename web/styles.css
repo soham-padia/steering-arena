@@ -172,7 +172,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shad
 .tab.on { color: #1a0a12; background: var(--gold); border-color: #b9911a; }
 .tab.anti.on { background: var(--pink); border-color: #b83c7e; }
 .refresh { margin-left: auto; }
-.board-cap { font-family: var(--term); font-size: 16px; color: var(--muted); margin: 0 0 12px; }
+.board-cap { font-family: var(--term); font-size: 16px; color: var(--muted); margin: 0 0 6px; }
+.disclaimer { font-family: var(--term); font-size: 15px; color: #8f93b5; margin: 0 0 12px;
+  border-left: 3px solid #2b2860; padding-left: 10px; line-height: 1.35; }
+.disclaimer a { color: var(--cyan); }
 .tag b.anti { color: var(--pink); }
 
 /* ---- Leaderboard ---- */
