@@ -197,6 +197,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shad
 .board tr.bronze .rank, .board tr.bronze .num { color: var(--bronze); }
 
 .empty { font-size: 11px; line-height: 2.2; color: var(--muted); text-align: center; padding: 16px 0; }
+.showmore { display: block; width: 100%; margin-top: 12px; text-align: center; }
 
 /* ---- Rules ---- */
 .rules ul { margin: 0; padding-left: 4px; list-style: none; }

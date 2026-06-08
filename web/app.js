@@ -8,6 +8,8 @@ function arena() {
     season: null,
     tab: "pro",
     boards: { pro: [], anti: [] },
+    collapsed: true,
+    collapseN: 5,
     handle: "",
     sequence: "",
     tokenCount: 0,
@@ -23,6 +25,11 @@ function arena() {
     // Rows for the currently selected board.
     get entries() {
       return this.boards[this.tab] || [];
+    },
+
+    // Collapsed view shows only the top N; toggle expands to the full board.
+    get visibleEntries() {
+      return this.collapsed ? this.entries.slice(0, this.collapseN) : this.entries;
     },
 
     // Real token count from the model tokenizer (matches server enforcement).
