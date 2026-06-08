@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     season_id: int = 0
     season_name: str = "Season 0 — scaffold"
     d_version: str = "v0-stub"
-    model_id: str = "OLMo-3-32B"
+    model_id: str = "allenai/Olmo-3-1125-32B"  # exact NDIF-hosted id
     model_build: str = ""
     layer: int = 16
     token_budget: int = 10

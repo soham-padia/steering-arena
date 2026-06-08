@@ -11,7 +11,7 @@
 set -u
 cd "$(dirname "$0")/.."
 
-MODEL="${MODEL:-allenai/Olmo-3.1-32B-Instruct}"
+MODEL="${MODEL:-allenai/Olmo-3-1125-32B}"
 OUT="${OUT:-data/directions/d_olmo3_v1.npz}"
 ATTEMPTS="${ATTEMPTS:-200}"
 SLEEP="${SLEEP:-120}"
