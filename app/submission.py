@@ -99,6 +99,16 @@ def process_submission(
         "score": score,
         "ip_hash": ip_hash,
     })
-    rank = db.rank_for(season["id"], score)
+    # One signed score, two boards: pro-human ranks by most-positive projection,
+    # anti-human by most-negative (the geometric opposite).
+    pro_rank = db.rank_for(season["id"], score, higher_is_better=True)
+    anti_rank = db.rank_for(season["id"], score, higher_is_better=False)
 
-    return {"score": score, "rank": rank, "token_count": token_count, "id": inserted.get("id")}
+    return {
+        "score": score,
+        "rank": pro_rank,  # back-compat alias for pro_rank
+        "pro_rank": pro_rank,
+        "anti_rank": anti_rank,
+        "token_count": token_count,
+        "id": inserted.get("id"),
+    }

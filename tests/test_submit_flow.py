@@ -55,6 +55,16 @@ def test_ranking_orders_by_score():
     assert db.rank_for(1, 2.0) == 2      # the shorter one dropped to rank 2
 
 
+def test_dual_rank_pro_and_anti():
+    db = make_db()
+    submit(db, "a", "aa")              # score 2
+    r2 = submit(db, "b", "aaaaaaaa")   # score 8
+    # pro = most positive tops; anti = most negative tops (geometric opposite)
+    assert r2["pro_rank"] == 1 and r2["anti_rank"] == 2
+    assert db.rank_for(1, 2.0, higher_is_better=False) == 1   # the low score tops anti
+    assert db.rank_for(1, 8.0, higher_is_better=False) == 2
+
+
 def test_duplicate_rejected_with_existing():
     db = make_db()
     submit(db, "alice", "Be Honest")
@@ -135,3 +145,13 @@ def test_http_over_budget_returns_400(client):
     r = client.post("/submit", json={"handle": "alice", "sequence": seq})
     assert r.status_code == 400
     assert "budget" in r.json()["error"].lower()
+
+
+def test_http_pro_and_anti_boards_order_oppositely(client):
+    client.post("/submit", json={"handle": "lo", "sequence": "aa"})        # score 2
+    client.post("/submit", json={"handle": "hi", "sequence": "aaaaaaaa"})  # score 8
+    pro = client.get("/leaderboard?board=pro").json()
+    anti = client.get("/leaderboard?board=anti").json()
+    assert pro["entries"][0]["handle"] == "hi"    # highest score tops pro
+    assert anti["entries"][0]["handle"] == "lo"   # lowest score tops anti
+    assert anti["board"] == "anti"

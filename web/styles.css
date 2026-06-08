@@ -149,6 +149,19 @@ input:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shad
 .readout.err { border-color: var(--red); color: var(--red); background: rgba(255, 82, 119, 0.08); }
 .readout span:not(.big) { font-family: var(--term); font-size: 18px; color: var(--ink); }
 
+/* ---- Leaderboard tabs ---- */
+.tabs { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.tab {
+  font-size: 9px; color: var(--muted); background: var(--panel-2);
+  border: 3px solid #2b2860; padding: 9px 10px; cursor: pointer;
+}
+.tab:hover:not(.on) { color: var(--ink); }
+.tab.on { color: #1a0a12; background: var(--gold); border-color: #b9911a; }
+.tab.anti.on { background: var(--pink); border-color: #b83c7e; }
+.refresh { margin-left: auto; }
+.board-cap { font-family: var(--term); font-size: 16px; color: var(--muted); margin: 0 0 12px; }
+.tag b.anti { color: var(--pink); }
+
 /* ---- Leaderboard ---- */
 .board { width: 100%; border-collapse: collapse; }
 .board th {

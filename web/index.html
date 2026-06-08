@@ -23,7 +23,7 @@
         <h1>STEERING ARENA</h1>
         <span class="coin" aria-hidden="true">●</span>
       </div>
-      <p class="tag">PUSH THE MODEL'S MIND TOWARD <b>PRO&#8209;HUMAN</b> — HIGHEST PROJECTION WINS</p>
+      <p class="tag">STEER THE MODEL'S MIND — <b>&#9650; PRO&#8209;HUMAN</b> OR <b class="anti">&#9660; ANTI&#8209;HUMAN</b>. ONE SCORE, TWO BOARDS.</p>
       <p class="insert blink"><a href="#play">▶ INSERT SEQUENCE</a></p>
     </div>
   </header>
@@ -43,7 +43,7 @@
     <!-- Submit -->
     <section id="play" class="card">
       <h2>NEW CHALLENGER</h2>
-      <p class="muted">A short string that, prepended to neutral prompts, shifts the model's last-token state hardest along the direction. Weird, opaque sequences are fair game.</p>
+      <p class="muted">A short string that, prepended to neutral prompts, shifts the model's last-token state along the direction — <b>▲ toward</b> pro-human or <b>▼ against</b> it. One submission scores once and ranks on both boards. Weird, opaque sequences are fair game.</p>
 
       <label for="handle">PLAYER</label>
       <input id="handle" type="text" maxlength="32" placeholder="AAA" x-model="handle" autocomplete="off" />
@@ -61,7 +61,7 @@
 
       <div class="readout ok" x-show="result" x-transition>
         <span class="big" x-text="fmtScore(result?.score)"></span>
-        <span>RANK <b x-text="result?.rank"></b> &middot; <span x-text="result?.token_count"></span> TOK</span>
+        <span>&#9650; RANK <b x-text="result?.pro_rank"></b> PRO &middot; &#9660; RANK <b x-text="result?.anti_rank"></b> ANTI &middot; <span x-text="result?.token_count"></span> TOK</span>
       </div>
       <div class="readout err" x-show="error" x-transition>
         <span class="big">GAME OVER</span>
@@ -71,17 +71,20 @@
 
     <!-- Leaderboard -->
     <section class="card">
-      <div class="row between">
-        <h2>HIGH SCORES</h2>
-        <button class="mini" @click="loadBoard()">&#8635; REFRESH</button>
+      <h2>HIGH SCORES</h2>
+      <div class="tabs">
+        <button class="tab" :class="{ on: tab==='pro' }" @click="tab='pro'">&#9650; PRO&#8209;HUMAN</button>
+        <button class="tab anti" :class="{ on: tab==='anti' }" @click="tab='anti'">&#9660; ANTI&#8209;HUMAN</button>
+        <button class="mini refresh" @click="loadBoards()" title="Refresh">&#8635;</button>
       </div>
+      <p class="board-cap" x-text="tab==='pro' ? 'Top = pushed hardest TOWARD pro-human (highest score)' : 'Top = pushed hardest AGAINST it (most negative score)'"></p>
 
-      <table class="board" x-show="board.length">
+      <table class="board" x-show="entries.length">
         <thead>
           <tr><th>#</th><th>PLAYER</th><th>SEQUENCE</th><th class="num">SCORE</th></tr>
         </thead>
         <tbody>
-          <template x-for="(e, i) in board" :key="i">
+          <template x-for="(e, i) in entries" :key="i">
             <tr :class="i===0 ? 'gold' : i===1 ? 'silver' : i===2 ? 'bronze' : ''">
               <td class="rank" x-text="i + 1"></td>
               <td class="player" x-text="e.handle"></td>
@@ -91,7 +94,7 @@
           </template>
         </tbody>
       </table>
-      <p class="muted empty" x-show="!board.length">NO SCORES YET<br />BE THE FIRST</p>
+      <p class="empty" x-show="!entries.length">NO SCORES YET<br />BE THE FIRST</p>
     </section>
   </main>
 
@@ -101,6 +104,7 @@
     <ul>
       <li><b>THE GOAL.</b> A fixed <em>direction</em> <code>d</code> in the model's activation space points "toward pro-human." Submit a short token sequence; the server measures how far it shifts the model's internal state along <code>d</code>, averaged over fixed neutral probe prompts.</li>
       <li><b>OPEN BY DESIGN.</b> The model and <code>d</code> are public — it's an optimization game. Because the model is large and served remotely, the <em>server is the scoring oracle</em>: it scores every entry canonically and that value is final.</li>
+      <li><b>TWO BOARDS.</b> Every entry gets one signed score. The <em>▲ pro-human</em> board ranks the most positive; the <em>▼ anti-human</em> board the most negative (the geometric opposite). A strong push lands you near the top of one — and the bottom of the other.</li>
       <li><b>TOKEN BUDGET.</b> Sequences are capped at the season's budget. Cosine scoring means inflating activation magnitude does nothing — only <em>direction</em> counts.</li>
       <li><b>ANYTHING GOES (ON-THEME).</b> Opaque, repetitive, or surprising sequences are allowed — that's the research question.</li>
       <li><b>ONE PER SEQUENCE.</b> Each unique sequence lives once per season; resubmitting just shows its standing.</li>

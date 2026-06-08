@@ -165,15 +165,16 @@ def season() -> dict:
 
 
 @app.get("/leaderboard")
-def leaderboard(season: int | None = None, limit: int = 50) -> dict:
+def leaderboard(season: int | None = None, limit: int = 50, board: str = "pro") -> dict:
     limit = max(1, min(limit, settings.leaderboard_max))
+    ascending = board.lower() == "anti"  # anti-human board ranks by most-negative score
     try:
         db = get_db()
         season_id = season if season is not None else (db.get_active_season() or {}).get("id")
-        rows = db.leaderboard(season_id, limit) if season_id is not None else []
+        rows = db.leaderboard(season_id, limit, ascending=ascending) if season_id is not None else []
     except Exception:  # noqa: BLE001 — a read shouldn't 500; show an empty board instead
         logging.getLogger("steering_arena").exception("leaderboard read failed")
-        return {"season": season, "entries": []}
+        return {"season": season, "board": board, "entries": []}
     entries = [
         {
             "rank": i + 1,
@@ -184,7 +185,7 @@ def leaderboard(season: int | None = None, limit: int = 50) -> dict:
         }
         for i, r in enumerate(rows)
     ]
-    return {"season": season_id, "entries": entries}
+    return {"season": season_id, "board": board, "entries": entries}
 
 
 @app.post("/submit")

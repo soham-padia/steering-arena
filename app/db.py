@@ -41,9 +41,9 @@ class InMemoryDatabase:
         return row
 
     # submissions
-    def leaderboard(self, season_id: int, limit: int) -> list[dict]:
+    def leaderboard(self, season_id: int, limit: int, ascending: bool = False) -> list[dict]:
         rows = [s for s in self.submissions if s["season_id"] == season_id]
-        rows.sort(key=lambda r: (-r["score"], r["created_at"]))
+        rows.sort(key=lambda r: (r["score"] if ascending else -r["score"], r["created_at"]))
         return rows[:limit]
 
     def find_submission(self, season_id: int, norm_key: str) -> dict | None:
@@ -58,8 +58,11 @@ class InMemoryDatabase:
         self.submissions.append(stored)
         return stored
 
-    def rank_for(self, season_id: int, score: float) -> int:
-        better = sum(1 for s in self.submissions if s["season_id"] == season_id and s["score"] > score)
+    def rank_for(self, season_id: int, score: float, higher_is_better: bool = True) -> int:
+        if higher_is_better:
+            better = sum(1 for s in self.submissions if s["season_id"] == season_id and s["score"] > score)
+        else:
+            better = sum(1 for s in self.submissions if s["season_id"] == season_id and s["score"] < score)
         return better + 1
 
     def count_ip_since(self, ip_hash: str, since_iso: str) -> int:
@@ -88,12 +91,12 @@ class SupabaseDatabase:
         res = self.client.table("seasons").select("*").eq("id", season_id).limit(1).execute()
         return res.data[0] if res.data else None
 
-    def leaderboard(self, season_id: int, limit: int) -> list[dict]:
+    def leaderboard(self, season_id: int, limit: int, ascending: bool = False) -> list[dict]:
         res = (
             self.client.table("submissions")
             .select("user_handle, sequence_text, score, created_at")
             .eq("season_id", season_id)
-            .order("score", desc=True)
+            .order("score", desc=not ascending)
             .order("created_at", desc=False)
             .limit(limit)
             .execute()
@@ -115,15 +118,14 @@ class SupabaseDatabase:
         res = self.client.table("submissions").insert(row).execute()
         return res.data[0] if res.data else row
 
-    def rank_for(self, season_id: int, score: float) -> int:
-        res = (
+    def rank_for(self, season_id: int, score: float, higher_is_better: bool = True) -> int:
+        q = (
             self.client.table("submissions")
             .select("id", count="exact", head=True)
             .eq("season_id", season_id)
-            .gt("score", score)
-            .execute()
         )
-        return (res.count or 0) + 1
+        q = q.gt("score", score) if higher_is_better else q.lt("score", score)
+        return (q.execute().count or 0) + 1
 
     def count_ip_since(self, ip_hash: str, since_iso: str) -> int:
         res = (

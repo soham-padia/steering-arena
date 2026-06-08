@@ -6,7 +6,8 @@
 function arena() {
   return {
     season: null,
-    board: [],
+    tab: "pro",
+    boards: { pro: [], anti: [] },
     handle: "",
     sequence: "",
     result: null,
@@ -15,7 +16,12 @@ function arena() {
 
     async init() {
       await this.loadSeason();
-      await this.loadBoard();
+      await this.loadBoards();
+    },
+
+    // Rows for the currently selected board.
+    get entries() {
+      return this.boards[this.tab] || [];
     },
 
     // Rough client-side token estimate; the server is authoritative.
@@ -39,14 +45,19 @@ function arena() {
       }
     },
 
-    async loadBoard() {
+    async fetchBoard(board) {
       try {
-        const r = await fetch("/leaderboard?limit=50");
+        const r = await fetch(`/leaderboard?board=${board}&limit=50`);
         const j = await r.json();
-        this.board = j.entries || [];
+        return j.entries || [];
       } catch (_) {
-        this.board = [];
+        return [];
       }
+    },
+
+    async loadBoards() {
+      const [pro, anti] = await Promise.all([this.fetchBoard("pro"), this.fetchBoard("anti")]);
+      this.boards = { pro, anti };
     },
 
     async submit() {
@@ -68,7 +79,7 @@ function arena() {
           this.error = msg;
         } else {
           this.result = j;
-          await this.loadBoard();
+          await this.loadBoards();
         }
       } catch (_) {
         this.error = "Network error — please try again.";
