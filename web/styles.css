@@ -1,0 +1,105 @@
+:root {
+  --bg: #0b0c10;
+  --surface: #15171f;
+  --surface-2: #1c1f29;
+  --border: #2a2e3a;
+  --text: #e8e8ee;
+  --muted: #9aa0b0;
+  --accent: #8b7bff;
+  --accent-dim: #6b5cf0;
+  --ok: #3ddc97;
+  --err: #ff6b6b;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1100px 500px at 80% -10%, rgba(139, 123, 255, 0.12), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+.wrap { width: min(1000px, 92vw); margin: 0 auto; }
+
+/* Topbar */
+.topbar { border-bottom: 1px solid var(--border); padding: 18px 0; }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo { font-size: 30px; }
+h1 { font-size: 21px; margin: 0; letter-spacing: -0.02em; }
+.tag { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.tag em { color: var(--accent); font-style: normal; }
+
+/* Banner */
+.banner { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px auto; }
+.chip {
+  background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  padding: 5px 11px; border-radius: 999px; font-size: 12.5px;
+}
+.chip b { color: var(--text); font-weight: 600; }
+.chip-accent { background: rgba(139, 123, 255, 0.14); border-color: var(--accent-dim); color: #cdc6ff; }
+
+/* Layout */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 18px;
+}
+h2 { font-size: 16px; margin: 0 0 10px; letter-spacing: -0.01em; }
+.muted { color: var(--muted); }
+.small { font-size: 12.5px; }
+.hint { opacity: 0.7; }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { justify-content: space-between; }
+
+/* Form */
+label { display: block; font-size: 12.5px; color: var(--muted); margin: 14px 0 5px; }
+input, textarea {
+  width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); border-radius: 9px; padding: 10px 12px; font: inherit; resize: vertical;
+}
+textarea { font-family: var(--mono); font-size: 14px; }
+input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+
+button { cursor: pointer; font: inherit; border-radius: 9px; border: 1px solid transparent; }
+.primary {
+  background: var(--accent); color: #0c0a1a; font-weight: 650; padding: 9px 18px; border: none;
+}
+.primary:hover { background: #9d90ff; }
+.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+.ghost-btn {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+  padding: 7px 13px; text-decoration: none; display: inline-block;
+}
+.ghost-btn:hover { border-color: var(--accent); color: var(--text); }
+
+/* Result */
+.result { margin-top: 14px; padding: 10px 13px; border-radius: 9px; font-size: 14px; }
+.result.ok { background: rgba(61, 220, 151, 0.1); border: 1px solid rgba(61, 220, 151, 0.4); }
+.result.err { background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.4); color: #ffb3b3; }
+
+/* Leaderboard */
+.board { width: 100%; border-collapse: collapse; font-size: 14px; }
+.board th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+.board td { padding: 8px; border-bottom: 1px solid rgba(42, 46, 58, 0.5); vertical-align: top; }
+.board .num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+.board .rank { color: var(--muted); width: 28px; }
+.board .seq { font-family: var(--mono); font-size: 13px; word-break: break-word; max-width: 320px; }
+.board tr.top .rank { color: var(--accent); font-weight: 700; }
+.board tr.top td { background: rgba(139, 123, 255, 0.05); }
+
+/* Rules */
+.rules ul { margin: 0; padding-left: 18px; }
+.rules li { margin: 9px 0; color: #cfd2dd; }
+.rules code, footer code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2);
+  padding: 1px 6px; border-radius: 5px; color: #cdc6ff; }
+
+footer { padding: 28px 0 40px; text-align: center; }

@@ -30,6 +30,9 @@ dist/
 .coverage
 htmlcov/
 
+# Local dev placeholder direction (tiny-model dim) — never commit
+data/directions/d_dev.npz
+
 # --- ML / model artifacts (the committed d_<version>.npz under data/ is intentional and NOT ignored) ---
 .cache/
 hf_home/

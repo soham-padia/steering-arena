@@ -47,6 +47,10 @@ class ResidualReader:
         return cls(model, prepend_bos=settings.prepend_bos, remote=False, backend=backend)
 
     @property
+    def tokenizer(self):
+        return self.model.tokenizer
+
+    @property
     def hidden_size(self) -> int | None:
         try:
             return int(self.model.config.hidden_size)

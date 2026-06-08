@@ -4,14 +4,111 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Steering Arena</title>
+  <meta name="description" content="Submit short token sequences that steer a language model's activations toward a fixed 'pro-human' direction. The server scores and ranks them." />
+  <link rel="stylesheet" href="/styles.css" />
+  <!-- Alpine.js (CDN, no build step). User content is rendered with x-text only — never x-html — to prevent stored XSS. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <script defer src="/app.js"></script>
 </head>
-<body>
-  <!-- Phase 0 placeholder. The real single-page UI (banner + submit form +
-       leaderboard + rules) is built in Phase 3 with plain HTML/CSS/JS + Alpine.js. -->
-  <main>
-    <h1>Steering Arena</h1>
-    <p>Scaffold up. Frontend arrives in Phase 3.</p>
-    <p><a href="/season">/season</a> · <a href="/health">/health</a></p>
+<body x-data="arena()" x-init="init()">
+
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">🧭</span>
+        <div>
+          <h1>Steering&nbsp;Arena</h1>
+          <p class="tag">Push the model's mind toward <em>pro-human</em>. Highest projection wins.</p>
+        </div>
+      </div>
+      <a class="ghost-btn" href="#rules">How it works</a>
+    </div>
+  </header>
+
+  <!-- Season banner -->
+  <section class="wrap banner" x-show="season">
+    <span class="chip chip-accent">Season <span x-text="season?.id"></span></span>
+    <span class="chip" title="Served model"><b>model</b> <span x-text="season?.model_id"></span></span>
+    <span class="chip"><b>layer</b> <span x-text="season?.layer"></span></span>
+    <span class="chip"><b>direction</b> <span x-text="season?.d_version"></span></span>
+    <span class="chip"><b>budget</b> <span x-text="season?.token_budget"></span> tokens</span>
+    <span class="chip"><b>metric</b> <span x-text="season?.scoring_mode"></span></span>
+  </section>
+
+  <main class="wrap grid">
+
+    <!-- Submit -->
+    <section class="card">
+      <h2>Submit a sequence</h2>
+      <p class="muted">A short string that, prepended to neutral prompts, shifts the model's last-token state hardest along the direction. Weird/opaque sequences are fair game.</p>
+
+      <label for="handle">Display name</label>
+      <input id="handle" type="text" maxlength="32" placeholder="e.g. alice" x-model="handle" autocomplete="off" />
+
+      <label for="sequence">Sequence</label>
+      <textarea id="sequence" rows="3" maxlength="500" placeholder="be honest and own mistakes" x-model="sequence"></textarea>
+
+      <div class="row between">
+        <span class="muted small">
+          ≈ <span x-text="tokenEstimate"></span> tokens
+          <span class="hint">(estimate — the server counts canonically)</span>
+        </span>
+        <button class="primary" :disabled="submitting || !handle.trim() || !sequence.trim()" @click="submit()">
+          <span x-show="!submitting">Score it</span>
+          <span x-show="submitting">Scoring…</span>
+        </button>
+      </div>
+
+      <div class="result ok" x-show="result" x-transition>
+        Scored <b x-text="fmtScore(result?.score)"></b> ·
+        rank <b x-text="result?.rank"></b> ·
+        <span x-text="result?.token_count"></span> tokens
+      </div>
+      <div class="result err" x-show="error" x-transition x-text="error"></div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section class="card">
+      <div class="row between">
+        <h2>Leaderboard</h2>
+        <button class="ghost-btn small" @click="loadBoard()">↻ Refresh</button>
+      </div>
+
+      <table class="board" x-show="board.length">
+        <thead>
+          <tr><th>#</th><th>Name</th><th>Sequence</th><th class="num">Score</th></tr>
+        </thead>
+        <tbody>
+          <template x-for="(e, i) in board" :key="i">
+            <tr :class="i < 3 ? 'top' : ''">
+              <td class="rank" x-text="i + 1"></td>
+              <td x-text="e.handle"></td>
+              <td class="seq" x-text="e.sequence"></td>
+              <td class="num" x-text="fmtScore(e.score)"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <p class="muted" x-show="!board.length">No entries yet — be the first.</p>
+    </section>
   </main>
+
+  <!-- Rules -->
+  <section id="rules" class="wrap card rules">
+    <h2>How it works</h2>
+    <ul>
+      <li><b>The goal.</b> A fixed <em>direction</em> <code>d</code> in the model's activation space points "toward pro-human." You submit a short token sequence; the server measures how far it shifts the model's internal state along <code>d</code>, averaged over a fixed set of neutral probe prompts.</li>
+      <li><b>Open by design.</b> The model and <code>d</code> are public — it's an optimization game. Because the model is large and served remotely, the <em>server is the scoring oracle</em>: it scores every submission canonically and that value is final.</li>
+      <li><b>Token budget.</b> Sequences are capped at the season's token budget. Cosine scoring means inflating activation magnitude doesn't help — only <em>direction</em> does.</li>
+      <li><b>Anything goes (on-theme).</b> Opaque, repetitive, or surprising sequences are allowed — that's part of the research question.</li>
+      <li><b>One per sequence.</b> Each unique sequence lives once per season; resubmitting an existing one just shows its standing.</li>
+      <li><b>Research, not profit.</b> This is a non-commercial research project. Scores are only comparable within a season.</li>
+    </ul>
+  </section>
+
+  <footer class="wrap muted small">
+    Steering Arena · scores computed on a frozen model + direction · a season is a fixed
+    <code>(model, layer, d_version)</code>.
+  </footer>
 </body>
 </html>
