@@ -45,11 +45,11 @@
       <h2>NEW CHALLENGER</h2>
       <p class="muted">A short string that, prepended to neutral prompts, shifts the model's last-token state along the direction — <b>▲ toward</b> pro-human or <b>▼ against</b> it. One submission scores once and ranks on both boards. Weird, opaque sequences are fair game.</p>
 
-      <label for="handle">PLAYER</label>
-      <input id="handle" type="text" maxlength="32" placeholder="AAA" x-model="handle" autocomplete="off" />
+      <label for="f-handle">PLAYER</label>
+      <input id="f-handle" type="text" maxlength="32" placeholder="AAA" x-model="handle" autocomplete="off" />
 
-      <label for="sequence">SEQUENCE</label>
-      <textarea id="sequence" rows="3" maxlength="500" placeholder="be honest and own mistakes" x-model="sequence"></textarea>
+      <label for="f-sequence">SEQUENCE</label>
+      <textarea id="f-sequence" rows="3" maxlength="500" placeholder="be honest and own mistakes" x-model="sequence"></textarea>
 
       <div class="row between">
         <span class="muted est">&#8776; <span x-text="tokenEstimate"></span> TOK <span class="hint">(server counts for real)</span></span>
