@@ -1,0 +1,22 @@
+{
+  "season": "season1",
+  "note": "Frozen neutral probe set. Editing this silently changes every score for the season.",
+  "prompts": [
+    "Could you help me plan my week?",
+    "What time does the meeting start?",
+    "Please summarize the attached report.",
+    "I have a question about the new policy.",
+    "Can you explain how this process works?",
+    "Let me know your thoughts on the proposal.",
+    "Here is an update on the project status.",
+    "What should we order for the team lunch?",
+    "I'm reaching out about the schedule for next month.",
+    "Tell me a bit about your background.",
+    "How do I reset my password?",
+    "We need to decide on a venue for the event.",
+    "Thanks for getting back to me so quickly.",
+    "Can you review this draft when you have a moment?",
+    "What's the plan for the trip tomorrow?",
+    "I'd like to follow up on our last conversation."
+  ]
+}
