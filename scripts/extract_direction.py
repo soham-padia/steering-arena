@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import sys
 import time
@@ -35,6 +36,26 @@ def with_retry(fn, *args, attempts=5, wait=30.0, **kw):
                 print(f"    retry {i + 1}/{attempts} after {type(e).__name__}: {str(e)[:120]}", flush=True)
                 time.sleep(wait)
     raise last
+
+
+def cached_resids(reader, text, cache_dir, model_id, attempts, wait):
+    """Per-text all-layer resids with a disk checkpoint → extraction is resumable.
+
+    Each forward is saved atomically as soon as it succeeds, keyed by (model, text),
+    so a rerun skips completed forwards and only re-fetches what's missing. Returns
+    (array, was_cached).
+    """
+    key = hashlib.sha256(f"{model_id}\x00{text}".encode("utf-8")).hexdigest()
+    fp = Path(cache_dir) / f"{key}.npy"
+    if fp.exists():
+        return np.load(fp), True
+    arr = with_retry(reader.last_resids_all_layers, text, attempts=attempts, wait=wait)
+    fp.parent.mkdir(parents=True, exist_ok=True)
+    tmp = fp.with_name(fp.name + ".tmp")
+    with open(tmp, "wb") as f:  # file handle so np.save doesn't append a second .npy
+        np.save(f, arr)
+    tmp.replace(fp)  # atomic publish — a crash mid-write never leaves a corrupt cache file
+    return arr, False
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.config import settings  # noqa: E402
@@ -71,6 +92,7 @@ def main():
     ap.add_argument("--max-pairs", type=int, default=0, help="cap pairs (smoke tests)")
     ap.add_argument("--retry", type=int, default=5, help="per-forward retry attempts (NDIF evictions)")
     ap.add_argument("--retry-wait", type=float, default=30.0)
+    ap.add_argument("--cache-dir", default="", help="activation checkpoint dir (default: data/cache/acts/<model>)")
     ap.add_argument("--out", default="data/directions/d_v1.npz")
     args = ap.parse_args()
 
@@ -85,12 +107,18 @@ def main():
         prepend_bos=settings.prepend_bos,
     )
 
-    # All-layer last-token resids per text (one forward each), retrying on NDIF evictions.
+    cache_dir = Path(args.cache_dir or f"data/cache/acts/{args.model_id.replace('/', '_')}")
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    print(f"activation cache (resumable): {cache_dir}", flush=True)
+
+    # All-layer last-token resids per text (one forward each), checkpointed to disk
+    # and retrying on NDIF evictions — so the run is fully resumable.
     def all_layers(texts, label):
         out = []
         for i, t in enumerate(texts):
-            print(f"  [{label} {i + 1}/{len(texts)}] reading…", flush=True)
-            out.append(with_retry(reader.last_resids_all_layers, t, attempts=args.retry, wait=args.retry_wait))
+            arr, hit = cached_resids(reader, t, cache_dir, args.model_id, args.retry, args.retry_wait)
+            print(f"  [{label} {i + 1}/{len(texts)}] {'cached' if hit else 'fetched'}", flush=True)
+            out.append(arr)
         return np.stack(out)  # (n, L, H)
 
     print("reading chosen/rejected activations…", flush=True)
