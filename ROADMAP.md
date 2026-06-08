@@ -40,18 +40,18 @@ Steps:
 
 ## Phase 1 — Scoring core
 
-**Goal:** deterministic scoring against a placeholder direction.
+**Goal:** deterministic scoring through NDIF against a placeholder direction.
 
 Steps:
-1. `app/model.py` — load model + tokenizer **once**, fp32, `.eval()`, grad disabled, pinned revision; hold in memory.
-2. `app/scoring.py` — cosine steering-shift (spec §5.1): for each probe `p`, `cos(R_L(seq⊕p)[-1], d) − cos(R_L(p)[-1], d)`, averaged. Add the `cosine_self` fallback (§5.2) behind `SCORING_MODE`.
-3. Ship a **placeholder** `data/directions/d_v1.npz` (random or hand-set vector, clearly marked placeholder in metadata) and `data/probes/season1.json` (~16 frozen neutral prompts).
-4. CLI entry: `python -m app.scoring "be honest and own mistakes"` prints a score.
-5. `tests/test_scoring_determinism.py` — same sequence twice + after reload, assert within 1e-5; cover empty-ish and max-token-budget inputs.
+1. `app/ndif_client.py` — `nnsight.LanguageModel(remote=True)` for the NDIF model + tokenizer; NDIF key from env; **no local weights**. (Optionally a small local model behind a flag for offline dev when NDIF is slow.)
+2. `app/scoring.py` — cosine steering-shift (spec §5.1) via a remote forward pass: for each probe `p`, `cos(R_L(seq⊕p)[-1], d) − cos(R_L(p)[-1], d)`, averaged. Add the `cosine_self` fallback (§5.2) behind `SCORING_MODE`.
+3. Ship a **placeholder** `data/directions/d_v1.npz` (random vector at the NDIF model's hidden dim, clearly marked placeholder) and `data/probes/season1.json` (~16 frozen neutral prompts).
+4. CLI entry: `python -m app.scoring "be honest and own mistakes"` prints a score (hits NDIF).
+5. `tests/test_scoring_determinism.py` — same sequence twice + after reload, assert within ~1e-4; cover empty-ish and max-token-budget inputs.
 
 **Skill/agent:** run **verify-determinism** against this code; delegate test execution to **test-runner**.
 
-**DoD:** CLI prints a score; determinism test green within 1e-5.
+**DoD:** CLI prints a score via NDIF; determinism test green within tolerance.
 
 ---
 
@@ -60,14 +60,15 @@ Steps:
 **Goal:** a working, abuse-resistant submit/leaderboard backend.
 
 Steps:
-1. Supabase free project; apply the schema (spec §6) as a committed migration SQL file (`seasons`, `submissions`, indexes incl. `unique(season_id, norm_key)`).
-2. `app/db.py` — Supabase client + queries (server-side service key from env).
-3. `app/ratelimit.py` — per-`ip_hash` limits (30/min, 500/day); salted SHA-256 of IP, never raw IP.
-4. Implement `/season`, `/leaderboard?season=&limit=`, `/submit` (spec §7): validate handle + sequence → tokenize + token-budget check → `norm_key` dedup → rate-limit → **canonical re-score** → insert → compute rank. Friendly error strings.
-5. CORS locked to the Space origin; input hardening (char cap before tokenize, strip control chars, reject non-UTF-8).
-6. `tests/test_submit_flow.py` — happy path + duplicate rejection + over-budget rejection + rate-limit 429.
+1. Supabase free project; apply the schema (spec §6) as a committed migration SQL file (`seasons`, `submissions`, indexes incl. `unique(season_id, norm_key)`; the `(season_id, norm_key)` row doubles as the score cache).
+2. `app/db.py` — Supabase client + queries (server-side service key from env), including score-cache lookup/insert.
+3. `app/ratelimit.py` — per-`ip_hash` limits (30/min, 500/day) **plus a global daily ceiling** (NDIF-quota guard); salted SHA-256 of IP, never raw IP.
+4. `app/queue.py` — bounded NDIF concurrency (semaphore/worker pool) so bursts don't exceed NDIF limits.
+5. Implement `/season`, `/leaderboard?season=&limit=`, `/submit` (spec §7): validate handle + sequence → tokenize + token-budget check → `norm_key` dedup → rate-limit → **cache hit OR enqueue + canonical NDIF score** → insert → compute rank. Friendly error strings incl. 502/503 when NDIF is unavailable.
+6. CORS locked to the Space origin; input hardening (char cap before tokenize, strip control chars, reject non-UTF-8).
+7. `tests/test_submit_flow.py` — happy path + duplicate rejection + over-budget rejection + cache hit (no NDIF re-call) + rate-limit 429.
 
-**DoD:** against a real free Supabase project, can submit a sequence and read it back ranked; dedup and token-budget rejections work.
+**DoD:** against a real free Supabase project, can submit a sequence and read it back ranked; dedup, token-budget, cache-hit, and rate-limit all work.
 
 ---
 
@@ -76,7 +77,7 @@ Steps:
 **Goal:** a clean single-page UI; end-to-end play.
 
 Steps:
-1. `web/index.html` + `app.js` + `styles.css`, served as static assets by FastAPI.
+1. `web/index.html` + `app.js` + `styles.css` — **plain HTML/CSS/JS + Alpine.js (CDN, no build step)**, served as static assets by FastAPI.
 2. Season banner (model, layer, `d_version`, token budget, scoring mode, rules link).
 3. Submission form: handle + sequence + live token counter (server authoritative); show score + rank + friendly errors.
 4. Leaderboard table (rank, handle, sequence in monospace, score, time) with refresh; highlight top entries.
@@ -94,12 +95,12 @@ Steps:
 **Goal:** public, warm, free Space.
 
 Steps:
-1. `Dockerfile` — CPU torch, `HF_HOME` cache, port 7860.
+1. `Dockerfile` — app only, **no model download**, port 7860.
 2. README frontmatter wired (`sdk: docker`, `app_port: 7860`).
-3. Space secrets set: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `IP_HASH_SALT`.
+3. Space secrets set: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `IP_HASH_SALT`, **`NDIF_API_KEY`** (server-side only).
 4. `.github/workflows/keepalive.yml` — cron `curl /health` every 6 h.
 
-**DoD:** public Space URL works; survives a cold start; cron keeps it warm. Cost ledger (spec §15) still all-zero.
+**DoD:** public Space URL works; survives a cold start; cron keeps it warm; a real submission scores through NDIF; `NDIF_API_KEY` never reaches the client. Cost ledger (spec §15) still all-zero.
 
 ---
 
@@ -112,8 +113,8 @@ Owned by the **direction-research** agent. Starts once `data/seed_pairs.jsonl` e
 **DoD:** encoding-leak scan zero hits; `chosen`/`rejected` length distributions overlap; non-workplace scenarios added per axis.
 
 ### Phase R2 — Extract & validate `d`
-**Skill:** **extract-direction**. Per-pair diffs, last-token, estimate `d`, orthogonalize confounds, layer sweep 8..22 on the **live small model**. Run all validation gates.
-**DoD (all required):** good held-out separation; `cos(d, length_dir)`, `cos(d, sentiment_dir)` ≈ 0; **causal steering check passes**; per-axis coherence acceptable (or the lack of it reported as a finding). Commit the real `d_<version>.npz` with full metadata.
+**Skill:** **extract-direction**. Per-pair diffs, last-token, estimate `d`, orthogonalize confounds, layer sweep on the **served NDIF model (OLMo-3-32B), via NNsight `remote=True`** — the same model live scoring uses. Run all validation gates.
+**DoD (all required):** good held-out separation; `cos(d, length_dir)`, `cos(d, sentiment_dir)` ≈ 0; **causal steering check passes**; per-axis coherence acceptable (or the lack of it reported as a finding). Commit the real `d_<version>.npz` with full metadata (incl. the NDIF model id/build).
 
 ---
 
@@ -123,10 +124,10 @@ Owned by the **direction-research** agent. Starts once `data/seed_pairs.jsonl` e
 
 Steps:
 1. Confirm R2 produced a validated, committed real `d`.
-2. **Skill: new-season.** Bump `d_version`; insert the season row matching the `d` file metadata exactly; set exactly one `active=true`; freeze + reference the committed probe set; leave any placeholder season's scores untouched (or drop the placeholder season cleanly before any public traffic).
-3. **Skill: verify-determinism** end-to-end against the live `(model, revision, layer, d)`; tick the full §14 checklist.
+2. **Skill: new-season.** Bump `d_version`; insert the season row matching the `d` file metadata exactly (incl. the pinned NDIF model id/build); set exactly one `active=true`; freeze + reference the committed probe set; leave any placeholder season's scores untouched (or drop the placeholder season cleanly before any public traffic).
+3. **Skill: verify-determinism** end-to-end against the live NDIF `(model, build, layer, d)`; tick the full §14 checklist (incl. NDIF key server-side only, score cache, season-break policy).
 
-**DoD:** `GET /season` returns the real active Season 1; live model/revision/layer match the `d` file; determinism checklist fully green; leaderboard isolated by `season_id`.
+**DoD:** `GET /season` returns the real active Season 1; live NDIF model/build/layer match the `d` file; determinism checklist fully green; leaderboard isolated by `season_id`.
 
 ---
 
@@ -134,7 +135,7 @@ Steps:
 
 Independent add-ons, pick by interest (spec §13/§6 Phase 6):
 - Per-axis leaderboards (15 directions) + an anti-human board per axis (push away from `d`).
-- Weight-class tiers: a second season on `OLMo-2-1B` (needs a fresh `d` via Track B → new season).
+- Weight-class tiers: a second season on a lighter NDIF model (e.g. `OLMo-2-7B` / `OLMo-3-7B`) for faster/cheaper scoring (needs a fresh `d` via Track B → new season).
 - Fluency sub-league (perplexity-gated "human-readable" board).
 - SAE-feature direction flagship (if an SAE exists for the model/layer); surface which features a sequence lit up.
 - Hidden-oracle exploration league (hide `d`, expose only a rate-limited scoring oracle, rotate axes).
@@ -143,8 +144,9 @@ Independent add-ons, pick by interest (spec §13/§6 Phase 6):
 
 ## Cross-cutting gates (enforce at every relevant phase)
 
-- **Determinism** (P1, P5): fp32 / `eval()` / grad-off / pinned revision / fixed BOS; same input → same score within 1e-5.
-- **Season isolation** (P2, P5, P6): every leaderboard/rank query filters by `season_id`; a changed scored-function = a new season, never a silent mix.
-- **$0 ledger** (P2, P4, P6): every component on a genuinely free indefinite tier; if anything would cost money, stop and reconsider the component.
-- **Server authority** (P2): client scores are display hints only; the server re-score is canonical.
-- **NDIF never in the request loop** (R2): research-only; re-extract `d` on the served model.
+- **Determinism (NDIF-bounded)** (P1, P5): forward-pass only / no sampling / fixed BOS; same input → same score within ~1e-4 while NDIF serves the same build; documented season-break policy if NDIF re-serves the model.
+- **Season isolation** (P2, P5, P6): every leaderboard/rank query filters by `season_id`; a changed scored-function (incl. NDIF model build) = a new season, never a silent mix.
+- **$0 ledger** (P2, P4, P6): every component on a genuinely free indefinite tier (NDIF via Northeastern research access); if anything would cost money, request university compute — never pay.
+- **Server authority** (P2): client scores are display hints only; the server's NDIF score is canonical.
+- **NDIF key + quota protection** (P1, P2, P4): `NDIF_API_KEY` server-side only, never client-side; rate limits + global daily ceiling + scoring queue + `(season_id, norm_key)` cache always active.
+- **Same model for extract + score** (R2, P5): `d` is extracted on the exact NDIF model live scoring uses — no cross-size mismatch.
