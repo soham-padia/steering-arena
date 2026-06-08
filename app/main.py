@@ -26,9 +26,15 @@ from app.submission import process_submission
 
 app = FastAPI(title="Steering Arena", version="0.3.0")
 
+_log = logging.getLogger("steering_arena")
 if settings.allowed_origin == "*":
-    logging.getLogger("steering_arena").warning(
-        "ALLOWED_ORIGIN is '*' — lock it to the Space origin before going public (audit M1)."
+    _log.warning("ALLOWED_ORIGIN is '*' — lock it to the Space origin before going public (audit M1).")
+# Production heuristic: a real origin is set. If so, CAPTCHA must be on, or /submit
+# has no bot gate and the NDIF quota is exposed (audit H1, fail-open).
+if settings.allowed_origin != "*" and not settings.turnstile_secret:
+    _log.warning(
+        "PROD origin set but TURNSTILE_SECRET is empty — /submit has NO CAPTCHA; "
+        "the NDIF quota is exposed to bots. Set TURNSTILE_SECRET + TURNSTILE_SITEKEY."
     )
 
 app.add_middleware(
@@ -114,8 +120,9 @@ def get_scorer():
         _scorer = (count_tokens, score_fn)
     except ScoringUnavailable:
         raise
-    except Exception as exc:  # noqa: BLE001 — surface any wiring failure as 503
-        raise ScoringUnavailable(f"Scoring backend unavailable: {exc}") from exc
+    except Exception as exc:  # noqa: BLE001 — log detail server-side, return a generic message
+        _log.exception("scorer build failed")
+        raise ScoringUnavailable("Scoring is temporarily unavailable — please try again shortly.") from exc
     return _scorer
 
 
