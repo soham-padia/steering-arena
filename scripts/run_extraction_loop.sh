@@ -11,11 +11,14 @@
 set -u
 cd "$(dirname "$0")/.."
 
-MODEL="${MODEL:-allenai/Olmo-3-1125-32B}"
-OUT="${OUT:-data/directions/d_olmo3_v1.npz}"
-ATTEMPTS="${ATTEMPTS:-200}"
-SLEEP="${SLEEP:-120}"
+MODEL="${MODEL:-meta-llama/Llama-3.1-8B}"
+OUT="${OUT:-data/directions/d_llama_v1.npz}"
+ATTEMPTS="${ATTEMPTS:-300}"
+SLEEP="${SLEEP:-90}"
 PY="${PY:-.venv/bin/python}"
+
+# Gated models (e.g. Llama) need an HF token to load config/tokenizer locally.
+export HF_TOKEN="${HF_TOKEN:-$(grep -E '^HF_TOKEN=' .env | cut -d'=' -f2- | tr -d '"' | tr -d ' ')}"
 
 for i in $(seq 1 "$ATTEMPTS"); do
   echo "=== extraction attempt $i/$ATTEMPTS ($(date +%H:%M:%S)) ==="

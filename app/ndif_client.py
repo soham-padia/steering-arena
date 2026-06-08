@@ -15,8 +15,9 @@ envoy structure before opening a real season; override via env `RESID_LAYER`.
 
 from __future__ import annotations
 
-import os
-
+# NOTE: do NOT import `os` (or other non-whitelisted modules) at module scope —
+# NDIF's remote sandbox inspects the trace's module and rejects e.g. `os`
+# ("Module os is not whitelisted"). Import such modules locally where needed.
 import numpy as np
 
 
@@ -43,6 +44,8 @@ class ResidualReader:
 
     @classmethod
     def from_settings(cls, settings) -> "ResidualReader":
+        import os
+
         backend = os.getenv("SCORING_BACKEND", "ndif").lower()
         if backend == "ndif":
             return cls.build(settings.model_id, "ndif", ndif_key=settings.ndif_api_key, prepend_bos=settings.prepend_bos)

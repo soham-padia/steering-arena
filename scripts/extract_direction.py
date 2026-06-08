@@ -38,18 +38,19 @@ def with_retry(fn, *args, attempts=5, wait=30.0, **kw):
     raise last
 
 
-def cached_resids(reader, text, cache_dir, model_id, attempts, wait):
-    """Per-text all-layer resids with a disk checkpoint → extraction is resumable.
+def cached_layer_resid(reader, text, layer, cache_dir, model_id, attempts, wait):
+    """One (text, layer) last-token residual with a disk checkpoint → resumable.
 
-    Each forward is saved atomically as soon as it succeeds, keyed by (model, text),
-    so a rerun skips completed forwards and only re-fetches what's missing. Returns
-    (array, was_cached).
+    Uses single-layer reads (one .save() per remote trace): NDIF's remote sandbox
+    rejects many .save() calls in one trace, but single reads are reliable. Each is
+    saved atomically, keyed by (model, layer, text), so a rerun only re-fetches what's
+    missing. Returns (array, was_cached).
     """
-    key = hashlib.sha256(f"{model_id}\x00{text}".encode("utf-8")).hexdigest()
+    key = hashlib.sha256(f"{model_id}\x00L{layer}\x00{text}".encode("utf-8")).hexdigest()
     fp = Path(cache_dir) / f"{key}.npy"
     if fp.exists():
         return np.load(fp), True
-    arr = with_retry(reader.last_resids_all_layers, text, attempts=attempts, wait=wait)
+    arr = with_retry(reader.last_token_resid, text, layer, attempts=attempts, wait=wait)
     fp.parent.mkdir(parents=True, exist_ok=True)
     tmp = fp.with_name(fp.name + ".tmp")
     with open(tmp, "wb") as f:  # file handle so np.save doesn't append a second .npy
@@ -111,21 +112,28 @@ def main():
     cache_dir.mkdir(parents=True, exist_ok=True)
     print(f"activation cache (resumable): {cache_dir}", flush=True)
 
-    # All-layer last-token resids per text (one forward each), checkpointed to disk
-    # and retrying on NDIF evictions — so the run is fully resumable.
-    def all_layers(texts, label):
-        out = []
-        for i, t in enumerate(texts):
-            arr, hit = cached_resids(reader, t, cache_dir, args.model_id, args.retry, args.retry_wait)
-            print(f"  [{label} {i + 1}/{len(texts)}] {'cached' if hit else 'fetched'}", flush=True)
-            out.append(arr)
-        return np.stack(out)  # (n, L, H)
+    # Candidate layers to read. Single-layer reads are remote-safe; default to one
+    # mid-depth layer (cheap, ~2 forwards/pair). Pass --layers "a,b,c" to sweep a few.
+    nlayers = reader.num_layers
+    layers = [int(x) for x in args.layers.split(",") if x.strip()] or [round(nlayers * 0.5)]
+    print(f"reading layers {layers} (of {nlayers}); single-layer reads, checkpointed/resumable", flush=True)
+
+    def read_set(texts, label):
+        out = np.empty((len(texts), len(layers), reader.hidden_size), dtype=np.float32)
+        for ti, t in enumerate(texts):
+            for li, L in enumerate(layers):
+                arr, hit = cached_layer_resid(reader, t, L, cache_dir, args.model_id, args.retry, args.retry_wait)
+                out[ti, li, :] = arr
+            print(f"  [{label} {ti + 1}/{len(texts)}] layers {layers} done", flush=True)
+        return out
 
     print("reading chosen/rejected activations…", flush=True)
-    chosen = all_layers([compose(r["prompt"], r["chosen"]) for r in rows], "chosen")    # (N, L, H)
-    rejected = all_layers([compose(r["prompt"], r["rejected"]) for r in rows], "rejected")
-    diffs = chosen - rejected                                                 # (N, L, H)
-    N, L, H = diffs.shape
+    # float64 for the projection math: float32 @ on some BLAS builds emits spurious
+    # overflow/divide-by-zero warnings even on small, finite activations.
+    chosen = read_set([compose(r["prompt"], r["chosen"]) for r in rows], "chosen").astype(np.float64)
+    rejected = read_set([compose(r["prompt"], r["rejected"]) for r in rows], "rejected").astype(np.float64)
+    diffs = chosen - rejected                                                 # (N, n_layers, H)
+    N = diffs.shape[0]
 
     # Train / val split.
     rng = np.random.default_rng(args.split_seed)
@@ -133,28 +141,26 @@ def main():
     n_val = max(1, int(round(N * args.val_frac)))
     val_idx, train_idx = idx[:n_val], idx[n_val:]
 
-    # Candidate layers.
-    layers = [int(x) for x in args.layers.split(",") if x.strip()] or list(range(L))
-
-    def separation(layer, d):
+    def separation(pos, d):
         u = unit(d)
-        pc = chosen[val_idx, layer, :] @ u
-        pr = rejected[val_idx, layer, :] @ u
+        pc = chosen[val_idx, pos, :] @ u
+        pr = rejected[val_idx, pos, :] @ u
         return float(np.mean(pc > pr))
 
     best = None
-    for layer in layers:
-        d_l = diffs[train_idx, layer, :].mean(axis=0)
-        acc = separation(layer, d_l)
-        if best is None or acc > best[1]:
-            best = (layer, acc, d_l)
-    best_layer, best_acc, d = best
+    for pos, L in enumerate(layers):
+        d_l = diffs[train_idx, pos, :].mean(axis=0)
+        acc = separation(pos, d_l)
+        if best is None or acc > best[2]:
+            best = (pos, L, acc, d_l)
+    best_pos, best_layer, best_acc, d = best
     print(f"swept layers {layers}: best layer {best_layer} (held-out separation {best_acc:.3f})")
 
     confounds_removed = []
     if not args.no_orthogonalize:
-        neutral = all_layers(LONG + SHORT + POS + NEG, "neutral")  # (8, L, H)
-        nl = neutral[:, best_layer, :]
+        neutral_texts = LONG + SHORT + POS + NEG
+        nl = np.stack([cached_layer_resid(reader, t, best_layer, cache_dir, args.model_id, args.retry, args.retry_wait)[0]
+                       for t in neutral_texts])  # (8, H) at best layer
         length_dir = nl[:2].mean(0) - nl[2:4].mean(0)
         sentiment_dir = nl[4:6].mean(0) - nl[6:8].mean(0)
         for name, cd in (("length", length_dir), ("sentiment", sentiment_dir)):
