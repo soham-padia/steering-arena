@@ -27,6 +27,7 @@
       </div>
       <p class="tag">STEER THE MODEL'S MIND — <b>&#9650; PRO&#8209;HUMAN</b> OR <b class="anti">&#9660; ANTI&#8209;HUMAN</b>. ONE SCORE, TWO BOARDS.</p>
       <p class="insert blink"><a href="#play">▶ INSERT SEQUENCE</a></p>
+      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a></p>
     </div>
   </header>
 
@@ -107,7 +108,7 @@
     <h2>HOW TO PLAY</h2>
     <ul>
       <li><b>THE GOAL.</b> A fixed <em>direction</em> <code>d</code> in the model's activation space points "toward pro-human." Submit a short token sequence; the server measures how far it shifts the model's internal state along <code>d</code>, averaged over fixed neutral probe prompts.</li>
-      <li><b>OPEN BY DESIGN.</b> The model and <code>d</code> are public — it's an optimization game. Because the model is large and served remotely, the <em>server is the scoring oracle</em>: it scores every entry canonically and that value is final.</li>
+      <li><b>OPEN BY DESIGN.</b> The model and <code>d</code> are public — it's an optimization game. The model runs on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> (via NNsight), so the <em>server is the scoring oracle</em>: it scores every entry canonically and that value is final. See the <a href="/reproducibility.html">reproducibility page</a> for the data + method.</li>
       <li><b>TWO BOARDS.</b> Every entry gets one signed score. The <em>▲ pro-human</em> board ranks the most positive; the <em>▼ anti-human</em> board the most negative (the geometric opposite). A strong push lands you near the top of one — and the bottom of the other.</li>
       <li><b>TOKEN BUDGET.</b> Sequences are capped at the season's budget. Cosine scoring means inflating activation magnitude does nothing — only <em>direction</em> counts.</li>
       <li><b>ANYTHING GOES (ON-THEME).</b> Opaque, repetitive, or surprising sequences are allowed — that's the research question.</li>
@@ -117,7 +118,9 @@
   </section>
 
   <footer class="wrap muted">
-    STEERING ARENA &middot; FROZEN MODEL + DIRECTION &middot; A SEASON IS A FIXED <code>(MODEL, LAYER, D_VERSION)</code>
+    STEERING ARENA &middot; MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT &middot;
+    <a href="/reproducibility.html">REPRODUCIBILITY</a> &middot;
+    <a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">SOURCE</a>
   </footer>
 </body>
 </html>

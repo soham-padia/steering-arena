@@ -78,6 +78,19 @@ h1 {
 .tag b { color: var(--gold); }
 .insert { font-size: 10px; margin: 14px 0 0; }
 .insert a { color: var(--green); }
+.nav { font-family: var(--pixel); font-size: 9px; margin: 12px 0 0; line-height: 1.8; }
+.nav a { color: var(--cyan); }
+
+/* Reproducibility page bits */
+.rules-list { margin: 0; padding-left: 4px; list-style: none; }
+.rules-list li { margin: 12px 0; color: #cfd0ff; font-size: 19px; line-height: 1.45; }
+.rules-list li b { font-family: var(--pixel); font-size: 9px; color: var(--cyan); margin-right: 6px; }
+.rules-list em { color: var(--gold); font-style: normal; }
+.formula { font-family: var(--term); font-size: 18px; color: var(--green); background: var(--panel-2);
+  border: 3px solid #2b2860; padding: 12px 14px; white-space: pre-wrap; line-height: 1.4; overflow-x: auto; }
+.ok-tag { font-family: var(--pixel); font-size: 8px; color: #06210a; background: var(--green);
+  padding: 3px 6px; margin-left: 6px; white-space: nowrap; }
+footer a { color: var(--cyan); }
 
 /* ---- Season banner ---- */
 .banner { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 8px auto 26px; }

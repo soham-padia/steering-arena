@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>STEERING ARENA — Reproducibility</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap">
+      <div class="marquee">
+        <span class="coin" aria-hidden="true">●</span>
+        <h1>REPRODUCIBILITY</h1>
+        <span class="coin" aria-hidden="true">●</span>
+      </div>
+      <p class="tag">EVERYTHING BEHIND THE SCORE — DATA, METHOD, CODE, VALIDATION</p>
+      <p class="insert"><a href="/">◂ BACK TO THE ARENA</a></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="card">
+      <h2>① THE DATA</h2>
+      <p class="muted">The direction is built from <b>135 contrastive pairs</b> across <b>15 human-values axes</b> (9 each: accountability, boundaries, conflict resolution, empathy, fairness, feedback, inclusion, integrity, leadership, learning, ownership, privacy, respect, safety, trust). Each pair is <code>{axis, prompt, chosen, rejected}</code> — a more pro-human response and a less pro-human one.</p>
+      <p class="muted">Pairs are deliberately <em>de-confounded</em>: <b>length-matched</b> (chosen vs rejected within ~1 word on average, so the direction can't just learn "length"), negatives kept plausible (not cartoonish), domains varied (work / personal / civic / online), and ASCII-only.</p>
+      <div class="row">
+        <a class="btn" href="/seed-pairs.jsonl" download>⬇ DOWNLOAD SEED PAIRS (.jsonl)</a>
+        <a class="mini" href="https://github.com/soham-padia/steering-arena/blob/main/data/seed_pairs.jsonl" target="_blank" rel="noopener">VIEW ON GITHUB</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>② HOW THE DIRECTION <code>d</code> IS EXTRACTED</h2>
+      <ul class="rules-list">
+        <li><b>READ.</b> For each pair, read the model's residual-stream hidden state at the <em>last token</em> of <code>prompt + chosen</code> and <code>prompt + rejected</code>, at layer L. (Last token, not mean-pooled — pooling would re-introduce a length signal.)</li>
+        <li><b>DIFF.</b> Take the per-pair difference <code>δ = R_L(chosen) − R_L(rejected)</code>. The shared prompt cancels, isolating the value contrast.</li>
+        <li><b>AVERAGE.</b> <code>d = mean(δ)</code> over the training split (difference-of-means / mass-mean estimator).</li>
+        <li><b>PICK LAYER.</b> Choose the layer where <code>d</code> best separates held-out pairs.</li>
+        <li><b>DE-CONFOUND.</b> Orthogonalize <code>d</code> against explicit "length" and "sentiment" directions (Gram-Schmidt).</li>
+        <li><b>NORMALIZE.</b> <code>d ← d / ‖d‖</code>, frozen for the season.</li>
+      </ul>
+      <div class="row">
+        <a class="mini" href="https://github.com/soham-padia/steering-arena/blob/main/docs/EXTRACTION.md" target="_blank" rel="noopener">FULL METHODOLOGY →</a>
+        <a class="mini" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/extract_direction.py" target="_blank" rel="noopener">extract_direction.py</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>③ HOW A SEQUENCE IS SCORED</h2>
+      <p class="muted">Your sequence is prepended to a fixed set of neutral probe prompts. The score is the average shift it causes in the model's last-token state along <code>d</code>:</p>
+      <pre class="formula">score(seq) = mean over probes p of
+   [ cos(R_L(seq ⊕ p), d) − cos(R_L(p), d) ]</pre>
+      <p class="muted">Cosine (not raw projection) means inflating activation magnitude does nothing — only <em>direction</em> counts. ▲ pro-human ranks the most positive; ▼ anti-human the most negative (same score, opposite ranking).</p>
+      <a class="mini" href="https://github.com/soham-padia/steering-arena/blob/main/app/scoring.py" target="_blank" rel="noopener">scoring.py</a>
+    </section>
+
+    <section class="card">
+      <h2>④ VALIDATION (Season 1)</h2>
+      <p class="muted">Before a direction ships, it must pass four gates:</p>
+      <ul class="rules-list">
+        <li><b>HELD-OUT SEPARATION</b> — chosen projects above rejected on held-out pairs. <span class="ok-tag">1.00</span></li>
+        <li><b>CONFOUND COSINES</b> — near-zero alignment with length/sentiment. <span class="ok-tag">0.02 / 0.00</span></li>
+        <li><b>PER-AXIS COHERENCE</b> — the 15 axes point the same way. <span class="ok-tag">0.76</span></li>
+        <li><b>CAUSAL STEERING</b> — adding +d steers generations toward kindness/empathy/respect; −d toward hostility. <span class="ok-tag">PASS</span></li>
+      </ul>
+      <a class="mini" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/validate_direction.py" target="_blank" rel="noopener">validate_direction.py</a>
+    </section>
+
+    <section class="card">
+      <h2>⑤ THE MODEL</h2>
+      <p class="muted">Season 1 runs on <b>Llama-3.1-8B</b>, served remotely on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> via <a href="https://nnsight.net" target="_blank" rel="noopener">NNsight</a> — the same model used for both extraction and live scoring, read at layer 16. The model and <code>d</code> are public; the server is the canonical scoring oracle.</p>
+      <div class="row">
+        <a class="mini" href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">FULL SOURCE ON GITHUB</a>
+        <a class="mini" href="https://ndif.us" target="_blank" rel="noopener">NDIF.US</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap muted">
+    STEERING ARENA · MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT · OPEN SOURCE
+  </footer>
+</body>
+</html>

@@ -13,7 +13,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -149,6 +149,13 @@ class SubmitIn(BaseModel):
     handle: str
     sequence: str
     turnstile_token: str = ""  # Cloudflare Turnstile token (when CAPTCHA is enabled)
+
+
+@app.get("/seed-pairs.jsonl")
+def seed_pairs():
+    """Download the contrastive seed pairs used to extract the direction (reproducibility)."""
+    p = Path(__file__).resolve().parent.parent / "data" / "seed_pairs.jsonl"
+    return FileResponse(p, media_type="application/x-ndjson", filename="steering_arena_seed_pairs.jsonl")
 
 
 @app.get("/health")
