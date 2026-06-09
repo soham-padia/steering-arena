@@ -10,6 +10,7 @@ function arena() {
     boards: { pro: [], anti: [] },
     collapsed: true,
     collapseN: 5,
+    expandedSeq: {},   // per-row sequence expand state (keyed by sequence text)
     handle: "",
     sequence: "",
     tokenCount: 0,
@@ -30,6 +31,11 @@ function arena() {
     // Collapsed view shows only the top N; toggle expands to the full board.
     get visibleEntries() {
       return this.collapsed ? this.entries.slice(0, this.collapseN) : this.entries;
+    },
+
+    // Long sequences are clamped per row; clicking the cell expands/collapses it.
+    toggleSeq(seq) {
+      this.expandedSeq[seq] = !this.expandedSeq[seq];
     },
 
     // Real token count from the model tokenizer (matches server enforcement).

@@ -188,7 +188,11 @@ input:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shad
 .board td { padding: 11px 8px; border-bottom: 2px solid rgba(43, 40, 96, 0.55); vertical-align: top; }
 .board .rank { font-size: 11px; color: var(--muted); width: 34px; }
 .board .player { font-family: var(--pixel); font-size: 10px; letter-spacing: 1px; color: var(--ink); }
-.board .seq { font-family: var(--term); font-size: 19px; color: #d7d8ff; word-break: break-word; max-width: 320px; }
+.board .seq { font-family: var(--term); font-size: 19px; color: #d7d8ff; max-width: 320px; }
+.board .seqbox { cursor: pointer; word-break: break-word; white-space: pre-wrap; }
+/* Long sequences clamp to ~3 lines with an ellipsis until the row is clicked. */
+.board .seqbox.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.board .seqbox:hover { color: #fff; }
 .board .num { font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
 
 .board tr.gold   td { background: rgba(255, 210, 63, 0.08); }

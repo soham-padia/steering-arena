@@ -8,11 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=5" />
+  <link rel="stylesheet" href="/styles.css?v=6" />
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
-  <script defer src="/app.js?v=5"></script>
+  <script defer src="/app.js?v=6"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -67,7 +67,7 @@
       <input id="f-handle" type="text" maxlength="32" placeholder="AAA" x-model="handle" autocomplete="off" />
 
       <label for="f-sequence">SEQUENCE</label>
-      <textarea id="f-sequence" rows="3" maxlength="1000" placeholder="be honest and own mistakes" x-model="sequence" @input.debounce.350ms="updateTokens()"></textarea>
+      <textarea id="f-sequence" rows="3" maxlength="6000" placeholder="be honest and own mistakes" x-model="sequence" @input.debounce.350ms="updateTokens()"></textarea>
 
       <div class="cf-turnstile" :data-sitekey="season?.captcha_sitekey" x-show="season?.captcha_sitekey" style="margin:14px 0"></div>
 
@@ -112,7 +112,12 @@
             <tr :class="i===0 ? 'gold' : i===1 ? 'silver' : i===2 ? 'bronze' : ''">
               <td class="rank" x-text="i + 1"></td>
               <td class="player" x-text="e.handle"></td>
-              <td class="seq" x-text="e.sequence"></td>
+              <td class="seq">
+                <div class="seqbox" :class="{ clamp: !expandedSeq[e.sequence] }"
+                     @click="toggleSeq(e.sequence)"
+                     :title="expandedSeq[e.sequence] ? 'click to collapse' : 'click to expand'"
+                     x-text="e.sequence"></div>
+              </td>
               <td class="num" x-text="fmtScore(e.score)"></td>
             </tr>
           </template>
