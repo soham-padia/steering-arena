@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+# JSON API endpoints — no value to crawlers, keep crawl budget on the pages.
+Disallow: /submit
+Disallow: /tokenize
+Disallow: /health
+Disallow: /season
+Disallow: /leaderboard
+
+Sitemap: https://sohampadianeu-steering-arena.hf.space/sitemap.xml
