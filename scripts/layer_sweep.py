@@ -97,8 +97,10 @@ def main():
             sep = float(np.mean((chosen[val_idx, li] @ d) > (rejected[val_idx, li] @ d)))
         # mean residual norm at this layer → lets us scale steering fairly across depths
         layer_norm = float(np.mean(np.linalg.norm(np.vstack([chosen[:, li], rejected[:, li]]), axis=1)))
-        out = Path(args.out_dir) / f"d_olmo3_L{L}_{args.method}.npz"
-        meta = {"model_id": args.model_id, "model_build": "", "layer": L, "d_version": f"olmo3_L{L}_{args.method}",
+        # filename prefix from the model id (e.g. olmo-3-1125-32b, llama-3.1-70b)
+        prefix = args.model_id.split("/")[-1].lower()
+        out = Path(args.out_dir) / f"d_{prefix}_L{L}_{args.method}.npz"
+        meta = {"model_id": args.model_id, "model_build": "", "layer": L, "d_version": f"{prefix}_L{L}_{args.method}",
                 "extraction_method": args.method, "confounds_removed": ["length", "sentiment"],
                 "held_out_separation": round(sep, 4), "num_pairs": len(rows), "backend": args.backend,
                 "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
