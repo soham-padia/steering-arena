@@ -47,11 +47,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=7" />
+  <link rel="stylesheet" href="/styles.css?v=8" />
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
-  <script defer src="/app.js?v=7"></script>
+  <script defer src="/app.js?v=8"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -88,6 +88,7 @@
       <li><b>OPEN BY DESIGN.</b> The model and <code>d</code> are public — it's an optimization game. The model runs on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> (via NNsight), so the <em>server is the scoring oracle</em>: it scores every entry canonically and that value is final. See the <a href="/reproducibility.html">reproducibility page</a> for the data + method.</li>
       <li><b>TWO BOARDS.</b> Every entry gets one signed score. The <em>▲ pro-human</em> board ranks the most positive; the <em>▼ anti-human</em> board the most negative (the geometric opposite). A strong push lands you near the top of one — and the bottom of the other.</li>
       <li><b>TOKEN BUDGET.</b> Sequences are capped at the season's budget. Cosine scoring means inflating activation magnitude does nothing — only <em>direction</em> counts.</li>
+      <li><b>SPEC = SPECIFICITY.</b> Alongside the score, each entry shows how much of its activation movement is <em>specifically along</em> the direction vs. just movement anywhere. High SPEC = targeted steering; low SPEC = the score likely rides a token artifact. (Informational this season — ranking is still by score.)</li>
       <li><b>ANYTHING GOES (ON-THEME).</b> Opaque, repetitive, or surprising sequences are allowed — that's the research question.</li>
       <li><b>ONE PER SEQUENCE.</b> Each unique sequence lives once per season; resubmitting just shows its standing.</li>
       <li><b>RESEARCH, NOT PROFIT.</b> Non-commercial. Scores are only comparable within a season.</li>
@@ -123,7 +124,7 @@
 
       <div class="readout ok" x-show="result" x-transition>
         <span class="big" x-text="fmtScore(result?.score)"></span>
-        <span>&#9650; RANK <b x-text="result?.pro_rank"></b> PRO &middot; &#9660; RANK <b x-text="result?.anti_rank"></b> ANTI &middot; <span x-text="result?.token_count"></span> TOK</span>
+        <span>&#9650; RANK <b x-text="result?.pro_rank"></b> PRO &middot; &#9660; RANK <b x-text="result?.anti_rank"></b> ANTI &middot; SPEC <b x-text="fmtSpec(result?.specificity)"></b> &middot; <span x-text="result?.token_count"></span> TOK</span>
       </div>
       <div class="readout err" x-show="error" x-transition>
         <span class="big">GAME OVER</span>
@@ -145,7 +146,7 @@
       <div class="board-wrap" :class="{ scroll: !collapsed }">
       <table class="board" x-show="entries.length">
         <thead>
-          <tr><th>#</th><th>PLAYER</th><th>SEQUENCE</th><th class="num">SCORE</th></tr>
+          <tr><th>#</th><th>PLAYER</th><th>SEQUENCE</th><th class="num">SCORE</th><th class="num" title="Direction-specificity: how much of the sequence's activation movement is ALONG the pro-human direction vs just movement anywhere. High = targeted; low = artifact-like.">SPEC</th></tr>
         </thead>
         <tbody>
           <template x-for="(e, i) in visibleEntries" :key="i">
@@ -159,6 +160,7 @@
                      x-text="e.sequence"></div>
               </td>
               <td class="num" x-text="fmtScore(e.score)"></td>
+              <td class="num spec" x-text="fmtSpec(e.specificity)"></td>
             </tr>
           </template>
         </tbody>

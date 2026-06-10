@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     d_file: str = "data/directions/d_olmo3_L24_logistic.npz"
     prepend_bos: bool = True
 
+    # ── Direction-specificity metric (non-ranking column this season; see
+    #    db/migrations/0003_specificity.sql + app/scoring.py closed-form notes) ──
+    specificity_enabled: bool = True
+    specificity_eps: float = 1e-4                       # denominator floor (frozen per season)
+    specificity_null: str = "isotropic_closed_form"     # method id, recorded for provenance
+
     # ── NDIF call / queue ──
     ndif_api_key: str = ""
     ndif_timeout_s: int = 60

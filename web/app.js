@@ -56,6 +56,12 @@ function arena() {
       return v == null ? "—" : Number(v).toFixed(4);
     },
 
+    // Direction-specificity z (closed-form; |z| ≤ √hidden ≈ 71.6). "—" = scored
+    // before the metric existed and not yet backfilled.
+    fmtSpec(v) {
+      return v == null ? "—" : Number(v).toFixed(1);
+    },
+
     async loadSeason() {
       try {
         const r = await fetch("/season");

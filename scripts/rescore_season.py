@@ -42,10 +42,13 @@ def build_scorer():
     def batch_fn(texts):
         return reader.batch_last_resids(texts, settings.layer)
 
-    base_cos = scoring.baseline_cosines(probes, batch_fn, d)
+    base_units = scoring.baseline_unit_rows(probes, batch_fn)
 
     def score_fn(seq):
-        return scoring.steering_shift_batched(seq, probes, batch_fn, base_cos, d)
+        shift, z = scoring.shift_and_specificity(seq, probes, batch_fn, base_units, d,
+                                                 eps=settings.specificity_eps)
+        ranked = z if settings.scoring_mode == scoring.SPECIFICITY_Z else shift
+        return scoring.ScoreResult(ranked, shift, z)
 
     return count_tokens, score_fn
 
@@ -84,7 +87,13 @@ def main():
             print(f"[{i}/{len(rows)}] skip (already in target): {seq[:50]!r}", flush=True)
             continue
         try:
-            score = float(score_fn(seq))
+            res = score_fn(seq)
+            # ScoreResult (NamedTuple) or legacy plain float.
+            if isinstance(res, tuple):
+                score, shift_raw = float(res[0]), float(res[1])
+                spec = float(res[2]) if res[2] is not None else None
+            else:
+                score, shift_raw, spec = float(res), float(res), None
             tok = count_tokens(seq)
         except Exception as e:  # noqa: BLE001
             failed += 1
@@ -93,12 +102,14 @@ def main():
         flag = "  ⚠over-budget" if tok > budget else ""
         if tok > budget:
             over += 1
-        print(f"[{i}/{len(rows)}] {score:+.5f}  ({tok} tok){flag}  {r['user_handle']!r}: {seq[:45]!r}", flush=True)
+        spec_s = f" z={spec:+.1f}" if spec is not None else ""
+        print(f"[{i}/{len(rows)}] {score:+.5f}{spec_s}  ({tok} tok){flag}  {r['user_handle']!r}: {seq[:45]!r}", flush=True)
         if not args.dry_run:
             c.table("submissions").insert({
                 "season_id": args.to_season_id, "user_handle": r["user_handle"],
                 "sequence_text": seq, "norm_key": key, "token_count": tok,
-                "score": score, "ip_hash": RESCORE_IP,
+                "score": score, "shift_raw": shift_raw, "specificity": spec,
+                "ip_hash": RESCORE_IP,
             }).execute()
             done += 1
 

@@ -201,6 +201,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shad
 .board-wrap.scroll::-webkit-scrollbar-track { background: var(--panel-2); }
 .board-wrap.scroll::-webkit-scrollbar-thumb { background: #2b2860; border: 2px solid var(--panel); }
 .board .num { font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.board td.spec { color: var(--cyan); font-size: 11px; }
 
 .board tr.gold   td { background: rgba(255, 210, 63, 0.08); }
 .board tr.gold   .rank, .board tr.gold   .num { color: var(--gold); text-shadow: 0 0 8px rgba(255,210,63,0.5); }

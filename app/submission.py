@@ -88,7 +88,14 @@ def process_submission(
     # Rate limits guard the NDIF quota; checked only for genuinely new sequences.
     check_rate_limits(db, ip_hash, settings, now)
 
-    score = float(score_fn(sequence))
+    # score_fn returns either a plain float (legacy/tests) or a scoring.ScoreResult
+    # (score=ranked value, shift=raw steering shift, specificity=closed-form z).
+    res = score_fn(sequence)
+    if isinstance(res, tuple):  # ScoreResult (NamedTuple)
+        score, shift_raw, specificity = float(res[0]), float(res[1]), res[2]
+        specificity = float(specificity) if specificity is not None else None
+    else:
+        score, shift_raw, specificity = float(res), float(res), None
 
     inserted = db.insert_submission({
         "season_id": season["id"],
@@ -97,6 +104,8 @@ def process_submission(
         "norm_key": key,
         "token_count": token_count,
         "score": score,
+        "shift_raw": shift_raw,
+        "specificity": specificity,
         "ip_hash": ip_hash,
     })
     # One signed score, two boards: pro-human ranks by most-positive projection,
@@ -106,6 +115,7 @@ def process_submission(
 
     return {
         "score": score,
+        "specificity": specificity,
         "rank": pro_rank,  # back-compat alias for pro_rank
         "pro_rank": pro_rank,
         "anti_rank": anti_rank,

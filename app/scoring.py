@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Callable, Sequence
+from typing import Callable, NamedTuple, Sequence
 
 import numpy as np
 
@@ -22,6 +22,26 @@ ResidFn = Callable[[str], np.ndarray]
 
 STEERING_SHIFT = "cosine_steering_shift"
 SELF = "cosine_self"
+SPECIFICITY_Z = "steering_shift_specificity_z"  # future season mode: rank by z instead of raw shift
+
+# Floor (not additive eps) for the specificity denominator. Binds only when the
+# pooled per-probe movement is essentially zero (per-probe cosine change > 0.99997),
+# i.e. "the sequence moved nothing" → z := shift/eps stays bounded by |z| <= sqrt(H).
+SPEC_EPS_DEFAULT = 1e-4
+
+
+class ScoreResult(NamedTuple):
+    """What the live scorer returns per submission.
+
+    score       — the RANKED value for the active season (raw shift today; z if the
+                  season's scoring_mode is SPECIFICITY_Z).
+    shift       — raw cosine steering-shift (always computed; equals `score` today).
+    specificity — closed-form direction-specificity z (None when disabled).
+    """
+
+    score: float
+    shift: float
+    specificity: float | None
 
 
 def cosine(a: np.ndarray, b: np.ndarray) -> float:
@@ -69,6 +89,62 @@ def steering_shift_batched(seq, probes, batch_resid_fn, baseline_cos, d: np.ndar
     mat = batch_resid_fn([compose(seq, p) for p in probes])
     seq_cos = _cosines_to_rows(mat, d)
     return float(np.mean(seq_cos - np.asarray(baseline_cos, dtype=np.float64)))
+
+
+# ── Direction-specificity (closed-form null; PROJECT validity Track 1) ──────
+#
+# The score is linear in the direction: per-probe shift along any unit u is
+# δ_i·u with δ_i = m̂_i − b̂_i (unit-normalized composed/baseline rows). For
+# isotropic random unit directions r in R^H the null is EXACTLY mean 0 with
+# pooled std ‖Δ‖_F/√(P·H) — so "z versus K random directions" has a closed
+# form at K→∞, no RNG, no stored null vectors:
+#
+#   z = shift_d / max(‖Δ‖_F/√(P·H), eps)  =  √H · cos(δ̄, d) · coherence
+#
+# coherence = ‖δ̄‖ / RMS_i‖δ_i‖ ∈ [0,1] penalizes sequences that fling each
+# probe's activation in a different direction (token-soup artifacts), while
+# rewarding consistent movement along d. Bounded |z| ≤ √H (≈71.55 at H=5120).
+
+def unit_rows(mat: np.ndarray) -> np.ndarray:
+    """Rows normalized to unit length, float64. Raises on a zero row (matches cosine())."""
+    m = np.asarray(mat, dtype=np.float64)
+    norms = np.linalg.norm(m, axis=1, keepdims=True)
+    if np.any(norms == 0.0):
+        raise ValueError("cannot unit-normalize a zero activation row")
+    return m / norms
+
+
+def baseline_unit_rows(probes, batch_resid_fn) -> np.ndarray:
+    """(P, H) unit-normalized baseline activations — ONE batched forward, precompute
+    per (season, probes). Supersedes baseline_cosines for the live path (the d-cosines
+    are just `baseline_unit_rows(...) @ d`)."""
+    return unit_rows(batch_resid_fn(list(probes)))
+
+
+def shift_and_specificity(
+    seq: str,
+    probes: Sequence[str],
+    batch_resid_fn,
+    base_units: np.ndarray,
+    d: np.ndarray,
+    *,
+    eps: float = SPEC_EPS_DEFAULT,
+) -> tuple[float, float]:
+    """(raw steering shift, closed-form specificity z) from one batched forward.
+
+    `shift` is numerically identical to steering_shift_batched (parity-tested):
+    mean_i(cos(m_i,d) − cos(b_i,d)) = mean_i((m̂_i − b̂_i)·d) = δ̄·d for unit d.
+    """
+    d64 = np.asarray(d, dtype=np.float64)
+    d64 = d64 / np.linalg.norm(d64)  # cosine() normalizes d too — keep exact parity for any d
+    mat = unit_rows(batch_resid_fn([compose(seq, p) for p in probes]))
+    delta = mat - np.asarray(base_units, dtype=np.float64)          # (P, H)
+    # inputs are finite; some BLAS builds emit spurious overflow warnings on @ (see scripts)
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        shift = float(delta.mean(axis=0) @ d64)
+        sigma_null = float(np.linalg.norm(delta)) / float(np.sqrt(delta.size))  # ‖Δ‖_F/√(P·H)
+    z = shift / max(sigma_null, eps)
+    return shift, float(z)
 
 
 def score(
@@ -131,8 +207,18 @@ def _main(argv: list[str] | None = None) -> None:
             f"or ship a real d extracted on this model."
         )
 
-    s = score(args.sequence, probes, lambda t: reader.last_token_resid(t, settings.layer), d, mode=args.mode)
-    print(f"{s:.6f}")
+    if args.mode == STEERING_SHIFT:
+        # Batched path (one forward) + the specificity z alongside the raw shift.
+        def batch_fn(texts):
+            return reader.batch_last_resids(texts, settings.layer)
+
+        base_units = baseline_unit_rows(probes, batch_fn)
+        shift, z = shift_and_specificity(args.sequence, probes, batch_fn, base_units, d,
+                                         eps=settings.specificity_eps)
+        print(f"shift={shift:.6f}  specificity_z={z:.2f}")
+    else:
+        s = score(args.sequence, probes, lambda t: reader.last_token_resid(t, settings.layer), d, mode=args.mode)
+        print(f"{s:.6f}")
 
 
 if __name__ == "__main__":

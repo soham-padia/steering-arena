@@ -94,7 +94,7 @@ class SupabaseDatabase:
     def leaderboard(self, season_id: int, limit: int, ascending: bool = False) -> list[dict]:
         res = (
             self.client.table("submissions")
-            .select("user_handle, sequence_text, score, created_at")
+            .select("user_handle, sequence_text, score, specificity, shift_raw, created_at")
             .eq("season_id", season_id)
             .order("score", desc=not ascending)
             .order("created_at", desc=False)

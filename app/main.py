@@ -118,15 +118,21 @@ def get_scorer():
         def count_tokens(text: str) -> int:
             return len(reader.tokenizer(text, add_special_tokens=False)["input_ids"])
 
-        if settings.scoring_mode == scoring.STEERING_SHIFT:
-            # One batched forward per submission; probe baselines precomputed once.
+        if settings.scoring_mode in (scoring.STEERING_SHIFT, scoring.SPECIFICITY_Z):
+            # One batched forward per submission; unit-normalized probe baselines
+            # precomputed once. Raw shift AND the specificity z come from the same
+            # forward (the z is closed-form — pure numpy on the same matrices).
             def batch_fn(texts):
                 return reader.batch_last_resids(texts, settings.layer)
 
-            base_cos = scoring.baseline_cosines(probes, batch_fn, d)
+            base_units = scoring.baseline_unit_rows(probes, batch_fn)
 
-            def score_fn(seq: str) -> float:
-                return scoring.steering_shift_batched(seq, probes, batch_fn, base_cos, d)
+            def score_fn(seq: str) -> scoring.ScoreResult:
+                shift, z = scoring.shift_and_specificity(
+                    seq, probes, batch_fn, base_units, d, eps=settings.specificity_eps,
+                )
+                ranked = z if settings.scoring_mode == scoring.SPECIFICITY_Z else shift
+                return scoring.ScoreResult(ranked, shift, z if settings.specificity_enabled else None)
         else:
             def score_fn(seq: str) -> float:
                 return scoring.score(
@@ -244,6 +250,7 @@ def leaderboard(season: int | None = None, limit: int = 50, board: str = "pro") 
             "handle": r.get("user_handle"),
             "sequence": r.get("sequence_text"),
             "score": r.get("score"),
+            "specificity": r.get("specificity"),
             "at": r.get("created_at"),
         }
         for i, r in enumerate(rows)

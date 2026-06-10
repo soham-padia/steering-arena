@@ -47,6 +47,22 @@ def test_happy_path_inserts_and_ranks():
     assert len(db.submissions) == 1
 
 
+def test_scoreresult_carries_specificity():
+    """A ScoreResult-returning score_fn lands shift_raw + specificity in the row
+    and the response; the plain-float fakes elsewhere keep working (back-compat)."""
+    from app.scoring import ScoreResult
+
+    db = make_db()
+    r = process_submission(
+        handle="alice", sequence="be honest", ip_hash="ip", db=db,
+        count_tokens=TOK, score_fn=lambda s: ScoreResult(2.0, 2.0, 14.5),
+        settings=settings(),
+    )
+    assert r["score"] == 2.0 and r["specificity"] == 14.5
+    row = db.submissions[0]
+    assert row["shift_raw"] == 2.0 and row["specificity"] == 14.5
+
+
 def test_ranking_orders_by_score():
     db = make_db()
     submit(db, "alice", "aa")            # score 2
