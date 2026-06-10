@@ -47,11 +47,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=6" />
+  <link rel="stylesheet" href="/styles.css?v=7" />
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
-  <script defer src="/app.js?v=6"></script>
+  <script defer src="/app.js?v=7"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -142,6 +142,7 @@
       <p class="board-cap" x-text="tab==='pro' ? 'Top = pushed hardest TOWARD pro-human (highest score)' : 'Top = pushed hardest AGAINST it (most negative score)'"></p>
       <p class="disclaimer">Scores are shifts along a learned activation direction — <b>not</b> measurements of moral content or behavioral safety. <a href="/limitations.html">Limitations →</a></p>
 
+      <div class="board-wrap" :class="{ scroll: !collapsed }">
       <table class="board" x-show="entries.length">
         <thead>
           <tr><th>#</th><th>PLAYER</th><th>SEQUENCE</th><th class="num">SCORE</th></tr>
@@ -162,6 +163,7 @@
           </template>
         </tbody>
       </table>
+      </div>
       <button class="mini showmore" x-show="entries.length > collapseN" @click="collapsed = !collapsed"
               x-text="collapsed ? ('▾ SHOW ALL (' + entries.length + ')') : '▴ SHOW LESS'"></button>
       <p class="empty" x-show="!entries.length">NO SCORES YET<br />BE THE FIRST</p>

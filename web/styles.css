@@ -193,6 +193,13 @@ input:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shad
 /* Long sequences clamp to ~3 lines with an ellipsis until the row is clicked. */
 .board .seqbox.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .board .seqbox:hover { color: #fff; }
+/* Expanded board scrolls inside a fixed-height panel so ALL entries are reachable
+   without the page growing unbounded; the header row stays pinned while scrolling. */
+.board-wrap.scroll { max-height: 60vh; overflow-y: auto; border: 2px solid #2b2860; }
+.board-wrap.scroll thead th { position: sticky; top: 0; background: var(--panel); z-index: 2; }
+.board-wrap.scroll::-webkit-scrollbar { width: 10px; }
+.board-wrap.scroll::-webkit-scrollbar-track { background: var(--panel-2); }
+.board-wrap.scroll::-webkit-scrollbar-thumb { background: #2b2860; border: 2px solid var(--panel); }
 .board .num { font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
 
 .board tr.gold   td { background: rgba(255, 210, 63, 0.08); }

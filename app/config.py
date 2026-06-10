@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     rate_per_min: int = 8
     rate_per_day: int = 100
     global_per_day: int = 2000
-    leaderboard_max: int = 200
+    leaderboard_max: int = 1000
 
     # ── Supabase (secrets) ──
     supabase_url: str = ""

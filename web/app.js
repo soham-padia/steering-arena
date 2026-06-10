@@ -76,7 +76,7 @@ function arena() {
 
     async fetchBoard(board) {
       try {
-        const r = await fetch(`/leaderboard?board=${board}&limit=50`);
+        const r = await fetch(`/leaderboard?board=${board}&limit=1000`);
         const j = await r.json();
         return j.entries || [];
       } catch (_) {
