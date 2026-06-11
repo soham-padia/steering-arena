@@ -64,3 +64,5 @@ temp_cache.md
 # behavioral-eval working files (blind key must stay private until the human pass is done)
 data/analysis/behavioral_blind.csv
 data/analysis/behavioral_blind_key.json
+# post drafts
+lesswrong.md
