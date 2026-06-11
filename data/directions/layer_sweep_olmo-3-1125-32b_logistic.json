@@ -1,0 +1,38 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "method": "logistic",
+  "layers": [
+    {
+      "layer": 16,
+      "separation": 1.0,
+      "resid_norm": 19.2,
+      "path": "data/directions/d_olmo3_L16_logistic.npz"
+    },
+    {
+      "layer": 24,
+      "separation": 1.0,
+      "resid_norm": 30.56,
+      "path": "data/directions/d_olmo3_L24_logistic.npz"
+    },
+    {
+      "layer": 32,
+      "separation": 1.0,
+      "resid_norm": 50.97,
+      "path": "data/directions/d_olmo3_L32_logistic.npz"
+    },
+    {
+      "layer": 40,
+      "separation": 1.0,
+      "resid_norm": 62.36,
+      "path": "data/directions/d_olmo3_L40_logistic.npz"
+    },
+    {
+      "layer": 48,
+      "separation": 1.0,
+      "resid_norm": 80.48,
+      "path": "data/directions/d_olmo3_L48_logistic.npz"
+    }
+  ],
+  "steering": null,
+  "note": "Regenerated 2026-06-11 from the resumable activation cache after the original report was overwritten by a 70B sweep (filename collision, since fixed). Directions verified bit-identical to the shipped d_olmo3_L*_logistic.npz (cos=1.000000 at every layer). Steering runs from the original sweep: data/directions/steering_L24_pm.json (\u00b1d at L24) and the memos in data/analysis/. Key fact this file witnesses: held-out separation is 1.000 at ALL layers while steering quality varies enormously by layer \u2014 best-reading layer \u2260 best-steering layer."
+}

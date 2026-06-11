@@ -49,6 +49,8 @@ def main():
     ap.add_argument("--retry-wait", type=float, default=30.0)
     ap.add_argument("--cache-dir", default="")
     ap.add_argument("--out-dir", default="data/directions")
+    ap.add_argument("--no-steer", action="store_true",
+                    help="skip the steering probe (separation-only report; fully cache-served, no generations)")
     args = ap.parse_args()
 
     layers = [int(x) for x in args.layers.split(",") if x.strip()]
@@ -111,22 +113,25 @@ def main():
 
     # Inline causal-steering probe per layer. Steering strength = mult × ‖R‖_layer so
     # depths are comparable (deeper layers have larger residual norms).
-    print("\n=== STEERING PROBE (does +mult·‖R‖·d̂ move generations, coherently?) ===", flush=True)
-    steer_log = {"mults": mults, "prompts": STEER_PROMPTS, "layers": layers, "runs": []}
-    for prompt in STEER_PROMPTS:
-        print(f"\n#### {prompt!r}", flush=True)
-        base = generate(reader, prompt, args.max_new)
-        print(f"  BASE: {base!r}", flush=True)
-        steer_log["runs"].append({"prompt": prompt, "layer": None, "mult": 0, "text": base})
-        for pl in per_layer:
-            for m in mults:
-                a = m * pl["norm"]
-                text = generate(reader, prompt, args.max_new, steer=(pl["layer"], a * pl["d"]))
-                print(f"  L{pl['layer']:>2} +{m:g}·‖R‖d (a={a:.0f}): {text!r}", flush=True)
-                steer_log["runs"].append({"prompt": prompt, "layer": pl["layer"], "mult": m, "alpha": a, "text": text})
+    steer_log = None
+    if not args.no_steer:
+        print("\n=== STEERING PROBE (does +mult·‖R‖·d̂ move generations, coherently?) ===", flush=True)
+        steer_log = {"mults": mults, "prompts": STEER_PROMPTS, "layers": layers, "runs": []}
+        for prompt in STEER_PROMPTS:
+            print(f"\n#### {prompt!r}", flush=True)
+            base = generate(reader, prompt, args.max_new)
+            print(f"  BASE: {base!r}", flush=True)
+            steer_log["runs"].append({"prompt": prompt, "layer": None, "mult": 0, "text": base})
+            for pl in per_layer:
+                for m in mults:
+                    a = m * pl["norm"]
+                    text = generate(reader, prompt, args.max_new, steer=(pl["layer"], a * pl["d"]))
+                    print(f"  L{pl['layer']:>2} +{m:g}·‖R‖d (a={a:.0f}): {text!r}", flush=True)
+                    steer_log["runs"].append({"prompt": prompt, "layer": pl["layer"], "mult": m, "alpha": a, "text": text})
 
     rep = {"model_id": args.model_id, "method": args.method,
-           "layers": [{"layer": p["layer"], "separation": p["separation"], "path": p["path"]} for p in per_layer],
+           "layers": [{"layer": p["layer"], "separation": p["separation"],
+                       "resid_norm": round(p["norm"], 2), "path": p["path"]} for p in per_layer],
            "steering": steer_log}
     out = Path(args.out_dir) / f"layer_sweep_{prefix}_{args.method}.json"  # model-specific: a second model's sweep must not overwrite the first
     out.write_text(json.dumps(rep, indent=2))
