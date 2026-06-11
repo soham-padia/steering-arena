@@ -1,0 +1,1244 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "d_file": "data/directions/d_olmo3_L24_logistic.npz",
+  "arms": {
+    "+0.5": {
+      "model": {
+        "steered_preferred": 6,
+        "base_preferred": 8,
+        "ties": 0,
+        "win_rate_excl_ties": 0.429,
+        "sign_test_p": 0.79053
+      }
+    },
+    "+1": {
+      "model": {
+        "steered_preferred": 11,
+        "base_preferred": 7,
+        "ties": 0,
+        "win_rate_excl_ties": 0.611,
+        "sign_test_p": 0.48068
+      }
+    },
+    "-0.5": {
+      "model": {
+        "steered_preferred": 9,
+        "base_preferred": 12,
+        "ties": 0,
+        "win_rate_excl_ties": 0.429,
+        "sign_test_p": 0.66362
+      }
+    },
+    "-1": {
+      "model": {
+        "steered_preferred": 13,
+        "base_preferred": 4,
+        "ties": 0,
+        "win_rate_excl_ties": 0.765,
+        "sign_test_p": 0.04904
+      }
+    }
+  },
+  "per_pair": {
+    "1": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "2": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "3": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "4": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "5": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "6": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "7": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "8": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "9": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "10": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "11": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "12": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "13": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "14": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "15": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "16": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "17": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "18": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "19": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "20": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "21": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "22": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "23": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "24": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "25": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "26": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "27": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "28": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "29": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "30": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "31": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "32": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "33": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "34": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "35": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "36": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "37": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "38": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "39": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "40": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "41": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "42": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "43": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "44": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "45": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "46": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "47": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "48": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "49": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "50": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "51": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "52": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "53": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "54": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "55": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "56": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "57": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "58": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "59": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "60": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "61": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "62": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "63": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "64": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "65": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "66": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "67": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "68": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "69": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "70": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "71": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "72": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "73": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "74": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "75": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "76": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "77": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "78": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "79": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "80": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "81": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "82": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "83": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "84": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "85": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "86": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "87": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "88": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "89": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "90": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "91": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "92": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "93": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "94": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "95": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "96": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "97": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "98": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "99": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "100": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "101": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "102": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "103": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "104": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "105": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "106": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "107": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "108": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "109": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "110": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "111": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "112": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "113": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "114": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "115": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "116": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "117": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "118": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "119": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "120": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "121": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "122": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "123": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "124": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "125": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "126": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "127": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "128": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "129": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "130": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "131": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "132": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "133": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "134": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "135": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "136": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "137": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "138": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "139": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "140": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "141": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "142": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "143": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "144": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "145": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "146": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "147": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "148": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "149": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "150": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "151": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "152": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "153": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "154": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "155": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "156": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "157": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "158": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "159": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "160": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "161": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "162": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "163": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "164": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "165": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "166": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "167": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "168": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "169": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "170": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": "B",
+      "human": null
+    },
+    "171": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "172": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "173": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "174": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "175": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "176": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "177": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "178": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "179": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "180": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "181": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "182": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "183": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "184": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "185": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "186": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "187": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "188": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "189": {
+      "arm": "+0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "190": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "191": {
+      "arm": "-0.5",
+      "steered_is": "A",
+      "model": "A",
+      "human": null
+    },
+    "192": {
+      "arm": "-1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "193": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": "B",
+      "human": null
+    },
+    "194": {
+      "arm": "+1",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "195": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": "A",
+      "human": null
+    },
+    "196": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "197": {
+      "arm": "+0.5",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "198": {
+      "arm": "+1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    },
+    "199": {
+      "arm": "-0.5",
+      "steered_is": "B",
+      "model": null,
+      "human": null
+    },
+    "200": {
+      "arm": "-1",
+      "steered_is": "A",
+      "model": null,
+      "human": null
+    }
+  }
+}

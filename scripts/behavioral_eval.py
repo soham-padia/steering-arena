@@ -146,15 +146,40 @@ def cmd_blind(args):
           f"key (do not peek) → {BLIND_KEY}")
 
 
-def _judge_pair(reader, a, b):
-    """OLMo forced-choice via short generation; returns 'A'/'B'/None."""
+JUDGE_CACHE = CACHE_DIR / "judge"
+
+
+def _judge_once(reader, a, b):
+    """One OLMo forced-choice call; returns 'A'/'B'/None. Disk-cached per (model, a, b)."""
+    JUDGE_CACHE.mkdir(parents=True, exist_ok=True)
+    key = hashlib.sha256(f"{settings.model_id}\x00{a}\x00{b}".encode()).hexdigest()
+    fp = JUDGE_CACHE / f"{key}.json"
+    if fp.exists():
+        return json.loads(fp.read_text())["verdict"]
     prompt = JUDGE_TEMPLATE.format(a=a, b=b)
     text = generate(reader, prompt, 3)
     tail = text[len(prompt):].strip().upper()
-    for ch in tail[:4]:
-        if ch in ("A", "B"):
-            return ch
-    return None
+    verdict = next((ch for ch in tail[:4] if ch in ("A", "B")), None)
+    fp.write_text(json.dumps({"verdict": verdict}))
+    return verdict
+
+
+def _judge_pair(reader, a, b):
+    """Position-debiased judge: ask twice with A/B swapped; keep only CONSISTENT
+    verdicts (first run says X, swapped run says the swapped letter of X). A
+    position-biased judge (always 'A') answers inconsistently and is dropped —
+    the first single-pass run showed pure position-bias noise. Returns 'A'/'B'/None
+    in the ORIGINAL orientation."""
+    v1 = _judge_once(reader, a, b)
+    v2 = _judge_once(reader, b, a)  # swapped presentation
+    if v1 is None or v2 is None:
+        return None
+    # consistent ⇔ the two runs picked the same underlying TEXT
+    if v1 == "A" and v2 == "B":
+        return "A"
+    if v1 == "B" and v2 == "A":
+        return "B"
+    return None  # inconsistent → position bias / no real preference
 
 
 def _sign_test(wins, losses):
@@ -182,6 +207,7 @@ def cmd_judge(args):
                     human[row["pair_id"]] = r
 
     per_arm = {}
+    per_pair = {}
     judge_calls = 0
     for pid, info in key.items():
         arm = info["arm"]
@@ -196,6 +222,8 @@ def cmd_judge(args):
             a, b = (steered, base) if info["steered_is"] == "A" else (base, steered)
             m = with_retry(_judge_pair, reader, a, b, attempts=3, wait=15.0)
             judge_calls += 1
+            per_pair[pid] = {"arm": arm, "steered_is": info["steered_is"], "model": m,
+                             "human": human.get(pid)}
         for label, verdict in (("human", h), ("model", m)):
             if verdict is None:
                 continue
@@ -226,6 +254,7 @@ def cmd_judge(args):
             entry["human_model_agreement"] = round(rec["agree"] / rec["both"], 3)
             print(f"        human–model agreement: {rec['agree']}/{rec['both']}")
         report["arms"][arm] = entry
+    report["per_pair"] = per_pair
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     REPORT.write_text(json.dumps(report, indent=2))
     print(f"\nreport → {REPORT}")
