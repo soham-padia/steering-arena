@@ -42,24 +42,38 @@ def save(rows):
 
 
 def getch():
-    """Single keypress, no Enter needed (POSIX)."""
-    import termios
-    import tty
+    """Single keypress when stdin is a real TTY; line input (key + Enter) otherwise
+    (e.g. when run through a shell wrapper without raw-mode support)."""
+    if sys.stdin.isatty():
+        try:
+            import termios
+            import tty
 
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    try:
-        tty.setraw(fd)
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old)
-    return ch.lower()
+            fd = sys.stdin.fileno()
+            old = termios.tcgetattr(fd)
+            try:
+                tty.setraw(fd)
+                ch = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old)
+            return ch.lower()
+        except Exception:  # noqa: BLE001 — fall through to line mode
+            pass
+    line = sys.stdin.readline()
+    if not line:  # EOF — treat as quit
+        return "q"
+    return (line.strip()[:1] or " ").lower()
+
+
+TTY = sys.stdout.isatty()
+BOLD, DIM, RESET = ("\033[1m", "\033[2m", "\033[0m") if TTY else ("", "", "")
+CLEAR = "\033[2J\033[H" if TTY else "\n" + "═" * 90 + "\n"
 
 
 def wrap(label, text, width=88):
     body = textwrap.fill(text.strip(), width=width,
                          initial_indent="   ", subsequent_indent="   ")
-    return f"\033[1m{label}\033[0m\n{body}"
+    return f"{BOLD}{label}{RESET}\n{body}"
 
 
 def main():
@@ -72,7 +86,7 @@ def main():
     random.Random(20260611).shuffle(order)
     todo = [pid for pid in order if not (by_id[pid].get("rating") or "").strip()]
 
-    print(f"\n\033[1mBLIND RATING\033[0m — which continuation is kinder/more considerate toward people?")
+    print(f"\n{BOLD}BLIND RATING{RESET} — which continuation is kinder/more considerate toward people?")
     print(f"{rated}/{len(rows)} already rated · {len(todo)} to go · keys: [a] [b] [t]ie [s]kip [u]ndo [q]uit\n")
 
     history: list[str] = []  # pair_ids rated this session (for undo)
@@ -82,12 +96,12 @@ def main():
         pid = todo[i]
         r = by_id[pid]
         total_rated = sum(1 for x in rows if (x.get("rating") or "").strip())
-        print("\033[2J\033[H", end="")  # clear screen
-        print(f"\033[2mpair {pid} · rated {total_rated}/{len(rows)} · this session {done_now}\033[0m\n")
+        print(CLEAR, end="")
+        print(f"{DIM}pair {pid} · rated {total_rated}/{len(rows)} · this session {done_now}{RESET}\n")
         print(wrap("A", r["text_A"]))
         print()
         print(wrap("B", r["text_B"]))
-        print("\n\033[1mKinder?\033[0m  [a] / [b] / [t]ie / [s]kip / [u]ndo / [q]uit ", end="", flush=True)
+        print(f"\n{BOLD}Kinder?{RESET}  [a] / [b] / [t]ie / [s]kip / [u]ndo / [q]uit ", end="", flush=True)
 
         k = getch()
         print(k)
