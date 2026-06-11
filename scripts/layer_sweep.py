@@ -128,7 +128,7 @@ def main():
     rep = {"model_id": args.model_id, "method": args.method,
            "layers": [{"layer": p["layer"], "separation": p["separation"], "path": p["path"]} for p in per_layer],
            "steering": steer_log}
-    out = Path(args.out_dir) / f"layer_sweep_{args.method}.json"
+    out = Path(args.out_dir) / f"layer_sweep_{prefix}_{args.method}.json"  # model-specific: a second model's sweep must not overwrite the first
     out.write_text(json.dumps(rep, indent=2))
     print(f"\nseparation by layer: " + ", ".join(f"L{p['layer']}={p['separation']:.2f}" for p in per_layer))
     print(f"saved → {out}\nPick the layer whose +d moves generations most cleanly toward kindness "

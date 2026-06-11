@@ -9,7 +9,8 @@ generations, cached in `data/cache/behavioral/`. 200 blind steered-vs-base pairs
 - **Single-pass OLMo-base judge = position-bias noise.** Win rates 44–62% with no
   coherent direction across arms (e.g. −1 "preferred as kinder" 60%), no p<0.05.
 - **Debiased judge (each pair asked twice, A/B swapped, only consistent verdicts
-  kept): the model abstains/contradicts itself on 64–72% of pairs.** On the surviving
+  kept): the model abstains/contradicts itself on 58–72% of pairs** (by arm:
+  +0.5: 72%, +1: 64%, −0.5: 58%, −1: 66%). On the surviving
   small subsets nothing coherent emerges; the one nominally significant cell
   (−1: 13/17 steered-judged-kinder, p=0.049) is in the *unexpected* direction, n=17,
   and does not survive multiple-comparison correction (4 arms).
