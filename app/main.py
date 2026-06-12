@@ -285,6 +285,15 @@ def submit(body: SubmitIn, request: Request):
         )
     except SubmitError as e:
         return JSONResponse(status_code=e.http_status, content={"error": e.message})
+    except Exception:  # noqa: BLE001 — e.g. NDIF deployment down mid-score; a raw 500
+        # would surface as a misleading "Network error" in the frontend.
+        _log.exception("scoring failed mid-submission (model backend?)")
+        return JSONResponse(
+            status_code=503,
+            content={"error": "Scoring backend is temporarily unavailable (the model "
+                              "deployment may be restarting). Your sequence was NOT "
+                              "used up — please try again in a few minutes."},
+        )
 
 
 # Serve the static frontend if present (Phase 3 fills web/). Mounted last.

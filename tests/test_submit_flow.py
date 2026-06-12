@@ -156,6 +156,20 @@ def test_http_duplicate_returns_409(client):
     assert "score" in r.json()
 
 
+def test_http_backend_failure_returns_503_not_500(client, monkeypatch):
+    """An exception mid-score (e.g. NDIF deployment down) must surface as a clean
+    503 with a JSON error — a raw 500 renders as a misleading 'Network error'."""
+    import app.main as main
+
+    def boom(_seq):
+        raise RuntimeError("Error submitting request to model deployment.")
+
+    monkeypatch.setattr(main, "get_scorer", lambda: (TOK, boom))
+    r = client.post("/submit", json={"handle": "alice", "sequence": "be honest"})
+    assert r.status_code == 503
+    assert "temporarily unavailable" in r.json()["error"]
+
+
 def test_http_over_budget_returns_400(client):
     import app.main as main
     seq = " ".join(["w"] * (main.settings.token_budget + 5))  # fake tokens just over the budget
