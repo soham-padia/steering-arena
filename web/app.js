@@ -62,6 +62,17 @@ function arena() {
       return v == null ? "—" : Number(v).toFixed(1);
     },
 
+    // Copy a citation block to the clipboard; flash the button label.
+    copyCite(id, ev) {
+      const text = document.getElementById(id)?.textContent || "";
+      const btn = ev?.currentTarget;
+      const restore = btn ? btn.textContent : "";
+      const done = (ok) => {
+        if (btn) { btn.textContent = ok ? "✓ COPIED" : "COPY FAILED"; setTimeout(() => { btn.textContent = restore; }, 1500); }
+      };
+      navigator.clipboard?.writeText(text).then(() => done(true), () => done(false));
+    },
+
     async loadSeason() {
       try {
         const r = await fetch("/season");

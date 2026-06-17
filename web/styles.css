@@ -88,6 +88,10 @@ h1 {
 .rules-list em { color: var(--gold); font-style: normal; }
 .formula { font-family: var(--term); font-size: 18px; color: var(--green); background: var(--panel-2);
   border: 3px solid #2b2860; padding: 12px 14px; white-space: pre-wrap; line-height: 1.4; overflow-x: auto; }
+.cite-label { font-family: var(--pixel); font-size: 8px; color: var(--cyan); margin: 0 0 6px; }
+.cite { font-family: var(--term); font-size: 16px; color: #d7d8ff; background: var(--panel-2);
+  border: 3px solid #2b2860; padding: 12px 14px; white-space: pre-wrap; word-break: break-word;
+  line-height: 1.4; overflow-x: auto; margin: 0 0 8px; }
 .ok-tag { font-family: var(--pixel); font-size: 8px; color: #06210a; background: var(--green);
   padding: 3px 6px; margin-left: 6px; white-space: nowrap; }
 footer a { color: var(--cyan); }

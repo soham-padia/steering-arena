@@ -47,11 +47,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=8" />
+  <link rel="stylesheet" href="/styles.css?v=9" />
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
-  <script defer src="/app.js?v=8"></script>
+  <script defer src="/app.js?v=9"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -66,7 +66,7 @@
       </div>
       <p class="tag">STEER THE MODEL'S MIND — <b>&#9650; PRO&#8209;HUMAN</b> OR <b class="anti">&#9660; ANTI&#8209;HUMAN</b>. ONE SCORE, TWO BOARDS.</p>
       <p class="insert blink"><a href="#play">▶ INSERT SEQUENCE</a></p>
-      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/limitations.html">LIMITATIONS</a> · <a href="#contact">CONTACT</a></p>
+      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/limitations.html">LIMITATIONS</a> · <a href="#cite">CITE</a> · <a href="#contact">CONTACT</a></p>
     </div>
   </header>
 
@@ -186,10 +186,33 @@
     </div>
   </section>
 
+  <!-- Cite -->
+  <section id="cite" class="wrap card rules">
+    <h2>CITE THIS</h2>
+    <p class="muted">Using Steering Arena in research, a write-up, or a class? Please cite it:</p>
+
+    <p class="cite-label">BibTeX</p>
+    <pre class="cite" id="cite-bibtex">@misc{padia2026steeringarena,
+  author       = {Padia, Soham},
+  title        = {Steering Arena: A Public Pro-Human Activation-Steering Competition},
+  year         = {2026},
+  howpublished = {\url{https://sohampadianeu-steering-arena.hf.space}},
+  note         = {Non-commercial interpretability research, Northeastern University}
+}</pre>
+    <button class="mini" @click="copyCite('cite-bibtex', $event)">⧉ COPY BIBTEX</button>
+
+    <p class="cite-label" style="margin-top:18px">Plain text</p>
+    <pre class="cite" id="cite-plain">Padia, S. (2026). Steering Arena: A Public Pro-Human Activation-Steering Competition. https://sohampadianeu-steering-arena.hf.space</pre>
+    <button class="mini" @click="copyCite('cite-plain', $event)">⧉ COPY</button>
+
+    <p class="muted" style="margin-top:14px">Code, seed pairs, directions, and analysis: <a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">github.com/soham-padia/steering-arena</a>. Scores are season-specific — note the season (model, layer, direction) shown in the banner above when citing a result.</p>
+  </section>
+
   <footer class="wrap muted">
     STEERING ARENA &middot; MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT &middot;
     <a href="/reproducibility.html">REPRODUCIBILITY</a> &middot;
     <a href="/limitations.html">LIMITATIONS</a> &middot;
+    <a href="#cite">CITE</a> &middot;
     <a href="#contact">CONTACT</a> &middot;
     <a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">SOURCE</a>
   </footer>
