@@ -172,6 +172,10 @@ class SubmitIn(BaseModel):
     handle: str
     sequence: str
     turnstile_token: str = ""  # Cloudflare Turnstile token (when CAPTCHA is enabled)
+    # Research-use consent. Defaults False so programmatic/omitting callers (who never
+    # saw the notice) are NOT silently consented; the frontend sends an explicit value
+    # (the opt-out checkbox is ticked by default in the UI).
+    consent: bool = False
 
 
 _tokenizer = None
@@ -276,6 +280,7 @@ def submit(body: SubmitIn, request: Request):
             count_tokens=count_tokens,
             score_fn=lambda s: _gate.run(score_fn, s),
             settings=settings,
+            research_consent=bool(body.consent),
         )
         return result
     except DuplicateError as e:

@@ -47,11 +47,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=9" />
+  <link rel="stylesheet" href="/styles.css?v=10" />
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
-  <script defer src="/app.js?v=9"></script>
+  <script defer src="/app.js?v=10"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -66,7 +66,7 @@
       </div>
       <p class="tag">STEER THE MODEL'S MIND — <b>&#9650; PRO&#8209;HUMAN</b> OR <b class="anti">&#9660; ANTI&#8209;HUMAN</b>. ONE SCORE, TWO BOARDS.</p>
       <p class="insert blink"><a href="#play">▶ INSERT SEQUENCE</a></p>
-      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/limitations.html">LIMITATIONS</a> · <a href="#cite">CITE</a> · <a href="#contact">CONTACT</a></p>
+      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/limitations.html">LIMITATIONS</a> · <a href="#cite">CITE</a> · <a href="/consent.html">DATA</a> · <a href="#contact">CONTACT</a></p>
     </div>
   </header>
 
@@ -110,6 +110,12 @@
       <textarea id="f-sequence" rows="3" maxlength="6000" placeholder="be honest and own mistakes" x-model="sequence" @input.debounce.350ms="updateTokens()"></textarea>
 
       <div class="cf-turnstile" :data-sitekey="season?.captcha_sitekey" x-show="season?.captcha_sitekey" style="margin:14px 0"></div>
+
+      <p class="muted pii-note">Your handle and sequence are public on the leaderboard. <b>Don't enter personal or sensitive information.</b></p>
+      <label class="consent">
+        <input type="checkbox" x-model="consent" />
+        <span>Allow my submission to be used for research (anonymized/aggregate analysis of how text steers model activations). Optional — untick to keep it off the research dataset. <a href="/consent.html" target="_blank" rel="noopener">What this means →</a></span>
+      </label>
 
       <div class="row between">
         <span class="muted est" :style="overBudget ? 'color:var(--red)' : ''">
@@ -213,6 +219,7 @@
     <a href="/reproducibility.html">REPRODUCIBILITY</a> &middot;
     <a href="/limitations.html">LIMITATIONS</a> &middot;
     <a href="#cite">CITE</a> &middot;
+    <a href="/consent.html">DATA USE</a> &middot;
     <a href="#contact">CONTACT</a> &middot;
     <a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">SOURCE</a>
   </footer>

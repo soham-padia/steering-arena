@@ -13,6 +13,7 @@ function arena() {
     expandedSeq: {},   // per-row sequence expand state (keyed by sequence text)
     handle: "",
     sequence: "",
+    consent: true,   // research-use opt-out: ticked by default, user can untick
     tokenCount: 0,
     result: null,
     error: null,
@@ -120,7 +121,7 @@ function arena() {
         const r = await fetch("/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ handle: this.handle, sequence: this.sequence, turnstile_token: tok }),
+          body: JSON.stringify({ handle: this.handle, sequence: this.sequence, turnstile_token: tok, consent: this.consent }),
         });
         const j = await r.json();
         if (!r.ok) {

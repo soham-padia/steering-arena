@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     specificity_eps: float = 1e-4                       # denominator floor (frozen per season)
     specificity_null: str = "isotropic_closed_form"     # method id, recorded for provenance
 
+    # ── Research-data consent (data governance; see db/migrations/0004_consent.sql) ──
+    # Frozen id of the consent notice text currently shown (web/consent.html). Bump when
+    # the notice materially changes, so each consented row records what was agreed to.
+    consent_version: str = "v1-2026-06"
+
     # ── NDIF call / queue ──
     ndif_api_key: str = ""
     ndif_timeout_s: int = 60

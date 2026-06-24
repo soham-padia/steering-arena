@@ -88,6 +88,12 @@ h1 {
 .rules-list em { color: var(--gold); font-style: normal; }
 .formula { font-family: var(--term); font-size: 18px; color: var(--green); background: var(--panel-2);
   border: 3px solid #2b2860; padding: 12px 14px; white-space: pre-wrap; line-height: 1.4; overflow-x: auto; }
+.pii-note { font-family: var(--term); font-size: 15px; color: #8f93b5; margin: 14px 0 8px; }
+.pii-note b { color: var(--red); }
+.consent { display: flex; gap: 9px; align-items: flex-start; font-family: var(--term);
+  font-size: 15px; color: #cfd0ff; line-height: 1.4; margin: 0 0 14px; cursor: pointer; }
+.consent input { width: 16px; height: 16px; margin-top: 2px; flex: 0 0 auto; accent-color: var(--green); }
+.consent a { color: var(--cyan); }
 .cite-label { font-family: var(--pixel); font-size: 8px; color: var(--cyan); margin: 0 0 6px; }
 .cite { font-family: var(--term); font-size: 16px; color: #d7d8ff; background: var(--panel-2);
   border: 3px solid #2b2860; padding: 12px 14px; white-space: pre-wrap; word-break: break-word;

@@ -50,6 +50,7 @@ def process_submission(
     count_tokens: Callable[[str], int],
     score_fn: Callable[[str], float],
     settings,
+    research_consent: bool = False,
     now: datetime | None = None,
 ) -> dict:
     """Validate → token-budget → dedup/cache → rate-limit → score → insert → rank.
@@ -107,6 +108,9 @@ def process_submission(
         "shift_raw": shift_raw,
         "specificity": specificity,
         "ip_hash": ip_hash,
+        "research_consent": bool(research_consent),
+        # record which notice they agreed to (null when not consented)
+        "consent_version": getattr(settings, "consent_version", None) if research_consent else None,
     })
     # One signed score, two boards: pro-human ranks by most-positive projection,
     # anti-human by most-negative (the geometric opposite).

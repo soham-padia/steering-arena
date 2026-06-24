@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Use &amp; Consent — Steering Arena</title>
+  <meta name="description" content="What data Steering Arena records, how research consent works, and how to withdraw your submission from the research dataset." />
+  <link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/consent.html" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Soham Padia" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=10" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap">
+      <div class="marquee">
+        <span class="coin" aria-hidden="true">●</span>
+        <h1>RESEARCH USE &amp; CONSENT</h1>
+        <span class="coin" aria-hidden="true">●</span>
+      </div>
+      <p class="tag">WHAT IS RECORDED, HOW IT MAY BE USED, AND HOW TO OPT OUT</p>
+      <p class="insert"><a href="/">◂ BACK TO THE ARENA</a></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="card">
+      <p class="muted">Steering Arena is a non-commercial research project by <b>Soham Padia</b> at Northeastern University, studying how short text sequences shift a language model's internal activations. The research is about the <em>model</em>, not about you — but because you type text in, here is exactly what is recorded and how it may be used.</p>
+    </section>
+
+    <section class="card">
+      <h2>① WHAT IS RECORDED WHEN YOU SUBMIT</h2>
+      <ul class="rules-list">
+        <li><b>YOUR SEQUENCE.</b> The text you submit. It is shown publicly on the leaderboard.</li>
+        <li><b>YOUR HANDLE.</b> The name you choose. Also shown publicly.</li>
+        <li><b>SCORES.</b> The computed steering score and specificity, plus a timestamp.</li>
+        <li><b>A SALTED IP HASH.</b> An irreversible salted hash of your IP, used only for rate-limiting. It is never shown and is never included in any research dataset.</li>
+      </ul>
+      <p class="muted pii-note">Because your handle and sequence are public, <b>do not enter personal or sensitive information</b> (real names, contact details, anything you would not want public).</p>
+    </section>
+
+    <section class="card">
+      <h2>② WHAT "RESEARCH USE" MEANS</h2>
+      <p class="muted">If you leave the consent box ticked, your <em>handle, sequence, and scores</em> (never your IP hash) may be analyzed and included — individually or in aggregate — in research outputs such as papers, blog posts, talks, or public datasets about activation steering. Participation is <b>voluntary</b>: unticking the box before you submit means your entry still competes on the leaderboard but is <b>excluded from the research dataset</b>. The box is ticked by default; you may untick it on any submission.</p>
+    </section>
+
+    <section class="card">
+      <h2>③ WITHDRAWING YOUR DATA</h2>
+      <p class="muted">You can ask to have a submission removed from the research dataset at any time. Email <a href="mailto:padia.so@northeastern.edu">padia.so@northeastern.edu</a> with the handle and sequence, and it will be excluded from future research exports. (Note: anything already published in a fixed output, e.g. a posted paper, may not be retractable, but it will be removed from the working dataset and future releases.)</p>
+    </section>
+
+    <section class="card">
+      <h2>④ CONTACT &amp; OVERSIGHT</h2>
+      <p class="muted">Questions about the research or your data: <a href="mailto:padia.so@northeastern.edu">padia.so@northeastern.edu</a> (Soham Padia, Northeastern University). This is an independent, non-commercial student research project; consent here supports, and does not replace, any applicable institutional (IRB) determination. Current consent notice version: <b>v1-2026-06</b>.</p>
+      <div class="row">
+        <a class="mini" href="/limitations.html">LIMITATIONS</a>
+        <a class="mini" href="/reproducibility.html">REPRODUCIBILITY</a>
+        <a class="mini" href="/">◂ ARENA</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap muted">
+    STEERING ARENA · NON-COMMERCIAL RESEARCH · <a href="/">ARENA</a>
+  </footer>
+</body>
+</html>

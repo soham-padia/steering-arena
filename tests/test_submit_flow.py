@@ -47,6 +47,23 @@ def test_happy_path_inserts_and_ranks():
     assert len(db.submissions) == 1
 
 
+def test_research_consent_recorded():
+    """Consent (and the frozen consent_version) is stored on the row; default is off
+    and writes no version — so non-UI/omitting callers are never silently consented."""
+    db = make_db()
+    s = settings()
+    s.consent_version = "vtest"
+    # consented
+    process_submission(handle="a", sequence="kind one", ip_hash="ip", db=db,
+                       count_tokens=TOK, score_fn=SCORE, settings=s, research_consent=True)
+    # not consented (default)
+    process_submission(handle="b", sequence="kind two", ip_hash="ip", db=db,
+                       count_tokens=TOK, score_fn=SCORE, settings=s)
+    yes, no = db.submissions[0], db.submissions[1]
+    assert yes["research_consent"] is True and yes["consent_version"] == "vtest"
+    assert no["research_consent"] is False and no["consent_version"] is None
+
+
 def test_scoreresult_carries_specificity():
     """A ScoreResult-returning score_fn lands shift_raw + specificity in the row
     and the response; the plain-float fakes elsewhere keep working (back-compat)."""
