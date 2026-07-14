@@ -66,3 +66,9 @@ data/analysis/behavioral_blind.csv
 data/analysis/behavioral_blind_key.json
 # post drafts
 lesswrong.md
+
+# local-only (fellowship drafts, private notes) — never commit
+_local/
+STRUCTURE.md
+steering_arena.zip
+steering_arena/
