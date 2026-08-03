@@ -258,9 +258,22 @@ def main():
         print(f"    mean gap kind−cruel: {control_gap:+.3f}   (chosen−rejected ref: {train_gap:+.3f}   ratio {ratio:.2f})")
 
     # ── Verdict ──────────────────────────────────────────────────────────────
-    report["flags"] = flags
-    report["assessment"] = "confound risk: see flags" if flags else "no confound flag tripped by these tests"
+    # MERGE into any existing report rather than overwrite: a partial --tests run must
+    # not clobber sections (and their flags) from earlier full runs. Flags belong to a
+    # section; a rerun section replaces its own flags, untouched sections keep theirs.
     out = Path(args.d).with_suffix(".confound_audit.json")
+    flag_section = lambda f: ("agreement" if "estimators disagree" in f  # noqa: E731
+                              else "control" if "control FAIL" in f else "confound")
+    if out.exists():
+        old = json.loads(out.read_text())
+        kept_flags = [f for f in old.get("flags", []) if flag_section(f) not in tests]
+        merged = {**old, **report}  # this run's sections overwrite; others persist
+        merged["flags"] = kept_flags + flags
+        report = merged
+        flags = report["flags"]
+    else:
+        report["flags"] = flags
+    report["assessment"] = "confound risk: see flags" if flags else "no confound flag tripped by these tests"
     out.write_text(json.dumps(report, indent=2))
     print("\n=== ASSESSMENT ===")
     if flags:
