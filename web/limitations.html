@@ -62,7 +62,8 @@
 
     <section class="card">
       <h2>③ HIGH SCORES MAY EXPLOIT ARTIFACTS</h2>
-      <p class="muted">Short strings can score highly because of tokenization quirks, sentiment, formatting, memorized associations, or distributional artifacts — rather than meaningful value-related representation. (The current board is itself evidence: opaque token-soup like <code>.Mock</code>, <code>-chan</code>, <code>emoji</code> outscores plain "be kind and honest.")</p>
+      <p class="muted">Short strings can score highly because of tokenization quirks, sentiment, formatting, memorized associations, or distributional artifacts — rather than meaningful value-related representation. (The board is itself evidence: opaque token-soup has outscored plain "be kind and honest" since Season 1.)</p>
+      <p class="muted"><b>Confirmed by gradient-based optimization.</b> Jesse Li ran <a href="https://arxiv.org/abs/2307.15043" target="_blank" rel="noopener">Greedy Coordinate Gradient</a> attacks against the metric and now holds the top of the pro-human board with optimized token strings — see his <a href="https://jesseli2002.github.io/blog/projects/gcg-activation-steering/" target="_blank" rel="noopener">write-up</a> and <a href="https://github.com/jesseli2002/steering-arena-optim" target="_blank" rel="noopener">code</a>. His results also suggest an approximate scaling law (score grows with the number of optimized tokens and log-linearly with optimization samples). This is the arena working as intended: optimized entries mark the ceiling of what the metric can be pushed to, and make the gap between "moves the direction" and "means something pro-human" precisely measurable.</p>
     </section>
 
     <section class="card">
