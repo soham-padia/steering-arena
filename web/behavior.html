@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css?v=10" />
-  <link rel="stylesheet" href="/behavior.css?v=1" />
+  <link rel="stylesheet" href="/behavior.css?v=3" />
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="tapes()" x-init="load()">
@@ -163,7 +163,7 @@
       <div class="cf-turnstile" :data-sitekey="gen.captcha_sitekey"
            x-show="gen.captcha_sitekey" style="margin:14px 0"></div>
 
-      <label class="bh-consent" x-show="gen.logging" x-cloak>
+      <label class="consent bh-consent" x-show="gen.logging" x-cloak>
         <input type="checkbox" x-model="consent" />
         <span>
           Your sentence and the model's answer are recorded so this demo can be studied
@@ -254,7 +254,7 @@ function tapes() {
     roundNo: 1, picked: null, youText: "",
     get round() { return this.data.rounds[this.roundNo - 1] || null; },
     async load() {
-      const r = await fetch("/behavior_data.json?v=1");
+      const r = await fetch("/behavior_data.json?v=3");
       this.data = await r.json();
       try {
         const g = await fetch("/generate/arms");
