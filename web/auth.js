@@ -12,6 +12,7 @@
 function arenaAuth() {
   return {
     cfg: { enabled: false },
+    providers: [],
     authStep: "email",
     email: "",
     code: "",
@@ -22,6 +23,16 @@ function arenaAuth() {
     async initAuth() {
       try { this.cfg = await (await fetch("/admin/config")).json(); }
       catch (_) { this.cfg = { enabled: false }; }
+      // Which sign-in methods this Supabase project actually has switched on. OAuth
+      // sends no email, which matters: the built-in mailer is capped at a couple of
+      // messages an hour project-wide and is not meant for production traffic.
+      try {
+        const base = (this.cfg.supabase_url || "").replace(/\/$/, "");
+        const s = await (await fetch(`${base}/auth/v1/settings`, {
+          headers: { apikey: this.cfg.anon_key },
+        })).json();
+        this.providers = ["google", "github"].filter(p => s.external && s.external[p]);
+      } catch (_) { this.providers = []; }
       const h = new URLSearchParams((location.hash || "").replace(/^#/, ""));
       const tok = h.get("access_token");
       if (tok) {
@@ -53,7 +64,13 @@ function arenaAuth() {
           redirect_to: location.origin + location.pathname,
         });
         this.authStep = "code";
-      } catch (e) { this.authErr = String(e.message || e); }
+      } catch (e) {
+        const m = String(e.message || e);
+        this.authErr = /rate limit/i.test(m)
+          ? "Too many sign-in emails from this site in the last hour. Try again shortly, " +
+            "or use one of the other sign-in buttons if they're shown."
+          : m;
+      }
       finally { this.authBusy = false; }
     },
 
@@ -67,6 +84,14 @@ function arenaAuth() {
         if (this.onSignedIn) await this.onSignedIn();
       } catch (e) { this.authErr = String(e.message || e); }
       finally { this.authBusy = false; }
+    },
+
+    // OAuth needs no code in the page: Supabase bounces the browser back here with the
+    // session in the URL fragment, which initAuth() already picks up and wipes.
+    signInWith(provider) {
+      const base = (this.cfg.supabase_url || "").replace(/\/$/, "");
+      const back = encodeURIComponent(location.origin + location.pathname);
+      location.href = `${base}/auth/v1/authorize?provider=${provider}&redirect_to=${back}`;
     },
 
     signOut() {

@@ -242,3 +242,9 @@
 
 .bh-input-short { max-width: 260px; }
 .bh-label-gap { margin-top: 16px; }
+
+/* OAuth options, shown only for providers the Supabase project has enabled */
+.bh-oauth { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 18px; }
+.bh-oauth-btn { margin-top: 0; background: var(--cyan); box-shadow: 4px 4px 0 #1a6c8c; }
+.bh-oauth-btn:hover { background: var(--ink); }
+.bh-oauth-or { font-family: var(--pixel); font-size: 8px; color: var(--muted); }

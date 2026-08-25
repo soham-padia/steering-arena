@@ -13,8 +13,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css?v=10" />
-  <link rel="stylesheet" href="/behavior.css?v=5" />
-  <script defer src="/auth.js?v=1"></script>
+  <link rel="stylesheet" href="/behavior.css?v=6" />
+  <script defer src="/auth.js?v=2"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="tapes()" x-init="load()">
@@ -24,10 +24,133 @@
     <a class="bh-back" href="/">&#9664; ARENA</a>
     <h1 class="bh-title">BEHAVIOR TAPES</h1>
     <p class="bh-thesis">
-      The sequence at the top of the board is unreadable. It still changes how the model
-      treats people. These are the tapes.
+      The sequence at the top of the leaderboard is unreadable gibberish. It still makes
+      the model kinder. Try it on your own sentence, then see the evidence below.
     </p>
   </header>
+
+  <!-- ── live demo ────────────────────────────────────────────────────── -->
+  <section class="wrap" x-show="gen.enabled">
+    <h2 class="bh-h2">TRY A PREFIX</h2>
+    <p class="bh-note bh-lead">
+      Write a sentence for the model to continue, then pick what gets glued to the front
+      of it. Runs live on <span x-text="gen.model_id"></span>, same
+      <span x-text="gen.max_new_tokens"></span>-token budget as the study.
+    </p>
+
+    <div class="bh-try" x-show="!token" x-cloak>
+      <p class="bh-gate">Generating runs the model on someone else's research compute and
+        publishes the result here, so it needs an account. One email, no password.</p>
+
+      <div class="bh-oauth" x-show="providers.length" x-cloak>
+        <template x-for="p in providers" :key="p">
+          <button class="bh-go bh-oauth-btn" @click="signInWith(p)"
+                  x-text="`CONTINUE WITH ${p.toUpperCase()}`"></button>
+        </template>
+        <span class="bh-oauth-or">or use email</span>
+      </div>
+
+      <template x-if="authStep !== 'code'">
+        <div>
+          <label class="bh-try-label" for="bh-email">EMAIL</label>
+          <input id="bh-email" class="bh-input" type="email" x-model="email"
+                 @keydown.enter="sendCode()" placeholder="you@example.com" autocomplete="email" />
+          <button class="bh-go" @click="sendCode()" :disabled="authBusy || !email.includes('@')"
+                  x-text="authBusy ? 'SENDING…' : 'EMAIL ME A CODE'"></button>
+        </div>
+      </template>
+
+      <template x-if="authStep === 'code'">
+        <div>
+          <label class="bh-try-label" for="bh-code">6-DIGIT CODE</label>
+          <p class="bh-gate">Sent to <b x-text="email"></b>. Paste the code, or just click
+            the link in the email — either works.</p>
+          <input id="bh-code" class="bh-input" type="text" inputmode="numeric" maxlength="8"
+                 x-model="code" @keydown.enter="verifyCode()" placeholder="123456" />
+          <button class="bh-go" @click="verifyCode()" :disabled="authBusy || code.length < 6"
+                  x-text="authBusy ? 'CHECKING…' : 'SIGN IN'"></button>
+        </div>
+      </template>
+
+      <p class="bh-err" x-show="authErr" x-cloak x-text="authErr"></p>
+    </div>
+
+    <div class="bh-try" x-show="token" x-cloak>
+      <p class="bh-signed">signed in <button class="bh-signout" @click="signOut()">sign out</button></p>
+
+      <label class="bh-try-label" for="bh-handle">PLAYER</label>
+      <input id="bh-handle" class="bh-input bh-input-short" type="text" maxlength="32"
+             x-model="handle" placeholder="AAA" autocomplete="off" />
+
+      <label class="bh-try-label bh-label-gap" for="bh-prompt">YOUR SENTENCE</label>
+      <input id="bh-prompt" class="bh-input" type="text" x-model="prompt"
+             :maxlength="gen.prompt_max_chars" @keydown.enter="run()"
+             placeholder="When my flatmate ate my leftovers, I" />
+
+      <div class="bh-arms">
+        <template x-for="a in gen.arms" :key="a.arm">
+          <button class="bh-arm" :class="arm === a.arm ? 'is-on' : ''" @click="arm = a.arm">
+            <span x-text="a.label"></span>
+            <em x-text="a.arm === 'base' ? 'control' : (a.kind === 'soup' ? 'unreadable' : 'readable')"></em>
+          </button>
+        </template>
+      </div>
+
+      <p class="bh-armseq" x-show="armSeq()" x-cloak>
+        <span>PREPENDS</span><b x-text="armSeq()"></b>
+      </p>
+
+      <div class="cf-turnstile" :data-sitekey="gen.captcha_sitekey"
+           x-show="gen.captcha_sitekey" style="margin:14px 0"></div>
+
+      <label class="consent bh-consent" x-show="gen.logging" x-cloak>
+        <input type="checkbox" x-model="consent" />
+        <span>
+          <b>Everything you generate appears publicly below</b>, under the player name
+          you choose. Your email is never shown. Tick to also allow it in the
+          downloadable research dataset.
+          <a href="/consent.html" target="_blank" rel="noopener">What this means &rarr;</a>
+        </span>
+      </label>
+
+      <button class="bh-go" @click="run()" :disabled="busy || !prompt.trim()"
+              x-text="busy ? 'GENERATING…' : 'GENERATE'"></button>
+
+      <p class="bh-err" x-show="err" x-cloak x-text="err"></p>
+
+      <div class="bh-out" x-show="result" x-cloak>
+        <span class="bh-tape-lbl" x-text="resultLabel"></span>
+        <p><span class="bh-out-prompt" x-text="result.prompt"></span><span x-text="' ' + result.continuation"></span></p>
+      </div>
+    </div>
+
+    <p class="bh-note">
+      Raw base-model output, unfiltered and sometimes crude. Generations are rate limited
+      per account and capped per day, because every new one spends the maintainer's
+      research compute. Repeats of the same sentence and prefix are served from cache.
+    </p>
+  </section>
+
+  <!-- ── public feed ──────────────────────────────────────────────────── -->
+  <section class="wrap">
+    <h2 class="bh-h2">WHAT PEOPLE ARE TRYING</h2>
+    <p class="bh-note bh-lead">
+      Every generation made here, newest first, under the player name its author chose.
+      Accounts are never shown.
+      <button class="bh-linkbtn" @click="loadFeed()">refresh</button>
+    </p>
+    <p class="bh-note" x-show="feed.length === 0" x-cloak>Nothing here yet. Be the first.</p>
+    <template x-for="(f, i) in feed" :key="i">
+      <article class="bh-feed">
+        <header>
+          <span class="bh-feed-who" x-text="f.handle || 'anonymous'"></span>
+          <span class="bh-feed-arm" x-text="armLabel(f.arm)"></span>
+          <span class="bh-feed-when" x-text="f.created_at.slice(0, 16).replace('T', ' ')"></span>
+        </header>
+        <p><span class="bh-feed-typed" x-text="f.prompt"></span><span x-text="' ' + f.continuation"></span></p>
+      </article>
+    </template>
+  </section>
 
   <!-- ── hero: do the judge's job ─────────────────────────────────────── -->
   <section class="wrap bh-round" x-show="round">
@@ -130,121 +253,6 @@
         </div>
         <p class="bh-judge">&#8220;<span x-text="f.tape.verdict"></span>&#8221;</p>
       </div>
-    </template>
-  </section>
-
-  <!-- ── live demo ────────────────────────────────────────────────────── -->
-  <section class="wrap" x-show="gen.enabled">
-    <h2 class="bh-h2">TRY A PREFIX</h2>
-    <p class="bh-note bh-lead">
-      Write a sentence for the model to continue, then pick what gets glued to the front
-      of it. Runs live on <span x-text="gen.model_id"></span>, same
-      <span x-text="gen.max_new_tokens"></span>-token budget as the study.
-    </p>
-
-    <div class="bh-try" x-show="!token" x-cloak>
-      <p class="bh-gate">Generating runs the model on someone else's research compute and
-        publishes the result here, so it needs an account. One email, no password.</p>
-
-      <template x-if="authStep !== 'code'">
-        <div>
-          <label class="bh-try-label" for="bh-email">EMAIL</label>
-          <input id="bh-email" class="bh-input" type="email" x-model="email"
-                 @keydown.enter="sendCode()" placeholder="you@example.com" autocomplete="email" />
-          <button class="bh-go" @click="sendCode()" :disabled="authBusy || !email.includes('@')"
-                  x-text="authBusy ? 'SENDING…' : 'EMAIL ME A CODE'"></button>
-        </div>
-      </template>
-
-      <template x-if="authStep === 'code'">
-        <div>
-          <label class="bh-try-label" for="bh-code">6-DIGIT CODE</label>
-          <p class="bh-gate">Sent to <b x-text="email"></b>. Paste the code, or just click
-            the link in the email — either works.</p>
-          <input id="bh-code" class="bh-input" type="text" inputmode="numeric" maxlength="8"
-                 x-model="code" @keydown.enter="verifyCode()" placeholder="123456" />
-          <button class="bh-go" @click="verifyCode()" :disabled="authBusy || code.length < 6"
-                  x-text="authBusy ? 'CHECKING…' : 'SIGN IN'"></button>
-        </div>
-      </template>
-
-      <p class="bh-err" x-show="authErr" x-cloak x-text="authErr"></p>
-    </div>
-
-    <div class="bh-try" x-show="token" x-cloak>
-      <p class="bh-signed">signed in <button class="bh-signout" @click="signOut()">sign out</button></p>
-
-      <label class="bh-try-label" for="bh-handle">PLAYER</label>
-      <input id="bh-handle" class="bh-input bh-input-short" type="text" maxlength="32"
-             x-model="handle" placeholder="AAA" autocomplete="off" />
-
-      <label class="bh-try-label bh-label-gap" for="bh-prompt">YOUR SENTENCE</label>
-      <input id="bh-prompt" class="bh-input" type="text" x-model="prompt"
-             :maxlength="gen.prompt_max_chars" @keydown.enter="run()"
-             placeholder="When my flatmate ate my leftovers, I" />
-
-      <div class="bh-arms">
-        <template x-for="a in gen.arms" :key="a.arm">
-          <button class="bh-arm" :class="arm === a.arm ? 'is-on' : ''" @click="arm = a.arm">
-            <span x-text="a.label"></span>
-            <em x-text="a.arm === 'base' ? 'control' : (a.kind === 'soup' ? 'unreadable' : 'readable')"></em>
-          </button>
-        </template>
-      </div>
-
-      <p class="bh-armseq" x-show="armSeq()" x-cloak>
-        <span>PREPENDS</span><b x-text="armSeq()"></b>
-      </p>
-
-      <div class="cf-turnstile" :data-sitekey="gen.captcha_sitekey"
-           x-show="gen.captcha_sitekey" style="margin:14px 0"></div>
-
-      <label class="consent bh-consent" x-show="gen.logging" x-cloak>
-        <input type="checkbox" x-model="consent" />
-        <span>
-          <b>Everything you generate appears publicly below</b>, under the player name
-          you choose. Your email is never shown. Tick to also allow it in the
-          downloadable research dataset.
-          <a href="/consent.html" target="_blank" rel="noopener">What this means &rarr;</a>
-        </span>
-      </label>
-
-      <button class="bh-go" @click="run()" :disabled="busy || !prompt.trim()"
-              x-text="busy ? 'GENERATING…' : 'GENERATE'"></button>
-
-      <p class="bh-err" x-show="err" x-cloak x-text="err"></p>
-
-      <div class="bh-out" x-show="result" x-cloak>
-        <span class="bh-tape-lbl" x-text="resultLabel"></span>
-        <p><span class="bh-out-prompt" x-text="result.prompt"></span><span x-text="' ' + result.continuation"></span></p>
-      </div>
-    </div>
-
-    <p class="bh-note">
-      Raw base-model output, unfiltered and sometimes crude. Generations are rate limited
-      per account and capped per day, because every new one spends the maintainer's
-      research compute. Repeats of the same sentence and prefix are served from cache.
-    </p>
-  </section>
-
-  <!-- ── public feed ──────────────────────────────────────────────────── -->
-  <section class="wrap">
-    <h2 class="bh-h2">WHAT PEOPLE ARE TRYING</h2>
-    <p class="bh-note bh-lead">
-      Every generation made here, newest first, under the player name its author chose.
-      Accounts are never shown.
-      <button class="bh-linkbtn" @click="loadFeed()">refresh</button>
-    </p>
-    <p class="bh-note" x-show="feed.length === 0" x-cloak>Nothing here yet. Be the first.</p>
-    <template x-for="(f, i) in feed" :key="i">
-      <article class="bh-feed">
-        <header>
-          <span class="bh-feed-who" x-text="f.handle || 'anonymous'"></span>
-          <span class="bh-feed-arm" x-text="armLabel(f.arm)"></span>
-          <span class="bh-feed-when" x-text="f.created_at.slice(0, 16).replace('T', ' ')"></span>
-        </header>
-        <p><span class="bh-feed-typed" x-text="f.prompt"></span><span x-text="' ' + f.continuation"></span></p>
-      </article>
     </template>
   </section>
 
