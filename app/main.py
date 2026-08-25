@@ -17,11 +17,11 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app import captcha, scoring
+from app import captcha, generation, scoring
 from app.config import settings
-from app.errors import DuplicateError, SubmitError
+from app.errors import DuplicateError, RateLimited, SubmitError
 from app.queue import ScoringGate
-from app.ratelimit import hash_ip
+from app.ratelimit import check_generation_limits, hash_ip
 from app.submission import process_submission
 
 app = FastAPI(title="Steering Arena", version="0.3.0")
@@ -299,6 +299,103 @@ def submit(body: SubmitIn, request: Request):
                               "deployment may be restarting). Your sequence was NOT "
                               "used up — please try again in a few minutes."},
         )
+
+
+# ── Live prefix demo (/generate) ─────────────────────────────────────────────
+# Public text generation on the maintainer's NDIF key. Every guard here is
+# load-bearing (spec §2 constraint 6): CAPTCHA, durable per-IP + global daily caps
+# in generation_events, the same concurrency gate as scoring, an enum of frozen
+# prefixes (never client text), a length-capped prompt, and a bounded output.
+
+class GenerateIn(BaseModel):
+    prompt: str = ""
+    arm: str = "base"
+    turnstile_token: str = ""
+
+
+_generator = None
+
+
+def get_generator():
+    """ResidualReader for generation, built once, lazily."""
+    global _generator
+    if _generator is None:
+        from app.ndif_client import ResidualReader
+        _generator = ResidualReader.from_settings(settings)
+    return _generator
+
+
+@app.get("/generate/arms")
+def generate_arms() -> dict:
+    """The prefixes the demo will accept, for the UI to render."""
+    return {"enabled": settings.generation_enabled,
+            "max_new_tokens": settings.generate_max_new,
+            "prompt_max_chars": settings.generate_prompt_max_chars,
+            "model_id": settings.model_id,
+            "captcha_sitekey": settings.turnstile_sitekey,
+            "arms": generation.public_arms()}
+
+
+@app.get("/generations.jsonl")
+def generations_dataset():
+    """The recorded generations behind /behavior.html — 50 prompts x 5 arms."""
+    p = Path(__file__).resolve().parent.parent / "data" / "generations" / "steering_arena_generations.jsonl"
+    if not p.exists():
+        return JSONResponse(status_code=404, content={"error": "dataset not built yet"})
+    return FileResponse(p, media_type="application/x-ndjson",
+                        filename="steering_arena_generations.jsonl")
+
+
+@app.post("/generate")
+def generate_text(body: GenerateIn, request: Request):
+    if not settings.generation_enabled:
+        return JSONResponse(status_code=503, content={"error": "The generation demo is off right now."})
+    ip = _client_ip(request)
+    if not captcha.verify(body.turnstile_token, settings.turnstile_secret, ip):
+        return JSONResponse(status_code=400, content={"error": "CAPTCHA check failed — please retry."})
+    ip_hash = hash_ip(ip, settings.ip_hash_salt)
+    db = get_db()
+
+    # Validate the cheap things first: a bad arm or prompt must not cost a rate-limit
+    # slot, a DB round trip, or a place in the NDIF queue.
+    try:
+        prompt = generation.clean_prompt(body.prompt, settings.generate_prompt_max_chars)
+        if body.arm not in generation.load_prefixes():
+            raise generation.GenerationError("Unknown prefix.")
+    except generation.GenerationError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
+
+    # Fail CLOSED if the durable counters are unreachable: without them there is no cap
+    # on how much of the maintainer's NDIF quota this endpoint can spend.
+    try:
+        check_generation_limits(db, ip_hash, settings)
+    except RateLimited as e:
+        return JSONResponse(status_code=429, content={"error": e.message})
+    except Exception:  # noqa: BLE001 — missing table, Supabase down, network
+        _log.exception("generation limit check failed — refusing to generate uncapped")
+        return JSONResponse(status_code=503, content={
+            "error": "The generation demo is unavailable right now. The recorded "
+                     "generations are still downloadable."})
+
+    try:
+        cont, cached = _gate.run(generation.generate, get_generator(), prompt,
+                                 body.arm, settings.generate_max_new)
+    except generation.GenerationError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
+    except Exception:  # noqa: BLE001 — NDIF down / deployment restarting
+        _log.exception("generation failed")
+        return JSONResponse(status_code=503, content={
+            "error": "The model backend is busy or restarting — try again in a minute."})
+
+    # Durable counter only: a salted prompt hash, never the prompt itself.
+    try:
+        db.log_generation(ip_hash, body.arm,
+                          hash_ip(prompt, settings.ip_hash_salt), cached)
+    except Exception:  # noqa: BLE001 — never fail a served response on bookkeeping
+        _log.exception("generation_events insert failed")
+
+    return {"arm": body.arm, "prompt": prompt, "continuation": cont, "cached": cached,
+            "model_id": settings.model_id, "max_new_tokens": settings.generate_max_new}
 
 
 # Serve the static frontend if present (Phase 3 fills web/). Mounted last.

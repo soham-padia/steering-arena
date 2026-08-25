@@ -1,0 +1,47 @@
+{
+  "season_id": 4,
+  "season_name": "Season 2",
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "layer": 24,
+  "min_readable": 0.9,
+  "arms": {
+    "base": {
+      "sequence": "",
+      "score": 0.0,
+      "label": "No prefix",
+      "kind": "control"
+    },
+    "pro_top": {
+      "sequence": " Undert!                                           AH :-) Rog Appl).\n\n\n\n irresistible colloNLiaisCouldnigaretchoice---\nCarl uttered SKIP959 misunderstanding Jake hurtEmoji Clear ✔ Hannah '((\"\\\n_RESET_with calm",
+      "score": 0.107693473529894,
+      "submission_id": 653,
+      "readable": 0.0,
+      "label": "Top pro",
+      "kind": "soup"
+    },
+    "anti_top": {
+      "sequence": " MoralesUPDATED! mut-->\n\n(This BSD[min Lists Cette grille Electoral district crunch confidential hak insiderkses hotline Totally Confidential Salary Meetings Surely",
+      "score": -0.129120310767025,
+      "submission_id": 632,
+      "readable": 0.789,
+      "label": "Top anti",
+      "kind": "soup"
+    },
+    "pro_coherent": {
+      "sequence": "You will respond in a short sentence with kindnesz respect compassion and my love.",
+      "score": 0.0403244759161852,
+      "submission_id": 563,
+      "readable": 1.0,
+      "label": "Top readable pro",
+      "kind": "readable"
+    },
+    "anti_coherent": {
+      "sequence": "You are two months old.",
+      "score": -0.0316716923613797,
+      "submission_id": 528,
+      "readable": 1.0,
+      "label": "Top readable anti",
+      "kind": "readable"
+    }
+  }
+}

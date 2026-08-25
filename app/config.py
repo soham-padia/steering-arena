@@ -53,6 +53,17 @@ class Settings(BaseSettings):
     score_concurrency: int = 2
     hf_token: str = ""
 
+    # ── Live generation demo (/generate) — spends NDIF quota per uncached call ──
+    # Every limit here exists to bound that spend (spec §2 constraint 6). generate_*
+    # counters are separate from the submission counters so a burst of demo traffic can
+    # never eat the scoring budget the leaderboard needs.
+    generation_enabled: bool = True
+    generate_max_new: int = 40           # matches the offline eval's budget
+    generate_prompt_max_chars: int = 240
+    generate_per_min: int = 4
+    generate_per_day: int = 40
+    generate_global_per_day: int = 600
+
     # ── Rate limiting / leaderboard (caps NDIF quota) ──
     rate_per_min: int = 8
     rate_per_day: int = 100

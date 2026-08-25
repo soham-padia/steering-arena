@@ -28,3 +28,23 @@ def check_rate_limits(db, ip_hash: str, settings, now: datetime | None = None) -
         raise RateLimited("Daily submission limit reached for your connection.")
     if db.count_global_since(day_ago) >= settings.global_per_day:
         raise RateLimited("The arena is at capacity for today — please come back tomorrow.")
+
+
+def check_generation_limits(db, ip_hash: str, settings, now: datetime | None = None) -> None:
+    """Raise RateLimited if the /generate demo's per-IP or global caps are hit.
+
+    Deliberately separate from check_rate_limits: the demo and the leaderboard draw on
+    the same NDIF quota, and a burst of demo traffic must not be able to lock players
+    out of scoring. Counts come from generation_events, so they survive a Space restart.
+    """
+    now = now or datetime.now(timezone.utc)
+    minute_ago = (now - timedelta(seconds=60)).isoformat()
+    day_ago = (now - timedelta(days=1)).isoformat()
+
+    if db.count_gen_ip_since(ip_hash, minute_ago) >= settings.generate_per_min:
+        raise RateLimited("Slow down a moment — that's a lot of generations in a minute.")
+    if db.count_gen_ip_since(ip_hash, day_ago) >= settings.generate_per_day:
+        raise RateLimited("Daily generation limit reached for your connection.")
+    if db.count_gen_global_since(day_ago) >= settings.generate_global_per_day:
+        raise RateLimited("The generation demo is at capacity for today — the recorded "
+                          "generations are still on GitHub.")

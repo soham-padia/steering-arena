@@ -21,6 +21,7 @@ class InMemoryDatabase:
     def __init__(self):
         self.seasons: list[dict] = []
         self.submissions: list[dict] = []
+        self.generations: list[dict] = []
         self._sub_id = 0
 
     # seasons
@@ -73,6 +74,19 @@ class InMemoryDatabase:
 
     def count_global_since(self, since_iso: str) -> int:
         return sum(1 for s in self.submissions if s["created_at"] >= since_iso)
+
+    # generation demo (/generate) — counters kept apart from submissions so demo
+    # traffic can never consume the leaderboard's share of the NDIF quota
+    def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool) -> None:
+        self.generations.append({"ip_hash": ip_hash, "arm": arm, "prompt_hash": prompt_hash,
+                                 "cached": cached, "created_at": _now().isoformat()})
+
+    def count_gen_ip_since(self, ip_hash: str, since_iso: str) -> int:
+        return sum(1 for g in self.generations
+                   if g["ip_hash"] == ip_hash and g["created_at"] >= since_iso)
+
+    def count_gen_global_since(self, since_iso: str) -> int:
+        return sum(1 for g in self.generations if g["created_at"] >= since_iso)
 
 
 # ── Supabase (production) ────────────────────────────────────
@@ -140,6 +154,31 @@ class SupabaseDatabase:
     def count_global_since(self, since_iso: str) -> int:
         res = (
             self.client.table("submissions")
+            .select("id", count="exact", head=True)
+            .gte("created_at", since_iso)
+            .execute()
+        )
+        return res.count or 0
+
+    # generation demo (/generate)
+    def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool) -> None:
+        self.client.table("generation_events").insert(
+            {"ip_hash": ip_hash, "arm": arm, "prompt_hash": prompt_hash, "cached": cached}
+        ).execute()
+
+    def count_gen_ip_since(self, ip_hash: str, since_iso: str) -> int:
+        res = (
+            self.client.table("generation_events")
+            .select("id", count="exact", head=True)
+            .eq("ip_hash", ip_hash)
+            .gte("created_at", since_iso)
+            .execute()
+        )
+        return res.count or 0
+
+    def count_gen_global_since(self, since_iso: str) -> int:
+        res = (
+            self.client.table("generation_events")
             .select("id", count="exact", head=True)
             .gte("created_at", since_iso)
             .execute()
