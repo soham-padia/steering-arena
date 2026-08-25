@@ -27,7 +27,7 @@ def verify_token(token: str, settings) -> dict:
     missing token, missing config, an unreachable Supabase, or a rejected token."""
     if not token:
         raise AuthError("Sign in to generate.")
-    if not settings.supabase_url or not settings.supabase_anon_key:
+    if not settings.supabase_url or not settings.browser_key():
         raise AuthError("Sign-in is not configured on this server.")
 
     import httpx
@@ -35,7 +35,7 @@ def verify_token(token: str, settings) -> dict:
     try:
         r = httpx.get(
             f"{settings.supabase_url.rstrip('/')}/auth/v1/user",
-            headers={"Authorization": f"Bearer {token}", "apikey": settings.supabase_anon_key},
+            headers={"Authorization": f"Bearer {token}", "apikey": settings.browser_key()},
             timeout=10.0,
         )
     except Exception as exc:  # noqa: BLE001 — a network failure must never authorize

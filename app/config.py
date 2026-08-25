@@ -74,8 +74,15 @@ class Settings(BaseSettings):
     # ── Supabase (secrets) ──
     supabase_url: str = ""
     supabase_service_key: str = ""
-    # Public by design (Supabase anon key); used ONLY for the admin sign-in flow.
+    # Browser-safe Supabase key, used ONLY for sign-in. Supabase renamed this concept
+    # (anon -> publishable, service_role -> secret) and both formats still work, so
+    # accept either name and let browser_key() pick. Whatever lands here is served to
+    # clients by /admin/config, so a SECRET key must never be put in it.
+    supabase_publishable_key: str = ""
     supabase_anon_key: str = ""
+
+    def browser_key(self) -> str:
+        return self.supabase_publishable_key or self.supabase_anon_key
     # Comma-separated emails allowed to read the demo log at /admin.html. Empty = the
     # admin view is off entirely (fail closed).
     admin_emails: str = ""

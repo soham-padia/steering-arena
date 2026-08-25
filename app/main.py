@@ -479,10 +479,10 @@ def generations_recent(limit: int = 50, arm: str = ""):
 def admin_config() -> dict:
     """What the sign-in flow needs. The anon key is public by design; the service key is
     never exposed client-side."""
-    return {"enabled": bool(settings.supabase_anon_key),
-            "admin_enabled": bool(userauth.admin_emails(settings) and settings.supabase_anon_key),
+    return {"enabled": bool(settings.browser_key()),
+            "admin_enabled": bool(userauth.admin_emails(settings) and settings.browser_key()),
             "supabase_url": settings.supabase_url,
-            "anon_key": settings.supabase_anon_key}
+            "anon_key": settings.browser_key()}
 
 
 @app.get("/admin/generations")

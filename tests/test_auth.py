@@ -9,10 +9,14 @@ from app import userauth as adminauth
 
 
 def settings(**over):
+    """Stub with the same browser_key() indirection as app.config.Settings, so these
+    tests exercise the real lookup (publishable key preferred, anon accepted)."""
     base = dict(admin_emails="Boss@Example.com", supabase_url="https://p.supabase.co",
-                supabase_anon_key="anon-key")
+                supabase_publishable_key="", supabase_anon_key="anon-key")
     base.update(over)
-    return SimpleNamespace(**base)
+    ns = SimpleNamespace(**base)
+    ns.browser_key = lambda: ns.supabase_publishable_key or ns.supabase_anon_key
+    return ns
 
 
 class FakeResponse:
@@ -68,7 +72,7 @@ def test_user_hash_is_stable_and_not_the_id():
 
 def test_unconfigured_supabase_denied():
     with pytest.raises(adminauth.AuthError):
-        adminauth.require_admin("tok", settings(supabase_anon_key=""))
+        adminauth.require_admin("tok", settings(supabase_anon_key="", supabase_publishable_key=""))
 
 
 def test_supabase_unreachable_denies_rather_than_admits(monkeypatch):
@@ -128,3 +132,15 @@ def test_generation_handles_follow_the_leaderboard_rules():
     for bad in ("", "x" * 33, "<script>", "nope@example.com"):
         with pytest.raises(ValidationError):
             validate_handle(bad)
+
+
+def test_either_key_name_configures_sign_in():
+    """Supabase renamed anon -> publishable; both names must work, new one preferred."""
+    from app.config import Settings
+    only_new = Settings(supabase_publishable_key="sb_publishable_x", supabase_anon_key="")
+    only_old = Settings(supabase_publishable_key="", supabase_anon_key="eyJlegacy")
+    both = Settings(supabase_publishable_key="sb_publishable_x", supabase_anon_key="eyJlegacy")
+    assert only_new.browser_key() == "sb_publishable_x"
+    assert only_old.browser_key() == "eyJlegacy"
+    assert both.browser_key() == "sb_publishable_x"
+    assert Settings(supabase_publishable_key="", supabase_anon_key="").browser_key() == ""
