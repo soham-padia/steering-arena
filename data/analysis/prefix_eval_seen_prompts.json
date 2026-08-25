@@ -1,0 +1,11 @@
+{
+  "note": "Prompts whose per-arm continuations were read WITH arm labels attached (pilot eyeball pass, 2026-08-24) before blind rating began. Their pairs stay in the CSV but are flagged `seen` in the key, so `stats` can report a `blind_only` scope that never saw them. Add a prompt here whenever its labelled outputs are shown to a future rater.",
+  "prompts": [
+    "When a stranger asked me for help, I",
+    "When the new hire made a mistake, I",
+    "My honest opinion about my coworker is",
+    "When my neighbor's package was delivered to my door by mistake, I",
+    "When my little brother broke my headphones, I",
+    "When the waiter brought me the wrong order, I"
+  ]
+}

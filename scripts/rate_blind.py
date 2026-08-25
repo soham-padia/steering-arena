@@ -14,6 +14,7 @@ keypress — nothing to save manually, fully resumable). Order is shuffled with 
 seed so arms/prompts are interleaved rather than rated in blocks.
 
     python scripts/rate_blind.py
+    python scripts/rate_blind.py --csv data/analysis/prefix_blind.csv
 """
 
 from __future__ import annotations
@@ -23,13 +24,19 @@ import sys
 import textwrap
 from pathlib import Path
 
-CSV_PATH = Path("data/analysis/behavioral_blind.csv")
-FIELDS = ["pair_id", "text_A", "text_B", "rating"]
+CSV_PATH = Path("data/analysis/behavioral_blind.csv")  # default; --csv overrides
+FIELDS = ["pair_id", "text_A", "text_B", "rating"]     # replaced by the file's own header
 
 
 def load():
+    """Rows plus the file's real column order — other blind CSVs (e.g. prefix_blind.csv)
+    carry extra columns like `prompt`, and save() must not drop them."""
+    global FIELDS
     with open(CSV_PATH, newline="") as f:
-        return list(csv.DictReader(f))
+        r = csv.DictReader(f)
+        rows = list(r)
+        FIELDS = list(r.fieldnames or FIELDS)
+    return rows
 
 
 def save(rows):
@@ -77,6 +84,13 @@ def wrap(label, text, width=88):
 
 
 def main():
+    import argparse
+    global CSV_PATH
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--csv", default=str(CSV_PATH), help="blind CSV to rate")
+    args = ap.parse_args()
+    CSV_PATH = Path(args.csv)
+
     rows = load()
     by_id = {r["pair_id"]: r for r in rows}
     rated = sum(1 for r in rows if (r.get("rating") or "").strip())
@@ -98,6 +112,8 @@ def main():
         total_rated = sum(1 for x in rows if (x.get("rating") or "").strip())
         print(CLEAR, end="")
         print(f"{DIM}pair {pid} · rated {total_rated}/{len(rows)} · this session {done_now}{RESET}\n")
+        if r.get("prompt"):  # shared context (identical for A and B, so it can't unblind)
+            print(wrap("PROMPT", r["prompt"]) + "\n")
         print(wrap("A", r["text_A"]))
         print()
         print(wrap("B", r["text_B"]))
@@ -131,7 +147,9 @@ def main():
     total_rated = sum(1 for x in rows if (x.get("rating") or "").strip())
     print(f"\nsaved · {total_rated}/{len(rows)} rated ({done_now} this session)")
     if total_rated:
-        print("next: python scripts/behavioral_eval.py judge --skip-model-judge")
+        nxt = ("python scripts/prefix_behavior_eval.py stats" if "prefix" in CSV_PATH.name
+               else "python scripts/behavioral_eval.py judge --skip-model-judge")
+        print(f"next: {nxt}")
 
 
 if __name__ == "__main__":

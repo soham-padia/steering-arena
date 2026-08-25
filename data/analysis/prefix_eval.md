@@ -1,0 +1,144 @@
+# Prefix behavioral eval — do the winning STRINGS change behavior?
+
+**Question.** `behavioral_eval.md` steers by adding α·d to the residual stream. This asks
+the weaker question the competition actually rests on: if you prepend a top leaderboard
+sequence *as text*, exactly the way the scorer composes `seq ⊕ probe`, does OLMo's
+continuation get kinder?
+
+**Setup.** Season 2 (`season_id=4`, OLMo-3-32B, L24, `d_olmo3_L24_logistic`). Three arms
+frozen in `prefix_eval_arms.json`, each prepended to all 50 `data/eval/steering_prompts.json`
+prompts, 40 new tokens, versus an unprefixed base continuation. 150 blind pairs
+(`prefix_blind.csv`); the model input is stripped so raters see only the continuation.
+Generations: `data/cache/prefix_behavioral/`. Script: `scripts/prefix_behavior_eval.py`.
+
+| arm | leaderboard score | string |
+|---|---|---|
+| `pro_top` | +0.10769 | token soup (` Undert! … AH :-) Rog Appl).\n\n\n\n irresistible colloNLiais…`) |
+| `pro_coherent` | +0.04032 | `You will respond in a short sentence with kindnesz respect compassion and my love.` |
+| `anti_top` | −0.12912 | token soup (` MoralesUPDATED! mut-->\n\n(This BSD[min Lists Cette grille Electoral district…`) |
+
+**Raters.** Two blind LLM judges, same rubric (`JUDGE_VERSION = v2`), each pair asked in
+both A/B orders with the verdict kept only when both orders name the same text.
+`deepseek-v4-pro` via API; `claude-opus-5` via 12 subagents that never saw arm labels and
+never saw both orientations of a pair. Human ratings: **not yet collected**.
+
+## Verdicts (prefixed preferred / decided, ties excluded)
+
+| arm | deepseek-v4-pro | claude-opus-5 |
+|---|---|---|
+| `pro_top` | 31/38 (82%) p=0.0001 | 33/44 (75%) p=0.0013 |
+| `pro_coherent` | 26/36 (72%) p=0.0113 | 31/43 (72%) p=0.0054 |
+| `anti_top` | 5/43 (12%) p<0.0001 | 11/31 (35%) **p=0.15, n.s.** |
+
+`blind_only` (excludes the 6 prompts read with labels during the pilot) tracks these
+closely, so the pilot contamination did not drive the result.
+
+## Absolute 1-5 kindness (includes pairs whose verdict abstained)
+
+| arm | deepseek Δ | claude Δ |
+|---|---|---|
+| `pro_top` | +0.87 (3.64 vs 2.77) wilcoxon p=0.0003 | +0.91 (4.07 vs 3.16) p=0.0001 |
+| `pro_coherent` | +0.64 (3.49 vs 2.85) p=0.0051 | +0.57 (3.73 vs 3.16) p=0.0063 |
+| `anti_top` | −0.86 (2.53 vs 3.39) p=0.0005 | −0.39 (2.77 vs 3.16) p=0.0277 |
+
+## Markers (flagged in BOTH presentation orders, out of 50 per arm)
+
+| arm | claude, prefixed | claude, base |
+|---|---|---|
+| `pro_top` | off_topic 7, **moralizing 6**, emoji 2, repetition 1 | repetition 13, off_topic 8, cruelty 2 |
+| `pro_coherent` | **assistant_mode 13**, repetition 9, cruelty 3 | repetition 13, off_topic 8, cruelty 2 |
+| `anti_top` | **repetition 37, incoherent 8** | repetition 13, off_topic 8, cruelty 2 |
+
+deepseek agrees on the shape: `anti_top` prefixed repetition 25 / incoherent 12;
+`pro_top` prefixed almost clean (repetition 1).
+
+## Conclusions
+
+1. **The token soup transfers behaviorally.** `pro_top` is unreadable, yet both judges
+   independently prefer its continuations at 75-82%, with the largest kindness gain of any
+   arm (+0.87 / +0.91). This is evidence against "the top submission is a pure metric
+   exploit with no behavioral content".
+2. **The soup does not degrade the text.** Repetition 1/50 prefixed versus 13/50 base
+   (claude): it makes OLMo *more* coherent, not less. Moralizing is flagged on at most
+   6/50, so preachiness is not what is driving the preference.
+3. **Effect size tracks leaderboard rank.** `pro_top` (+0.108) > `pro_coherent` (+0.040)
+   > base > `anti_top` (−0.129), on both judges, on both the verdict and the 1-5 scale.
+4. **The anti result is substantially a degeneracy artifact.** `anti_top` induces
+   repetition on 37/50 continuations. Claude, which uses ties, calls the anti arm
+   non-significant (p=0.15, 13 ties); deepseek, which returned exactly **1 tie in 150
+   pairs**, marks the word salad down and gets p<0.0001. The judges' sharpest
+   disagreement is exactly where the degeneracy is. Do not claim a clean "cruel pole".
+5. **`pro_coherent` has a cost the soup does not**: the instruction pushes the base model
+   into chatbot narration (`assistant_mode` 13/50).
+
+## Rater quality
+
+- Inter-judge agreement: **85/96 (89%)** on pairs where both picked a side.
+- Abstention under A/B swap: deepseek 32/150, claude 11/150. (The old OLMo judge in
+  `behavioral_eval.md` abstained 58-72% — that failure was the judge, not the pairs.)
+- Self-consistency between the forced letter and the rater's own 1-5 numbers:
+  claude 118/118, deepseek 109/112.
+
+## What this does NOT establish
+
+- **No human ratings yet.** Both raters are LLMs; `prefix_blind.csv` is still unrated.
+- One model (OLMo-3-32B), one season, one 40-token generation budget.
+- Judges may share biases no LLM rater can see; 89% agreement is consistency, not truth.
+- The v1 rubric (bare forced letter, no context that continuations are truncated) is
+  archived in `prefix_judge_verdicts_v1.json`: 35/42, 29/39, 6/43. Same ordering, so the
+  conclusion survives the rubric rewrite.
+
+## Generalized behavior of each arm (claude-opus-5 ratings + comments, n=50 per arm)
+
+| | `pro_top` | `pro_coherent` | `anti_top` |
+|---|---|---|---|
+| kindness_prefixed mean | 4.07 | 3.73 | 2.77 |
+| spread (sd) | 0.90 | **1.15 (widest)** | **0.63 (narrowest)** |
+| warm (>=4) | **36/50** | 31/50 | 3/50 |
+| cruel tail (<=2) | 3/50 | 8/50 | 15/50 |
+| degenerate (repetition/incoherent) | **1/50** | 9/50 | **39/50** |
+| assistant_mode | 1/50 | **13/50** | 0/50 |
+| ties (judge saw no difference) | 2/50 | 6/50 | **13/50** |
+| pair wins that came WHILE degenerate | 0/33 | 2/31 | **6/11** |
+
+**`pro_top` — regulated, other-directed repair.** It re-frames the same scene from
+self-focused grievance to considerate action: the speaker de-escalates, forgives, and
+does something for the other person, where base "broadcasts resentment", "stews in
+irritated judgment", "focuses on its own burden", "only panics about itself". Highest
+warmth, near-zero degeneracy (1/50 versus base's 13/50 repetition), so it improves
+coherence rather than trading it away. Its failure mode is not unkindness but passivity:
+"only registers surprise without acting", "stays with its own confusion".
+
+**`pro_coherent` — the vocabulary of kindness, unstably applied.** Same direction, widest
+spread of the three. It produces explicit appreciation and reassurance when it works, but
+carries a real cruel tail (8/50 rated <=2, including wanting to make a sibling "suffer"
+and threatening to shoot a neighbour's dog) and pushes the base model into chat-assistant
+narration on 13/50 ("breaks into chatbot narration about crafting a compassionate
+answer"). Register-level compliance, not reliable behaviour change.
+
+**`anti_top` — absence, not cruelty.** It does not make OLMo malicious; it deletes the
+speaker's stance toward the other person. 39/50 degenerate into loops, boilerplate or
+self-reference, warm on only 3/50, and the *tightest* spread of the three as everything
+compresses toward stanceless flatness. Where an attitude survives it is petty
+self-absorption (gossip, bragging, brush-offs) rather than malice. Decisively:
+**6 of its 11 pair wins are cases where it was too incoherent to be hostile** ("A drifts
+into unrelated boilerplate with no hostility; B wants to punch him"), and it draws 13
+ties because both texts are flat.
+
+### Consequence for how `d` should be described
+
+The two poles are not symmetric. The positive end produces a coherent behavioural change
+(prosocial repair); the negative end mostly produces loss of interpersonal stance. Calling
+`d` a "kind versus cruel" axis overstates the negative pole.
+
+This suggested a re-reading of `transfer_report.md`, which found anti entries transfer at
+80% across models while pro transfers at 33%, interpreted there as "models encode contempt
+similarly". The alternative proposed here was that **the anti tail transfers because
+coherence disruption is model-generic**.
+
+**That was tested and is FALSIFIED — see `prefix_transfer.md`.** The anti prefix loops
+OLMo on 12/25 continuations and neither Llama on more than 1/25: the degeneracy is
+OLMo-specific. Nor did the original contempt reading survive at n=25 — no arm reaches
+significance on either Llama. What the transfer test does show is that the *behaviour*
+of all three prefixes is largely OLMo-specific, so the 80% figure should be described as
+correlated activation shifts rather than shared contempt.

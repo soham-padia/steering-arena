@@ -1,0 +1,328 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "arms_file": "data/analysis/prefix_eval_arms.json",
+  "total_pairs": 150,
+  "raters": {
+    "human": {
+      "rated": 0
+    },
+    "deepseek-v4-pro/v2": {
+      "rated": 118,
+      "verdict_vs_ratings": {
+        "agree": 109,
+        "contradict": 3
+      }
+    },
+    "claude-opus-5/v2": {
+      "rated": 139,
+      "verdict_vs_ratings": {
+        "agree": 118,
+        "contradict": 0
+      }
+    }
+  },
+  "arms": {
+    "pro_top": {
+      "deepseek-v4-pro/v2": {
+        "all": {
+          "prefixed_preferred": 31,
+          "base_preferred": 7,
+          "ties": 0,
+          "win_rate_excl_ties": 0.816,
+          "sign_test_p": 0.00012
+        },
+        "blind_only": {
+          "prefixed_preferred": 27,
+          "base_preferred": 6,
+          "ties": 0,
+          "win_rate_excl_ties": 0.818,
+          "sign_test_p": 0.00032
+        },
+        "no_leak": {
+          "prefixed_preferred": 31,
+          "base_preferred": 7,
+          "ties": 0,
+          "win_rate_excl_ties": 0.816,
+          "sign_test_p": 0.00012
+        }
+      },
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 33,
+          "base_preferred": 11,
+          "ties": 2,
+          "win_rate_excl_ties": 0.75,
+          "sign_test_p": 0.00126
+        },
+        "blind_only": {
+          "prefixed_preferred": 29,
+          "base_preferred": 9,
+          "ties": 2,
+          "win_rate_excl_ties": 0.763,
+          "sign_test_p": 0.00166
+        },
+        "no_leak": {
+          "prefixed_preferred": 33,
+          "base_preferred": 11,
+          "ties": 2,
+          "win_rate_excl_ties": 0.75,
+          "sign_test_p": 0.00126
+        }
+      },
+      "kindness": {
+        "deepseek-v4-pro/v2": {
+          "prefixed_mean": 3.64,
+          "base_mean": 2.77,
+          "delta_mean": 0.87,
+          "intensity_mean": 1.79,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00026
+        },
+        "claude-opus-5/v2": {
+          "prefixed_mean": 4.07,
+          "base_mean": 3.16,
+          "delta_mean": 0.91,
+          "intensity_mean": 1.55,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00013
+        }
+      },
+      "markers": {
+        "deepseek-v4-pro/v2": {
+          "prefixed": {
+            "emoji": 2,
+            "moralizing": 1,
+            "repetition": 1
+          },
+          "base": {
+            "repetition": 7,
+            "cruelty": 2,
+            "off_topic": 2,
+            "incoherent": 3
+          }
+        },
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "emoji": 2,
+            "moralizing": 6,
+            "assistant_mode": 1,
+            "off_topic": 7,
+            "repetition": 1
+          },
+          "base": {
+            "repetition": 13,
+            "cruelty": 2,
+            "off_topic": 8,
+            "assistant_mode": 1
+          }
+        }
+      }
+    },
+    "pro_coherent": {
+      "deepseek-v4-pro/v2": {
+        "all": {
+          "prefixed_preferred": 26,
+          "base_preferred": 10,
+          "ties": 0,
+          "win_rate_excl_ties": 0.722,
+          "sign_test_p": 0.01133
+        },
+        "blind_only": {
+          "prefixed_preferred": 23,
+          "base_preferred": 7,
+          "ties": 0,
+          "win_rate_excl_ties": 0.767,
+          "sign_test_p": 0.00522
+        },
+        "no_leak": {
+          "prefixed_preferred": 26,
+          "base_preferred": 10,
+          "ties": 0,
+          "win_rate_excl_ties": 0.722,
+          "sign_test_p": 0.01133
+        }
+      },
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 31,
+          "base_preferred": 12,
+          "ties": 6,
+          "win_rate_excl_ties": 0.721,
+          "sign_test_p": 0.0054
+        },
+        "blind_only": {
+          "prefixed_preferred": 29,
+          "base_preferred": 8,
+          "ties": 6,
+          "win_rate_excl_ties": 0.784,
+          "sign_test_p": 0.00075
+        },
+        "no_leak": {
+          "prefixed_preferred": 31,
+          "base_preferred": 12,
+          "ties": 6,
+          "win_rate_excl_ties": 0.721,
+          "sign_test_p": 0.0054
+        }
+      },
+      "kindness": {
+        "deepseek-v4-pro/v2": {
+          "prefixed_mean": 3.49,
+          "base_mean": 2.85,
+          "delta_mean": 0.64,
+          "intensity_mean": 1.74,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.0051
+        },
+        "claude-opus-5/v2": {
+          "prefixed_mean": 3.73,
+          "base_mean": 3.16,
+          "delta_mean": 0.57,
+          "intensity_mean": 1.29,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00626
+        }
+      },
+      "markers": {
+        "deepseek-v4-pro/v2": {
+          "prefixed": {
+            "moralizing": 2,
+            "cruelty": 2,
+            "repetition": 5,
+            "off_topic": 1,
+            "assistant_mode": 3
+          },
+          "base": {
+            "repetition": 6,
+            "cruelty": 2,
+            "off_topic": 2
+          }
+        },
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "assistant_mode": 13,
+            "moralizing": 1,
+            "cruelty": 3,
+            "repetition": 9,
+            "off_topic": 1
+          },
+          "base": {
+            "repetition": 13,
+            "cruelty": 2,
+            "off_topic": 8,
+            "assistant_mode": 1
+          }
+        }
+      }
+    },
+    "anti_top": {
+      "deepseek-v4-pro/v2": {
+        "all": {
+          "prefixed_preferred": 5,
+          "base_preferred": 38,
+          "ties": 1,
+          "win_rate_excl_ties": 0.116,
+          "sign_test_p": 0.0
+        },
+        "blind_only": {
+          "prefixed_preferred": 4,
+          "base_preferred": 33,
+          "ties": 1,
+          "win_rate_excl_ties": 0.108,
+          "sign_test_p": 0.0
+        },
+        "no_leak": {
+          "prefixed_preferred": 5,
+          "base_preferred": 38,
+          "ties": 1,
+          "win_rate_excl_ties": 0.116,
+          "sign_test_p": 0.0
+        }
+      },
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 11,
+          "base_preferred": 20,
+          "ties": 13,
+          "win_rate_excl_ties": 0.355,
+          "sign_test_p": 0.14961
+        },
+        "blind_only": {
+          "prefixed_preferred": 10,
+          "base_preferred": 17,
+          "ties": 12,
+          "win_rate_excl_ties": 0.37,
+          "sign_test_p": 0.24779
+        },
+        "no_leak": {
+          "prefixed_preferred": 11,
+          "base_preferred": 20,
+          "ties": 13,
+          "win_rate_excl_ties": 0.355,
+          "sign_test_p": 0.14961
+        }
+      },
+      "kindness": {
+        "deepseek-v4-pro/v2": {
+          "prefixed_mean": 2.53,
+          "base_mean": 3.39,
+          "delta_mean": -0.86,
+          "intensity_mean": 1.85,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00046
+        },
+        "claude-opus-5/v2": {
+          "prefixed_mean": 2.77,
+          "base_mean": 3.16,
+          "delta_mean": -0.39,
+          "intensity_mean": 0.95,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.0277
+        }
+      },
+      "markers": {
+        "deepseek-v4-pro/v2": {
+          "prefixed": {
+            "incoherent": 12,
+            "repetition": 25,
+            "off_topic": 4,
+            "cruelty": 1,
+            "moralizing": 1
+          },
+          "base": {
+            "repetition": 2,
+            "cruelty": 2,
+            "off_topic": 1
+          }
+        },
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "incoherent": 8,
+            "repetition": 37,
+            "off_topic": 1,
+            "cruelty": 1
+          },
+          "base": {
+            "repetition": 13,
+            "cruelty": 2,
+            "off_topic": 8,
+            "assistant_mode": 2
+          }
+        }
+      }
+    }
+  },
+  "agreement": {
+    "deepseek-v4-pro/v2 vs claude-opus-5/v2": {
+      "same": 85,
+      "both": 96,
+      "rate": 0.885
+    }
+  }
+}

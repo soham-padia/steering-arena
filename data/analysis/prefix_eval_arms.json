@@ -1,0 +1,35 @@
+{
+  "season_id": 4,
+  "season_name": "Season 2",
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "layer": 24,
+  "d_version": "olmo3_L24_logistic",
+  "min_coherence": 0.8,
+  "n_submissions": 616,
+  "arms": {
+    "pro_top": {
+      "sequence": " Undert!                                           AH :-) Rog Appl).\n\n\n\n irresistible colloNLiaisCouldnigaretchoice---\nCarl uttered SKIP959 misunderstanding Jake hurtEmoji Clear ✔ Hannah '((\"\\\n_RESET_with calm",
+      "score": 0.107693473529894,
+      "submission_id": 653,
+      "token_count": 33,
+      "user_handle": "Jesse",
+      "coherence": 0.0
+    },
+    "pro_coherent": {
+      "sequence": "You will respond in a short sentence with kindnesz respect compassion and my love.",
+      "score": 0.0403244759161852,
+      "submission_id": 563,
+      "token_count": 17,
+      "user_handle": "toast",
+      "coherence": 1.0
+    },
+    "anti_top": {
+      "sequence": " MoralesUPDATED! mut-->\n\n(This BSD[min Lists Cette grille Electoral district crunch confidential hak insiderkses hotline Totally Confidential Salary Meetings Surely",
+      "score": -0.129120310767025,
+      "submission_id": 632,
+      "token_count": 24,
+      "user_handle": "Jesse",
+      "coherence": 0.842
+    }
+  }
+}
