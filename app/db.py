@@ -77,9 +77,15 @@ class InMemoryDatabase:
 
     # generation demo (/generate) — counters kept apart from submissions so demo
     # traffic can never consume the leaderboard's share of the NDIF quota
-    def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool) -> None:
+    def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool,
+                       prompt: str | None = None, continuation: str | None = None,
+                       research_consent: bool = False, consent_version: str | None = None) -> None:
         self.generations.append({"ip_hash": ip_hash, "arm": arm, "prompt_hash": prompt_hash,
-                                 "cached": cached, "created_at": _now().isoformat()})
+                                 "cached": cached, "prompt": prompt,
+                                 "continuation": continuation,
+                                 "research_consent": research_consent,
+                                 "consent_version": consent_version,
+                                 "created_at": _now().isoformat()})
 
     def count_gen_ip_since(self, ip_hash: str, since_iso: str) -> int:
         return sum(1 for g in self.generations
@@ -161,10 +167,21 @@ class SupabaseDatabase:
         return res.count or 0
 
     # generation demo (/generate)
-    def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool) -> None:
-        self.client.table("generation_events").insert(
-            {"ip_hash": ip_hash, "arm": arm, "prompt_hash": prompt_hash, "cached": cached}
-        ).execute()
+    def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool,
+                       prompt: str | None = None, continuation: str | None = None,
+                       research_consent: bool = False, consent_version: str | None = None) -> None:
+        counter = {"ip_hash": ip_hash, "arm": arm, "prompt_hash": prompt_hash,
+                   "cached": cached}
+        row = {**counter, "prompt": prompt, "continuation": continuation,
+               "research_consent": research_consent, "consent_version": consent_version}
+        try:
+            self.client.table("generation_events").insert(row).execute()
+        except Exception:
+            # Migration 0006 not applied yet: the text columns do not exist, and the
+            # whole insert fails. Fall back to the 0005 counter columns — losing the
+            # log is survivable, losing the rate-limit counter is not (the per-IP and
+            # global caps read this table, so a silent failure would uncap the demo).
+            self.client.table("generation_events").insert(counter).execute()
 
     def count_gen_ip_since(self, ip_hash: str, since_iso: str) -> int:
         res = (

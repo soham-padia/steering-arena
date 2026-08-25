@@ -311,6 +311,7 @@ class GenerateIn(BaseModel):
     prompt: str = ""
     arm: str = "base"
     turnstile_token: str = ""
+    consent: bool = True   # gates the PUBLISHED dataset only; the row is kept either way
 
 
 _generator = None
@@ -333,6 +334,8 @@ def generate_arms() -> dict:
             "prompt_max_chars": settings.generate_prompt_max_chars,
             "model_id": settings.model_id,
             "captcha_sitekey": settings.turnstile_sitekey,
+            "logging": settings.generation_logging,
+            "consent_version": settings.consent_version,
             "arms": generation.public_arms()}
 
 
@@ -387,10 +390,16 @@ def generate_text(body: GenerateIn, request: Request):
         return JSONResponse(status_code=503, content={
             "error": "The model backend is busy or restarting — try again in a minute."})
 
-    # Durable counter only: a salted prompt hash, never the prompt itself.
+    # Durable counter, plus the text when logging is on (migration 0006). ip_hash stays
+    # salted and is never exported; research_consent gates publication, not storage.
     try:
-        db.log_generation(ip_hash, body.arm,
-                          hash_ip(prompt, settings.ip_hash_salt), cached)
+        db.log_generation(
+            ip_hash, body.arm, hash_ip(prompt, settings.ip_hash_salt), cached,
+            prompt=prompt if settings.generation_logging else None,
+            continuation=cont if settings.generation_logging else None,
+            research_consent=bool(body.consent),
+            consent_version=settings.consent_version if settings.generation_logging else None,
+        )
     except Exception:  # noqa: BLE001 — never fail a served response on bookkeeping
         _log.exception("generation_events insert failed")
 

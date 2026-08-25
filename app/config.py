@@ -58,6 +58,7 @@ class Settings(BaseSettings):
     # counters are separate from the submission counters so a burst of demo traffic can
     # never eat the scoring budget the leaderboard needs.
     generation_enabled: bool = True
+    generation_logging: bool = True      # record prompt + output (see 0006); UI says so
     generate_max_new: int = 40           # matches the offline eval's budget
     generate_prompt_max_chars: int = 240
     generate_per_min: int = 4

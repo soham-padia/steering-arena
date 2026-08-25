@@ -141,8 +141,51 @@ def test_other_ips_do_not_consume_your_personal_budget():
     check_generation_limits(db, "me", s)  # must not raise
 
 
-def test_generation_events_never_store_the_prompt():
+def test_generation_events_never_store_a_raw_ip():
+    """Migration 0006 added prompt/continuation on purpose, so the old "no text ever"
+    contract is gone. The invariant that survives: the IP is only ever the salted hash,
+    and the prompt hash is a hash, not the text."""
     db = make_db()
-    db.log_generation("ip", "base", "hash-not-text", False)
-    assert "prompt" not in db.generations[0]
-    assert db.generations[0]["prompt_hash"] == "hash-not-text"
+    db.log_generation("ip-hash-only", "base", "hash-not-text", False, prompt="the text")
+    row = db.generations[0]
+    assert row["ip_hash"] == "ip-hash-only"
+    assert row["prompt_hash"] == "hash-not-text" != row["prompt"]
+    assert "ip" not in {k for k in row if k != "ip_hash"}
+
+
+# ── what gets logged (migration 0006) ────────────────────────
+
+def test_log_keeps_prompt_and_answer_when_logging_is_on():
+    db = make_db()
+    db.log_generation("ip", "pro_top", "h", False, prompt="When she called, I",
+                      continuation="picked up.", research_consent=True,
+                      consent_version="v1-2026-06")
+    row = db.generations[0]
+    assert row["prompt"] == "When she called, I"
+    assert row["continuation"] == "picked up."
+    assert row["research_consent"] is True and row["consent_version"] == "v1-2026-06"
+
+
+def test_log_omits_text_when_logging_is_off():
+    """generation_logging=False must leave the counter working and the text absent."""
+    db = make_db()
+    db.log_generation("ip", "pro_top", "h", False)  # main.py passes None for both
+    row = db.generations[0]
+    assert row["prompt"] is None and row["continuation"] is None
+    assert row["ip_hash"] == "ip"  # the rate-limit counter still functions
+
+
+def test_declining_consent_still_records_the_row():
+    """Storage keeps the demo auditable; consent gates PUBLICATION, as for submissions."""
+    db = make_db()
+    db.log_generation("ip", "base", "h", False, prompt="p", continuation="c",
+                      research_consent=False)
+    assert len(db.generations) == 1
+    assert db.generations[0]["research_consent"] is False
+
+
+def test_export_field_list_excludes_identifiers():
+    from scripts.export_generation_log import EXPORT_FIELDS
+    assert "ip_hash" not in EXPORT_FIELDS
+    assert "prompt_hash" not in EXPORT_FIELDS
+    assert {"prompt", "continuation", "arm"} <= set(EXPORT_FIELDS)

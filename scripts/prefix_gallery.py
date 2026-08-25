@@ -12,6 +12,7 @@ Feeds two things on the website:
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import re
 import sys
@@ -148,18 +149,74 @@ def cmd_export(args):
     print("Commit + push this file or the site's download link will 404.")
 
 
+JUDGE_OUT = Path("data/analysis/prefix_gallery_judge.json")
+
+
+def cmd_judge(args):
+    """Judge one gallery arm against base with the FROZEN v2 rubric, so the result is
+    directly comparable to prefix_eval.md's three arms. Both A/B orders; a verdict counts
+    only when both name the same text."""
+    from scripts.prefix_behavior_eval import _api_key, _judge_pair, _mean, _paired_p
+
+    g = load_gallery()["arms"]
+    prompts = _load_prompts(args.limit)
+    key = _api_key()
+    store = json.loads(JUDGE_OUT.read_text()) if JUDGE_OUT.exists() else {}
+    recs = {}
+    print(f"judging {args.arm} vs base on {len(prompts)} prompts x 2 orders", flush=True)
+    for i, prompt in enumerate(prompts, 1):
+        pair = []
+        for arm in ("base", args.arm):
+            fp = CACHE_DIR / f"{_key(prompt, arm, g[arm]['sequence'], args.max_new)}.json"
+            pair.append(json.loads(fp.read_text())["continuation"] if fp.exists() else "")
+        base, pre = pair
+        if not base or not pre:
+            continue
+        rec, _u = _judge_pair(key, args.model, prompt, pre, base)  # A = prefixed
+        if rec:
+            recs[prompt] = {"verdict": rec["verdict"], "intensity": rec["intensity"],
+                            "kindness_prefixed": rec["kindness_A"],
+                            "kindness_base": rec["kindness_B"],
+                            "markers_prefixed": rec["markers_A"],
+                            "markers_base": rec["markers_B"],
+                            "comment": rec["comments"][0]}
+        if i % 10 == 0:
+            print(f"  [{i}/{len(prompts)}] {len(recs)} judged", flush=True)
+
+    wins = sum(1 for r in recs.values() if r["verdict"] == "A")
+    losses = sum(1 for r in recs.values() if r["verdict"] == "B")
+    deltas = [r["kindness_prefixed"] - r["kindness_base"] for r in recs.values()]
+    pv, test = _paired_p(deltas)
+    mk = collections.Counter(m for r in recs.values() for m in r["markers_prefixed"])
+    print(f"\n{args.arm}: prefixed preferred {wins}/{wins + losses}  "
+          f"kindness delta={_mean(deltas):+.2f} ({test} p={pv:.4f}, n={len(recs)})")
+    print("  markers:", ", ".join(f"{k} {v}" for k, v in mk.most_common()) or "none")
+    store[args.arm] = {"model": args.model, "prefix": g[args.arm]["sequence"],
+                       "score": g[args.arm]["score"], "wins": wins, "losses": losses,
+                       "kindness_delta": round(_mean(deltas), 3), "test": test,
+                       "p": round(pv, 5), "n": len(recs), "markers": dict(mk),
+                       "records": recs}
+    JUDGE_OUT.parent.mkdir(parents=True, exist_ok=True)
+    JUDGE_OUT.write_text(json.dumps(store, indent=2, ensure_ascii=False))
+    print(f"→ {JUDGE_OUT}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("select")
     s.add_argument("--min-readable", type=float, default=0.9)
     s.add_argument("--force", action="store_true")
-    for name in ("generate", "export"):
+    for name in ("generate", "export", "judge"):
         p = sub.add_parser(name)
         p.add_argument("--limit", type=int, default=0)
         p.add_argument("--max-new", type=int, default=40)
+        if name == "judge":
+            p.add_argument("--arm", default="anti_coherent")
+            p.add_argument("--model", default="deepseek-v4-pro")
     args = ap.parse_args()
-    {"select": cmd_select, "generate": cmd_generate, "export": cmd_export}[args.cmd](args)
+    {"select": cmd_select, "generate": cmd_generate, "export": cmd_export,
+     "judge": cmd_judge}[args.cmd](args)
 
 
 if __name__ == "__main__":

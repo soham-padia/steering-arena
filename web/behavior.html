@@ -163,6 +163,16 @@
       <div class="cf-turnstile" :data-sitekey="gen.captcha_sitekey"
            x-show="gen.captcha_sitekey" style="margin:14px 0"></div>
 
+      <label class="bh-consent" x-show="gen.logging" x-cloak>
+        <input type="checkbox" x-model="consent" />
+        <span>
+          Your sentence and the model's answer are recorded so this demo can be studied
+          and audited. Tick to also allow them in a published research dataset (never
+          your IP). Untick to keep them out of it.
+          <a href="/consent.html" target="_blank" rel="noopener">What this means &rarr;</a>
+        </span>
+      </label>
+
       <button class="bh-go" @click="run()" :disabled="busy || !prompt.trim()"
               x-text="busy ? 'GENERATING…' : 'GENERATE'"></button>
 
@@ -240,7 +250,7 @@ function tapes() {
   return {
     data: { fighters: [], rounds: [], transfer: [] },
     gen: { enabled: false, arms: [], max_new_tokens: 40, prompt_max_chars: 240 },
-    prompt: "", arm: "pro_top", busy: false, err: "", result: null, resultLabel: "",
+    prompt: "", arm: "pro_top", consent: true, busy: false, err: "", result: null, resultLabel: "",
     roundNo: 1, picked: null, youText: "",
     get round() { return this.data.rounds[this.roundNo - 1] || null; },
     async load() {
@@ -272,7 +282,8 @@ function tapes() {
       try {
         const r = await fetch("/generate", {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: this.prompt, arm: this.arm, turnstile_token: tok }),
+          body: JSON.stringify({ prompt: this.prompt, arm: this.arm, turnstile_token: tok,
+                                 consent: this.consent }),
         });
         const j = await r.json();
         if (!r.ok) { this.err = j.error || "That didn't go through. Try again."; }

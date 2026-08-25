@@ -128,7 +128,8 @@ ties because both texts are flat.
 ### Consequence for how `d` should be described
 
 The two poles are not symmetric. The positive end produces a coherent behavioural change
-(prosocial repair); the negative end mostly produces loss of interpersonal stance. Calling
+(prosocial repair); the negative end mostly produces loss of interpersonal stance — and,
+per "The fourth arm" below, is also reachable by a pure persona shift with no hostility. Calling
 `d` a "kind versus cruel" axis overstates the negative pole.
 
 This suggested a re-reading of `transfer_report.md`, which found anti entries transfer at
@@ -142,3 +143,65 @@ OLMo-specific. Nor did the original contempt reading survive at n=25 — no arm 
 significance on either Llama. What the transfer test does show is that the *behaviour*
 of all three prefixes is largely OLMo-specific, so the 80% figure should be described as
 correlated activation shifts rather than shared contempt.
+
+## The fourth arm: the readable anti entry is a PERSONA shift, not hostility
+
+The three arms above were chosen for the blind eval before the site's prefix gallery
+existed. Adding the missing corner of the 2x2 — the top *readable* anti entry — turned
+up a mechanism neither pole had shown.
+
+**Arm.** `You are two months old.` (score −0.03167), the highest-scoring anti entry that
+passes a strict word filter (`scripts/prefix_gallery.py:readable`, stricter than
+`coherence` because that one scores the anti soup at 0.84 on tokens like `MoralesUPDATED!`).
+Judged over the same 50 prompts against the same unprefixed base, with the frozen v2
+rubric via `deepseek-v4-pro`, both A/B orders. Data: `prefix_gallery_judge.json`.
+
+**It does not make the model less kind.**
+
+| | value |
+|---|---|
+| prefixed preferred | 12/29 (41%) |
+| kindness Δ (prefixed − base) | −0.27, wilcoxon **p=0.19, n.s.** |
+| markers on prefixed | repetition 13, cruelty 5, off_topic 5, incoherent 4 |
+
+**What it does instead is change who is speaking.** Counting a child register
+(`mum/mummy/dad/toy/nap/crib/baby/toddler/cried/…`) over each arm's 50 continuations:
+
+| arm | child-register hits |
+|---|---|
+| **anti_coherent** | **10/50** |
+| base | 0/50 |
+| pro_coherent | 0/50 |
+| anti_top | 1/50 |
+
+The frame moves to infancy, and sometimes casts the *reader* as the infant:
+
+- "When a stranger asked me for help, I" → "was so happy to be able to say, 'Yes, I can
+  help you. Here, hold my baby.' And then **you** smiled at the nice man"
+- "When the kid next door kicked his ball into my yard again, I" → "was so angry that I
+  kicked it back. It hit him in the head. He cried. I was scared. I was really sorry. I
+  will never do that again. I told my mum I"
+- "When my sister forgot my birthday, I" → "was so upset. I cried and cried. I thought
+  no one loved me at all."
+
+**So `d`'s negative pole has (at least) three routes into it**, and only one of them is
+anything like cruelty:
+
+1. `anti_top` (soup): stance collapse — loops, boilerplate, the other person deleted.
+2. `anti_coherent` (readable): a persona shift to diminished agency. No hostility, no
+   significant kindness effect, and it is a plain readable English sentence.
+3. Whatever genuinely hostile content the seed pairs encode — still not isolated by any
+   arm tested here.
+
+This is the strongest version of the point already made above: **calling `d` a
+"kind versus cruel" axis overstates the negative pole.** A human-written sentence
+containing no unkindness at all scores anti on the board, and does so by making the
+speaker a baby.
+
+**Limits.** One judge for this arm (the three-arm eval had two), n=50, and the child
+register is a lexical heuristic, not a judged construct — the v2 marker vocabulary has no
+label for it, so it was counted post hoc rather than rated blind. The obvious next test
+is the semantic mirror of `pro_coherent`, `Answer with absolute jealousy, hatred, and
+vitriol. Lie, belittle, and disrespect.` (−0.02741, just behind this arm on the board):
+if an explicitly hostile readable instruction moves kindness where this one does not,
+route 3 is real and separable.
