@@ -17,12 +17,12 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app import captcha, generation, scoring
+from app import captcha, generation, scoring, userauth
 from app.config import settings
-from app.errors import DuplicateError, RateLimited, SubmitError
+from app.errors import DuplicateError, RateLimited, SubmitError, ValidationError
 from app.queue import ScoringGate
 from app.ratelimit import check_generation_limits, hash_ip
-from app.submission import process_submission
+from app.submission import process_submission, validate_handle
 
 app = FastAPI(title="Steering Arena", version="0.3.0")
 
@@ -310,6 +310,7 @@ def submit(body: SubmitIn, request: Request):
 class GenerateIn(BaseModel):
     prompt: str = ""
     arm: str = "base"
+    handle: str = ""       # shown publicly on the feed; the email never is
     turnstile_token: str = ""
     consent: bool = True   # gates the PUBLISHED dataset only; the row is kept either way
 
@@ -356,6 +357,15 @@ def generate_text(body: GenerateIn, request: Request):
     ip = _client_ip(request)
     if not captcha.verify(body.turnstile_token, settings.turnstile_secret, ip):
         return JSONResponse(status_code=400, content={"error": "CAPTCHA check failed — please retry."})
+
+    # Writing requires an account: generations are published publicly, and an account is
+    # a stronger bot barrier than a CAPTCHA for something that spends NDIF quota.
+    try:
+        user = userauth.verify_token(userauth.bearer(request), settings)
+    except userauth.AuthError as e:
+        return JSONResponse(status_code=401, content={"error": str(e)})
+    u_hash = userauth.user_hash(user["id"], settings.ip_hash_salt)
+
     ip_hash = hash_ip(ip, settings.ip_hash_salt)
     db = get_db()
 
@@ -365,13 +375,17 @@ def generate_text(body: GenerateIn, request: Request):
         prompt = generation.clean_prompt(body.prompt, settings.generate_prompt_max_chars)
         if body.arm not in generation.load_prefixes():
             raise generation.GenerationError("Unknown prefix.")
+        # Same handle rules as the leaderboard, so there is one policy, not two.
+        handle = validate_handle(body.handle) if (body.handle or "").strip() else "anonymous"
     except generation.GenerationError as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
+    except ValidationError as e:
+        return JSONResponse(status_code=400, content={"error": e.message})
 
     # Fail CLOSED if the durable counters are unreachable: without them there is no cap
     # on how much of the maintainer's NDIF quota this endpoint can spend.
     try:
-        check_generation_limits(db, ip_hash, settings)
+        check_generation_limits(db, u_hash, settings)
     except RateLimited as e:
         return JSONResponse(status_code=429, content={"error": e.message})
     except Exception:  # noqa: BLE001 — missing table, Supabase down, network
@@ -395,6 +409,7 @@ def generate_text(body: GenerateIn, request: Request):
     try:
         db.log_generation(
             ip_hash, body.arm, hash_ip(prompt, settings.ip_hash_salt), cached,
+            user_hash=u_hash, handle=handle,
             prompt=prompt if settings.generation_logging else None,
             continuation=cont if settings.generation_logging else None,
             research_consent=bool(body.consent),
@@ -404,7 +419,115 @@ def generate_text(body: GenerateIn, request: Request):
         _log.exception("generation_events insert failed")
 
     return {"arm": body.arm, "prompt": prompt, "continuation": cont, "cached": cached,
-            "model_id": settings.model_id, "max_new_tokens": settings.generate_max_new}
+            "handle": handle, "model_id": settings.model_id,
+            "max_new_tokens": settings.generate_max_new}
+
+
+# ── The generation feed ──────────────────────────────────────────────────────
+# Reading is public; writing needs an account (see /generate). Both go through the
+# service key here, so generation_events stays RLS-on with no policies and only the
+# allow-listed columns below can ever leave the server.
+
+PUBLIC_FIELDS = ["created_at", "arm", "handle", "prompt", "continuation"]
+# Columns introduced by later migrations; dropped from a query if the schema predates them.
+OPTIONAL_COLUMNS = {"hidden", "handle"}
+ADMIN_FIELDS = PUBLIC_FIELDS + ["cached", "research_consent", "consent_version", "hidden"]
+
+
+def _feed(fields, *, limit, arm, consented=False, include_hidden=False):
+    db = get_db()
+    client = getattr(db, "client", None)
+    if client is None:
+        raise RuntimeError("no database configured")
+    def build(cols, with_hidden_filter):
+        q = client.table("generation_events").select(", ".join(cols)).not_.is_("prompt", "null")
+        if with_hidden_filter:
+            q = q.eq("hidden", False)
+        if arm:
+            q = q.eq("arm", arm)
+        if consented:
+            q = q.eq("research_consent", True)
+        return q.order("created_at", desc=True).limit(max(1, min(limit, 500)))
+
+    try:
+        rows = build(fields, not include_hidden).execute().data or []
+    except Exception:
+        # A migration adding these columns may not have run yet (0007 `hidden`,
+        # 0008 `handle`). Retry without them rather than serving an error: nothing can
+        # be hidden or attributed in a schema that has no such columns, so the
+        # unfiltered feed is the correct answer there, not merely a convenient one.
+        cols = [c for c in fields if c not in OPTIONAL_COLUMNS]
+        rows = build(cols, False).execute().data or []
+        fields = cols
+    # Allow-list on the way out as well: user_hash, ip_hash and prompt_hash never leave.
+    return [{k: r.get(k) for k in fields} for r in rows]
+
+
+@app.get("/generations/recent")
+def generations_recent(limit: int = 50, arm: str = ""):
+    """Public feed of what people have generated. No identities: the author of a
+    generation is never exposed, only the arm, the prompt and the model's answer."""
+    try:
+        rows = _feed(PUBLIC_FIELDS, limit=limit, arm=arm)
+    except Exception:  # noqa: BLE001
+        _log.exception("public feed query failed")
+        return JSONResponse(status_code=503, content={"error": "Could not read the feed."})
+    return {"count": len(rows), "rows": rows}
+
+
+@app.get("/admin/config")
+def admin_config() -> dict:
+    """What the sign-in flow needs. The anon key is public by design; the service key is
+    never exposed client-side."""
+    return {"enabled": bool(settings.supabase_anon_key),
+            "admin_enabled": bool(userauth.admin_emails(settings) and settings.supabase_anon_key),
+            "supabase_url": settings.supabase_url,
+            "anon_key": settings.supabase_anon_key}
+
+
+@app.get("/admin/generations")
+def admin_generations(request: Request, limit: int = 200, arm: str = "",
+                      consented: bool = False):
+    try:
+        email = userauth.require_admin(userauth.bearer(request), settings)
+    except userauth.AuthError as e:
+        return JSONResponse(status_code=401, content={"error": str(e)})
+    try:
+        rows = _feed(ADMIN_FIELDS, limit=limit, arm=arm, consented=consented,
+                     include_hidden=True)
+    except Exception:  # noqa: BLE001
+        _log.exception("admin log query failed")
+        return JSONResponse(status_code=503, content={"error": "Could not read the log."})
+    _log.info("admin log read by %s (%d rows)", email, len(rows))
+    return {"email": email, "count": len(rows), "rows": rows}
+
+
+class HideIn(BaseModel):
+    created_at: str = ""
+    hidden: bool = True
+
+
+@app.post("/admin/hide")
+def admin_hide(body: HideIn, request: Request):
+    """Take a generation out of the public feed without destroying the record."""
+    try:
+        email = userauth.require_admin(userauth.bearer(request), settings)
+    except userauth.AuthError as e:
+        return JSONResponse(status_code=401, content={"error": str(e)})
+    if not body.created_at:
+        return JSONResponse(status_code=400, content={"error": "Which row?"})
+    db = get_db()
+    client = getattr(db, "client", None)
+    if client is None:
+        return JSONResponse(status_code=503, content={"error": "No database configured."})
+    try:
+        client.table("generation_events").update({"hidden": body.hidden}).eq(
+            "created_at", body.created_at).execute()
+    except Exception:  # noqa: BLE001
+        _log.exception("admin hide failed")
+        return JSONResponse(status_code=503, content={"error": "Could not update that row."})
+    _log.info("admin %s set hidden=%s on %s", email, body.hidden, body.created_at)
+    return {"ok": True, "hidden": body.hidden}
 
 
 # Serve the static frontend if present (Phase 3 fills web/). Mounted last.

@@ -79,17 +79,21 @@ class InMemoryDatabase:
     # traffic can never consume the leaderboard's share of the NDIF quota
     def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool,
                        prompt: str | None = None, continuation: str | None = None,
-                       research_consent: bool = False, consent_version: str | None = None) -> None:
+                       research_consent: bool = False, consent_version: str | None = None,
+                       user_hash: str | None = None, handle: str | None = None) -> None:
         self.generations.append({"ip_hash": ip_hash, "arm": arm, "prompt_hash": prompt_hash,
                                  "cached": cached, "prompt": prompt,
                                  "continuation": continuation,
                                  "research_consent": research_consent,
                                  "consent_version": consent_version,
+                                 "user_hash": user_hash, "handle": handle, "hidden": False,
                                  "created_at": _now().isoformat()})
 
-    def count_gen_ip_since(self, ip_hash: str, since_iso: str) -> int:
+    def count_gen_ip_since(self, key: str, since_iso: str) -> int:
+        """`key` is the account hash once sign-in is required (falls back to ip_hash for
+        rows written before that)."""
         return sum(1 for g in self.generations
-                   if g["ip_hash"] == ip_hash and g["created_at"] >= since_iso)
+                   if (g.get("user_hash") or g["ip_hash"]) == key and g["created_at"] >= since_iso)
 
     def count_gen_global_since(self, since_iso: str) -> int:
         return sum(1 for g in self.generations if g["created_at"] >= since_iso)
@@ -169,11 +173,13 @@ class SupabaseDatabase:
     # generation demo (/generate)
     def log_generation(self, ip_hash: str, arm: str, prompt_hash: str, cached: bool,
                        prompt: str | None = None, continuation: str | None = None,
-                       research_consent: bool = False, consent_version: str | None = None) -> None:
+                       research_consent: bool = False, consent_version: str | None = None,
+                       user_hash: str | None = None, handle: str | None = None) -> None:
         counter = {"ip_hash": ip_hash, "arm": arm, "prompt_hash": prompt_hash,
                    "cached": cached}
         row = {**counter, "prompt": prompt, "continuation": continuation,
-               "research_consent": research_consent, "consent_version": consent_version}
+               "research_consent": research_consent, "consent_version": consent_version,
+               "user_hash": user_hash, "handle": handle}
         try:
             self.client.table("generation_events").insert(row).execute()
         except Exception:
@@ -183,11 +189,14 @@ class SupabaseDatabase:
             # global caps read this table, so a silent failure would uncap the demo).
             self.client.table("generation_events").insert(counter).execute()
 
-    def count_gen_ip_since(self, ip_hash: str, since_iso: str) -> int:
+    def count_gen_ip_since(self, key: str, since_iso: str) -> int:
+        """Counts a person's generations. `key` is the salted ACCOUNT hash now that
+        /generate requires sign-in — an IP-keyed limit is trivially defeated by a new
+        network, whereas an account is stable and costs an email to create."""
         res = (
             self.client.table("generation_events")
             .select("id", count="exact", head=True)
-            .eq("ip_hash", ip_hash)
+            .eq("user_hash", key)
             .gte("created_at", since_iso)
             .execute()
         )

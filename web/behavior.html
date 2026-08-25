@@ -13,7 +13,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css?v=10" />
-  <link rel="stylesheet" href="/behavior.css?v=3" />
+  <link rel="stylesheet" href="/behavior.css?v=5" />
+  <script defer src="/auth.js?v=1"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="tapes()" x-init="load()">
@@ -141,8 +142,43 @@
       <span x-text="gen.max_new_tokens"></span>-token budget as the study.
     </p>
 
-    <div class="bh-try">
-      <label class="bh-try-label" for="bh-prompt">YOUR SENTENCE</label>
+    <div class="bh-try" x-show="!token" x-cloak>
+      <p class="bh-gate">Generating runs the model on someone else's research compute and
+        publishes the result here, so it needs an account. One email, no password.</p>
+
+      <template x-if="authStep !== 'code'">
+        <div>
+          <label class="bh-try-label" for="bh-email">EMAIL</label>
+          <input id="bh-email" class="bh-input" type="email" x-model="email"
+                 @keydown.enter="sendCode()" placeholder="you@example.com" autocomplete="email" />
+          <button class="bh-go" @click="sendCode()" :disabled="authBusy || !email.includes('@')"
+                  x-text="authBusy ? 'SENDING…' : 'EMAIL ME A CODE'"></button>
+        </div>
+      </template>
+
+      <template x-if="authStep === 'code'">
+        <div>
+          <label class="bh-try-label" for="bh-code">6-DIGIT CODE</label>
+          <p class="bh-gate">Sent to <b x-text="email"></b>. Paste the code, or just click
+            the link in the email — either works.</p>
+          <input id="bh-code" class="bh-input" type="text" inputmode="numeric" maxlength="8"
+                 x-model="code" @keydown.enter="verifyCode()" placeholder="123456" />
+          <button class="bh-go" @click="verifyCode()" :disabled="authBusy || code.length < 6"
+                  x-text="authBusy ? 'CHECKING…' : 'SIGN IN'"></button>
+        </div>
+      </template>
+
+      <p class="bh-err" x-show="authErr" x-cloak x-text="authErr"></p>
+    </div>
+
+    <div class="bh-try" x-show="token" x-cloak>
+      <p class="bh-signed">signed in <button class="bh-signout" @click="signOut()">sign out</button></p>
+
+      <label class="bh-try-label" for="bh-handle">PLAYER</label>
+      <input id="bh-handle" class="bh-input bh-input-short" type="text" maxlength="32"
+             x-model="handle" placeholder="AAA" autocomplete="off" />
+
+      <label class="bh-try-label bh-label-gap" for="bh-prompt">YOUR SENTENCE</label>
       <input id="bh-prompt" class="bh-input" type="text" x-model="prompt"
              :maxlength="gen.prompt_max_chars" @keydown.enter="run()"
              placeholder="When my flatmate ate my leftovers, I" />
@@ -166,9 +202,9 @@
       <label class="consent bh-consent" x-show="gen.logging" x-cloak>
         <input type="checkbox" x-model="consent" />
         <span>
-          Your sentence and the model's answer are recorded so this demo can be studied
-          and audited. Tick to also allow them in a published research dataset (never
-          your IP). Untick to keep them out of it.
+          <b>Everything you generate appears publicly below</b>, under the player name
+          you choose. Your email is never shown. Tick to also allow it in the
+          downloadable research dataset.
           <a href="/consent.html" target="_blank" rel="noopener">What this means &rarr;</a>
         </span>
       </label>
@@ -186,9 +222,30 @@
 
     <p class="bh-note">
       Raw base-model output, unfiltered and sometimes crude. Generations are rate limited
-      per visitor and capped per day, because every new one spends the maintainer's
+      per account and capped per day, because every new one spends the maintainer's
       research compute. Repeats of the same sentence and prefix are served from cache.
     </p>
+  </section>
+
+  <!-- ── public feed ──────────────────────────────────────────────────── -->
+  <section class="wrap">
+    <h2 class="bh-h2">WHAT PEOPLE ARE TRYING</h2>
+    <p class="bh-note bh-lead">
+      Every generation made here, newest first, under the player name its author chose.
+      Accounts are never shown.
+      <button class="bh-linkbtn" @click="loadFeed()">refresh</button>
+    </p>
+    <p class="bh-note" x-show="feed.length === 0" x-cloak>Nothing here yet. Be the first.</p>
+    <template x-for="(f, i) in feed" :key="i">
+      <article class="bh-feed">
+        <header>
+          <span class="bh-feed-who" x-text="f.handle || 'anonymous'"></span>
+          <span class="bh-feed-arm" x-text="armLabel(f.arm)"></span>
+          <span class="bh-feed-when" x-text="f.created_at.slice(0, 16).replace('T', ' ')"></span>
+        </header>
+        <p><span class="bh-feed-typed" x-text="f.prompt"></span><span x-text="' ' + f.continuation"></span></p>
+      </article>
+    </template>
   </section>
 
   <!-- ── transfer ─────────────────────────────────────────────────────── -->
@@ -248,9 +305,12 @@
 <script>
 function tapes() {
   return {
+    ...arenaAuth(),
+    feed: [],
     data: { fighters: [], rounds: [], transfer: [] },
     gen: { enabled: false, arms: [], max_new_tokens: 40, prompt_max_chars: 240 },
-    prompt: "", arm: "pro_top", consent: true, busy: false, err: "", result: null, resultLabel: "",
+    prompt: "", handle: "", arm: "pro_top", consent: true, busy: false, err: "",
+    result: null, resultLabel: "",
     roundNo: 1, picked: null, youText: "",
     get round() { return this.data.rounds[this.roundNo - 1] || null; },
     async load() {
@@ -269,6 +329,19 @@ function tapes() {
           }
         }
       } catch (_) { /* static preview without the API: demo stays hidden */ }
+      await this.initAuth();
+      await this.loadFeed();
+    },
+    onSignedIn() { return this.loadFeed(); },
+    async loadFeed() {
+      try {
+        const r = await fetch("/generations/recent?limit=40");
+        if (r.ok) this.feed = (await r.json()).rows || [];
+      } catch (_) { /* feed is a nicety; never break the page over it */ }
+    },
+    armLabel(arm) {
+      const a = this.gen.arms.find(x => x.arm === arm);
+      return a ? a.label : arm;
     },
     armSeq() {
       const a = this.gen.arms.find(x => x.arm === this.arm);
@@ -281,9 +354,10 @@ function tapes() {
       const tok = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
       try {
         const r = await fetch("/generate", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: this.prompt, arm: this.arm, turnstile_token: tok,
-                                 consent: this.consent }),
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
+          body: JSON.stringify({ prompt: this.prompt, arm: this.arm, handle: this.handle,
+                                 turnstile_token: tok, consent: this.consent }),
         });
         const j = await r.json();
         if (!r.ok) { this.err = j.error || "That didn't go through. Try again."; }
@@ -291,6 +365,7 @@ function tapes() {
           this.result = j;
           const a = this.gen.arms.find(x => x.arm === j.arm);
           this.resultLabel = (a ? a.label : j.arm) + (j.cached ? " · from cache" : "");
+          this.loadFeed();
         }
       } catch (_) {
         this.err = "Could not reach the model backend.";

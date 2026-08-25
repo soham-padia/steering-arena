@@ -74,6 +74,11 @@ class Settings(BaseSettings):
     # ── Supabase (secrets) ──
     supabase_url: str = ""
     supabase_service_key: str = ""
+    # Public by design (Supabase anon key); used ONLY for the admin sign-in flow.
+    supabase_anon_key: str = ""
+    # Comma-separated emails allowed to read the demo log at /admin.html. Empty = the
+    # admin view is off entirely (fail closed).
+    admin_emails: str = ""
     ip_hash_salt: str = ""
 
     # ── CAPTCHA (Cloudflare Turnstile) — optional; active only when secret is set ──

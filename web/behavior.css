@@ -214,3 +214,31 @@
    `input, textarea { width: 100% }` would stretch the checkbox across the whole row.
    .bh-consent only adds spacing, so there is one consent pattern, not two. */
 .bh-consent { margin: 16px 0 0; max-width: 72ch; }
+
+/* ---- sign-in gate + public feed ---- */
+.bh-gate { color: var(--muted); font-size: 20px; line-height: 1.35; margin: 0 0 14px; max-width: 62ch; }
+.bh-gate b { color: var(--ink); }
+.bh-signed {
+  margin: 0 0 14px; font-family: var(--pixel); font-size: 8px; color: var(--green);
+  display: flex; gap: 12px; align-items: center;
+}
+.bh-signout {
+  background: none; border: 0; cursor: pointer; color: var(--muted);
+  font-family: var(--term); font-size: 18px; text-decoration: underline; padding: 0;
+}
+.bh-signout:hover { color: var(--ink); }
+.bh-linkbtn {
+  background: none; border: 0; cursor: pointer; color: var(--cyan);
+  font-family: var(--term); font-size: 19px; padding: 0 2px; text-decoration: underline;
+}
+.bh-linkbtn:hover { color: var(--ink); }
+.bh-feed { border-left: 3px solid #302a6b; padding: 8px 0 8px 14px; margin-bottom: 12px; }
+.bh-feed header { display: flex; gap: 10px; align-items: baseline; }
+.bh-feed-when { font-family: var(--pixel); font-size: 7px; color: var(--muted); }
+.bh-feed-who { font-family: var(--pixel); font-size: 9px; color: var(--gold); }
+.bh-feed-arm { font-family: var(--pixel); font-size: 7px; color: var(--cyan); }
+.bh-feed p { margin: 6px 0 0; font-size: 20px; line-height: 1.3; color: var(--silver); }
+.bh-feed-typed { color: var(--muted); }
+
+.bh-input-short { max-width: 260px; }
+.bh-label-gap { margin-top: 16px; }
