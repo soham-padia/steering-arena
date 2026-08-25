@@ -1,0 +1,47 @@
+/* Demo log — a maintainer tool, so it borrows the arcade shell but stays plain:
+   dense rows, no ornament, nothing competing with the text being read. */
+.ad-title {
+  font-family: var(--pixel); font-size: clamp(16px, 4vw, 30px); margin: 18px 0 0;
+  color: var(--gold); letter-spacing: 2px;
+}
+.ad-box { background: var(--panel); border: 3px solid #2a2560; padding: 22px; margin-top: 26px; }
+.ad-off { color: var(--muted); font-size: 20px; margin: 0; }
+.ad-off code { font-family: var(--pixel); font-size: 10px; color: var(--gold); }
+.ad-hint { color: var(--muted); font-size: 18px; margin: 0 0 8px; }
+.ad-hint b { color: var(--ink); }
+.ad-link {
+  background: none; border: 0; cursor: pointer; color: var(--cyan);
+  font-family: var(--term); font-size: 19px; padding: 6px 4px; text-decoration: underline;
+}
+.ad-link:hover { color: var(--ink); }
+
+.ad-bar {
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between;
+  align-items: center; margin: 26px 0 10px; padding-bottom: 12px;
+  border-bottom: 2px solid #2a2560;
+}
+.ad-who { font-family: var(--pixel); font-size: 8px; color: var(--muted); }
+.ad-who b { color: var(--green); }
+.ad-tools { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; color: var(--muted); font-size: 18px; }
+.ad-tools label { display: flex; gap: 6px; align-items: center; font-family: var(--term);
+  font-size: 18px; color: var(--muted); margin: 0; }
+.ad-tools input[type="checkbox"] { width: 15px; height: 15px; flex: 0 0 auto; accent-color: var(--green); }
+.ad-tools select {
+  font-family: var(--term); font-size: 18px; background: var(--panel-2); color: var(--ink);
+  border: 2px solid #302a6b; padding: 5px 8px;
+}
+
+.ad-row { border-left: 3px solid #302a6b; padding: 10px 0 10px 14px; margin-bottom: 14px; }
+.ad-row header { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; }
+.ad-when { font-family: var(--pixel); font-size: 8px; color: var(--muted); }
+.ad-arm { font-family: var(--pixel); font-size: 8px; color: var(--cyan); }
+.ad-flag { font-family: var(--pixel); font-size: 7px; color: var(--muted); }
+.ad-flag.is-yes { color: var(--green); }
+.ad-typed, .ad-said { margin: 8px 0 0; font-size: 20px; line-height: 1.3; }
+.ad-typed span, .ad-said span {
+  display: inline-block; font-family: var(--pixel); font-size: 7px; color: var(--muted);
+  margin-right: 8px;
+}
+.ad-typed b { font-weight: normal; color: var(--ink); }
+.ad-said b { font-weight: normal; color: var(--silver); }
+.ad-none { margin: 8px 0 0; color: var(--muted); font-size: 18px; font-style: italic; }

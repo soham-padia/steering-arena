@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demo log — Steering Arena</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=10" />
+  <link rel="stylesheet" href="/behavior.css?v=4" />
+  <link rel="stylesheet" href="/admin.css?v=1" />
+  <script defer src="/auth.js?v=1"></script>
+  <script defer src="/alpine.min.js"></script>
+</head>
+<body x-data="adminLog()" x-init="init()">
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="bh-top wrap">
+    <a class="bh-back" href="/">&#9664; ARENA</a>
+    <h1 class="ad-title">DEMO LOG</h1>
+    <p class="bh-thesis">
+      What people typed into <a href="/behavior.html">TRY A PREFIX</a>, and what the model
+      said back. Maintainer only.
+    </p>
+  </header>
+
+  <!-- sign in -->
+  <section class="wrap ad-box" x-show="!token" x-cloak>
+    <p class="ad-off" x-show="cfg.admin_enabled === false" x-cloak>
+      Admin access isn't configured on this server. Set <code>ADMIN_EMAILS</code> and
+      <code>SUPABASE_ANON_KEY</code>, then reload.
+    </p>
+
+    <template x-if="cfg.admin_enabled">
+      <div>
+        <template x-if="authStep !== 'code'">
+          <div>
+            <label class="bh-try-label" for="ad-email">EMAIL</label>
+            <input id="ad-email" class="bh-input" type="email" x-model="email"
+                   @keydown.enter="sendCode()" placeholder="you@example.com" autocomplete="email" />
+            <button class="bh-go" @click="sendCode()" :disabled="authBusy || !email.includes('@')"
+                    x-text="authBusy ? 'SENDING…' : 'SEND CODE'"></button>
+          </div>
+        </template>
+
+        <template x-if="authStep === 'code'">
+          <div>
+            <label class="bh-try-label" for="ad-code">6-DIGIT CODE</label>
+            <p class="ad-hint">
+              Sent to <b x-text="email"></b>. Paste the 6-digit code, or just click the
+              link in the email &mdash; either works. Check spam if it's slow.
+            </p>
+            <input id="ad-code" class="bh-input" type="text" inputmode="numeric" maxlength="8"
+                   x-model="code" @keydown.enter="verifyCode()" placeholder="123456" />
+            <button class="bh-go" @click="verifyCode()" :disabled="authBusy || code.length < 6"
+                    x-text="authBusy ? 'CHECKING…' : 'SIGN IN'"></button>
+            <button class="ad-link" @click="authStep = 'email'; code = ''">use a different email</button>
+          </div>
+        </template>
+
+        <p class="bh-err" x-show="authErr" x-cloak x-text="authErr"></p>
+      </div>
+    </template>
+  </section>
+
+  <!-- log -->
+  <section class="wrap" x-show="token" x-cloak>
+    <div class="ad-bar">
+      <span class="ad-who">signed in as <b x-text="email"></b></span>
+      <span class="ad-tools">
+        <label><input type="checkbox" x-model="consentedOnly" @change="load()" /> consented only</label>
+        <select x-model="arm" @change="load()">
+          <option value="">all arms</option>
+          <template x-for="a in arms" :key="a"><option :value="a" x-text="a"></option></template>
+        </select>
+        <button class="ad-link" @click="load()">refresh</button>
+        <button class="ad-link" @click="signOut()">sign out</button>
+      </span>
+    </div>
+
+    <p class="bh-err" x-show="err" x-cloak x-text="err"></p>
+    <p class="bh-note" x-show="!err" x-text="`${count} row(s). Rows logged before migration 0006 have no text.`"></p>
+
+    <template x-for="(r, i) in rows" :key="i">
+      <article class="ad-row">
+        <header>
+          <span class="ad-when" x-text="r.created_at.slice(0, 19).replace('T', ' ')"></span>
+          <span class="ad-arm" x-text="r.arm"></span>
+          <span class="ad-flag" x-text="r.research_consent ? 'consented' : 'not consented'"
+                :class="r.research_consent ? 'is-yes' : ''"></span>
+          <span class="ad-flag" x-show="r.cached">cached</span>
+          <span class="ad-flag" x-show="r.hidden" style="color:var(--red)">hidden</span>
+          <button class="ad-link" @click="toggleHide(r)"
+                  x-text="r.hidden ? 'unhide' : 'hide from public feed'"></button>
+        </header>
+        <p class="ad-typed" x-show="r.prompt"><span>TYPED</span><b x-text="r.prompt"></b></p>
+        <p class="ad-said" x-show="r.continuation"><span>MODEL</span><b x-text="r.continuation"></b></p>
+        <p class="ad-none" x-show="!r.prompt">no text — logged before migration 0006</p>
+      </article>
+    </template>
+  </section>
+
+<script>
+function adminLog() {
+  return {
+    ...arenaAuth(),
+    err: "",
+    rows: [], count: 0, arm: "", consentedOnly: false,
+    arms: ["base", "pro_top", "pro_coherent", "anti_top", "anti_coherent"],
+
+    async init() { await this.initAuth(); },
+    onSignedIn() { return this.load(); },
+    onSignedOut() { this.rows = []; this.count = 0; },
+
+    async load() {
+      this.err = "";
+      const q = new URLSearchParams({ limit: "200" });
+      if (this.arm) q.set("arm", this.arm);
+      if (this.consentedOnly) q.set("consented", "true");
+      const r = await fetch(`/admin/generations?${q}`, {
+        headers: { Authorization: `Bearer ${this.token}` },
+      });
+      const j = await r.json();
+      if (!r.ok) { this.err = j.error || "Could not load the log."; this.rows = []; this.count = 0; return; }
+      this.rows = j.rows; this.count = j.count; this.email = j.email;
+    },
+
+    async toggleHide(r) {
+      const want = !r.hidden;
+      const res = await fetch("/admin/hide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
+        body: JSON.stringify({ created_at: r.created_at, hidden: want }),
+      });
+      if (res.ok) { r.hidden = want; } else { this.err = (await res.json()).error || "Could not update."; }
+    },
+  };
+}
+</script>
+</body>
+</html>
