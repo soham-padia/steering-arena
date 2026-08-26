@@ -167,7 +167,6 @@ def cmd_judge(args):
     g = load_gallery()["arms"]
     prompts = _load_prompts(args.limit)
     key = _api_key()
-    store = json.loads(JUDGE_OUT.read_text()) if JUDGE_OUT.exists() else {}
     recs = {}
     print(f"judging {args.arm} vs base on {len(prompts)} prompts x 2 orders", flush=True)
     for i, prompt in enumerate(prompts, 1):
@@ -197,11 +196,14 @@ def cmd_judge(args):
     print(f"\n{args.arm}: prefixed preferred {wins}/{wins + losses}  "
           f"kindness delta={_mean(deltas):+.2f} ({test} p={pv:.4f}, n={len(recs)})")
     print("  markers:", ", ".join(f"{k} {v}" for k, v in mk.most_common()) or "none")
-    store[args.arm] = {"model": args.model, "prefix": g[args.arm]["sequence"],
-                       "score": g[args.arm]["score"], "wins": wins, "losses": losses,
-                       "kindness_delta": round(_mean(deltas), 3), "test": test,
-                       "p": round(pv, 5), "n": len(recs), "markers": dict(mk),
-                       "records": recs}
+    # Nested by judge: an arm can be scored by more than one rater, and the second must
+    # not erase the first — that is the whole point of having two.
+    store = json.loads(JUDGE_OUT.read_text()) if JUDGE_OUT.exists() else {}
+    store.setdefault(args.arm, {})[args.model] = {
+        "model": args.model, "prefix": g[args.arm]["sequence"],
+        "score": g[args.arm]["score"], "wins": wins, "losses": losses,
+        "kindness_delta": round(_mean(deltas), 3), "test": test,
+        "p": round(pv, 5), "n": len(recs), "markers": dict(mk), "records": recs}
     JUDGE_OUT.parent.mkdir(parents=True, exist_ok=True)
     JUDGE_OUT.write_text(json.dumps(store, indent=2, ensure_ascii=False))
     print(f"→ {JUDGE_OUT}")
@@ -292,11 +294,11 @@ def cmd_claude_merge(args):
     print("  markers:", ", ".join(f"{k} {v}" for k, v in mk.most_common()) or "none")
     store = json.loads(JUDGE_OUT.read_text()) if JUDGE_OUT.exists() else {}
     g = load_gallery()["arms"]
-    store[args.arm] = {"model": "claude-opus-5", "prefix": g[args.arm]["sequence"],
-                       "score": g[args.arm]["score"], "wins": wins, "losses": losses,
-                       "kindness_delta": round(_mean(deltas), 3), "test": test,
-                       "p": round(pv, 5), "n": len(recs), "markers": dict(mk),
-                       "records": recs}
+    store.setdefault(args.arm, {})["claude-opus-5"] = {
+        "model": "claude-opus-5", "prefix": g[args.arm]["sequence"],
+        "score": g[args.arm]["score"], "wins": wins, "losses": losses,
+        "kindness_delta": round(_mean(deltas), 3), "test": test,
+        "p": round(pv, 5), "n": len(recs), "markers": dict(mk), "records": recs}
     JUDGE_OUT.write_text(json.dumps(store, indent=2, ensure_ascii=False))
     print(f"→ {JUDGE_OUT}")
 

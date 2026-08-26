@@ -371,3 +371,35 @@ read as saying exactly that rather than as a uniform endorsement or a uniform de
 comparison is still like-for-like: `pro_top`'s Claude-judged Δ of +0.91 is the reference
 used above, not its DeepSeek number. The free path lives in
 `prefix_gallery.py claude-batches / claude-merge`.
+
+## Every arm, both judges
+
+The paid judge went offline mid-study (HTTP 402), so some arms were scored by
+`deepseek-v4-pro` and others by the free `claude-opus-5` subagent path. Both have now
+been run on all four gallery arms. Same rubric, same 50 prompts, same base, both
+presentation orders.
+
+| arm | board score | deepseek Δ | claude Δ | gap |
+|---|---|---|---|---|
+| `pro_top` | +0.10769 | +0.87 | +0.91 | 0.04 |
+| `pro_coherent` | +0.04032 | +0.64 | +0.57 | 0.07 |
+| `control_junk` | +0.00714 | −0.18 | −0.15 | 0.03 |
+| `control_text` | +0.00144 | −0.10 | −0.18 | 0.08 |
+| `anti_coherent` | −0.03167 | −0.27 | −0.13 | 0.14 |
+| **`anti_hostile`** | **−0.02741** | **−1.31** | **−1.31** | **0.00** |
+
+**The inversion is no longer single-judge.** `anti_hostile` was the one arm carrying a
+headline claim on one rater, and two model families with different rubric reflexes
+returned the same number to two decimal places. Every arm agrees within 0.14, and the
+disagreements are all on arms whose effect is null anyway.
+
+Note what this does NOT rescue: `anti_top` remains withdrawn. Judge agreement cannot fix
+a comparison that is unrankable and pairs that cannot be blinded (§"Human ratings").
+Agreement between raters answering the same ill-posed question is not evidence the
+question was well posed.
+
+**Implementation note.** Both judge paths wrote the same key per arm, so the second run
+silently erased the first; and both did a read-modify-write on one JSON, so two
+concurrent runs lost each other's results. Judgements are now nested by judge and the
+store is re-read immediately before writing. Both bugs destroyed real results before
+being caught.
