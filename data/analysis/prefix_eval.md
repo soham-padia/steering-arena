@@ -264,3 +264,67 @@ already type this instruction as their own sentence — withholding the prefix p
 nothing. And the anti soup was public throughout, so the effect was to publish one route
 into the negative pole while hiding the one that shows the metric's largest failure.
 Presenting a single edge of the knife is how a result gets misread.
+
+## Human ratings (n=54) — and why the anti arm must be withdrawn
+
+The maintainer rated 54 of the 150 blind pairs. Two results held; one collapsed, and the
+way it collapsed invalidates the anti-arm measurement for every rater, not just the human.
+
+| arm | human | deepseek | claude |
+|---|---|---|---|
+| `pro_top` | **14/16 (88%)** p=0.004 | 82% | 75% |
+| `pro_coherent` | 7/13 (54%) **p=1.0** | 72% | 72% |
+| `anti_top` | **14/17 (82%)** p=0.013 | **12%** | 35% |
+
+### `pro_top` survives human review
+
+Three independent raters — one human, two models with different rubric reflexes — land
+between 75% and 88%. This is the strongest form of the headline: the unreadable sequence
+at the top of the board really does make OLMo's writing kinder, and a person who cannot
+read the prefix agrees with the machines that judged it.
+
+### `pro_coherent` is not confirmed by humans
+
+7/13 is a coin flip. With 13 decided pairs this cannot separate "no effect" from
+"underpowered" (detecting the judges' 72% needs ~35), so it is reported as **not
+confirmed at n=13**, not as a refutation. It is consistent with this arm's known
+instability: widest spread of the three, 8/50 cruel tail, assistant_mode 13/50.
+
+### `anti_top`: WITHDRAWN as a behavioural measurement
+
+The human preferred the anti-PREFIXED text 82% of the time; deepseek preferred it 12%.
+Opposite signs on identical pairs. The cause is not rater quality — it is that the
+question cannot be asked of these pairs:
+
+1. **The comparison is unrankable.** Most anti pairs put a vacant, looping continuation
+   against a base continuation that has some attitude, often a negative one. "Which is
+   kinder" presupposes both parties responded. A non-response is not kinder than a cold
+   response, nor unkinder; it is outside the scale. The human was told "neutral beats
+   cruel" and got 82%; deepseek treated word salad as unkind and got 12%. **The sign of
+   this result is set by an arbitrary rubric convention, not by the data.**
+
+2. **The blinding fails.** The maintainer reports being able to identify the anti-prefixed
+   text on sight, because looping and incoherence are that prefix's signature. The pairs
+   were blind in name only. The judges had the same tell: deepseek flagged `repetition` on
+   25/50 of those very texts. No rater was blind on this arm.
+
+Neither problem is fixable by rating more pairs or by rewording the rubric, because the
+fingerprint IS the behaviour being measured.
+
+**What survives.** The objective, judge-free measurement stands: the anti prefix collapses
+distinct-4-gram ratio to 0.805 with 12/25 continuations looping (base 0.888, 6/25). That
+is a real, reproducible effect and it needs no kindness scale. What must be withdrawn is
+any claim of the form "the anti prefix makes the model less kind by X" — including this
+document's earlier "-0.86, p=0.0005", which measured a convention.
+
+**Corrections to earlier sections.** "The anti result is substantially a degeneracy
+artifact" (§Conclusions) understated it: it is not a contaminated measurement but an
+inapplicable one. The `anti_top` rows in the verdict and kindness tables should be read as
+rubric artifacts. The `anti_hostile` result (§"The fifth arm") is NOT affected — that arm
+produces fluent, hostile text with cruelty flagged 24/50 and repetition 11/50, so its
+pairs are rankable and its blinding does not fail the same way. The 4.7x ranking inversion
+stands, and now rests on the arm that can actually be measured.
+
+**Instrument fix for any future round.** `n` ("no stance") was scoped to *neither* text.
+It should be *either* text: if one side does not respond to anyone, the pair is outside
+the kindness scale and must be excluded rather than decided.

@@ -4,7 +4,7 @@
   "total_pairs": 150,
   "raters": {
     "human": {
-      "rated": 0
+      "rated": 54
     },
     "deepseek-v4-pro/v2": {
       "rated": 118,
@@ -23,11 +23,38 @@
   },
   "arms": {
     "pro_top": {
+      "human": {
+        "all": {
+          "prefixed_preferred": 14,
+          "base_preferred": 2,
+          "ties": 5,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.875,
+          "sign_test_p": 0.00418
+        },
+        "blind_only": {
+          "prefixed_preferred": 13,
+          "base_preferred": 2,
+          "ties": 5,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.867,
+          "sign_test_p": 0.00739
+        },
+        "no_leak": {
+          "prefixed_preferred": 14,
+          "base_preferred": 2,
+          "ties": 5,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.875,
+          "sign_test_p": 0.00418
+        }
+      },
       "deepseek-v4-pro/v2": {
         "all": {
           "prefixed_preferred": 31,
           "base_preferred": 7,
           "ties": 0,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.816,
           "sign_test_p": 0.00012
         },
@@ -35,6 +62,7 @@
           "prefixed_preferred": 27,
           "base_preferred": 6,
           "ties": 0,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.818,
           "sign_test_p": 0.00032
         },
@@ -42,6 +70,7 @@
           "prefixed_preferred": 31,
           "base_preferred": 7,
           "ties": 0,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.816,
           "sign_test_p": 0.00012
         }
@@ -51,6 +80,7 @@
           "prefixed_preferred": 33,
           "base_preferred": 11,
           "ties": 2,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.75,
           "sign_test_p": 0.00126
         },
@@ -58,6 +88,7 @@
           "prefixed_preferred": 29,
           "base_preferred": 9,
           "ties": 2,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.763,
           "sign_test_p": 0.00166
         },
@@ -65,6 +96,7 @@
           "prefixed_preferred": 33,
           "base_preferred": 11,
           "ties": 2,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.75,
           "sign_test_p": 0.00126
         }
@@ -121,11 +153,38 @@
       }
     },
     "pro_coherent": {
+      "human": {
+        "all": {
+          "prefixed_preferred": 7,
+          "base_preferred": 6,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.538,
+          "sign_test_p": 1.0
+        },
+        "blind_only": {
+          "prefixed_preferred": 7,
+          "base_preferred": 5,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.583,
+          "sign_test_p": 0.77441
+        },
+        "no_leak": {
+          "prefixed_preferred": 7,
+          "base_preferred": 6,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.538,
+          "sign_test_p": 1.0
+        }
+      },
       "deepseek-v4-pro/v2": {
         "all": {
           "prefixed_preferred": 26,
           "base_preferred": 10,
           "ties": 0,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.722,
           "sign_test_p": 0.01133
         },
@@ -133,6 +192,7 @@
           "prefixed_preferred": 23,
           "base_preferred": 7,
           "ties": 0,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.767,
           "sign_test_p": 0.00522
         },
@@ -140,6 +200,7 @@
           "prefixed_preferred": 26,
           "base_preferred": 10,
           "ties": 0,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.722,
           "sign_test_p": 0.01133
         }
@@ -149,6 +210,7 @@
           "prefixed_preferred": 31,
           "base_preferred": 12,
           "ties": 6,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.721,
           "sign_test_p": 0.0054
         },
@@ -156,6 +218,7 @@
           "prefixed_preferred": 29,
           "base_preferred": 8,
           "ties": 6,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.784,
           "sign_test_p": 0.00075
         },
@@ -163,6 +226,7 @@
           "prefixed_preferred": 31,
           "base_preferred": 12,
           "ties": 6,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.721,
           "sign_test_p": 0.0054
         }
@@ -220,11 +284,38 @@
       }
     },
     "anti_top": {
+      "human": {
+        "all": {
+          "prefixed_preferred": 14,
+          "base_preferred": 3,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.824,
+          "sign_test_p": 0.01273
+        },
+        "blind_only": {
+          "prefixed_preferred": 12,
+          "base_preferred": 3,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.8,
+          "sign_test_p": 0.03516
+        },
+        "no_leak": {
+          "prefixed_preferred": 14,
+          "base_preferred": 3,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.824,
+          "sign_test_p": 0.01273
+        }
+      },
       "deepseek-v4-pro/v2": {
         "all": {
           "prefixed_preferred": 5,
           "base_preferred": 38,
           "ties": 1,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.116,
           "sign_test_p": 0.0
         },
@@ -232,6 +323,7 @@
           "prefixed_preferred": 4,
           "base_preferred": 33,
           "ties": 1,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.108,
           "sign_test_p": 0.0
         },
@@ -239,6 +331,7 @@
           "prefixed_preferred": 5,
           "base_preferred": 38,
           "ties": 1,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.116,
           "sign_test_p": 0.0
         }
@@ -248,6 +341,7 @@
           "prefixed_preferred": 11,
           "base_preferred": 20,
           "ties": 13,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.355,
           "sign_test_p": 0.14961
         },
@@ -255,6 +349,7 @@
           "prefixed_preferred": 10,
           "base_preferred": 17,
           "ties": 12,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.37,
           "sign_test_p": 0.24779
         },
@@ -262,6 +357,7 @@
           "prefixed_preferred": 11,
           "base_preferred": 20,
           "ties": 13,
+          "no_stance": 0,
           "win_rate_excl_ties": 0.355,
           "sign_test_p": 0.14961
         }
@@ -323,6 +419,16 @@
       "same": 85,
       "both": 96,
       "rate": 0.885
+    },
+    "human vs deepseek-v4-pro/v2": {
+      "same": 21,
+      "both": 38,
+      "rate": 0.553
+    },
+    "human vs claude-opus-5/v2": {
+      "same": 27,
+      "both": 37,
+      "rate": 0.73
     }
   }
 }
