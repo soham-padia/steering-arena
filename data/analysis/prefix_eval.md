@@ -257,6 +257,10 @@ those two orderings come apart badly at the top.
 the arm was selected because it is the readable mirror of `pro_coherent`, not by a blind
 rule — it is a targeted control, not a survey of the anti board.
 
-**Handling.** `anti_hostile` is marked `public: false` in `site_prefixes.json`: it is a
-legitimate research control but not something a public page should generate on one click,
-so `/generate` refuses it and the published dataset excludes it. Tests cover both.
+**Handling.** This arm ships like every other: selectable in the live demo, included in
+the published dataset. It was briefly withheld as "a research control not fit for a public
+page", and that was wrong on two counts. The prompt box is free text, so anyone could
+already type this instruction as their own sentence — withholding the prefix prevented
+nothing. And the anti soup was public throughout, so the effect was to publish one route
+into the negative pole while hiding the one that shows the metric's largest failure.
+Presenting a single edge of the knife is how a result gets misread.

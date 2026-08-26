@@ -47,11 +47,11 @@ def load_prefixes() -> dict:
 def public_arms() -> list[dict]:
     """What the demo may offer, and the allow-list /generate validates against.
 
-    Arms marked `public: false` in site_prefixes.json exist for the offline analysis
-    only — e.g. the explicit "be cruel" instruction that separates hostility from the
-    persona shift. Those are legitimate research controls but not things a public page
-    should generate on one click, so they are absent here and therefore unreachable
-    through the API.
+    An arm marked `public: false` in site_prefixes.json is offline-only and unreachable
+    through the API. Nothing uses that today, deliberately: the anti arms are published
+    alongside the pro ones, because showing one edge of the knife is how a result gets
+    misread. The hook exists for an arm that genuinely cannot be served, not for one that
+    is merely unflattering.
     """
     out = []
     for arm, a in load_prefixes().items():
