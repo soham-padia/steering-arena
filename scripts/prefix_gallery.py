@@ -30,7 +30,13 @@ GALLERY = Path("data/analysis/site_prefixes.json")
 EXPORT_DIR = Path("data/generations")
 
 # Arm ids match prefix_behavior_eval's so the 200 generations already on disk are reused.
-ARMS = ("base", "pro_top", "pro_coherent", "anti_top", "anti_coherent")
+# Every arm on disk, including research-only ones (see load_prefixes / public_arms).
+def all_arms():
+    return tuple(load_gallery()["arms"].keys())
+
+
+def public_only():
+    return tuple(a for a, v in load_gallery()["arms"].items() if v.get("public") is not False)
 
 STRICT_WORD = re.compile(r"[A-Z]?[a-z]+(?:['-][A-Za-z]+)*[.,!?;:&]?$")
 
@@ -97,7 +103,7 @@ def cmd_generate(args):
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     n_new = n_hit = 0
     for pi, prompt in enumerate(prompts, 1):
-        for arm in ARMS:
+        for arm in all_arms():
             prefix = g["arms"][arm]["sequence"]
             fp = CACHE_DIR / f"{_key(prompt, arm, prefix, args.max_new)}.json"
             if fp.exists():
@@ -127,7 +133,7 @@ def cmd_export(args):
     n = 0
     with open(out, "w", encoding="utf-8") as f:
         for prompt in prompts:
-            for arm in ARMS:
+            for arm in public_only():   # published dataset excludes research-only arms
                 prefix = g["arms"][arm]["sequence"]
                 fp = CACHE_DIR / f"{_key(prompt, arm, prefix, args.max_new)}.json"
                 if not fp.exists():

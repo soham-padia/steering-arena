@@ -45,10 +45,18 @@ def load_prefixes() -> dict:
 
 
 def public_arms() -> list[dict]:
-    """What the frontend may offer. The raw prefix text is public (the board is public),
-    but it is sent for display only — the server never accepts one back."""
+    """What the demo may offer, and the allow-list /generate validates against.
+
+    Arms marked `public: false` in site_prefixes.json exist for the offline analysis
+    only — e.g. the explicit "be cruel" instruction that separates hostility from the
+    persona shift. Those are legitimate research controls but not things a public page
+    should generate on one click, so they are absent here and therefore unreachable
+    through the API.
+    """
     out = []
     for arm, a in load_prefixes().items():
+        if a.get("public") is False:
+            continue
         out.append({"arm": arm, "label": a["label"], "kind": a.get("kind", ""),
                     "score": a.get("score"), "sequence": a["sequence"]})
     return out

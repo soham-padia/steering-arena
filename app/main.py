@@ -373,7 +373,7 @@ def generate_text(body: GenerateIn, request: Request):
     # slot, a DB round trip, or a place in the NDIF queue.
     try:
         prompt = generation.clean_prompt(body.prompt, settings.generate_prompt_max_chars)
-        if body.arm not in generation.load_prefixes():
+        if body.arm not in {a["arm"] for a in generation.public_arms()}:
             raise generation.GenerationError("Unknown prefix.")
         # Same handle rules as the leaderboard, so there is one policy, not two.
         handle = validate_handle(body.handle) if (body.handle or "").strip() else "anonymous"

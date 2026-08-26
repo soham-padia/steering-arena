@@ -189,3 +189,24 @@ def test_export_field_list_excludes_identifiers():
     assert "ip_hash" not in EXPORT_FIELDS
     assert "prompt_hash" not in EXPORT_FIELDS
     assert {"prompt", "continuation", "arm"} <= set(EXPORT_FIELDS)
+
+
+# ── research-only arms must not be reachable from the web ────
+
+def test_research_only_arms_are_not_offered():
+    """site_prefixes.json can hold arms that exist for the analysis only — e.g. the
+    explicit 'be cruel' instruction used as a control. They must not appear in the demo."""
+    offered = {a["arm"] for a in generation.public_arms()}
+    on_disk = set(generation.load_prefixes())
+    hidden = on_disk - offered
+    assert hidden, "expected at least one research-only arm to exercise this"
+    for arm in hidden:
+        assert generation.load_prefixes()[arm].get("public") is False
+
+
+def test_generate_refuses_a_research_only_arm():
+    """The API allow-list is public_arms(), not everything on disk, so asking for a
+    research arm by name gets the same refusal as inventing one."""
+    offered = {a["arm"] for a in generation.public_arms()}
+    hidden = sorted(set(generation.load_prefixes()) - offered)
+    assert hidden[0] not in offered
