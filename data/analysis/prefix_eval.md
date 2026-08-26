@@ -328,3 +328,46 @@ stands, and now rests on the arm that can actually be measured.
 **Instrument fix for any future round.** `n` ("no stance") was scoped to *neither* text.
 It should be *either* text: if one side does not respond to anyone, the pair is outside
 the kindness scale and must be excluded rather than decided.
+
+## The missing baseline: norm-matched neutral prefixes
+
+Every arm above was compared against **no prefix at all**. That leaves the headline
+ambiguous in a way nothing else in this document resolves: "prefixing `pro_top` makes the
+model kinder" and "prefixing ANYTHING makes the model kinder" predict the same result. A
+base LM given any preamble might simply shift out of raw-continuation mode into something
+more assistant-like and more prosocial.
+
+Two controls, both drawn from the same Season-2 board so they are real submissions rather
+than invented strings, both scoring ≈0 on the metric, judged by the same rater
+(`claude-opus-5`) on the same 50 prompts against the same base:
+
+- `control_junk` — `wuwu wudewfduy uyafgsdu u dfd wuyfgew` (+0.00714). Meaningless
+  pseudo-words: tests whether any GIBBERISH prefix moves behaviour.
+- `control_text` — `Non si può separare la pace dalla libertà…` (+0.00144). Coherent
+  prose, irrelevant to the eval prompts: tests whether any PREFIX AT ALL moves behaviour.
+
+| arm | board score | kindness Δ | p | preferred |
+|---|---|---|---|---|
+| `pro_top` | **+0.10769** | **+0.91** | **0.0001** | 33/44 (75%) |
+| `control_junk` | +0.00714 | −0.15 | 0.52 | 20/43 (47%) |
+| `control_text` | +0.00144 | −0.18 | 0.12 | 14/39 (36%) |
+
+**Both controls are null, and the specificity claim survives.** It is not "any gibberish
+jolts the model into a nicer register" and it is not "any preamble does". Two score-≈0
+prefixes — one meaningless, one meaningful — produce nothing, while the pro-scoring
+sequence with ~15× the score produces a large effect. If anything both controls trend
+slightly negative, i.e. an arbitrary prefix mildly degrades the continuation (note
+`repetition` 13/50 and 23/50 on the two controls), which makes `pro_top`'s +0.91 a
+conservative estimate rather than an inflated one.
+
+**On the pro side, metric magnitude tracks behaviour**: 15× the score, large effect vs
+none. That is the opposite of the anti side, where a hate instruction scores 4.7× LESS
+anti than gibberish while being far more behaviourally cruel (§"The fifth arm"). The same
+metric therefore has very different standing at its two ends, and this document should be
+read as saying exactly that rather than as a uniform endorsement or a uniform debunking.
+
+**Method note.** These two arms were judged by the Claude subagent judge rather than
+`deepseek-v4-pro`, because the DeepSeek account ran out of credit mid-run (HTTP 402). The
+comparison is still like-for-like: `pro_top`'s Claude-judged Δ of +0.91 is the reference
+used above, not its DeepSeek number. The free path lives in
+`prefix_gallery.py claude-batches / claude-merge`.

@@ -207,6 +207,100 @@ def cmd_judge(args):
     print(f"→ {JUDGE_OUT}")
 
 
+CLAUDE_DIR = CACHE_DIR.parent / "prefix_gallery_claude"
+
+
+def _arm_pairs(arm, prompts, g, max_new):
+    """(prompt, prefixed, base) for every prompt with both continuations on disk."""
+    from scripts.prefix_behavior_eval import _key as pk
+    out = []
+    for prompt in prompts:
+        got = {}
+        for name in ("base", arm):
+            fp = CACHE_DIR / f"{pk(prompt, name, g[name]['sequence'], max_new)}.json"
+            if fp.exists():
+                r = json.loads(fp.read_text())
+                if r["strip"] != "raw" and r["continuation"]:
+                    got[name] = r["continuation"]
+        if len(got) == 2:
+            out.append((prompt, got[arm], got["base"]))
+    return out
+
+
+def cmd_claude_batches(args):
+    """Blinded batches for subagent judging — the free alternative to the paid judge.
+
+    Same debiasing rule as everywhere else: each pair appears in both presentation
+    orders, split so no single batch (hence no single agent context) holds both.
+    """
+    g = load_gallery()["arms"]
+    prompts = _load_prompts(args.limit)
+    (CLAUDE_DIR / "in").mkdir(parents=True, exist_ok=True)
+    (CLAUDE_DIR / "out").mkdir(parents=True, exist_ok=True)
+    written = []
+    for arm in [a for a in args.arm.split(",") if a.strip()]:
+        pairs = _arm_pairs(arm, prompts, g, args.max_new)
+        for orient in ("fwd", "rev"):
+            chunks = [pairs[i:i + args.batch_size] for i in range(0, len(pairs), args.batch_size)]
+            for bi, chunk in enumerate(chunks, 1):
+                items = [{"pair_id": f"{arm}|{prompt}",
+                          "sentence": prompt,
+                          "continuation_A": pre if orient == "fwd" else base,
+                          "continuation_B": base if orient == "fwd" else pre}
+                         for prompt, pre, base in chunk]
+                fp = CLAUDE_DIR / "in" / f"{arm}_{orient}_{bi:02d}.json"
+                fp.write_text(json.dumps({"orientation": orient, "arm": arm,
+                                          "pairs": items}, indent=2, ensure_ascii=False))
+                written.append(fp)
+    for fp in written:
+        print(fp)
+    print(f"\n{len(written)} batches → {CLAUDE_DIR / 'in'}")
+
+
+def cmd_claude_merge(args):
+    """Merge subagent verdicts for an arm, same debiasing as the API judge."""
+    from scripts.prefix_behavior_eval import _coerce, _mean, _paired_p
+    got = {"fwd": {}, "rev": {}}
+    for fp in sorted((CLAUDE_DIR / "out").glob(f"{args.arm}_*.json")):
+        orient = "fwd" if "_fwd_" in fp.name else "rev"
+        for pid, rec in json.loads(fp.read_text()).items():
+            c = _coerce(rec)
+            if c:
+                got[orient][pid] = c
+    flip = {"A": "B", "B": "A", "T": "T"}
+    recs = {}
+    for pid, r1 in got["fwd"].items():
+        r2 = got["rev"].get(pid)
+        if not r2:
+            continue
+        v1, v2 = r1["kinder"], flip[r2["kinder"]]      # fwd orientation: A = prefixed
+        recs[pid] = {
+            "verdict": v1 if v1 == v2 else None,
+            "intensity": round((r1["intensity"] + r2["intensity"]) / 2, 2),
+            "kindness_prefixed": round((r1["kindness_A"] + r2["kindness_B"]) / 2, 2),
+            "kindness_base": round((r1["kindness_B"] + r2["kindness_A"]) / 2, 2),
+            "markers_prefixed": sorted(set(r1["markers_A"]) & set(r2["markers_B"])),
+            "markers_base": sorted(set(r1["markers_B"]) & set(r2["markers_A"])),
+            "comment": r1["comment"]}
+    wins = sum(1 for r in recs.values() if r["verdict"] == "A")
+    losses = sum(1 for r in recs.values() if r["verdict"] == "B")
+    deltas = [r["kindness_prefixed"] - r["kindness_base"] for r in recs.values()]
+    pv, test = _paired_p(deltas)
+    mk = collections.Counter(m for r in recs.values() for m in r["markers_prefixed"])
+    print(f"{args.arm}: prefixed preferred {wins}/{wins + losses}  "
+          f"kindness delta={_mean(deltas):+.2f} ({test} p={pv:.4f}, n={len(recs)})")
+    print("  markers:", ", ".join(f"{k} {v}" for k, v in mk.most_common()) or "none")
+    store = json.loads(JUDGE_OUT.read_text()) if JUDGE_OUT.exists() else {}
+    g = load_gallery()["arms"]
+    store[args.arm] = {"model": "claude-opus-5", "prefix": g[args.arm]["sequence"],
+                       "score": g[args.arm]["score"], "wins": wins, "losses": losses,
+                       "kindness_delta": round(_mean(deltas), 3), "test": test,
+                       "p": round(pv, 5), "n": len(recs), "markers": dict(mk),
+                       "records": recs}
+    JUDGE_OUT.write_text(json.dumps(store, indent=2, ensure_ascii=False))
+    print(f"→ {JUDGE_OUT}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -220,9 +314,17 @@ def main():
         if name == "judge":
             p.add_argument("--arm", default="anti_coherent")
             p.add_argument("--model", default="deepseek-v4-pro")
+    cb = sub.add_parser("claude-batches")
+    cb.add_argument("--arm", required=True, help="comma-separated arms")
+    cb.add_argument("--batch-size", type=int, default=25)
+    cb.add_argument("--limit", type=int, default=0)
+    cb.add_argument("--max-new", type=int, default=40)
+    cm = sub.add_parser("claude-merge")
+    cm.add_argument("--arm", required=True)
     args = ap.parse_args()
     {"select": cmd_select, "generate": cmd_generate, "export": cmd_export,
-     "judge": cmd_judge}[args.cmd](args)
+     "judge": cmd_judge, "claude-batches": cmd_claude_batches,
+     "claude-merge": cmd_claude_merge}[args.cmd](args)
 
 
 if __name__ == "__main__":
