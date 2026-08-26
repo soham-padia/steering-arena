@@ -6,9 +6,18 @@ Shows each unrated pair from data/analysis/behavioral_blind.csv; you press a key
     b — text B is
     t — tie: both show an attitude toward the other person, equally kind
     n — neither takes any stance toward another person (loops, boilerplate, word
-        salad). NOT the same as a tie, and the difference is the point: the anti
-        prefixes reach the direction by deleting the speaker's stance rather than by
-        being cruel, so "no stance" is a measurement, not a shrug.
+        salad). NOT the same as a tie, and NOT a way of saying "unsure" — press s for
+        that. The difference is the point: the anti prefixes reach the direction by
+        deleting the speaker's stance rather than by being cruel, so "no stance" is a
+        measurement, not a shrug.
+
+    Ignore coherence artifacts when they do not change the attitude: a continuation that
+    breaks into "Okay, the user wants..." or drifts off the scene can still be the kinder
+    one. Judge only how the speaker treats other people.
+
+    One text warm and the other vacant → the warm one. One cruel and the other vacant →
+    the vacant one; neutral beats cruel. That asymmetry is why an anti prefix sometimes
+    wins a pair (prefix_eval.md: 6 of its 11 wins were "too incoherent to be hostile").
     s — skip for now (stays unrated)
     u — undo your previous rating in this session
     q — quit (progress is saved after EVERY keypress, so quit anytime)
@@ -121,6 +130,12 @@ def main():
         print(wrap("A", r["text_A"]))
         print()
         print(wrap("B", r["text_B"]))
+        # The rule is on screen because two keys are easy to conflate, and conflating
+        # them corrupts the measurement: `n` is an OBSERVATION (nobody is addressed),
+        # `s` is uncertainty. If `n` also absorbs "not sure", the no-stance rate — the
+        # direct human evidence for stance collapse — stops meaning anything.
+        print(f"{DIM}   both show an attitude → a/b, or t if inseparable · "
+              f"neither addresses a person → n · unsure → s{RESET}")
         print(f"\n{BOLD}Kinder?{RESET}  [a] / [b] / [t]ie / [n]o stance / [s]kip / [u]ndo / [q]uit ", end="", flush=True)
 
         k = getch()
