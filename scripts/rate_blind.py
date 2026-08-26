@@ -4,7 +4,11 @@ Shows each unrated pair from data/analysis/behavioral_blind.csv; you press a key
 
     a — text A is kinder/more considerate
     b — text B is
-    t — tie / can't tell
+    t — tie: both show an attitude toward the other person, equally kind
+    n — neither takes any stance toward another person (loops, boilerplate, word
+        salad). NOT the same as a tie, and the difference is the point: the anti
+        prefixes reach the direction by deleting the speaker's stance rather than by
+        being cruel, so "no stance" is a measurement, not a shrug.
     s — skip for now (stays unrated)
     u — undo your previous rating in this session
     q — quit (progress is saved after EVERY keypress, so quit anytime)
@@ -101,7 +105,7 @@ def main():
     todo = [pid for pid in order if not (by_id[pid].get("rating") or "").strip()]
 
     print(f"\n{BOLD}BLIND RATING{RESET} — which continuation is kinder/more considerate toward people?")
-    print(f"{rated}/{len(rows)} already rated · {len(todo)} to go · keys: [a] [b] [t]ie [s]kip [u]ndo [q]uit\n")
+    print(f"{rated}/{len(rows)} already rated · {len(todo)} to go · keys: [a] [b] [t]ie [n]o stance [s]kip [u]ndo [q]uit\n")
 
     history: list[str] = []  # pair_ids rated this session (for undo)
     done_now = 0
@@ -117,7 +121,7 @@ def main():
         print(wrap("A", r["text_A"]))
         print()
         print(wrap("B", r["text_B"]))
-        print(f"\n{BOLD}Kinder?{RESET}  [a] / [b] / [t]ie / [s]kip / [u]ndo / [q]uit ", end="", flush=True)
+        print(f"\n{BOLD}Kinder?{RESET}  [a] / [b] / [t]ie / [n]o stance / [s]kip / [u]ndo / [q]uit ", end="", flush=True)
 
         k = getch()
         print(k)
@@ -135,7 +139,7 @@ def main():
                 # re-insert the undone pair right before the current one
                 todo.insert(i, prev)
             continue
-        if k in ("a", "b", "t"):
+        if k in ("a", "b", "t", "n"):
             r["rating"] = k.upper()
             save(rows)
             history.append(pid)

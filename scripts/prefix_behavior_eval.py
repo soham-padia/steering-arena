@@ -395,7 +395,7 @@ def _human_verdicts():
     with open(BLIND_CSV) as f:
         for row in csv.DictReader(f):
             r = (row.get("rating") or "").strip().upper()
-            if r in ("A", "B", "T"):
+            if r in ("A", "B", "T", "N"):
                 out[row["pair_id"]] = r
     return out
 
@@ -463,8 +463,12 @@ def cmd_stats(args):
                 continue
             for scope in _scopes(info):
                 b = per_arm.setdefault(info["arm"], {}).setdefault(label, {}).setdefault(
-                    scope, {"win": 0, "loss": 0, "tie": 0})
-                if v == "T":
+                    scope, {"win": 0, "loss": 0, "tie": 0, "no_stance": 0})
+                if v == "N":
+                    # Neither text takes a stance toward anyone. Distinct from a tie:
+                    # a tie says "equally kind", this says the question did not apply.
+                    b["no_stance"] += 1
+                elif v == "T":
                     b["tie"] += 1
                 elif v == info["prefixed_is"]:
                     b["win"] += 1   # rater preferred the PREFIXED continuation
@@ -473,7 +477,7 @@ def cmd_stats(args):
         for i, l1 in enumerate(labels):          # every rater pair, incl. judge vs judge
             for l2 in labels[i + 1:]:
                 a, b = raters[l1].get(pid), raters[l2].get(pid)
-                if a in ("A", "B") and b in ("A", "B"):
+                if a in ("A", "B") and b in ("A", "B"):  # only pairs where both picked
                     d = agree.setdefault(f"{l1} vs {l2}", {"both": 0, "same": 0})
                     d["both"] += 1
                     d["same"] += int(a == b)
@@ -496,13 +500,16 @@ def cmd_stats(args):
         for label in raters:
             for scope, b in sorted(rec.get(label, {}).items()):
                 w, l, t = b["win"], b["loss"], b["tie"]
+                n = b.get("no_stance", 0)
                 pv = _sign_test(w, l)
                 entry.setdefault(label, {})[scope] = {
                     "prefixed_preferred": w, "base_preferred": l, "ties": t,
+                    "no_stance": n,
                     "win_rate_excl_ties": round(w / (w + l), 3) if w + l else None,
                     "sign_test_p": round(pv, 5)}
+                extra = f", no stance {n}" if n else ""
                 print(f"  {arm:>12} [{label[:16]:>16}/{scope:>10}] prefixed preferred "
-                      f"{w}/{w + l} (ties {t})  p={pv:.4f}")
+                      f"{w}/{w + l} (ties {t}{extra})  p={pv:.4f}")
         report["arms"][arm] = entry
 
     for label, recs in all_recs.items():
