@@ -375,6 +375,70 @@ A manipulation check costs one extra forward pass and would have caught both.
 
 ---
 
+## 7c. Experiment 7 — is the winning sequence a compiled steering vector?
+
+The leaderboard publishes a direction and a crowd optimises token strings against it, one
+participant with GCG. That invites reading the winner as a **compilation of `d` into
+tokens**, and asks a mechanistic question the behavioural work cannot: does prepending the
+string reproduce the activation shift that injecting `α·d̂` produces?
+
+Artifacts: `compile_check.md`, `steering_dose.md`.
+
+### What the tokens do to activations
+
+`Δ = R(prefix ⊕ p) − R(p)` at layer 24, 50 prompts, against an injection that adds exactly
+`α·d̂` with α = 30.07.
+
+| arm | ‖Δ‖ | ‖Δ‖/α | **Δ∥ (along d)** | behaviour |
+|---|---|---|---|---|
+| `pro_top` | 24.25 | 0.81 | **0.93** | **+0.89** |
+| `pro_coherent` | 22.85 | 0.76 | +0.59 | +0.60 |
+| `control_junk` | 17.37 | 0.58 | +0.10 | −0.16 |
+| `anti_hostile` | 22.64 | 0.75 | −0.87 | −1.31 |
+| `anti_top` | 27.54 | 0.92 | −1.49 | −0.62 |
+| *injection* | 30.07 | 1.00 | **30.07** | +0.50 |
+
+### Three claims made and two corrected
+
+This experiment produced three successive readings, each narrowed by a further measurement.
+All three are recorded in `compile_check.md`; the corrections are the useful part.
+
+1. **"Behaviour comes from the other 96%"** — from `pro_top` alone, whose displacement is
+   96% orthogonal to `d`. **Corrected** by testing dose against response across all seven
+   arms: the small on-`d` component is the *best* predictor of behaviour available,
+   r = +0.863 (p=0.012), better than the board score itself (r = +0.745). On positive doses
+   r = +0.990; on negative doses r = +0.389 (n.s.).
+2. **"The injection is applied past its useful range"** (saturation) — predicted `+0.5·d`
+   would beat `+1·d`. **Falsified**: +0.13 (n.s.) versus +0.45 (p=0.007). The response is
+   still climbing at α = 1.0. This was the claim with reach beyond the project, and it is
+   false here.
+3. **What stands: two mechanisms, not one curve.** Per unit of on-`d` displacement the
+   prefix is ≈**58×** more behaviourally effective than the injection. Within each family
+   dose predicts response; across families it does not. A prefix is not a small injection —
+   it brings attention, position and its own computation over 33 tokens — so its on-`d`
+   component looks like a **marker** of what it is doing rather than the cause.
+
+**"Compiler" is therefore the wrong word**, and establishing that was the result. Matching a
+direction's on-`d` displacement does not reproduce its effect, in either sign.
+
+### Limits
+
+n = 7 arms, with the sign split resting on 4 and 3 points. Two doses per sign, so the
+injection's "curve" is a line by construction. Last-token readout at one layer, while the
+prefix changes every position. The `±0.5` generations date from June and may span an NDIF
+model re-serve.
+
+### Unfinished
+
+`scripts/cosine_scale.py` would put the board score on an interpretable scale — the score is
+a *cosine shift*, so +0.108 means little without the baseline. Expected to show the
+injection producing a 5-6× larger cosine shift than the token string while delivering half
+the behaviour: the leaderboard's own Goodhart pattern with the steering vector as the
+entrant gaming the metric. Blocked on NDIF congestion (job accepted, never dispatched), not
+on the code. Nothing above depends on it.
+
+---
+
 ## 8. The synthesis
 
 | | pro end | anti end |
@@ -392,6 +456,14 @@ The activation-steering arm (§7b) shows the same one-sidedness by a different r
 `+1·d` shifts behaviour under two judges, `−1·d` is null under both and inside the random
 band. So on both the prefix side and the steering side, **`d` is meaningful added and
 inert subtracted.** Two independent interventions, the same asymmetry.
+
+§7c adds a third sighting and a mechanism caveat. The dose-response between on-`d`
+displacement and behaviour is near-perfect for positive doses (r = +0.99) and absent for
+negative ones (r = +0.39, n.s.) — the asymmetry as a curve rather than point estimates. But
+it also shows that prefixes and injections sit on **separate curves**, ≈58× apart per unit
+of displacement, so the on-`d` coordinate is where the two mechanisms are *comparable*, not
+where either of them works. Any claim of the form "moving the model along `d` causes X"
+should specify which instrument moved it.
 
 Practically: the pro board can be described as ordering sequences by how much they
 prosocially steer OLMo. The anti board cannot be described that way. It orders activation
@@ -469,6 +541,9 @@ Migrations 0005-0008. Test suite 60 → 81.
 
 ## 12. Next
 
+0. **Finish `cosine_scale.py`** when NDIF clears — one call is strictly needed (base
+   residuals); the injection side is exact arithmetic. Puts the board score on an
+   interpretable scale.
 1. **Resolve `pro_coherent`** — 13 decided pairs, p=1.0; ~20 more with
    `rate_blind.py --focus`, or report the null honestly. The only open research item.
 2. ~~Update the site.~~ **Done** (26 Aug): five fighter cards with status badges, the
@@ -500,3 +575,6 @@ Migrations 0005-0008. Test suite 60 → 81.
 | `data/generations/steering_arena_generations.jsonl` | 300 published generations |
 | `data/analysis/steering_random_control.md` / `.json` | §7b results, both judges |
 | `data/analysis/steering_random_control_preregistration.md` | outcomes fixed before results |
+| `data/analysis/compile_check.md` / `.json` | §7c: does the token string reproduce the vector's shift |
+| `data/analysis/steering_dose.md` / `.json` | §7c: dose-response inside the injection family |
+| `scripts/cosine_scale.py` | UNFINISHED, blocked on NDIF congestion; see its docstring |
