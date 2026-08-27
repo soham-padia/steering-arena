@@ -428,14 +428,27 @@ injection's "curve" is a line by construction. Last-token readout at one layer, 
 prefix changes every position. The `±0.5` generations date from June and may span an NDIF
 model re-serve.
 
-### Unfinished
+### The metric's own axis (`cosine_scale.md`)
 
-`scripts/cosine_scale.py` would put the board score on an interpretable scale — the score is
-a *cosine shift*, so +0.108 means little without the baseline. Expected to show the
-injection producing a 5-6× larger cosine shift than the token string while delivering half
-the behaviour: the leaderboard's own Goodhart pattern with the steering vector as the
-entrant gaming the metric. Blocked on NDIF congestion (job accepted, never dispatched), not
-on the code. Nothing above depends on it.
+The board score is a *cosine shift*, so +0.108 means little without the baseline. Measured:
+
+| condition | cos(R, d) | shift | behaviour |
+|---|---|---|---|
+| base | **0.0067** | — | — |
+| `pro_top` prefix | 0.0422 | **+0.0355** | **+0.89** |
+| `+0.5·d` injection | 0.4567 | +0.4500 | +0.13 |
+| `+1·d` injection | 0.7135 | **+0.7068** | +0.50 |
+
+The neutral state is essentially orthogonal to `d`, so the whole leaderboard lives in a
+narrow band just above zero. The injection moves the metric **19.9× further** than the
+token string and produces **half** the behaviour; per unit of cosine shift the prefix
+delivers **≈35×** more.
+
+**On the metric's own axis the ranking inverts.** A small score is not evidence of a small
+effect — the metric's high end is where the behaviour is not. It is the leaderboard's
+Goodhart pattern again, with the steering vector cast as the entrant gaming the score:
+better than any crowd-optimised string at maximising the measured quantity, worse than the
+best of them at behaving.
 
 ---
 
@@ -541,9 +554,6 @@ Migrations 0005-0008. Test suite 60 → 81.
 
 ## 12. Next
 
-0. **Finish `cosine_scale.py`** when NDIF clears — one call is strictly needed (base
-   residuals); the injection side is exact arithmetic. Puts the board score on an
-   interpretable scale.
 1. **Resolve `pro_coherent`** — 13 decided pairs, p=1.0; ~20 more with
    `rate_blind.py --focus`, or report the null honestly. The only open research item.
 2. ~~Update the site.~~ **Done** (26 Aug): five fighter cards with status badges, the
@@ -577,4 +587,4 @@ Migrations 0005-0008. Test suite 60 → 81.
 | `data/analysis/steering_random_control_preregistration.md` | outcomes fixed before results |
 | `data/analysis/compile_check.md` / `.json` | §7c: does the token string reproduce the vector's shift |
 | `data/analysis/steering_dose.md` / `.json` | §7c: dose-response inside the injection family |
-| `scripts/cosine_scale.py` | UNFINISHED, blocked on NDIF congestion; see its docstring |
+| `data/analysis/cosine_scale.md` | §7c: the board score's scale, and the metric-vs-behaviour inversion |

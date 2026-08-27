@@ -1,9 +1,12 @@
 """What scale is the board score on? Measures cos(R, d) before and after each prefix, and
 what the injection does on that same axis.
 
-STATUS: UNFINISHED. Written 26 Aug, never completed a run — NDIF accepted the first call
-and left it at RECEIVED without dispatching (3000+ spinner frames, zero QUEUED/RUNNING).
-Nothing wrong with the script; the deployment was congested. Re-run when it clears.
+STATUS: COMPLETE (27 Aug). Results in data/analysis/cosine_scale.md. The 26 Aug attempt
+died in NDIF congestion (accepted, never dispatched); the retry ran in 105s.
+
+HEADLINE: base cos(R,d) = 0.0067, so the model's neutral state is essentially orthogonal to
+d. pro_top moves it +0.0355. The +1 injection moves it +0.7068 — 19.9x further — and
+produces HALF the behaviour. Per unit of cosine shift the prefix delivers ~35x more.
 
 WHY IT MATTERS: the board score is a COSINE SHIFT, so +0.108 for pro_top has no intuitive
 scale until you know the baseline cosine. The comparison this produces is the interesting
