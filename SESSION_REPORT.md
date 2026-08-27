@@ -260,6 +260,102 @@ Two controls, both real Season-2 submissions scoring ≈0, judged by both raters
 preamble does". Both trend slightly *negative* (repetition 13/50 and 23/50), so an
 arbitrary prefix mildly degrades output and `pro_top`'s +0.91 is conservative.
 
+
+---
+
+## 7b. Experiment 6 — the steering arm's norm-matched random direction
+
+The §7 controls were about **prefixes** (text in the context window). They say nothing
+about the *other* intervention in this project: adding `α·d` directly to the layer-24
+residual stream. `behavioral_eval.md` ran that at α = 0.5 and 1.0 × ‖R‖ with **no control
+for perturbation size**. A random vector of equal norm might derail generation just as
+much, which would make that result about magnitude rather than about `d`.
+
+Pre-registered in `steering_random_control_preregistration.md` before any result was seen.
+
+### Manipulation check, measured rather than read off the code
+
+The intervention was measured by saving the layer-24 output with and without the edit and
+differencing them.
+
+| property | measured |
+|---|---|
+| positions edited | **all 9 prompt positions**, not last-token only |
+| per-position edit norm | **30.07**, exactly α |
+| direction | **cos(diff, d) = 1.000** at every position |
+| generated tokens edited | **none** (trace covers 9 of a 17-token sequence) |
+| per-position baseline residual norms | 18.5, 21.5, 33.2, 35.1, 33.5, 32.6, 35.9, **5.2**, 31.1 |
+
+**This is prefill-only steering**, and that fact is the most interesting thing in this
+experiment rather than a defect. The edit touches the prompt's representation and **zero
+generated tokens**, yet shifts kindness across the whole 40-token continuation at p<0.01.
+The perturbed prompt produces perturbed K/V at layer 24, and every generated token attends
+to it, so the effect propagates through the model's read of its own context rather than
+through repeated nudging. *Modifying the representation of the prompt alone changes the
+behaviour of the whole continuation.*
+
+It also means **`behavioral_eval.md` describes an intervention it does not perform.** Any
+statement that this eval steers each token is wrong.
+
+Note too that α is the mean *last-token* residual norm applied uniformly to every
+position. Against per-position norms spanning 5.2 to 35.9, the same α is ≈1× the local
+residual at some positions and **≈6×** at others.
+
+### Results
+
+3 random unit vectors (seed 20260826) at the same α = 30.07, |cos with d| < 0.015,
+50 prompts per arm, both signs of the real arm re-judged under v2 in the same run.
+
+| arm | distinct-4 | Δ vs base | looping | kindness Δ (deepseek) | p | kindness Δ (claude) | p |
+|---|---|---|---|---|---|---|---|
+| base | 0.912 | — | 8/50 | — | — | — | — |
+| **+1 · d** | 0.872 | −0.039 (p=0.29) | 8/50 | **+0.45** | **0.0070** | **+0.54** | **0.0015** |
+| **−1 · d** | 0.889 | −0.023 (p=0.41) | 12/50 | −0.15 | 0.39 | +0.05 | 0.84 |
+| rand1 | 0.844 | −0.068 (p=0.036) | 17/50 | −0.18 | 0.32 | — | — |
+| rand2 | 0.867 | −0.045 (p=0.12) | 12/50 | +0.10 | 0.46 | — | — |
+| rand3 | 0.940 | +0.029 (p=0.21) | 9/50 | +0.13 | 0.45 | — | — |
+
+### Reading
+
+**The two measures dissociate.** Coherence damage is a **magnitude** effect: `+1·d`
+(−0.039) sits *inside* the random spread (−0.068 to +0.029), and the only arm significant
+on distinct-4 is a *random* one. The kindness shift is a **direction** effect: `+1·d` is
++0.45/+0.54 while all three randoms cluster near zero. Pre-registered outcome (A) on the
+measure that matters, (B) on the other.
+
+**This resolves an apparent tension with §3.** A prefix *improves* coherence (d4 0.888 →
+1.000, p=0.002; repetition 1/50 vs base 13/50) while an activation edit at 1.0·‖R‖
+*degrades* it in every direction including random. Not a contradiction: two different
+interventions, two regimes. Saying so explicitly protects both results.
+
+**The headline: the direction is meaningful in only one sign.** `−1·d` is null under both
+judges (−0.15 p=0.39; +0.05 p=0.84, an exact 15/30 coin flip) **and sits inside the random
+band on both measures**. Added along `+d` it steers; subtracted it is indistinguishable
+from noise of equal norm. A learned linear direction with that property is a sharp fact
+about linear representations, and it contrasts with bidirectional results reported for
+refusal directions — a contrast that needs a citation rather than assertion here.
+
+**Correction to an earlier claim.** "The negative pole yields stance collapse rather than
+cruelty" was the **prefix** `anti_top` arm (39/50 degenerate), now withdrawn — not this
+steering arm, which loops 12/50 against base 8/50. The steering asymmetry was previously
+*unsupported* (the OLMo judge failed on it), not differently-shaped; it is characterised
+here for the first time.
+
+### Robustness fact, independent of `d`
+
+A vector of norm 30.07 added at **every** prompt position, up to ~6× the local residual,
+leaves generation largely fluent: distinct-4 0.844-0.940 against base 0.912, looping
+9-17/50 against base 8/50. The model absorbs a perturbation the size of its own residual
+stream without collapsing.
+
+### A bug class, not an incident
+
+This is the second occurrence on one axis: **an intervention's firing scope diverging from
+what is believed about it.** Once via code drift (a per-step edit silently becoming
+prefill-only), now via documentation drift (a doc describing per-token steering over
+prefill-only code). Standing rule: **firing scope is measured, never read off the code.**
+A manipulation check costs one extra forward pass and would have caught both.
+
 ---
 
 ## 8. The synthesis
@@ -274,6 +370,11 @@ arbitrary prefix mildly degrades output and `pro_top`'s +0.91 is conservative.
 
 The metric has **opposite epistemic standing at its two ends**. That is the result. It is
 more defensible, and more interesting, than either a clean success or a clean debunking.
+
+The activation-steering arm (§7b) shows the same one-sidedness by a different route:
+`+1·d` shifts behaviour under two judges, `−1·d` is null under both and inside the random
+band. So on both the prefix side and the steering side, **`d` is meaningful added and
+inert subtracted.** Two independent interventions, the same asymmetry.
 
 Practically: the pro board can be described as ordering sequences by how much they
 prosocially steer OLMo. The anti board cannot be described that way. It orders activation
@@ -335,17 +436,22 @@ Migrations 0005-0008. Test suite 60 → 81.
    than by a blind rule over the board.
 6. **The child-register count is a post-hoc lexical heuristic**, not a blind-rated
    construct.
-7. **The steering eval still lacks a norm-matched random direction.**
-   `behavioral_eval.json` has only `±0.5` and `±1` of `d`. At 1×‖R‖ a random vector might
-   derail generation comparably, which would make that result about perturbation magnitude
-   rather than about `d`. This is the largest remaining gap.
+7. ~~The steering eval lacks a norm-matched random direction.~~ **Closed** — see §7b.
+   The result held on the measure that matters, and the control found two things the eval
+   would not have surfaced on its own: the intervention is prefill-only, and its coherence
+   effect is a magnitude artifact.
+8. **Three random draws bound the null loosely.** The `−1·d` claim is *defined* by falling
+   inside the random band, so that band deserves a distribution rather than a range. An
+   extension to 8 seeds is in progress.
+9. **The steering arm's random controls are single-judge.** Both `±1` arms are
+   cross-judged; the three random arms are DeepSeek-only.
 
 ---
 
 ## 12. Next
 
-1. **Norm-matched random direction for the steering eval** (limitation 7). Same class of
-   control as §7, one layer down. ~1 hour.
+1. **Finish the 8-seed null band** (limitation 8), so the `−1·d` result rests on a
+   characterised distribution.
 2. **Resolve `pro_coherent`** — ~20 more ratings with `rate_blind.py --focus`, or report
    the null.
 3. **Update the site** to match the research: it still shows three arms and the
@@ -366,3 +472,5 @@ Migrations 0005-0008. Test suite 60 → 81.
 | `data/analysis/prefix_transfer.md` / `.json` | cross-model results |
 | `data/analysis/prefix_blind.csv` | the human rating sheet (key held separately) |
 | `data/generations/steering_arena_generations.jsonl` | 300 published generations |
+| `data/analysis/steering_random_control.md` / `.json` | §7b results, both judges |
+| `data/analysis/steering_random_control_preregistration.md` | outcomes fixed before results |
