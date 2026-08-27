@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css?v=10" />
-  <link rel="stylesheet" href="/behavior.css?v=8" />
+  <link rel="stylesheet" href="/behavior.css?v=9" />
   <script defer src="/auth.js?v=2"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
@@ -91,6 +91,10 @@
              :maxlength="gen.prompt_max_chars" @keydown.enter="run()"
              placeholder="When my flatmate ate my leftovers, I" />
 
+      <p class="bh-try-label bh-arms-label">
+        SELECT YOUR FIGHTER
+        <a class="bh-linkbtn" href="#fighters">what each one does &rarr;</a>
+      </p>
       <div class="bh-arms">
         <template x-for="a in gen.arms" :key="a.arm">
           <button class="bh-arm" :class="arm === a.arm ? 'is-on' : ''" @click="arm = a.arm">
@@ -139,21 +143,54 @@
   <section class="wrap">
     <h2 class="bh-h2">WHAT PEOPLE ARE TRYING</h2>
     <p class="bh-note bh-lead">
-      Every generation made here, newest first, under the player name its author chose.
-      Accounts are never shown.
-      <button class="bh-linkbtn" @click="loadFeed()">refresh</button>
+      Every generation made here, under the player name its author chose. Accounts are never
+      shown. Runs of the <b>same sentence</b> are grouped, so you can read one prompt across
+      several prefixes side by side &mdash; which is the comparison this whole page is about.
     </p>
-    <p class="bh-note" x-show="feed.length === 0" x-cloak>Nothing here yet. Be the first.</p>
-    <template x-for="(f, i) in feed" :key="i">
-      <article class="bh-feed">
-        <header>
-          <span class="bh-feed-who" x-text="f.handle || 'anonymous'"></span>
-          <span class="bh-feed-arm" x-text="armLabel(f.arm)"></span>
-          <span class="bh-feed-when" x-text="f.created_at.slice(0, 16).replace('T', ' ')"></span>
-        </header>
-        <p><span class="bh-feed-typed" x-text="f.prompt"></span><span x-text="' ' + f.continuation"></span></p>
-      </article>
-    </template>
+
+    <div class="bh-feed-bar">
+      <label>prefix
+        <select x-model="feedArm">
+          <option value="">all</option>
+          <template x-for="a in gen.arms" :key="'f' + a.arm">
+            <option :value="a.arm" x-text="a.label"></option>
+          </template>
+        </select>
+      </label>
+      <label>sort
+        <select x-model="feedSort">
+          <option value="new">newest first</option>
+          <option value="most">most-tried sentence first</option>
+        </select>
+      </label>
+      <label><input type="checkbox" x-model="feedMultiOnly" /> only sentences with 2+ prefixes</label>
+      <button class="bh-linkbtn" @click="loadFeed()">refresh</button>
+      <span class="bh-feed-count" x-text="feedSummary()"></span>
+    </div>
+
+    <p class="bh-note" x-show="feedGroups().length === 0" x-cloak>Nothing here yet. Be the first.</p>
+
+    <div class="bh-feed-scroll">
+      <template x-for="grp in feedGroups()" :key="grp.prompt">
+        <section class="bh-feed-group">
+          <header class="bh-feed-prompt" @click="toggleGroup(grp.prompt)">
+            <span class="bh-feed-caret" x-text="isOpen(grp.prompt) ? '\u25be' : '\u25b8'"></span>
+            <b x-text="grp.prompt"></b>
+            <em x-text="`${grp.rows.length} run${grp.rows.length > 1 ? 's' : ''}`"></em>
+          </header>
+          <template x-for="(f, i) in grp.rows" :key="grp.prompt + i">
+            <article class="bh-feed" x-show="isOpen(grp.prompt)" x-cloak>
+              <header>
+                <span class="bh-feed-who" x-text="f.handle || 'anonymous'"></span>
+                <span class="bh-feed-arm" x-text="armLabel(f.arm)"></span>
+                <span class="bh-feed-when" x-text="f.created_at.slice(0, 16).replace('T', ' ')"></span>
+              </header>
+              <p x-text="f.continuation"></p>
+            </article>
+          </template>
+        </section>
+      </template>
+    </div>
   </section>
 
   <!-- ── hero: do the judge's job ─────────────────────────────────────── -->
@@ -197,7 +234,7 @@
 
   <!-- ── fighters ─────────────────────────────────────────────────────── -->
   <section class="wrap">
-    <h2 class="bh-h2">SELECT YOUR FIGHTER</h2>
+    <h2 class="bh-h2" id="fighters">SELECT YOUR FIGHTER</h2>
     <div class="bh-grid">
       <template x-for="f in data.fighters" :key="f.id">
         <article class="bh-card" :class="`accent-${f.accent}`">
@@ -205,6 +242,7 @@
             <span class="bh-call" x-text="f.callsign"></span>
             <span class="bh-score" x-text="(f.score > 0 ? '+' : '') + f.score.toFixed(3)"></span>
           </header>
+          <p class="bh-alias">= <b x-text="armLabel(f.id)"></b> in the picker above</p>
           <p class="bh-status" :class="'is-' + f.status" x-text="f.status_label"></p>
 
           <p class="bh-seq" x-text="seqPreview(f)"></p>
@@ -347,10 +385,11 @@ function tapes() {
     gen: { enabled: false, arms: [], max_new_tokens: 40, prompt_max_chars: 240 },
     prompt: "", handle: "", arm: "pro_top", consent: true, busy: false, err: "",
     result: null, resultLabel: "", showSignin: false,
+    feedArm: "", feedSort: "new", feedMultiOnly: false, openGroups: {},
     roundNo: 1, picked: null, youText: "",
     get round() { return this.data.rounds[this.roundNo - 1] || null; },
     async load() {
-      const r = await fetch("/behavior_data.json?v=7");
+      const r = await fetch("/behavior_data.json?v=9");
       this.data = await r.json();
       try {
         const g = await fetch("/generate/arms");
@@ -374,6 +413,40 @@ function tapes() {
         const r = await fetch("/generations/recent?limit=40");
         if (r.ok) this.feed = (await r.json()).rows || [];
       } catch (_) { /* feed is a nicety; never break the page over it */ }
+    },
+    // Group the feed by the sentence people typed. The same prompt run through different
+    // prefixes is the page's core comparison, so those rows belong next to each other
+    // rather than scattered by timestamp.
+    feedGroups() {
+      const rows = this.feed.filter(f => !this.feedArm || f.arm === this.feedArm);
+      const by = new Map();
+      for (const f of rows) {
+        if (!by.has(f.prompt)) by.set(f.prompt, []);
+        by.get(f.prompt).push(f);
+      }
+      let groups = [...by.entries()].map(([prompt, rs]) => ({
+        prompt,
+        rows: rs,
+        arms: new Set(rs.map(r => r.arm)).size,
+        latest: rs.map(r => r.created_at).sort().slice(-1)[0],
+      }));
+      if (this.feedMultiOnly) groups = groups.filter(g => g.arms > 1);
+      groups.sort(this.feedSort === "most"
+        ? (a, b) => b.rows.length - a.rows.length || b.latest.localeCompare(a.latest)
+        : (a, b) => b.latest.localeCompare(a.latest));
+      return groups;
+    },
+    isOpen(prompt) {
+      // default open, so the feed reads as content rather than as a list of closed folders
+      return this.openGroups[prompt] !== false;
+    },
+    toggleGroup(prompt) { this.openGroups[prompt] = this.isOpen(prompt) ? false : true; },
+    feedSummary() {
+      const g = this.feedGroups();
+      const runs = g.reduce((n, x) => n + x.rows.length, 0);
+      const multi = g.filter(x => x.arms > 1).length;
+      return `${runs} run${runs === 1 ? "" : "s"} · ${g.length} sentence${g.length === 1 ? "" : "s"}`
+             + (multi ? ` · ${multi} tried with 2+ prefixes` : "");
     },
     armLabel(arm) {
       const a = this.gen.arms.find(x => x.arm === arm);

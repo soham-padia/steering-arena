@@ -264,3 +264,45 @@
 .bh-status.is-null { color: var(--muted); }
 .bh-status.is-withdrawn { color: var(--red); }
 .accent-red { --acc: var(--red); --acc-dim: rgba(255, 82, 119, 0.16); }
+
+/* ---- picker <-> card cross-reference ---- */
+.bh-arms-label { display: flex; gap: 12px; align-items: baseline; margin-top: 18px; }
+.bh-alias { margin: 8px 0 0; color: var(--muted); font-size: 18px; }
+.bh-alias b { color: var(--acc); font-weight: normal; }
+
+/* ---- feed: grouped by the sentence people typed ----
+   The same prompt across different prefixes is the comparison this page exists to make,
+   so those rows are collapsed together rather than scattered by timestamp. */
+.bh-feed-bar {
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+  margin: 16px 0 12px; padding-bottom: 12px; border-bottom: 2px solid #2a2560;
+  color: var(--muted); font-size: 18px;
+}
+.bh-feed-bar label { display: flex; gap: 7px; align-items: center; margin: 0;
+  font-family: var(--term); font-size: 18px; color: var(--muted); }
+.bh-feed-bar select {
+  font-family: var(--term); font-size: 18px; background: var(--panel-2); color: var(--ink);
+  border: 2px solid #302a6b; padding: 4px 8px;
+}
+.bh-feed-bar input[type="checkbox"] { width: 15px; height: 15px; flex: 0 0 auto; accent-color: var(--green); }
+.bh-feed-count { margin-left: auto; font-family: var(--pixel); font-size: 8px; color: var(--muted); }
+
+.bh-feed-scroll { max-height: 62vh; overflow-y: auto; padding-right: 8px; }
+.bh-feed-scroll::-webkit-scrollbar { width: 10px; }
+.bh-feed-scroll::-webkit-scrollbar-track { background: var(--panel-2); }
+.bh-feed-scroll::-webkit-scrollbar-thumb { background: #302a6b; }
+.bh-feed-scroll::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+.bh-feed-group { margin-bottom: 18px; }
+.bh-feed-prompt {
+  display: flex; gap: 10px; align-items: baseline; cursor: pointer;
+  padding: 8px 10px; background: var(--panel); border-left: 3px solid var(--cyan);
+}
+.bh-feed-prompt:hover { background: var(--panel-2); }
+.bh-feed-prompt b { font-weight: normal; color: var(--ink); font-size: 21px; }
+.bh-feed-prompt em {
+  margin-left: auto; font-style: normal; font-family: var(--pixel);
+  font-size: 8px; color: var(--muted);
+}
+.bh-feed-caret { color: var(--cyan); font-size: 16px; }
+.bh-feed-group .bh-feed { margin-left: 18px; }
