@@ -315,6 +315,23 @@ residual at some positions and **≈6×** at others.
 | rand2 | 0.867 | −0.045 (p=0.12) | 12/50 | +0.10 | 0.46 | — | — |
 | rand3 | 0.940 | +0.029 (p=0.21) | 9/50 | +0.13 | 0.45 | — | — |
 
+### The null band over 8 draws
+
+| random deltas | −0.18, +0.05, +0.06, +0.06, +0.10, +0.11, +0.12, +0.13 |
+|---|---|
+| null band | mean **+0.056**, sd **0.100**, range [−0.18, +0.13] |
+| `+1·d` = +0.45 | **z = +3.93**, above all 8 draws |
+| `−1·d` = −0.15 | z = −2.06, inside the range (≈12th percentile) |
+| randoms significant | none of 8 |
+
+`+1·d` is unambiguous. `−1·d` needs the careful sentence: it sits at the *low edge* of the
+band under DeepSeek, while Claude places it at **+0.05**, essentially the null mean. The
+two judges **bracket** the centre. So the licensed claim is *not distinguishable from the
+random-direction null at n=50*, not *it is noise*.
+
+Separately: the null mean is **+0.056**, not zero — a random perturbation of norm ‖R‖ at
+every prompt position nudges judged kindness slightly upward on average.
+
 ### Reading
 
 **The two measures dissociate.** Coherence damage is a **magnitude** effect: `+1·d`
@@ -440,9 +457,10 @@ Migrations 0005-0008. Test suite 60 → 81.
    The result held on the measure that matters, and the control found two things the eval
    would not have surfaced on its own: the intervention is prefill-only, and its coherence
    effect is a magnitude artifact.
-8. **Three random draws bound the null loosely.** The `−1·d` claim is *defined* by falling
-   inside the random band, so that band deserves a distribution rather than a range. An
-   extension to 8 seeds is in progress.
+8. ~~Three random draws bound the null loosely.~~ **Closed** — extended to 8 draws
+   (mean +0.056, sd 0.100). It also sharpened the reading: `−1·d` is at the band's low
+   edge under one judge and at its centre under the other, so "not distinguishable from
+   the null" is the licensed claim rather than "is noise".
 9. **The steering arm's random controls are single-judge.** Both `±1` arms are
    cross-judged; the three random arms are DeepSeek-only.
 
@@ -450,9 +468,7 @@ Migrations 0005-0008. Test suite 60 → 81.
 
 ## 12. Next
 
-1. **Finish the 8-seed null band** (limitation 8), so the `−1·d` result rests on a
-   characterised distribution.
-2. **Resolve `pro_coherent`** — ~20 more ratings with `rate_blind.py --focus`, or report
+1. **Resolve `pro_coherent`** — ~20 more ratings with `rate_blind.py --focus`, or report
    the null.
 3. **Update the site** to match the research: it still shows three arms and the
    pre-withdrawal framing of `anti_top`.

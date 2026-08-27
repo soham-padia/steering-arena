@@ -66,6 +66,33 @@ Both judges find `+1·d` significant and `−1·d` null. Claude's `−1` result 
 preferred — an exact coin flip — with a point estimate nearer zero than DeepSeek's. The
 asymmetry no longer rests on a single rater on either side.
 
+## The null band, characterised (8 random draws)
+
+Three draws bound the null loosely, and the `−1·d` result is *defined* by falling inside
+it, so the band was extended to 8 seeds (250 further generations, same α, same prompts).
+
+| random-direction kindness deltas | −0.18, +0.05, +0.06, +0.06, +0.10, +0.11, +0.12, +0.13 |
+|---|---|
+| **null band** | mean **+0.056**, sd **0.100**, range [−0.18, +0.13] |
+| **+1 · d** = +0.45 | **z = +3.93** — outside the observed range |
+| **−1 · d** = −0.15 | z = −2.06 — inside the range |
+| random arms reaching p<0.05 on kindness | **none of 8** |
+
+**`+1·d` is unambiguous**: nearly 4 sd above the null mean, above every one of 8 draws.
+
+**`−1·d` needs a more careful sentence than "indistinguishable from noise".** At z = −2.06
+it sits at the *low edge* of the band, inside the range only because one draw (−0.18) is
+lower still — about the 12th percentile. But the second judge placed `−1` at **+0.05**,
+essentially the null mean. The two judges therefore **bracket** the null centre rather
+than agreeing on a position. The claim this supports is: *`−1·d` is not distinguishable
+from the random-direction null at n=50, with the two raters straddling its centre.* That
+is weaker than "it is noise", and it is what the data licenses.
+
+**A small observation in its own right:** the null mean is **+0.056**, not zero. A random
+perturbation of norm ‖R‖ at every prompt position nudges judged kindness slightly upward
+on average. Whether that is a real property of the perturbation or a judge artifact is not
+established here.
+
 ## Reading: the two measures dissociate
 
 **Coherence damage is a MAGNITUDE effect.** `+1·d` (−0.039) sits inside the random spread
