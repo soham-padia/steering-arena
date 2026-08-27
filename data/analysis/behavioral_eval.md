@@ -1,5 +1,21 @@
 # Behavioral steering eval (Track 3) — status memo, 2026-06-10
 
+> **CORRECTIONS, 2026-08-26** (see `steering_random_control.md`, which supersedes parts
+> of this memo):
+> 1. **The intervention is PREFILL-ONLY.** Measured, not inferred: the edit lands on all
+>    prompt positions with norm exactly α and cos 1.000 to `d`, and touches **zero
+>    generated tokens**. Read any description below of steering "each arm" as steering the
+>    prompt's forward pass, which changes the state generation proceeds from. It is not
+>    applied per decoding step.
+> 2. **Do not cite the ±1 judge numbers below** (incl. "−1: 13/17, p=0.049"). They come
+>    from the OLMo judge this memo itself reports as unusable. Both signs were re-judged
+>    under the v2 rubric by two working judges: **+1 = +0.45 / +0.54 (p<0.01), −1 = −0.15 /
+>    +0.05 (n.s.)**.
+> 3. **There was no control for perturbation SIZE.** There is now: against 8 norm-matched
+>    random directions, `+1·d` is ~4-5 sd outside the null under both judges, while the
+>    coherence effect of `±1·d` sits INSIDE the random band. The behavioural shift is
+>    about the direction; the coherence damage is about the magnitude.
+
 **Setup:** 50 frozen neutral prompts (`data/eval/steering_prompts.json`), 5 arms each
 (base, ±0.5×‖R‖, ±1×‖R‖ at OLMo-3-32B layer 24, ‖R‖≈30.1, 40 new tokens) → 250
 generations, cached in `data/cache/behavioral/`. 200 blind steered-vs-base pairs
