@@ -72,18 +72,38 @@ dose-response is near-perfect: **r = +0.990 (p=0.010)** across four arms. On the
 side there is none: r = +0.389 (p=0.75), and the ordering inverts (`anti_top` carries the
 largest anti dose, −1.49, and produces *less* behaviour than `anti_hostile` at −0.87).
 
-**What survives, restated.** The token strings deliver ≈3% of the injection's on-`d` push,
-and within that small-dose regime the response tracks the dose almost perfectly. The
-injection, with ~32× the dose, produces *less* behaviour than `pro_top` (+0.45/+0.54 vs
-+0.87/+0.91). So the dose-response is not linear across regimes: it rises steeply where the
-token strings live and has fallen by the time you reach α = 30.07 — consistent with the
-coherence result, where a perturbation that size degrades text in any direction, random ones
-included.
+**A saturation story was proposed here and then falsified.** The reasoning was: the token
+strings sit at a tiny dose with a large response, the injection sits at 32× the dose with a
+smaller response, therefore the response must peak somewhere between and the injection is
+applied past its useful range. That predicts `+0.5·d` should beat `+1·d`. It does not
+(`steering_dose.md`):
 
-That is a saturation-and-damage story, not an orthogonality story. `pro_top` is closer to a
-compilation than the previous version of this document claimed; what it is not is a
-compilation *at the injection's magnitude*, and the magnitude turns out to be the injection's
-problem rather than the string's.
+| injection dose | on-`d` push | behaviour | p |
+|---|---|---|---|
+| `+0.5·d` | 15.03 | **+0.13** | 0.32 (n.s.) |
+| `+1.0·d` | 30.07 | **+0.45** | 0.007 |
+
+The injection's response is still **climbing** at α = 1.0. Half the dose gives less than a
+third of the effect. The vector is not overdriven; if anything it is under-applied.
+
+**So the two families are not on one curve.**
+
+| | on-`d` dose | behaviour | behaviour per unit dose |
+|---|---|---|---|
+| `pro_top` prefix | 0.93 | +0.89 | **0.96** |
+| `+1·d` injection | 30.07 | +0.50 | **0.017** |
+
+**Per unit of on-`d` displacement, the token prefix is ≈58× more behaviourally effective
+than the residual injection.** Within prefixes the dose predicts the response (r = +0.99);
+within injections it also predicts it (0.13 → 0.45, increasing); but the two sit on
+completely separate curves.
+
+That promotes the mechanism confound from a caveat to the leading explanation. A prefix is
+not a small injection: 33 extra tokens give the model attention patterns, positional
+structure and its own computation over that context, none of which a residual nudge
+provides. On this evidence the on-`d` component of a prefix is a **marker** of what the
+prefix is doing rather than the thing doing it — which is why matching the injection's on-`d`
+push does not match its effect, in either direction.
 
 **It also offers an explanation for the asymmetry.** If the behaviour is not carried by the
 `d`-component, there is no reason negating `d` should invert the behaviour — and it doesn't
@@ -94,24 +114,29 @@ direction.
 
 ## What this does to the "vector-to-token compiler" framing
 
-The framing holds, with a sharper claim than either "it compiles" or "it doesn't":
+"Compiler" turns out to be the wrong word, and the reason is the finding.
 
-> Optimising token sequences against a direction yields strings that move activations along
-> it by ~3% of a conventional steering magnitude, and within that small-dose regime the
-> behavioural response tracks the dose almost perfectly (r = +0.99). Injecting the full
-> magnitude produces *less* behaviour than the compiled string, not more.
+> A token string optimised against `d` moves activations along `d` by ~3% of a conventional
+> steering magnitude and produces ~2× the behaviour of the full-magnitude injection. Within
+> each family the dose predicts the response; **across** families it does not, by a factor
+> of ≈58. Matching a direction's on-`d` displacement does not reproduce its effect.
 
-Two consequences worth stating separately.
+Three consequences.
 
-**The compilation is real but tiny, and tiny is better.** A 0.93 push along `d` outperforms a
-30.07 push along `d`. If that holds up, the practical reading is that steering vectors are
-routinely applied at magnitudes past the useful range, and a token string that lands a small
-precise push beats an injection that lands a large one.
+**A prefix is not a compiled vector, it is a different instrument.** Both move the residual
+along `d`, and that shared coordinate is what the leaderboard measures, but the prefix also
+brings attention, position and its own computation. The on-`d` number is where the two
+mechanisms happen to be comparable, not where either of them works.
 
-**The compilation is one-sided.** The dose-response is near-perfect for positive doses and
-absent for negative ones. Compilation succeeds in the sign that steers and fails in the sign
-that does not — the same asymmetry as everywhere else in this project, now visible as a
-dose-response curve rather than a pair of point estimates.
+**The compilation is one-sided.** Near-perfect dose-response for positive doses (r = +0.99,
+n=4), none for negative (r = +0.39, n=3) — the same asymmetry as everywhere else in this
+project, now as a curve rather than point estimates.
+
+**And the practical claim has to be narrowed.** "Steering vectors are applied past their
+useful range" was the interesting version and it is false here: the injection is still
+improving at α = 1.0·‖R‖. What is true is narrower and still worth saying — *at every dose
+tested, a token prefix delivered more behaviour per unit of on-`d` displacement than an
+injection did, by roughly two orders of magnitude*.
 
 ## Limits
 
