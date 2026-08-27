@@ -52,6 +52,17 @@ def arm_name(i):
     return f"rand{i + 1}s{SEED}"
 
 
+def null_band(values):
+    """Summarise the random-direction null. With enough draws this stops being a range
+    and becomes a distribution, which matters because the −1·d result is defined by
+    falling inside it."""
+    import statistics
+    v = sorted(values)
+    return {"n": len(v), "min": round(v[0], 3), "max": round(v[-1], 3),
+            "mean": round(statistics.fmean(v), 3),
+            "sd": round(statistics.stdev(v), 3) if len(v) > 1 else None}
+
+
 def _text(prompt, arm, alpha, max_new):
     fp = CACHE_DIR / f"{_gen_key(settings.model_id, settings.layer, prompt, arm, alpha, max_new)}.json"
     return json.loads(fp.read_text())["text"] if fp.exists() else None
@@ -148,6 +159,84 @@ def cmd_judge(args):
     print(f"\n→ {OUT}")
 
 
+def cmd_claude_batches(args):
+    """Blinded batches so the free subagent judge can cross-check the API judge.
+
+    Judge disagreement is what collapsed the anti_top arm in prefix_eval.md; a steering
+    result resting on one rater has no such check. Same pairs, same rubric, both orders,
+    split so no agent context holds both orientations of a pair.
+    """
+    prompts = _load_prompts(args.limit)
+    out_dir = Path("data/cache/steering_claude")
+    (out_dir / "in").mkdir(parents=True, exist_ok=True)
+    (out_dir / "out").mkdir(parents=True, exist_ok=True)
+    written = []
+    for arm, alpha in _arms(args):
+        pairs = []
+        for prompt in prompts:
+            base = _cont(_text(prompt, "base", 0.0, args.max_new), prompt)
+            pre = _cont(_text(prompt, arm, alpha, args.max_new), prompt)
+            if base and pre:
+                pairs.append((prompt, pre, base))
+        safe = arm.replace("+", "p").replace("-", "m").replace(".", "_")
+        for orient in ("fwd", "rev"):
+            chunks = [pairs[i:i + args.batch_size] for i in range(0, len(pairs), args.batch_size)]
+            for bi, chunk in enumerate(chunks, 1):
+                items = [{"pair_id": f"{arm}|{p}", "sentence": p,
+                          "continuation_A": pre if orient == "fwd" else base,
+                          "continuation_B": base if orient == "fwd" else pre}
+                         for p, pre, base in chunk]
+                fp = out_dir / "in" / f"{safe}_{orient}_{bi:02d}.json"
+                fp.write_text(json.dumps({"arm": arm, "orientation": orient,
+                                          "pairs": items}, indent=2, ensure_ascii=False))
+                written.append(fp)
+    for fp in written:
+        print(fp)
+    print(f"\n{len(written)} batches")
+
+
+def cmd_claude_merge(args):
+    from scripts.prefix_behavior_eval import _coerce
+    out_dir = Path("data/cache/steering_claude")
+    store = json.loads(OUT.read_text())
+    flip = {"A": "B", "B": "A", "T": "T"}
+    for arm, _alpha in _arms(args):
+        safe = arm.replace("+", "p").replace("-", "m").replace(".", "_")
+        got = {"fwd": {}, "rev": {}}
+        for fp in sorted((out_dir / "out").glob(f"{safe}_*.json")):
+            orient = "fwd" if "_fwd_" in fp.name else "rev"
+            for pid, rec in json.loads(fp.read_text()).items():
+                c = _coerce(rec)
+                if c:
+                    got[orient][pid] = c
+        recs = {}
+        for pid, r1 in got["fwd"].items():
+            r2 = got["rev"].get(pid)
+            if not r2:
+                continue
+            v1, v2 = r1["kinder"], flip[r2["kinder"]]
+            recs[pid] = {"verdict": v1 if v1 == v2 else None,
+                         "kindness_steered": round((r1["kindness_A"] + r2["kindness_B"]) / 2, 2),
+                         "kindness_base": round((r1["kindness_B"] + r2["kindness_A"]) / 2, 2),
+                         "markers_steered": sorted(set(r1["markers_A"]) & set(r2["markers_B"]))}
+        if not recs:
+            continue
+        wins = sum(1 for r in recs.values() if r["verdict"] == "A")
+        losses = sum(1 for r in recs.values() if r["verdict"] == "B")
+        deltas = [r["kindness_steered"] - r["kindness_base"] for r in recs.values()]
+        pv, test = _paired_p(deltas)
+        mk = collections.Counter(m for r in recs.values() for m in r["markers_steered"])
+        print(f"  {arm:>16} preferred {wins}/{wins + losses}  Δ={_mean(deltas):+.2f} "
+              f"({test} p={pv:.4f}, n={len(recs)})")
+        store = json.loads(OUT.read_text())
+        store.setdefault("judged_claude", {})[arm] = {
+            "model": "claude-opus-5", "wins": wins, "losses": losses,
+            "kindness_delta": round(_mean(deltas), 3), "test": test, "p": round(pv, 5),
+            "n": len(recs), "markers": dict(mk), "records": recs}
+        OUT.write_text(json.dumps(store, indent=2, ensure_ascii=False))
+    print(f"→ {OUT}")
+
+
 def cmd_report(args):
     store = json.loads(OUT.read_text())
     prompts = _load_prompts(args.limit)
@@ -184,17 +273,20 @@ def cmd_report(args):
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("generate", "judge", "report"):
+    for name in ("generate", "judge", "report", "claude-batches", "claude-merge"):
         p = sub.add_parser(name)
         p.add_argument("--limit", type=int, default=0)
         p.add_argument("--max-new", type=int, default=40)
         p.add_argument("--mult", type=float, default=1.0)
         if name == "generate":
-            p.add_argument("--dirs", type=int, default=3)
+            p.add_argument("--dirs", type=int, default=8)
         if name == "judge":
             p.add_argument("--model", default="deepseek-v4-pro")
+        if name == "claude-batches":
+            p.add_argument("--batch-size", type=int, default=25)
     args = ap.parse_args()
-    {"generate": cmd_generate, "judge": cmd_judge, "report": cmd_report}[args.cmd](args)
+    {"generate": cmd_generate, "judge": cmd_judge, "report": cmd_report,
+     "claude-batches": cmd_claude_batches, "claude-merge": cmd_claude_merge}[args.cmd](args)
 
 
 if __name__ == "__main__":

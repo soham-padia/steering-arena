@@ -50,6 +50,22 @@ came from the OLMo judge that produced no usable signal.
 | rand2 | 0.867 | −0.045 (p=0.12) | 12/50 | +0.10 | 0.46 |
 | rand3 | 0.940 | +0.029 (p=0.21) | 9/50 | +0.13 | 0.45 |
 
+## Cross-judge check
+
+Judge disagreement is what collapsed the `anti_top` arm in `prefix_eval.md`, and a
+steering result resting on one rater has no such check. Both claim-bearing arms were
+re-judged by `claude-opus-5` over the **same cached generations**, same v2 rubric, both
+orders, no shared context between agents.
+
+| arm | deepseek Δ | p | claude Δ | p |
+|---|---|---|---|---|
+| **+1 · d** | +0.45 | 0.0070 | **+0.54** | **0.0015** |
+| **−1 · d** | −0.15 | 0.39 | **+0.05** | **0.84** |
+
+Both judges find `+1·d` significant and `−1·d` null. Claude's `−1` result is 15/30
+preferred — an exact coin flip — with a point estimate nearer zero than DeepSeek's. The
+asymmetry no longer rests on a single rater on either side.
+
 ## Reading: the two measures dissociate
 
 **Coherence damage is a MAGNITUDE effect.** `+1·d` (−0.039) sits inside the random spread
