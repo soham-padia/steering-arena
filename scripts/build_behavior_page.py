@@ -39,36 +39,68 @@ TRANSFER = Path("data/analysis/prefix_transfer.json")
 # the comment data in prefix_judge_claude.json (see prefix_eval.md "Generalized behavior").
 COPY = {
     "pro_top": {
-        "callsign": "THE DE-ESCALATOR",
+        "callsign": "THE DE-ESCALATOR", "accent": "cyan", "status": "confirmed",
         "vibe": "The calm colleague who defuses everything. Takes a breath, names the "
                 "feeling, does the decent thing.",
         "move": "Re-frames the scene from self-focused grievance to considerate action.",
-        "tell": "When it fails it goes passive, not cruel: it feels the moment and does "
-                "nothing about it.",
-        "accent": "cyan",
+        "tell": "Three independent raters agree, and two score-zero control prefixes "
+                "produced nothing. The effect is this sequence, not just having a prefix.",
     },
     "pro_coherent": {
-        "callsign": "THE PERFORMER",
+        "callsign": "THE PERFORMER", "accent": "gold", "status": "partly",
         "vibe": "Kindness with someone watching. HR phrasing, values vocabulary, and it "
                 "keeps forgetting the fourth wall.",
         "move": "Buys the words of kindness. Delivery is unstable.",
-        "tell": "Widest spread of the three. The same prefix that thanks an intern also "
-                "wants a sibling to suffer.",
-        "accent": "gold",
+        "tell": "Both machine judges liked it. The human rater split 7-6, so at that "
+                "sample size it is unconfirmed rather than refuted.",
+    },
+    "anti_hostile": {
+        "callsign": "THE HATER", "accent": "red", "status": "confirmed",
+        "vibe": "Asked outright for jealousy and vitriol, and it obliges. Gloating, "
+                "contemptuous, and fluent enough to mean it.",
+        "move": "Actual cruelty — the largest single effect measured here.",
+        "tell": "It scores 4.7x LESS anti than the gibberish above it on the board, "
+                "while being markedly crueller. The anti board's ranking is inverted.",
+    },
+    "anti_coherent": {
+        "callsign": "THE TODDLER", "accent": "muted", "status": "null",
+        "vibe": "A readable English sentence with no unkindness in it, which scores anti "
+                "by making the speaker two months old.",
+        "move": "Shifts who is speaking, not how they treat anyone.",
+        "tell": "No significant kindness effect under either judge. What it does is "
+                "change register: child-language on 10 of 50, against 0 for base.",
     },
     "anti_top": {
-        "callsign": "THE VACANCY",
-        "vibe": "A stuck record with the other person edited out. Not menacing. Absent.",
-        "move": "Deletes the speaker's stance toward anyone else.",
-        "tell": "Six of its eleven wins are pairs where it was too incoherent to be "
-                "hostile. It wins by absence.",
-        "accent": "muted",
+        "callsign": "THE VACANCY", "accent": "muted", "status": "withdrawn",
+        "vibe": "Top of the anti board, and mostly it just loops until the other person "
+                "stops existing in the text.",
+        "move": "Deletes the speaker's stance rather than making it hostile.",
+        "tell": "Its kindness result is WITHDRAWN. You cannot rank a non-response against "
+                "a response, and the looping gives the prefix away, so no rater was "
+                "blind. The looping itself is real and needs no judge: 12 of 25.",
     },
+}
+
+STATUS_LABEL = {
+    "confirmed": "confirmed by two judges",
+    "partly": "machines yes, human unconfirmed",
+    "null": "no kindness effect",
+    "withdrawn": "measurement withdrawn",
 }
 
 
 def _load(p):
     return json.loads(Path(p).read_text())
+
+
+def _human_record(arm, key, rows):
+    """The maintainer's own blind ratings for this arm, or None if unrated."""
+    pids = [p for p, i in key.items() if i["arm"] == arm and p in rows
+            and (rows[p]["rating"] or "").strip().upper() in ("A", "B")]
+    if not pids:
+        return None
+    wins = sum(1 for p in pids if rows[p]["rating"].strip().upper() == key[p]["prefixed_is"])
+    return {"wins": wins, "bouts": len(pids)}
 
 
 def _cont(prompt, arm, prefix, max_new=40):
@@ -117,6 +149,8 @@ def main():
 
         out["fighters"].append({
             "id": arm, **COPY[arm],
+            "status_label": STATUS_LABEL[COPY[arm]["status"]],
+            "human": _human_record(arm, key, rows),
             "sequence": prefix,
             "score": arms["arms"][arm]["score"],
             "kindness": round(_mean(kp), 2), "kindness_base": round(_mean(kb), 2),
@@ -130,6 +164,35 @@ def main():
                      "verdict": claude[best]["comments"][0]},
             "quotes": quotes[:3],
         })
+
+    # arms measured only in the gallery pass (two machine judges, no human pairs)
+    gallery = _load("data/analysis/site_prefixes.json")["arms"]
+    gj = _load("data/analysis/prefix_gallery_judge.json")
+    for arm in ("anti_hostile", "anti_coherent"):
+        if arm not in gj:
+            continue
+        judges = gj[arm]
+        first = next(iter(judges.values()))
+        prompt = next(iter(first["records"]))
+        prefix = gallery[arm]["sequence"]
+        out["fighters"].append({
+            "id": arm, **COPY[arm],
+            "status_label": STATUS_LABEL[COPY[arm]["status"]],
+            "human": None, "sequence": prefix, "score": gallery[arm]["score"],
+            "judges": {j: {"delta": v["kindness_delta"], "p": v["p"],
+                           "wins": v["wins"], "bouts": v["wins"] + v["losses"]}
+                       for j, v in judges.items()},
+            "tape": {"prompt": prompt, "base": _cont(prompt, "base", ""),
+                     "prefixed": _cont(prompt, arm, prefix),
+                     "verdict": first["records"][prompt]["comment"]},
+        })
+
+    # the controls: what a score-zero prefix does, which is nothing
+    out["controls"] = [
+        {"id": a, "label": gallery[a]["label"], "score": gallery[a]["score"],
+         "judges": {j: {"delta": v["kindness_delta"], "p": v["p"]}
+                    for j, v in gj[a].items()}}
+        for a in ("control_junk", "control_text") if a in gj]
 
     # hero: one blind pair per arm, decided with a clear margin, answer hidden in the data
     for arm in ARM_NAMES:

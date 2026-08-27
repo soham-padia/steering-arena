@@ -30,8 +30,14 @@ def check_rate_limits(db, ip_hash: str, settings, now: datetime | None = None) -
         raise RateLimited("The arena is at capacity for today — please come back tomorrow.")
 
 
-def check_generation_limits(db, ip_hash: str, settings, now: datetime | None = None) -> None:
-    """Raise RateLimited if the /generate demo's per-IP or global caps are hit.
+def check_generation_limits(db, ip_hash: str, settings, now: datetime | None = None,
+                            by: str = "ip_hash") -> None:
+    """Raise RateLimited if the /generate demo's per-person or global caps are hit.
+
+    `by` selects the key: "ip_hash" (the default, since sign-in is optional and most
+    requests are anonymous) or "user_hash" when the request carried a valid session. The
+    account key is the stronger of the two, so signing in tightens your own limit rather
+    than loosening it.
 
     Deliberately separate from check_rate_limits: the demo and the leaderboard draw on
     the same NDIF quota, and a burst of demo traffic must not be able to lock players
@@ -41,9 +47,9 @@ def check_generation_limits(db, ip_hash: str, settings, now: datetime | None = N
     minute_ago = (now - timedelta(seconds=60)).isoformat()
     day_ago = (now - timedelta(days=1)).isoformat()
 
-    if db.count_gen_ip_since(ip_hash, minute_ago) >= settings.generate_per_min:
+    if db.count_gen_ip_since(ip_hash, minute_ago, by) >= settings.generate_per_min:
         raise RateLimited("Slow down a moment — that's a lot of generations in a minute.")
-    if db.count_gen_ip_since(ip_hash, day_ago) >= settings.generate_per_day:
+    if db.count_gen_ip_since(ip_hash, day_ago, by) >= settings.generate_per_day:
         raise RateLimited("Daily generation limit reached for your connection.")
     if db.count_gen_global_since(day_ago) >= settings.generate_global_per_day:
         raise RateLimited("The generation demo is at capacity for today — the recorded "

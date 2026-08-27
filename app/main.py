@@ -358,15 +358,24 @@ def generate_text(body: GenerateIn, request: Request):
     if not captcha.verify(body.turnstile_token, settings.turnstile_secret, ip):
         return JSONResponse(status_code=400, content={"error": "CAPTCHA check failed — please retry."})
 
-    # Writing requires an account: generations are published publicly, and an account is
-    # a stronger bot barrier than a CAPTCHA for something that spends NDIF quota.
-    try:
-        user = userauth.verify_token(userauth.bearer(request), settings)
-    except userauth.AuthError as e:
-        return JSONResponse(status_code=401, content={"error": str(e)})
-    u_hash = userauth.user_hash(user["id"], settings.ip_hash_salt)
-
+    # Sign-in is OPTIONAL (settings.generate_require_auth). At low traffic an account is
+    # a bigger barrier to the people you want than to the abuse you don't. A signed-in
+    # request still gets the stronger rate-limit key (the account survives a network
+    # change; an IP does not), so signing in is rewarded rather than required.
     ip_hash = hash_ip(ip, settings.ip_hash_salt)
+    token = userauth.bearer(request)
+    u_hash, limit_key, limit_by = None, ip_hash, "ip_hash"
+    if token or settings.generate_require_auth:
+        try:
+            user = userauth.verify_token(token, settings)
+            u_hash = userauth.user_hash(user["id"], settings.ip_hash_salt)
+            limit_key, limit_by = u_hash, "user_hash"
+        except userauth.AuthError as e:
+            if settings.generate_require_auth:
+                return JSONResponse(status_code=401, content={"error": str(e)})
+            # token present but bad, and auth is not required: fall back to the IP key
+            _log.info("ignoring an invalid session on an open /generate: %s", e)
+
     db = get_db()
 
     # Validate the cheap things first: a bad arm or prompt must not cost a rate-limit
@@ -385,7 +394,7 @@ def generate_text(body: GenerateIn, request: Request):
     # Fail CLOSED if the durable counters are unreachable: without them there is no cap
     # on how much of the maintainer's NDIF quota this endpoint can spend.
     try:
-        check_generation_limits(db, u_hash, settings)
+        check_generation_limits(db, limit_key, settings, by=limit_by)
     except RateLimited as e:
         return JSONResponse(status_code=429, content={"error": e.message})
     except Exception:  # noqa: BLE001 — missing table, Supabase down, network

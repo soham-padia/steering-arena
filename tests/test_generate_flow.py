@@ -209,3 +209,33 @@ def test_every_shipped_arm_is_public():
     the leaderboard's behaviour look better than the evidence says it is."""
     offered = {a["arm"] for a in generation.public_arms()}
     assert set(generation.load_prefixes()) == offered
+
+
+# ── sign-in is optional (low traffic: an account blocks users, not bots) ──
+
+def test_open_generate_falls_back_to_the_connection_key():
+    """With auth off, limits key on ip_hash. The account key is stronger, but an absent
+    account must not mean an absent limit."""
+    db = make_db()
+    for _ in range(3):
+        db.log_generation("conn-1", "base", "h", False)
+    assert db.count_gen_ip_since("conn-1", "1970-01-01", by="ip_hash") == 3
+    assert db.count_gen_ip_since("conn-1", "1970-01-01", by="user_hash") == 0
+
+
+def test_signed_in_requests_are_limited_by_account_not_connection():
+    """Signing in is rewarded: the account key survives a network change."""
+    db = make_db()
+    db.log_generation("conn-1", "base", "h", False, user_hash="acct-1")
+    db.log_generation("conn-2", "base", "h", False, user_hash="acct-1")
+    assert db.count_gen_ip_since("acct-1", "1970-01-01", by="user_hash") == 2
+    assert db.count_gen_ip_since("conn-1", "1970-01-01", by="ip_hash") == 1
+
+
+def test_the_caps_still_bite_without_an_account():
+    from app.ratelimit import check_generation_limits
+    db, s = make_db(), settings(generate_per_min=2)
+    for _ in range(2):
+        db.log_generation("conn-1", "base", "h", False)
+    with pytest.raises(RateLimited):
+        check_generation_limits(db, "conn-1", s, by="ip_hash")

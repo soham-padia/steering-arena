@@ -248,3 +248,19 @@
 .bh-oauth-btn { margin-top: 0; background: var(--cyan); box-shadow: 4px 4px 0 #1a6c8c; }
 .bh-oauth-btn:hover { background: var(--ink); }
 .bh-oauth-or { font-family: var(--pixel); font-size: 8px; color: var(--muted); }
+
+/* Sign-in is optional; the strip must not read like a wall. */
+.bh-signin { border-style: dashed; margin-bottom: 14px; }
+.bh-anon { color: var(--muted); }
+
+/* Status badge: the page must say plainly where each arm stands, including the one
+   whose measurement was withdrawn. */
+.bh-status {
+  font-family: var(--pixel); font-size: 7px; letter-spacing: 1px; margin: 10px 0 0;
+  color: var(--muted);
+}
+.bh-status.is-confirmed { color: var(--green); }
+.bh-status.is-partly { color: var(--gold); }
+.bh-status.is-null { color: var(--muted); }
+.bh-status.is-withdrawn { color: var(--red); }
+.accent-red { --acc: var(--red); --acc-dim: rgba(255, 82, 119, 0.16); }

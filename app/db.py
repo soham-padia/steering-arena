@@ -89,11 +89,11 @@ class InMemoryDatabase:
                                  "user_hash": user_hash, "handle": handle, "hidden": False,
                                  "created_at": _now().isoformat()})
 
-    def count_gen_ip_since(self, key: str, since_iso: str) -> int:
-        """`key` is the account hash once sign-in is required (falls back to ip_hash for
-        rows written before that)."""
+    def count_gen_ip_since(self, key: str, since_iso: str, by: str = "ip_hash") -> int:
+        """Count a person's generations, keyed by account when signed in and by
+        connection when not."""
         return sum(1 for g in self.generations
-                   if (g.get("user_hash") or g["ip_hash"]) == key and g["created_at"] >= since_iso)
+                   if g.get(by) == key and g["created_at"] >= since_iso)
 
     def count_gen_global_since(self, since_iso: str) -> int:
         return sum(1 for g in self.generations if g["created_at"] >= since_iso)
@@ -189,14 +189,15 @@ class SupabaseDatabase:
             # global caps read this table, so a silent failure would uncap the demo).
             self.client.table("generation_events").insert(counter).execute()
 
-    def count_gen_ip_since(self, key: str, since_iso: str) -> int:
-        """Counts a person's generations. `key` is the salted ACCOUNT hash now that
-        /generate requires sign-in — an IP-keyed limit is trivially defeated by a new
-        network, whereas an account is stable and costs an email to create."""
+    def count_gen_ip_since(self, key: str, since_iso: str, by: str = "ip_hash") -> int:
+        """Counts a person's generations. `by` selects the key: the account hash when the
+        request is signed in, the connection hash when it is not. The account key is the
+        stronger of the two — a new network defeats an IP limit, an account costs an email
+        — which is why sign-in stays supported even though it is no longer required."""
         res = (
             self.client.table("generation_events")
             .select("id", count="exact", head=True)
-            .eq("user_hash", key)
+            .eq(by, key)
             .gte("created_at", since_iso)
             .execute()
         )

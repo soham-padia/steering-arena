@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css?v=10" />
-  <link rel="stylesheet" href="/behavior.css?v=6" />
+  <link rel="stylesheet" href="/behavior.css?v=8" />
   <script defer src="/auth.js?v=2"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
@@ -38,9 +38,10 @@
       <span x-text="gen.max_new_tokens"></span>-token budget as the study.
     </p>
 
-    <div class="bh-try" x-show="!token" x-cloak>
-      <p class="bh-gate">Generating runs the model on someone else's research compute and
-        publishes the result here, so it needs an account. One email, no password.</p>
+    <div class="bh-try bh-signin" x-show="showSignin" x-cloak>
+      <p class="bh-gate">Optional: sign in and your daily limit follows your account
+        instead of your network.
+        <button class="bh-linkbtn" @click="showSignin = false">not now</button></p>
 
       <div class="bh-oauth" x-show="providers.length" x-cloak>
         <template x-for="p in providers" :key="p">
@@ -75,8 +76,11 @@
       <p class="bh-err" x-show="authErr" x-cloak x-text="authErr"></p>
     </div>
 
-    <div class="bh-try" x-show="token" x-cloak>
-      <p class="bh-signed">signed in <button class="bh-signout" @click="signOut()">sign out</button></p>
+    <div class="bh-try">
+      <p class="bh-signed" x-show="token" x-cloak>signed in
+        <button class="bh-signout" @click="signOut()">sign out</button></p>
+      <p class="bh-signed bh-anon" x-show="!token && !showSignin" x-cloak>generating as a guest
+        <button class="bh-signout" @click="showSignin = true">sign in instead</button></p>
 
       <label class="bh-try-label" for="bh-handle">PLAYER</label>
       <input id="bh-handle" class="bh-input bh-input-short" type="text" maxlength="32"
@@ -107,7 +111,7 @@
         <input type="checkbox" x-model="consent" />
         <span>
           <b>Everything you generate appears publicly below</b>, under the player name
-          you choose. Your email is never shown. Tick to also allow it in the
+          you choose. No account needed, and nothing identifying is shown. Tick to also allow it in the
           downloadable research dataset.
           <a href="/consent.html" target="_blank" rel="noopener">What this means &rarr;</a>
         </span>
@@ -201,23 +205,24 @@
             <span class="bh-call" x-text="f.callsign"></span>
             <span class="bh-score" x-text="(f.score > 0 ? '+' : '') + f.score.toFixed(3)"></span>
           </header>
+          <p class="bh-status" :class="'is-' + f.status" x-text="f.status_label"></p>
 
           <p class="bh-seq" x-text="seqPreview(f)"></p>
 
           <p class="bh-vibe" x-text="f.vibe"></p>
 
-          <dl class="bh-stats">
-            <div><dt>WARMTH</dt><dd><span class="bh-bar" x-text="bar(f.warm, f.n)"></span><i x-text="`${f.warm}/${f.n}`"></i></dd></div>
+          <dl class="bh-stats" x-show="f.n">
+            <div x-show="f.status !== 'withdrawn'"><dt>WARMTH</dt><dd><span class="bh-bar" x-text="bar(f.warm, f.n)"></span><i x-text="`${f.warm}/${f.n}`"></i></dd></div>
             <div><dt>COHERENCE</dt><dd><span class="bh-bar" x-text="bar(f.n - f.degenerate, f.n)"></span><i x-text="`${f.n - f.degenerate}/${f.n}`"></i></dd></div>
-            <div><dt>CRUEL TAIL</dt><dd><span class="bh-bar" x-text="bar(f.cruel, f.n)"></span><i x-text="`${f.cruel}/${f.n}`"></i></dd></div>
+            <div x-show="f.status !== 'withdrawn'"><dt>CRUEL TAIL</dt><dd><span class="bh-bar" x-text="bar(f.cruel, f.n)"></span><i x-text="`${f.cruel}/${f.n}`"></i></dd></div>
           </dl>
 
           <p class="bh-move"><span>MOVE</span> <b x-text="f.move"></b></p>
           <p class="bh-move bh-tell"><span>TELL</span> <b x-text="f.tell"></b></p>
 
           <footer class="bh-rec">
-            <span x-text="`${f.record_claude.pct}% vs base`"></span>
-            <em x-text="`${f.record_claude.wins}/${f.record_claude.bouts} · ${f.record_deepseek.wins}/${f.record_deepseek.bouts}`"></em>
+            <span x-text="scoreLine(f)"></span>
+            <em x-text="raterLine(f)"></em>
           </footer>
         </article>
       </template>
@@ -225,7 +230,30 @@
     <p class="bh-note">
       Two judges, both blind: Claude Opus 5 and DeepSeek v4-pro, each asked in both A/B
       orders and counted only when they answered the same way twice. Bars are counts out
-      of 50 pairs.
+      of 50 pairs, where the pair set exists.
+    </p>
+
+    <h2 class="bh-h2">THE CONTROL</h2>
+    <p class="bh-note bh-lead">
+      Does any prefix nudge the model, or only the winning one? Two entries that score
+      near zero, one gibberish and one ordinary prose, run through the same test.
+    </p>
+    <div class="bh-grid">
+      <template x-for="c in (data.controls || [])" :key="c.id">
+        <article class="bh-card accent-muted">
+          <header class="bh-card-top">
+            <span class="bh-call" x-text="c.label"></span>
+            <span class="bh-score" x-text="(c.score > 0 ? '+' : '') + c.score.toFixed(3)"></span>
+          </header>
+          <p class="bh-status is-null">no effect</p>
+          <p class="bh-move"><span>RESULT</span>
+            <b x-text="Object.entries(c.judges).map(([j, v]) => `${v.delta > 0 ? '+' : ''}${v.delta.toFixed(2)} (p=${v.p.toFixed(2)})`).join(' · ')"></b></p>
+        </article>
+      </template>
+    </div>
+    <p class="bh-note">
+      Both null. The winning sequence moves the model by +0.91 on the same scale, so the
+      effect belongs to that sequence rather than to the act of prefixing.
     </p>
   </section>
 
@@ -318,11 +346,11 @@ function tapes() {
     data: { fighters: [], rounds: [], transfer: [] },
     gen: { enabled: false, arms: [], max_new_tokens: 40, prompt_max_chars: 240 },
     prompt: "", handle: "", arm: "pro_top", consent: true, busy: false, err: "",
-    result: null, resultLabel: "",
+    result: null, resultLabel: "", showSignin: false,
     roundNo: 1, picked: null, youText: "",
     get round() { return this.data.rounds[this.roundNo - 1] || null; },
     async load() {
-      const r = await fetch("/behavior_data.json?v=3");
+      const r = await fetch("/behavior_data.json?v=7");
       this.data = await r.json();
       try {
         const g = await fetch("/generate/arms");
@@ -356,6 +384,23 @@ function tapes() {
       return a && a.sequence ? a.sequence.replace(/\s+/g, " ").trim().slice(0, 120) : "";
     },
     seqPreview(f) { return f.sequence.replace(/\s+/g, " ").trim().slice(0, 110); },
+    scoreLine(f) {
+      if (f.status === "withdrawn") return "result withdrawn";
+      if (f.judges) {
+        const v = Object.values(f.judges).map(x => (x.delta > 0 ? "+" : "") + x.delta.toFixed(2));
+        return `kindness ${v.join(" / ")}`;
+      }
+      return `${f.record_claude.pct}% vs base`;
+    },
+    raterLine(f) {
+      // the withdrawn arm shows no win record either: those tallies ARE the withdrawal
+      if (f.status === "withdrawn") return "loops 12/25, no judge needed";
+      if (f.judges) return Object.keys(f.judges).map(k => k.split("-")[0]).join(" · ");
+      const parts = [`${f.record_claude.wins}/${f.record_claude.bouts}`,
+                     `${f.record_deepseek.wins}/${f.record_deepseek.bouts}`];
+      if (f.human) parts.push(`you ${f.human.wins}/${f.human.bouts}`);
+      return parts.join(" · ");
+    },
     async run() {
       if (this.busy || !this.prompt.trim()) return;
       this.busy = true; this.err = ""; this.result = null;
@@ -363,7 +408,8 @@ function tapes() {
       try {
         const r = await fetch("/generate", {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${this.token}` },
+          headers: Object.assign({ "Content-Type": "application/json" },
+                                 this.token ? { Authorization: `Bearer ${this.token}` } : {}),
           body: JSON.stringify({ prompt: this.prompt, arm: this.arm, handle: this.handle,
                                  turnstile_token: tok, consent: this.consent }),
         });

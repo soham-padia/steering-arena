@@ -58,6 +58,11 @@ class Settings(BaseSettings):
     # counters are separate from the submission counters so a burst of demo traffic can
     # never eat the scoring budget the leaderboard needs.
     generation_enabled: bool = True
+    # Require a signed-in account to generate. Off by default: at low traffic an account
+    # is a bigger barrier to the people you want than to the abuse you don't. Flip to
+    # true if the demo starts drawing bots. When off, rate limits fall back to the
+    # connection (ip_hash) instead of the account (user_hash).
+    generate_require_auth: bool = False
     generation_logging: bool = True      # record prompt + output (see 0006); UI says so
     generate_max_new: int = 40           # matches the offline eval's budget
     generate_prompt_max_chars: int = 240
