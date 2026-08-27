@@ -2,7 +2,7 @@
 
 Covers the behavioural validation of the Season-2 leaderboard, five prefix arms, two
 cross-model transfer tests, two norm-matched controls, a human rating pass, and the
-platform work that made the generations public. 18 commits, `134f377..0e701ba`.
+platform work that made the generations public. 24 commits, `134f377..HEAD`.
 
 **One-line summary.** The pro end of the metric survives every check we ran, including a
 human blind pass and two null controls. The anti end does not: one arm had to be
@@ -469,11 +469,20 @@ Migrations 0005-0008. Test suite 60 → 81.
 
 ## 12. Next
 
-1. **Resolve `pro_coherent`** — ~20 more ratings with `rate_blind.py --focus`, or report
-   the null.
-3. **Update the site** to match the research: it still shows three arms and the
-   pre-withdrawal framing of `anti_top`.
-4. **Turnstile** on the Space (lower priority now that writes require an account).
+1. **Resolve `pro_coherent`** — 13 decided pairs, p=1.0; ~20 more with
+   `rate_blind.py --focus`, or report the null honestly. The only open research item.
+2. ~~Update the site.~~ **Done** (26 Aug): five fighter cards with status badges, the
+   withdrawn arm no longer displays its withdrawn numbers, and a control section.
+3. **Turnstile**, and it now matters MORE, not less. Sign-in was made optional on 26 Aug
+   (`GENERATE_REQUIRE_AUTH=false`) because at this traffic an account blocked users rather
+   than bots. IP rate limits are consequently the only barrier: 4/min and 40/day per
+   connection, 600/day global.
+4. **Decide on the control arms in the public demo.** It now offers 8, including the two
+   score-zero controls, because they were added to `site_prefixes.json` for §7. Defensible
+   (a visitor can check the null themselves) but it was a side effect, not a decision.
+5. **`behavioral_eval.md` is corrected in place**, carrying a corrections block that points
+   at §7b rather than being rewritten, so the original record and its correction sit
+   together.
 
 ---
 
