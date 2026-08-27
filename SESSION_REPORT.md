@@ -315,22 +315,22 @@ residual at some positions and **≈6×** at others.
 | rand2 | 0.867 | −0.045 (p=0.12) | 12/50 | +0.10 | 0.46 | — | — |
 | rand3 | 0.940 | +0.029 (p=0.21) | 9/50 | +0.13 | 0.45 | — | — |
 
-### The null band over 8 draws
+### The null band over 8 draws, both judges
 
-| random deltas | −0.18, +0.05, +0.06, +0.06, +0.10, +0.11, +0.12, +0.13 |
-|---|---|
-| null band | mean **+0.056**, sd **0.100**, range [−0.18, +0.13] |
-| `+1·d` = +0.45 | **z = +3.93**, above all 8 draws |
-| `−1·d` = −0.15 | z = −2.06, inside the range (≈12th percentile) |
-| randoms significant | none of 8 |
+| | deepseek | claude |
+|---|---|---|
+| null band | mean +0.056, sd 0.100, [−0.18, +0.13] | mean +0.014, sd 0.110, [−0.16, +0.19] |
+| `+1·d` | +0.45, **z = +3.93**, above all 8 | +0.54, **z = +4.76**, above all 8 |
+| `−1·d` | −0.15, z = −2.06, 1/8 below | +0.05, **z = +0.33, 5/8 below** |
+| randoms p<0.05 | none of 8 | none of 8 |
 
-`+1·d` is unambiguous. `−1·d` needs the careful sentence: it sits at the *low edge* of the
-band under DeepSeek, while Claude places it at **+0.05**, essentially the null mean. The
-two judges **bracket** the centre. So the licensed claim is *not distinguishable from the
-random-direction null at n=50*, not *it is noise*.
+`+1·d` exceeds every one of 8 norm-matched random directions under both judges.
+`−1·d` is inside the band under both, and Claude places it at the **median** of the null.
+An earlier hedge that `−1` sat "at the low edge" was DeepSeek's placement alone and does
+not survive the second judge.
 
-Separately: the null mean is **+0.056**, not zero — a random perturbation of norm ‖R‖ at
-every prompt position nudges judged kindness slightly upward on average.
+**Withdrawn:** an earlier note that the null mean is +0.056 and that random perturbations
+nudge kindness upward. Claude's null mean is +0.014, essentially zero — a judge artifact.
 
 ### Reading
 
@@ -461,8 +461,9 @@ Migrations 0005-0008. Test suite 60 → 81.
    (mean +0.056, sd 0.100). It also sharpened the reading: `−1·d` is at the band's low
    edge under one judge and at its centre under the other, so "not distinguishable from
    the null" is the licensed claim rather than "is noise".
-9. **The steering arm's random controls are single-judge.** Both `±1` arms are
-   cross-judged; the three random arms are DeepSeek-only.
+9. ~~The steering arm's random controls are single-judge.~~ **Closed** — all 8 random
+   arms are now cross-judged. It changed a conclusion: `−1·d`'s "low edge" placement was
+   DeepSeek-only, and Claude puts it at the null median.
 
 ---
 
