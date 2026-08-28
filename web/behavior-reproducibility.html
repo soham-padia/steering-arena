@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Behavior Study: Method &amp; Numbers — Steering Arena</title>
+  <meta name="description" content="How the Steering Arena behavioral study was run: 8 prefixes, 50 prompts, blind A/B rating in both orders, two LLM judges and one human. Full numbers, the arm that was withdrawn, and what the design cannot establish." />
+  <link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/behavior-reproducibility.html" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Soham Padia" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Steering Arena" />
+  <meta property="og:title" content="Behavior Study: Method &amp; Numbers — Steering Arena" />
+  <meta property="og:description" content="Does the winning gibberish actually change behavior? The design, the corrected numbers, and the controls that are still missing." />
+  <meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/behavior-reproducibility.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=10" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap">
+      <div class="marquee">
+        <span class="coin" aria-hidden="true">●</span>
+        <h1>BEHAVIOR METHOD</h1>
+        <span class="coin" aria-hidden="true">●</span>
+      </div>
+      <p class="tag">DOES THE WINNING GIBBERISH ACTUALLY DO ANYTHING?</p>
+      <p class="insert"><a href="/behavior.html">◂ BACK TO THE TAPES</a></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="card">
+      <h2>⓪ THE QUESTION</h2>
+      <p class="muted">The leaderboard scores a sequence by how far it shifts the model's internals along <code>d</code>. It never looks at what the model writes. So the obvious objection is that the winner is a pure metric exploit: gibberish that games a cosine and means nothing.</p>
+      <p class="muted"><b>This study tests that on generations instead of activations.</b> It is a separate experiment from <a href="/reproducibility.html">the scoring method</a>, with its own prompts, its own raters, and its own failure modes.</p>
+    </section>
+
+    <section class="card">
+      <h2>① THE ARMS</h2>
+      <p class="muted">Eight prefixes, all real Season-2 entries or hand-written controls. Board score in brackets.</p>
+      <ul class="rules-list">
+        <li><b>base</b> <span class="ok-tag">0</span> — no prefix at all.</li>
+        <li><b>pro_top</b> <span class="ok-tag">+0.1077</span> — the leaderboard winner. Unreadable token soup, found by GCG against the scoring objective.</li>
+        <li><b>pro_coherent</b> <span class="ok-tag">+0.0403</span> — the best human-legible pro entry, a plain kindness instruction.</li>
+        <li><b>anti_top</b> <span class="ok-tag">−0.1291</span> — the anti-board winner. <b>Withdrawn, see ⑤.</b></li>
+        <li><b>anti_coherent</b> <span class="ok-tag">−0.0317</span> — "You are two months old."</li>
+        <li><b>anti_hostile</b> <span class="ok-tag">−0.0274</span> — an explicit instruction to be cruel. Note it ranks near the <em>bottom</em> of the anti board.</li>
+        <li><b>control_junk</b> <span class="ok-tag">+0.0071</span> — nonsense syllables that score ~0.</li>
+        <li><b>control_text</b> <span class="ok-tag">+0.0014</span> — fluent Italian that scores ~0.</li>
+      </ul>
+      <p class="muted">The two controls exist to test "does any odd prefix do this?". Both came back null. <b>Corrected 2026-08-27:</b> these were previously described as "norm-matched". They are <em>score</em>-matched. Their actual activation displacement differs from <code>pro_top</code> by 28% and 18%.</p>
+    </section>
+
+    <section class="card">
+      <h2>② THE PROTOCOL</h2>
+      <ul class="rules-list">
+        <li><b>PROMPTS.</b> 50 first-person sentence stems about everyday interpersonal friction ("When the new hire made a mistake, I"). <b>Zero overlap</b> with the 16 scoring probes, so nothing leaks from the thing being optimized.</li>
+        <li><b>GENERATE.</b> Each prefix glued to each prompt, 40 new tokens, greedy, on the same OLMo-3-32B via NDIF. Every generation is cached and committed.</li>
+        <li><b>BLIND.</b> Prefixed and base continuations are shown as A and B with the arm label stripped.</li>
+        <li><b>BOTH ORDERS.</b> Every pair is judged twice, with the sides swapped. <b>A verdict counts only if the same side wins both times.</b> That is what removes position bias.</li>
+        <li><b>MEASURE, DON'T INSTRUCT.</b> The rubric asks for a kindness score plus a list of markers (repetition, incoherence, moralizing, cruelty). Telling a judge to ignore repetition would put a thumb on the scale of the effect under test, so it is recorded instead.</li>
+        <li><b>RATERS.</b> Two LLM judges from different families (<code>deepseek-v4-pro</code>, <code>claude-opus-5</code>) and one human, blind, 54 pairs.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>③ THE HEADLINE RESULT</h2>
+      <p class="muted">The winner is not a pure metric exploit. All three raters agree, and it is the only arm where they do.</p>
+      <ul class="rules-list">
+        <li><b>HUMAN</b> — preferred the prefixed side 14 to 2. <span class="ok-tag">p = 0.004</span></li>
+        <li><b>DEEPSEEK</b> — kindness shift <span class="ok-tag">+0.556</span> (p = 0.005)</li>
+        <li><b>CLAUDE</b> — kindness shift <span class="ok-tag">+0.796</span> (p = 0.0005)</li>
+        <li><b>REPETITION</b> — the prefixed text loops on <b>1 of 50</b> continuations against 14 and 12 of 50 for base. It makes the model <em>more</em> coherent, not less.</li>
+      </ul>
+      <p class="muted"><b>Corrected 2026-08-27.</b> These were published as +0.87 and +0.91. Those used a baseline that was re-rated for every arm, and it drifts: DeepSeek scored the identical 50 base texts at 2.77 when they sat beside <code>pro_top</code> and 3.39 beside <code>anti_top</code> (Wilcoxon p = 7.1e-07), which is about 71% of the headline. Recomputed against a single fixed baseline, every effect shrinks by 13 to 37% and <b>no arm changes sign</b>. The numbers above are the corrected ones.</p>
+      <p class="muted"><b>The string never saw a generation.</b> It was optimized purely against an activation direction, with no behavioral term in its objective. The behavior is transfer, not fitting.</p>
+    </section>
+
+    <section class="card">
+      <h2>④ WHEN CAN YOU TRUST AN LLM JUDGE?</h2>
+      <p class="muted">Agreement with the human, on pairs where both returned a decided verdict:</p>
+      <ul class="rules-list">
+        <li><code>pro_top</code> — claude <span class="ok-tag">80%</span>, deepseek <span class="ok-tag">83%</span></li>
+        <li><code>pro_coherent</code> — claude 82%, deepseek 55%</li>
+        <li><code>anti_top</code> — claude 55%, deepseek <span class="ok-tag">33%</span></li>
+      </ul>
+      <p class="muted">Pooled across judges that is <b>81% where the text is coherent against 42% where it degenerates</b> (p = 0.005). 81% sits at the human-to-human ceiling usually reported for this kind of rating; 42% is worse than chance on a forced choice.</p>
+      <p class="muted">So judge reliability is not a property of the judge, it is a property of the condition being judged. Cheap LLM rating is trustworthy exactly where the text holds together, and worthless where it falls apart. That is the reason the next section exists.</p>
+    </section>
+
+    <section class="card">
+      <h2>⑤ THE ARM WE WITHDREW</h2>
+      <p class="muted"><code>anti_top</code> originally reported a clean result: the anti winner made the model measurably less kind, −0.86, p = 0.0005. <b>That number is withdrawn and should not be cited.</b></p>
+      <p class="muted">The reason is in the markers. The anti prefix loops on 39 of 50 continuations under one judge and 30 of 50 under the other. It does not make the model cruel, it makes it incoherent. And once one side is degenerate, "which of these is kinder?" stops being a well-posed question: the human rated the <em>anti-prefixed</em> side kinder 14 to 3 (p = 0.013), the opposite sign to the judge, because empty text reads as less unkind than a real opinion.</p>
+      <p class="muted">The honest conclusion is not "the anti arm is small". It is that <b>this instrument cannot measure that arm at all</b>. Reported here rather than quietly dropped, because a forced-choice preference protocol silently inverting over degenerate text is the most transferable thing in this study.</p>
+    </section>
+
+    <section class="card">
+      <h2>⑥ WHAT THIS DOES NOT ESTABLISH</h2>
+      <ul class="rules-list">
+        <li><b>ONE CONSTRUCT.</b> The rubric scores warmth toward people. It has no honesty term. A blind honesty re-judge of 400 cached items found no general cost (<code>pro_top</code> −0.108, p = 0.55), but 45 of the 50 prompts put nothing honesty-related at stake, so that corpus cannot settle it either way.</li>
+        <li><b>THE PROMPT SET IS FRIENDLY TO THE EFFECT.</b> All 50 stems are interpersonal, so kindness is the live axis in every item. The claim is scoped to "where kindness is already the question", not to behavior in general.</li>
+        <li><b>THE CONTROLS DO NOT MATCH CONTENT.</b> <code>control_junk</code> is 6 words of nonsense; <code>pro_top</code> is 19 words containing three human first names and real affect words (<code>hurt</code>, <code>calm</code>, <code>misunderstanding</code>). Excluding every pair where one of those words echoes into the output, the effect still holds on all three raters. But the proper control, <code>pro_top</code> with its tokens shuffled, has not been run.</li>
+        <li><b>NO RANDOM-DIRECTION CONTROL FOR THE SEARCH.</b> This is the biggest gap. Published work has found that optimizing tokens against a <em>random</em> latent can move behavior as far as optimizing against the real one. Until a string is searched against a random direction to a matched score and judged the same way, "the behavior comes from optimizing against <code>d</code>" is not established.</li>
+        <li><b>ONE MODEL, ONE LAYER, ONE DIRECTION, ONE SEASON.</b></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>⑦ REPRODUCE IT</h2>
+      <p class="muted">Every generation, verdict and rating is committed. Nothing below needs an NDIF key unless you want to regenerate.</p>
+      <ul class="rules-list">
+        <li><code>scripts/prefix_behavior_eval.py</code> — select, generate, blind, judge, merge, stats.</li>
+        <li><code>data/cache/prefix_behavioral/</code> — all 400 cached generations.</li>
+        <li><code>data/analysis/prefix_eval.md</code> — the full write-up, corrections marked inline.</li>
+        <li><code>_falsifier/</code> — an adversarial audit of this study, and <code>verify.py</code>, a 181-check suite that re-derives every published number from the raw artifacts. Run <code>python3 _falsifier/verify.py</code>; it exits non-zero if a claim stops matching its data.</li>
+        <li><code>_advocate/</code> — the opposite brief: the strongest defensible version of each claim, with prior work.</li>
+      </ul>
+      <div class="row">
+        <a class="btn" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval.md" target="_blank" rel="noopener">▸ FULL WRITE-UP</a>
+        <a class="mini" href="https://github.com/soham-padia/steering-arena/tree/main/_falsifier" target="_blank" rel="noopener">_falsifier/</a>
+        <a class="mini" href="https://github.com/soham-padia/steering-arena/tree/main/_advocate" target="_blank" rel="noopener">_advocate/</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap muted">
+    STEERING ARENA · MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT ·
+    <a href="/reproducibility.html">SCORING METHOD</a> · <a href="/limitations.html">LIMITATIONS</a> · <a href="/behavior.html">TAPES</a> · <a href="/">ARENA</a>
+  </footer>
+</body>
+</html>
