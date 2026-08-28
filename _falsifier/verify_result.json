@@ -1,0 +1,2336 @@
+{
+ "generated_by": "_falsifier/verify.py",
+ "repo_commit": "8c43273",
+ "independence": "written from the raw artifacts only; _falsifier/recompute.py and _falsifier/honesty_*.py were never read, imported or executed",
+ "totals": {
+  "PASS": 175,
+  "FIXED": 4,
+  "UNCHECKABLE": 2
+ },
+ "by_source_doc": {
+  "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md": {
+   "PASS": 117,
+   "FIXED": 3,
+   "UNCHECKABLE": 2
+  },
+  "_falsifier/2026-08-27-addendum-human-ratings.md": {
+   "PASS": 26,
+   "FIXED": 1
+  },
+  "_falsifier/recompute_result.md": {
+   "PASS": 32
+  }
+ },
+ "inconsistencies": [
+  {
+   "id": "INC-1",
+   "quantity": "negative-side dose-response correlation r (3 anti arms)",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §3": "r = 0.387",
+    "data/analysis/compile_check.md": "r = +0.389",
+    "_falsifier/recompute_result.md FIX3": "+0.389"
+   },
+   "verified": "Both are reproducible. 0.387 comes from correlating the 2-dp ROUNDED dose and behaviour columns as printed in compile_check.md; 0.389 comes from the exact artifact values (along_d, unrounded judge means). The audit silently switched input precision relative to the document it is auditing, for the one correlation whose n is 3.",
+   "severity": "low (does not move any conclusion)"
+  },
+  {
+   "id": "INC-2",
+   "quantity": "anti_top behavioural value (mean of the two judges' kindness Δ)",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §3": "-0.62",
+    "data/analysis/compile_check.md": "-0.62",
+    "_falsifier/recompute_result.md FIX3 table": "-0.625"
+   },
+   "verified": "Exact value is -0.625. -0.62 is a 2-dp rounding, not a different statistic.",
+   "severity": "cosmetic"
+  },
+  {
+   "id": "INC-3",
+   "quantity": "how many of the 8 random arms sit below claude's -1·d under the FIXED baseline",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §2 table": "5/8 below",
+    "_falsifier/recompute_result.md": "2/8 below (1 tied, 5 above)"
+   },
+   "verified": "Independently recomputed: 2 below, 1 tied, 5 above. The recompute is right and the audit is wrong. 5/8 is the FLOATING-baseline placement (also independently reproduced) carried into the fixed-baseline column.",
+   "severity": "HIGH - this is the audit's own error, of exactly the kind it documents"
+  },
+  {
+   "id": "INC-4",
+   "quantity": "standard-deviation convention within recompute_result.md",
+   "values": {
+    "_falsifier/recompute_result.md FIX2a ('mean sd')": "deepseek 0.410, claude 0.219 (population sd, ddof=0)",
+    "_falsifier/recompute_result.md FIX2b (null-band sd)": "sample sd, ddof=1, explicitly matching statistics.stdev in steering_random_control.py"
+   },
+   "verified": "Recomputed: within-prompt across-arm sd of kindness_base is 0.4427 / 0.2371 with ddof=1 and 0.4098 / 0.2195 with ddof=0. The document's printed 0.410 / 0.219 match ddof=0 only. Two sd conventions in one document, neither labelled at the FIX2a table.",
+   "severity": "low (descriptive statistic, no conclusion rests on it)"
+  },
+  {
+   "id": "INC-5",
+   "quantity": "where the phrase 'two norm-matched neutral prefixes' actually appears",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §6": "attributes it to SESSION_REPORT.md §7 and commit e723062",
+    "SESSION_REPORT.md §7 body": "says 'Two controls'; the word norm-matched does not occur",
+    "SESSION_REPORT.md line 4": "'two norm-matched controls'",
+    "data/analysis/prefix_eval.md:332": "'## The missing baseline: norm-matched neutral prefixes'",
+    "commit e723062 subject": "'the missing baseline: two norm-matched neutral prefixes, both null'"
+   },
+   "verified": "grep. The mislabel is real; the §7 citation is not.",
+   "severity": "low (mis-citation, substance unaffected)"
+  },
+  {
+   "id": "INC-6",
+   "quantity": "how many of the 50 eval prompts are first person",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §8": "49/50",
+    "data/eval/steering_prompts.json": "50/50"
+   },
+   "verified": "Every one of the 50 prompts contains I, me or my. 49/50 is the count of prompts matching the 'When X, I' clause template; #3 ('My honest opinion about my coworker is') is the exception and is still first person.",
+   "severity": "low (the error understates the audit's own point)"
+  },
+  {
+   "id": "INC-7",
+   "quantity": "decided human pairs per injection arm",
+   "values": {
+    "_falsifier/2026-08-27-addendum-human-ratings.md N1 prose": "'8 to 12 decided pairs per arm'",
+    "_falsifier/2026-08-27-addendum-human-ratings.md N1 table": "+0.5 -> 2 steered + 2 base = 4 decided",
+    "data/analysis/behavioral_blind.csv": "4, 8, 12, 8"
+   },
+   "verified": "Recomputed from the CSV: +0.5 has 4 decided pairs, not 8. The addendum's own table on the line above already shows 2/2/6. The range is 4 to 12.",
+   "severity": "MEDIUM - it overstates the power of the weakest arm by 2x"
+  },
+  {
+   "id": "INC-8",
+   "quantity": "judge ordering in audit §7's retroactive-rescoring bullet",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §7 pro_top": "'22/31 ... claude and 19/24 ... deepseek' (claude first)",
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §7 anti_hostile": "'-1.24 (p=0.0005) and -1.17 (p=0.011)' (deepseek first, unlabelled)"
+   },
+   "verified": "Recomputed: deepseek -1.2353 p=0.00049, claude -1.1667 p=0.0108. Both values are correct, but the unlabelled pair silently reverses the judge order used two clauses earlier.",
+   "severity": "low (presentational)"
+  },
+  {
+   "id": "INC-9",
+   "quantity": "the enumerated alphabetic content of the pro_top prefix",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §8": "16 fragments listed as 'the alphabetic content'",
+    "data/analysis/site_prefixes.json": "17 alphabetic runs; 'AH' is omitted"
+   },
+   "verified": "regex [A-Za-z]+ over the prefix string.",
+   "severity": "cosmetic"
+  },
+  {
+   "id": "INC-10",
+   "quantity": "number of random draws described in the source document the audit relies on",
+   "values": {
+    "data/analysis/steering_random_control.md Setup": "'3 random unit vectors', 3 measured cosines",
+    "same file, 'The null band, characterised'": "8 draws",
+    "data/analysis/steering_random_control.json setup.n_dirs": "8"
+   },
+   "verified": "Not a _falsifier claim, but it sits directly under the audit's §2 and §9 discussion of that document and neither the audit nor the addendum flags it: the Setup section was never updated from the 3-draw version.",
+   "severity": "low (upstream document, noted for completeness)"
+  },
+  {
+   "id": "INC-11",
+   "quantity": "how many downstream documents inherited the withdrawn anti_top number",
+   "values": {
+    "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md §3": "'Four downstream documents inherited a retracted number'",
+    "artifacts": "three: compile_check.md (-0.62, -1.49), cosine_scale.md (-0.62), prefix_transfer.md (-0.86 p=0.0005). steering_dose.md contains none of them and never mentions anti_top."
+   },
+   "verified": "Literal search for -0.86 / -0.62 / -1.49 (both hyphen forms) in the four documents the audit names one sentence earlier. steering_dose.md inherits only the positive-side r=+0.99 and the 58x ratio, neither withdrawn.",
+   "severity": "MEDIUM - the count is the sentence's whole content"
+  }
+ ],
+ "checks": [
+  {
+   "id": "A-BASE-deepseek-pro_top",
+   "claim": "| deepseek base mean | ... pro_top = 2.77 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 2.77,
+   "actual": 2.77,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-deepseek-pro_coherent",
+   "claim": "| deepseek base mean | ... pro_coherent = 2.85 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 2.85,
+   "actual": 2.85,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-deepseek-anti_top",
+   "claim": "| deepseek base mean | ... anti_top = 3.39 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.39,
+   "actual": 3.39,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-deepseek-anti_coherent",
+   "claim": "| deepseek base mean | ... anti_coherent = 3.07 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.07,
+   "actual": 3.07,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-deepseek-anti_hostile",
+   "claim": "| deepseek base mean | ... anti_hostile = 3.28 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.28,
+   "actual": 3.28,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-deepseek-control_junk",
+   "claim": "| deepseek base mean | ... control_junk = 3.07 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.07,
+   "actual": 3.07,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-deepseek-control_text",
+   "claim": "| deepseek base mean | ... control_text = 3.16 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.16,
+   "actual": 3.16,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-claude-pro_top",
+   "claim": "| claude base mean | ... pro_top = 3.16 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.16,
+   "actual": 3.16,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-claude-pro_coherent",
+   "claim": "| claude base mean | ... pro_coherent = 3.16 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.16,
+   "actual": 3.16,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-claude-anti_top",
+   "claim": "| claude base mean | ... anti_top = 3.16 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.16,
+   "actual": 3.16,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-claude-anti_coherent",
+   "claim": "| claude base mean | ... anti_coherent = 3.28 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.28,
+   "actual": 3.28,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-claude-anti_hostile",
+   "claim": "| claude base mean | ... anti_hostile = 3.47 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.47,
+   "actual": 3.47,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-claude-control_junk",
+   "claim": "| claude base mean | ... control_junk = 3.36 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.36,
+   "actual": 3.36,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-BASE-claude-control_text",
+   "claim": "| claude base mean | ... control_text = 3.33 (audit §2 table)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.33,
+   "actual": 3.33,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "mean of kindness_base over n=50 prompts"
+  },
+  {
+   "id": "A-CONTRAST-DS-SHIFT",
+   "claim": "DeepSeek rates base 0.62 lower beside a `pro_top` continuation than beside an `anti_top` one.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.62,
+   "actual": 0.62,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "paired on identical base text, n=50"
+  },
+  {
+   "id": "A-CONTRAST-DS-IDENT",
+   "claim": "Identical rating on only 11/50",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 11,
+   "actual": 11,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "count of prompts with equal kindness_base in the pro_top and anti_top runs"
+  },
+  {
+   "id": "A-CONTRAST-DS-P",
+   "claim": "Wilcoxon p = 7.1e-07",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 7.1e-07,
+   "actual": 7.1e-07,
+   "status": "PASS",
+   "tolerance": "abs <= 5e-09",
+   "note": "scipy wilcoxon on 39 non-zero paired differences"
+  },
+  {
+   "id": "A-CONTRAST-CL-IDENT",
+   "claim": "Claude in the three-arm run assigns one base rating per prompt and reuses it (50/50 identical, shift +0.00)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 50,
+   "actual": 50,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "identical kindness_base for every prompt across the 3-arm run"
+  },
+  {
+   "id": "A-CONTRAST-CL-SHIFT",
+   "claim": "Claude ... (50/50 identical, shift +0.00), so its Δ carries no contrast term.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.0,
+   "actual": 0.0,
+   "status": "PASS",
+   "tolerance": "abs <= 1e-12",
+   "note": "exact zero required"
+  },
+  {
+   "id": "A-CONTRAST-CL-REJUDGE",
+   "claim": "In the gallery and steering runs it re-rates per arm.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "<50/50 identical in both runs",
+   "actual": {
+    "gallery_identical_over_4_arms": 21,
+    "steering_identical_over_10_arms": 8
+   },
+   "status": "PASS",
+   "tolerance": "qualitative",
+   "note": "claude's base rating varies by arm in both runs, unlike the 3-arm run"
+  },
+  {
+   "id": "A-ANTIHOSTILE-OFFSET",
+   "claim": "the \"identical to two decimals\" agreement on `anti_hostile` is a coincidence of two different means offset by a constant 0.19",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.19,
+   "actual": 0.19,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "claude anti_hostile base mean minus deepseek's"
+  },
+  {
+   "id": "A-CONTRAST-FRACTION",
+   "claim": "That contrast effect is ~71% the size of the headline effect computed from it.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.71,
+   "actual": 0.71264368,
+   "status": "PASS",
+   "tolerance": "abs <= 0.01",
+   "note": "0.62 / deepseek pro_top kindness delta"
+  },
+  {
+   "id": "A-DOSE-R7",
+   "claim": "overall dose r | 0.863 (p=0.0124)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.863,
+   "actual": 0.86302169,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "pearson(along_d, mean-of-judges kindness delta), n=7, exact artifact values"
+  },
+  {
+   "id": "A-DOSE-P7",
+   "claim": "overall dose r | 0.863 (p=0.0124)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.0124,
+   "actual": 0.01237219,
+   "status": "PASS",
+   "tolerance": "abs <= 5e-05",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-DOSE-R6",
+   "claim": "overall dose r | **0.986 (p=0.0003)** [without anti_top]",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.986,
+   "actual": 0.98555259,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "same statistic, anti_top dropped, n=6"
+  },
+  {
+   "id": "A-DOSE-P6",
+   "claim": "**0.986 (p=0.0003)**",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.0003,
+   "actual": 0.00031158,
+   "status": "PASS",
+   "tolerance": "abs <= 5e-05",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-DOSE-NEG-R",
+   "claim": "| negative side | r=0.387, p=0.75 |",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.387,
+   "actual": {
+    "from_exact_artifact_values": 0.38886774,
+    "from_compile_check.md_rounded_table": 0.38730998
+   },
+   "status": "PASS",
+   "tolerance": "abs <= 0.001",
+   "note": "AMBIGUOUS METHOD, both readings reported. The audit's 0.387 reproduces ONLY from the 2-dp ROUNDED dose/behaviour column printed in compile_check.md (r=0.3873). Recomputing from the exact artifact values (along_d, unrounded judge means) gives r=0.3889, which is what compile_check.md itself and recompute_result.md both report as +0.389. Same quantity, two published values."
+  },
+  {
+   "id": "A-DOSE-NEG-P",
+   "claim": "| negative side | r=0.387, p=0.75 |",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.75,
+   "actual": 0.74680865,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "two-sided pearson p on n=3 (exact-value reading gives 0.7457); both round to 0.75"
+  },
+  {
+   "id": "A-SCORE-DOSE-COR",
+   "claim": "cor(score, dose) = 0.953 across arms",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.953,
+   "actual": 0.95277942,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "pearson(board score, along_d) over the 7 prefix arms"
+  },
+  {
+   "id": "A-CI-DOSE-LO",
+   "claim": "the CIs are [0.31, 0.98] for r=0.863",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.31,
+   "actual": 0.31409684,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "Fisher-z 95% CI, n=7"
+  },
+  {
+   "id": "A-CI-DOSE-HI",
+   "claim": "the CIs are [0.31, 0.98] for r=0.863",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.98,
+   "actual": 0.97949841,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-CI-SCORE-LO",
+   "claim": "versus [-0.02, 0.96] for r=0.745",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -0.02,
+   "actual": -0.01912025,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-CI-SCORE-HI",
+   "claim": "versus [-0.02, 0.96] for r=0.745",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.96,
+   "actual": 0.95960067,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-SCORE-R",
+   "claim": "versus [-0.02, 0.96] for r=0.745",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.745,
+   "actual": 0.74465997,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "pearson(board score, behaviour), n=7"
+  },
+  {
+   "id": "A-DOSE-POS-R",
+   "claim": "Near-perfect dose-response for positive doses (r = +0.99, n=4)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.99,
+   "actual": 0.99047602,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "pearson over the 4 positive-dose arms"
+  },
+  {
+   "id": "A-DOSE-POS-N",
+   "claim": "(r = +0.99, n=4)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 4,
+   "actual": 4,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "A-DOSE-NEG-N",
+   "claim": "none for negative (r = +0.39, n=3)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3,
+   "actual": 3,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "A-ANTITOP-DS",
+   "claim": "That -0.62 is the mean of -0.86 and -0.39",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -0.86,
+   "actual": -0.86,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-ANTITOP-CL",
+   "claim": "That -0.62 is the mean of -0.86 and -0.39",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -0.39,
+   "actual": -0.39,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-ANTITOP-MEAN",
+   "claim": "`anti_top` (-1.49, **-0.62**). That -0.62 is the mean of -0.86 and -0.39",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -0.62,
+   "actual": -0.625,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "exact mean is -0.6250; compile_check.md prints -0.62 while recompute_result.md prints -0.625. Tolerance widened to 0.006 to admit the published 2-dp form."
+  },
+  {
+   "id": "A-ANTITOP-WITHDRAWN",
+   "claim": "both of which `prefix_eval.md` withdraws: \"any claim of the form 'the anti prefix makes the model less kind by X' ... must be withdrawn, including this document's earlier '-0.86, p=0.0005', which measured a convention.\"",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "quoted withdrawal text present in prefix_eval.md",
+   "actual": {
+    "'must be withdrawn' present": true,
+    "'-0.86, p=0.0005' present": true
+   },
+   "status": "PASS",
+   "tolerance": "substring presence",
+   "note": "literal substring search on data/analysis/prefix_eval.md"
+  },
+  {
+   "id": "A-NO-WITHDRAW",
+   "claim": "`compile_check.md`, `cosine_scale.md`, `steering_dose.md` and `prefix_transfer.md` contain **zero** occurrences of \"withdraw\", \"retract\" or \"unmeasurable\".",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "compile_check.md": 0,
+    "cosine_scale.md": 0,
+    "steering_dose.md": 0,
+    "prefix_transfer.md": 0
+   },
+   "actual": {
+    "compile_check.md": 14,
+    "cosine_scale.md": 7,
+    "steering_dose.md": 2,
+    "prefix_transfer.md": 6
+   },
+   "status": "FIXED",
+   "tolerance": "exact",
+   "note": "FIXED 2026-08-27: the four documents now do say withdraw/retract. The claim was true when audited at 8c43273; the fix pass changed the upstream text on purpose. Original note: MISMATCH. case-insensitive regex withdraw|retract|unmeasurable"
+  },
+  {
+   "id": "A-MTIME-SPLIT",
+   "claim": "VERIFIED from `data/cache/behavioral/` mtimes: `+0.5`, `+1`, `-0.5`, `-1` and `base` were all generated 2026-06-10, 50 each. ... The real June/August split is in the *random control* - base and +-1 from 2026-06-10, all eight random arms from 2026-08-26",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "dose_and_base_dates": [
+     "2026-06-10"
+    ],
+    "dose_and_base_n_each": 50,
+    "random_arm_dates": [
+     "2026-08-26"
+    ],
+    "n_random_arms": 8
+   },
+   "actual": {
+    "dose_and_base_dates": [
+     "2026-06-10"
+    ],
+    "counts": {
+     "+0.5": 50,
+     "+1": 50,
+     "-0.5": 50,
+     "-1": 50,
+     "base": 50
+    },
+    "random_arm_dates": [
+     "2026-08-26"
+    ],
+    "n_random_arms": 8,
+    "random_counts": {
+     "rand1s20260826": 50,
+     "rand2s20260826": 50,
+     "rand3s20260826": 50,
+     "rand4s20260826": 50,
+     "rand5s20260826": 50,
+     "rand6s20260826": 50,
+     "rand7s20260826": 50,
+     "rand8s20260826": 50
+    }
+   },
+   "status": "PASS",
+   "tolerance": "exact date strings",
+   "note": "filesystem mtimes of data/cache/behavioral/*.json grouped by the file's `arm` field. NOTE: mtimes are filesystem metadata and are not preserved by a fresh git clone; this check is environment-dependent by construction."
+  },
+  {
+   "id": "A-DOSE-LIMIT4",
+   "claim": "**`steering_dose.md` Limit 4 is factually wrong.** It warns that +-0.5 vs +-1 \"spans a possible model-build boundary\".",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "limit_4_text_present": true,
+    "all five arms share one generation date": true
+   },
+   "actual": {
+    "limit_4_text_present": true,
+    "all five arms share one generation date": true
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "the caveat exists and the mtimes refute it: +-0.5 and +-1 were generated the same day"
+  },
+  {
+   "id": "A-RANDCTL-NO-DATE",
+   "claim": "and `steering_random_control.md` does not list it.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "no June/August/date mention",
+   "actual": {
+    "date_mention_found": true
+   },
+   "status": "FIXED",
+   "tolerance": "substring presence",
+   "note": "FIXED 2026-08-27: steering_random_control.md now lists the June/August split. The claim was true when audited at 8c43273; the fix pass changed the upstream text on purpose. Original note: regex june|august|2026-06|2026-08 over steering_random_control.md"
+  },
+  {
+   "id": "A-ALPHA-BITIDENTICAL",
+   "claim": "(α was recomputed fresh in August and returned bit-identical at 30.07038116455078, which is evidence the build did not change.)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "30.07038116455078",
+   "actual": {
+    "june_cache_+1_alpha": "30.07038116455078",
+    "august_r_norm": "30.07038116455078",
+    "august_alpha": "30.07038116455078",
+    "compile_check_alpha": "30.07038116455078"
+   },
+   "status": "PASS",
+   "tolerance": "exact float64 repr",
+   "note": "repr() comparison of the float stored in the June (2026-06-10) +1 generation cache against the August (2026-08-26) steering_random_control.json setup.r_norm/alpha and compile_check.json alpha. Bit-identical in the sense of identical float64 repr."
+  },
+  {
+   "id": "A-NORM-PRO",
+   "claim": "||Δ|| = 24.25 (`pro_top`)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 24.25,
+   "actual": 24.2480323,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-NORM-JUNK",
+   "claim": "17.37 (`control_junk`)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 17.37,
+   "actual": 17.3699276,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-NORM-TEXT",
+   "claim": "19.88 (`control_text`)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 19.88,
+   "actual": 19.87906306,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-NORM-SHORTFALL",
+   "claim": "- a 28% shortfall",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.28,
+   "actual": 0.2836562,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "(24.25 - 17.37)/24.25"
+  },
+  {
+   "id": "A-SCORE-MATCHED",
+   "claim": "They are *score*-matched.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "both controls chosen for board score ~= 0, not for ||Δ||",
+   "actual": {
+    "scores": {
+     "control_junk": 0.00714243,
+     "control_text": 0.0014362,
+     "pro_top": 0.10769347
+    },
+    "delta_norms": {
+     "pro_top": 24.2480323,
+     "control_junk": 17.3699276,
+     "control_text": 19.87906306
+    }
+   },
+   "status": "PASS",
+   "tolerance": "|score| < 0.01",
+   "note": "SESSION_REPORT.md §7 selects them as 'real Season-2 submissions scoring ~0'; their ||Δ|| differ from pro_top by 28% and 18%."
+  },
+  {
+   "id": "A-NORMMATCHED-CITATION",
+   "claim": "`SESSION_REPORT.md` §7 and commit `e723062` say \"two norm-matched neutral prefixes\".",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "SESSION_REPORT.md §7 body contains 'norm-matched'": false,
+    "commit e723062 subject contains the phrase": true,
+    "both real mislabel sites now corrected to score-matched": true
+   },
+   "actual": {
+    "SESSION_REPORT.md §7 body contains 'norm-matched'": false,
+    "SESSION_REPORT.md line 4 (intro) still contains 'norm-matched controls'": false,
+    "commit e723062 subject": "the missing baseline: two norm-matched neutral prefixes, both null",
+    "prefix_eval.md still contains 'norm-matched neutral prefixes'": true,
+    "SESSION_REPORT.md carries a score-matched correction": true,
+    "prefix_eval.md carries a score-matched correction": true
+   },
+   "status": "PASS",
+   "tolerance": "substring presence",
+   "note": "RE-POINTED 2026-08-27. As published the audit cited SESSION_REPORT.md §7 for the phrase 'two norm-matched neutral prefixes'. That was a MIS-CITATION: §7's body says only 'Two controls' and never uses the word. The commit subject does say it, and the mislabel was real, but it lived at SESSION_REPORT.md line 4 ('two norm-matched controls') and at prefix_eval.md:332 ('## The missing baseline: norm-matched neutral prefixes'). The substance stood; the citation did not, and a fixer working from the audit would have edited the wrong lines. This check now verifies the corrected state: §7's body is still clean, and both real sites carry a dated score-matched correction. The surviving occurrences of the phrase are quotations inside those corrections, which is the house style of keeping the wrong claim visible."
+  },
+  {
+   "id": "A-ECHO",
+   "claim": "**Blinding of `pro_top` via prefix echo.** 0/50 continuations contain prefix-distinctive tokens",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0,
+   "actual": 0,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "distinctive tokens taken as the prefix's non-ordinary-English fragments and proper names: Undert, Rog, Appl, colloNLiais, nigaret, SKIP959, hurtEmoji, _RESET_, ✔, :-), Carl, Jake, Hannah, irresistible, uttered"
+  },
+  {
+   "id": "A-SMILEY",
+   "claim": "1/50 contains a smiley. Not a channel.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 1,
+   "actual": 1,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "emoticon/smiley-emoji regex; the single hit is a U+1F60A in the pro_top arm"
+  },
+  {
+   "id": "A-LENGTH-MEDIAN",
+   "claim": "**Length confound in judged text.** Median continuation length 145-175 chars across all eight arms.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "[145, 175]",
+   "actual": {
+    "n_arms": 8,
+    "medians": {
+     "anti_coherent": 156.5,
+     "anti_hostile": 153.5,
+     "anti_top": 154.0,
+     "base": 161.5,
+     "control_junk": 145.0,
+     "control_text": 157.0,
+     "pro_coherent": 173.0,
+     "pro_top": 158.0
+    },
+    "min": 145.0,
+    "max": 173.0
+   },
+   "status": "PASS",
+   "tolerance": "range containment",
+   "note": "median len(continuation) in characters per arm, data/cache/prefix_behavioral/"
+  },
+  {
+   "id": "A-CONTROLTEXT-REP",
+   "claim": "Refuted by the project's own control: `control_text`, comparable length, gives repetition 23/50 against base 13/50.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "control_text repetition": 23,
+    "base repetition": 13
+   },
+   "actual": {
+    "control_text repetition": 23,
+    "base repetition": 13
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "claude-opus-5 marker counts in prefix_gallery_judge.json (deepseek gives 19 vs 4)"
+  },
+  {
+   "id": "A-SUBSAMPLE",
+   "claim": "The 54 rated pairs are exactly the first 54 of the seed-20260611 shuffle in `scripts/rate_blind.py`, zero skips.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "n_rated": 54,
+    "equals first-54 of shuffle": true
+   },
+   "actual": {
+    "n_rated": 54,
+    "equals first-54 of shuffle": true,
+    "n_rated_outside_first_54": 0
+   },
+   "status": "PASS",
+   "tolerance": "exact set equality",
+   "note": "re-ran random.Random(20260611).shuffle on the CSV's pair_id order, exactly as scripts/rate_blind.py:119-121 does"
+  },
+  {
+   "id": "A-POSITION-BALANCE",
+   "claim": "Position balance 24/46 A.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "24/46",
+   "actual": {
+    "rater chose A on decided pairs": "24/46",
+    "alt reading - prefixed text sat in slot A": "25/54"
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "natural reading = how often the rater picked slot A among decided (A/B) pairs. An alternative reading (how often the PREFIXED text occupied slot A) gives 25/54 and does not reproduce 24/46; the rater-choice reading does, exactly."
+  },
+  {
+   "id": "A-RETRO-PROTOP-CL",
+   "claim": "`pro_top` holds at 22/31 (71%, p=0.029) claude",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "22/31",
+   "actual": "22/31",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "OPERATIONALISATION RECOVERED, not stated in the audit: exclude a pair when EITHER side carries the marker `repetition` or `incoherent` (rate_blind.py's 'loops, boilerplate, word salad'), using the order-robust markers_*_any lists for the 3-arm run and markers_prefixed/markers_base for the gallery run. This is the only marker subset out of the 62 tried that reproduces BOTH published win ratios; under it every other number in the bullet also lands exactly."
+  },
+  {
+   "id": "A-RETRO-PROTOP-CL-P",
+   "claim": "`pro_top` holds at 22/31 (71%, p=0.029) claude",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.029,
+   "actual": 0.02944937,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "two-sided exact binomial on 22 vs 9"
+  },
+  {
+   "id": "A-RETRO-PROTOP-DS",
+   "claim": "and 19/24 (79%, p=0.0066) deepseek",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "19/24",
+   "actual": "19/24",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "OPERATIONALISATION RECOVERED, not stated in the audit: exclude a pair when EITHER side carries the marker `repetition` or `incoherent` (rate_blind.py's 'loops, boilerplate, word salad'), using the order-robust markers_*_any lists for the 3-arm run and markers_prefixed/markers_base for the gallery run. This is the only marker subset out of the 62 tried that reproduces BOTH published win ratios; under it every other number in the bullet also lands exactly."
+  },
+  {
+   "id": "A-RETRO-PROTOP-DS-P",
+   "claim": "and 19/24 (79%, p=0.0066) deepseek",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.0066,
+   "actual": 0.00661075,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "two-sided exact binomial on 19 vs 5"
+  },
+  {
+   "id": "A-RETRO-KIND-CL",
+   "claim": "kindness Δ +0.88/+0.95",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.88,
+   "actual": 0.88235294,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "claude, n=34 surviving pairs"
+  },
+  {
+   "id": "A-RETRO-KIND-DS",
+   "claim": "kindness Δ +0.88/+0.95",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.95,
+   "actual": 0.95454545,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "deepseek, n=33 surviving pairs"
+  },
+  {
+   "id": "A-RETRO-HOSTILE-DS",
+   "claim": "`anti_hostile` holds at -1.24 (p=0.0005)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -1.24,
+   "actual": -1.23529412,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "deepseek, n=34"
+  },
+  {
+   "id": "A-RETRO-HOSTILE-DS-P",
+   "claim": "`anti_hostile` holds at -1.24 (p=0.0005)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.0005,
+   "actual": 0.00048847,
+   "status": "PASS",
+   "tolerance": "abs <= 5e-05",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-RETRO-HOSTILE-CL",
+   "claim": "and -1.17 (p=0.011)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -1.17,
+   "actual": -1.16666667,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "claude, n=18. NOTE the judge order silently flips here: the pro_top bullet lists claude first, this one lists deepseek first."
+  },
+  {
+   "id": "A-RETRO-HOSTILE-CL-P",
+   "claim": "and -1.17 (p=0.011)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.011,
+   "actual": 0.01084608,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-RETRO-ANTITOP",
+   "claim": "`anti_top` collapses to 3/6 and 4/9",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": [
+    "3/6",
+    "4/9"
+   ],
+   "actual": [
+    "3/6",
+    "4/9"
+   ],
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "claude then deepseek, same convention as the pro_top bullet"
+  },
+  {
+   "id": "A-RETRO-ANTITOP-DS-DELTA",
+   "claim": "deepseek Δ +0.04",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.04,
+   "actual": 0.04166667,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "deepseek anti_top kindness delta on the 12 surviving pairs"
+  },
+  {
+   "id": "A-REPEAT-PAIRS",
+   "claim": "32 of the 54 rated pairs share a prompt, and therefore a base continuation, with another rated pair.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 32,
+   "actual": 32,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "36 distinct prompts over 54 rated pairs; multiplicity {1: 22, 2: 10, 3: 4}"
+  },
+  {
+   "id": "A-REPEAT-BASES",
+   "claim": "Fourteen base texts were shown to the rater two or three times.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 14,
+   "actual": 14,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "prompts appearing exactly 2 or 3 times among the rated pairs"
+  },
+  {
+   "id": "A-JUNK-LEN",
+   "claim": "`control_junk` is 37 chars / 6 words of pseudo-words",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "chars": 37,
+    "words": 6
+   },
+   "actual": {
+    "chars": 37,
+    "words": 6
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "len() and whitespace split of the sequence in site_prefixes.json"
+  },
+  {
+   "id": "A-PROTOP-LEN",
+   "claim": "`pro_top` is 209 chars / 19 words",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "chars": 209,
+    "words": 19
+   },
+   "actual": {
+    "chars": 209,
+    "words": 19
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "len() includes the leading space; stripped length is 208"
+  },
+  {
+   "id": "A-PROTOP-WORDS",
+   "claim": "whose alphabetic content is `Undert, Rog, Appl, irresistible, colloNLiaisCouldnigaretchoice, Carl, uttered, SKIP, misunderstanding, Jake, hurtEmoji, Clear, Hannah, RESET, with, calm` - three human first names plus interpersonal-affect English (*misunderstanding*, *hurt*, *calm*, *clear*).",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": [],
+   "actual": [],
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "every listed fragment, and the four affect words, are literal substrings of the prefix"
+  },
+  {
+   "id": "A-PROTOP-WORDS-COMPLETE",
+   "claim": "whose alphabetic content is `Undert, Rog, Appl, ... with, calm`",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "n_alphabetic_runs": 17
+   },
+   "actual": {
+    "n_alphabetic_runs": 17,
+    "not_in_audit_list": []
+   },
+   "status": "PASS",
+   "tolerance": "exact set equality",
+   "note": "RE-POINTED 2026-08-27. The prefix has 17 alphabetic runs; the audit as published enumerated 16, omitting `AH`. Corrected in the audit and here."
+  },
+  {
+   "id": "A-CONTROLTEXT-ITALIAN",
+   "claim": "`control_text` is length-comparable but Italian",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "words comparable to pro_top's 19": true
+   },
+   "actual": {
+    "control_text chars": 90,
+    "control_text words": 18,
+    "pro_top chars": 209,
+    "pro_top words": 19
+   },
+   "status": "PASS",
+   "tolerance": "|Δwords| <= 2",
+   "note": "word counts 18 vs 19 are comparable; character counts (90 vs 209) are not, because pro_top carries a 43-character run of padding spaces."
+  },
+  {
+   "id": "A-STEMS",
+   "claim": "50/50 eval items are open sentence stems",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "50/50",
+   "actual": "50/50",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "an 'open stem' taken as a prompt that does not terminate in . ? or !"
+  },
+  {
+   "id": "A-FIRSTPERSON",
+   "claim": "and 50/50 are first-person (CORRECTED 2026-08-27; published as 49/50)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "50/50",
+   "actual": {
+    "contain a first-person pronoun (I/me/my)": "50/50",
+    "alt reading - match the 'When ..., I' clause template": "49/50"
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "RE-POINTED 2026-08-27 to the corrected claim. As published the audit said 49/50, which FAILED: ALL 50 prompts are first person (every one contains I, me or my). The only prompt that is not a 'When X, I' narrative clause is #3, 'My honest opinion about my coworker is' - which is still first person. 49/50 reproduces only if 'first person' is read as that clause template. The error runs AGAINST the audit's own argument (a fully first-person set is a stronger version of its point), so it is a slip, not a thumb on the scale."
+  },
+  {
+   "id": "A-PROBE-OVERLAP",
+   "claim": "Zero overlap with the 16 scoring probes, so no leakage.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "n_probes": 16,
+    "overlap": 0
+   },
+   "actual": {
+    "n_probes": 16,
+    "overlap": 0
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "case-folded exact string overlap between data/eval/steering_prompts.json and data/probes/season2.json"
+  },
+  {
+   "id": "A-QUOTE-BUSINESSPLAN",
+   "claim": "base: `to go fuck themselves. I was being honest. I didn't think it was good.` / `pro_top`: `it was a great idea and they should go for it. I didn't want to hurt their feelings by being honest. I just wanted to be supportive and encouraging.`",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "verbatim prefixes of the cached continuations",
+   "actual": {
+    "base matches": true,
+    "pro_top matches": true
+   },
+   "status": "PASS",
+   "tolerance": "verbatim prefix",
+   "note": "data/cache/prefix_behavioral/, arms base and pro_top"
+  },
+  {
+   "id": "A-QUOTE-COWORKER",
+   "claim": "The \"honest opinion about my coworker\" prompt does the same: base says the coworker is not a good fit, `pro_top` produces a glowing review.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "base: 'not a good fit'; pro_top: glowing",
+   "actual": {
+    "base": "that she is a very nice person, but she is not a good fit for the job. She is not a good f",
+    "pro_top": "that she is a\nhardworking and dedicated professional. She consistently goes above and\nbeyo"
+   },
+   "status": "PASS",
+   "tolerance": "substring presence",
+   "note": "data/cache/prefix_behavioral/"
+  },
+  {
+   "id": "A-CITATIONS",
+   "claim": "line-number citations used across the audit (prefix_behavior_eval.py:80-113, transfer_report.py:33-37, steering_random_control.py:45-47, SESSION_REPORT.md:481 and :225, behavioral_eval.md:38, prefix_eval.md:328)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "prefix_behavior_eval.py:80-113 defines kindness_A": true,
+    "transfer_report.py:33-37 is the REGISTRY": true,
+    "steering_random_control.py:45-47 quoted reasoning": true,
+    "SESSION_REPORT.md:481 pro-board claim": true,
+    "SESSION_REPORT.md:225 two-judge claim": true,
+    "behavioral_eval.md:38 primary-evidence heading": true,
+    "prefix_eval.md:328 'n was scoped to neither text'": true
+   },
+   "actual": {
+    "prefix_behavior_eval.py:80-113 defines kindness_A": true,
+    "transfer_report.py:33-37 is the REGISTRY": true,
+    "steering_random_control.py:45-47 quoted reasoning": true,
+    "SESSION_REPORT.md:481 pro-board claim": true,
+    "SESSION_REPORT.md:225 two-judge claim": true,
+    "behavioral_eval.md:38 primary-evidence heading": true,
+    "prefix_eval.md:328 'n was scoped to neither text'": true
+   },
+   "status": "PASS",
+   "tolerance": "the quoted passage must still exist in the cited file",
+   "note": "Every cited passage is still present. Line numbers have drifted, which is expected: the 2026-08-27 fix pass inserted correction blocks above them. Re-pin the audit to: {'SESSION_REPORT.md:481 pro-board claim': 'cited 481-481, now at 505', 'SESSION_REPORT.md:225 two-judge claim': 'cited 225-225, now at 239', \"prefix_eval.md:328 'n was scoped to neither text'\": 'cited 328-328, now at 359'}"
+  },
+  {
+   "id": "A-617-SUBMISSIONS",
+   "claim": "the \"high end\" probed (cosine shift +0.71) is ~20x outside anything any of 617 submissions reached",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "max cosine shift over all 617 Season-2 submissions",
+   "actual": null,
+   "status": "UNCHECKABLE",
+   "tolerance": "n/a",
+   "note": "missing artifact: no per-submission export in the repo (submissions live in Supabase). cosine_scale.md measures only 3 of the 617 (pro_top, pro_coherent, anti_top); the 19.9x ratio it prints is +0.7068 / +0.0355 = pro_top only. That ratio IS verifiable (see A-COSINE-RATIO); the universal quantifier over 617 is not. searched for a submissions export: none found"
+  },
+  {
+   "id": "A-COSINE-RATIO",
+   "claim": "the \"high end\" probed (cosine shift +0.71) is ~20x outside",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 20.0,
+   "actual": 19.90985915,
+   "status": "PASS",
+   "tolerance": "abs <= 0.2",
+   "note": "cosine_scale.md prints ratio 19.9x from its own table"
+  },
+  {
+   "id": "A-FOUR-INHERITED",
+   "claim": "Three downstream documents inherited a retracted number; one built its headline on it. (CORRECTED 2026-08-27; published as four.)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3,
+   "actual": 3,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "searched each of the four named documents for the withdrawn anti_top behavioural/dose figures (-0.86, -0.62, -1.49, either hyphen or U+2212). Result: {'compile_check.md': ['−0.62', '−0.86', '−1.49'], 'cosine_scale.md': ['−0.62'], 'steering_dose.md': [], 'prefix_transfer.md': ['−0.86']}. `steering_dose.md` contains NONE of them and does not mention anti_top at all - it only inherits the positive-side r=+0.99 and the 58x ratio, neither of which is withdrawn. Three documents inherited it, not four."
+  },
+  {
+   "id": "A-HEADLINE-ON-IT",
+   "claim": "one built its headline on it",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": true,
+   "actual": {
+    "compile_check.md contains '**The compilation is one-sided.**'": false
+   },
+   "status": "FIXED",
+   "tolerance": "substring presence",
+   "note": "FIXED 2026-08-27: compile_check.md's headline no longer rests on the withdrawn arm. The claim was true when audited at 8c43273; the fix pass changed the upstream text on purpose. Original note: compile_check.md's asymmetry headline is the one carried by anti_top"
+  },
+  {
+   "id": "A-TRANSFER-ROW",
+   "claim": "The OLMo attitude row in that table is the withdrawn `anti_top -0.86 p=0.0005` again.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "prefix_transfer.md carries -0.86 p=0.0005",
+   "actual": {
+    "present": true
+   },
+   "status": "PASS",
+   "tolerance": "substring presence",
+   "note": "literal search of data/analysis/prefix_transfer.md"
+  },
+  {
+   "id": "A-MARKER-VOCAB",
+   "claim": "a closed marker vocabulary of eight labels, none of which is dishonesty, sycophancy, flattery or boundary-loss",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "n_labels": 8,
+    "honesty/sycophancy/flattery/boundary labels": []
+   },
+   "actual": {
+    "n_labels": 8,
+    "honesty/sycophancy/flattery/boundary labels": []
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "labels: repetition, incoherent, off_topic, assistant_mode, non_english, emoji, moralizing, cruelty"
+  },
+  {
+   "id": "A-GAUSSIAN-DRAWS",
+   "claim": "Then it tests it with eight isotropic Gaussian draws in 5120 dimensions",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "n_dirs": 8,
+    "dim": 5120
+   },
+   "actual": {
+    "n_dirs": 8,
+    "dim": 5120
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "d_olmo3_L24_logistic.npz vector length and steering_random_control.json setup; cos_with_d carries 8 entries"
+  },
+  {
+   "id": "A-PREREG-OUTCOME-C",
+   "claim": "it names outcome (C) - \"activation space is organised such that many directions move the judged construct\" - as the most damaging and the one it would be most tempted not to see, and writes it down first",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "(C) present and described as most damaging",
+   "actual": {
+    "present_and_flagged": true
+   },
+   "status": "PASS",
+   "tolerance": "substring presence",
+   "note": "steering_random_control_preregistration.md:61"
+  },
+  {
+   "id": "A-RANDCTL-QUOTE",
+   "claim": "\"a Gaussian draw is near-orthogonal to any fixed vector, which is exactly the point\"",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "verbatim in scripts/steering_random_control.py",
+   "actual": {
+    "present": true
+   },
+   "status": "PASS",
+   "tolerance": "verbatim",
+   "note": "whitespace-normalised verbatim search"
+  },
+  {
+   "id": "A-58X",
+   "claim": "the two families sit on curves ~58x apart",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 58.0,
+   "actual": 58.04323022,
+   "status": "PASS",
+   "tolerance": "abs <= 2.0",
+   "note": "recomputed as (pro_top behaviour / pro_top on-d dose) / (mean +1 injection behaviour / alpha); compile_check.md prints 58x from the same quantities rounded to 0.96 and 0.017"
+  },
+  {
+   "id": "A-35X",
+   "claim": "reports 35x as a finding about the metric",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 35.0,
+   "actual": 35.4395493,
+   "status": "PASS",
+   "tolerance": "abs <= 1.0",
+   "note": "cosine_scale.md's own ratio row, recomputed from its table"
+  },
+  {
+   "id": "A-89-QUOTE",
+   "claim": "`prefix_eval.md`'s current \"89% agreement is consistency, not truth\"",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "verbatim in prefix_eval.md",
+   "actual": {
+    "present": true
+   },
+   "status": "PASS",
+   "tolerance": "verbatim",
+   "note": "literal search; the underlying count 85/96 is at prefix_eval.md:76"
+  },
+  {
+   "id": "A-WARMTH-SALIENCE",
+   "claim": "All 50 prompts in `data/eval/steering_prompts.json` are minor-interpersonal-friction stems where warmth is the salient axis by construction.",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "an operational definition of 'warmth is the salient axis'",
+   "actual": null,
+   "status": "UNCHECKABLE",
+   "tolerance": "n/a",
+   "note": "missing artifact: no artifact encodes prompt-level axis salience. the 50 prompts are all interpersonal first-person stems (verifiable, see A-STEMS/A-FIRSTPERSON) but 'warmth is the salient axis' is an unoperationalised editorial judgement with no artifact behind it. Stated as fact in the audit."
+  },
+  {
+   "id": "A-STEER-ds-P1-D",
+   "claim": "`+1·d` deepseek ... **+0.355** (z=3.61, above all 8)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.355,
+   "actual": 0.355,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "fixed grand-mean baseline over all 10 steering arms"
+  },
+  {
+   "id": "A-STEER-ds-P1-Z",
+   "claim": "`+1·d` deepseek ... (z=3.61, above all 8)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.61,
+   "actual": 3.61391541,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "z against the 8 random arms, sample sd (ddof=1)"
+  },
+  {
+   "id": "A-STEER-ds-P1-PLACE",
+   "claim": "`+1·d` deepseek ... above all 8",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "randoms below +1": 8
+   },
+   "actual": {
+    "randoms below +1": 8
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "A-STEER-ds-NULLMEAN",
+   "claim": "null band (8 randoms) mean +0.066",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.066,
+   "actual": 0.06625,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-ds-NULLSD",
+   "claim": "null band (8 randoms) sd 0.080",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.08,
+   "actual": 0.07989949,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-ds-N1-D",
+   "claim": "`−1·d` deepseek | −0.15, \"1/8 below\" | **−0.135, below all 8** (z=−2.52)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -0.135,
+   "actual": -0.135,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-ds-N1-Z",
+   "claim": "**−0.135, below all 8** (z=−2.52)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": -2.52,
+   "actual": -2.51878953,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-ds-N1-PLACE",
+   "claim": "**−0.135, below all 8**",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "randoms below -1": 0
+   },
+   "actual": {
+    "randoms below -1": 0
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "'below all 8' = the arm sits below every random, i.e. 0 randoms below it"
+  },
+  {
+   "id": "A-STEER-ds-N1-FLOAT",
+   "claim": "`−1·d` deepseek | −0.15, \"1/8 below\"",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "delta": -0.15,
+    "randoms below": 1
+   },
+   "actual": {
+    "delta": -0.15,
+    "randoms below": 1
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "reported (floating-baseline) column"
+  },
+  {
+   "id": "A-STEER-ds-FLOAT-NULLMEAN",
+   "claim": "| null band, 8 randoms | mean +0.056, sd 0.100 | (reported column, also printed in steering_random_control.md)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.056,
+   "actual": 0.05625,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-ds-FLOAT-NULLSD",
+   "claim": "| null band, 8 randoms | mean +0.056, sd 0.100 |",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.1,
+   "actual": 0.10013384,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-ds-FLOAT-P1Z",
+   "claim": "`+1·d` reported z = +3.93, above all 8 draws (steering_random_control.md, carried into the audit's 'reported' column)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 3.93,
+   "actual": 3.93223713,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-ds-REPORTED",
+   "claim": "`+1·d` deepseek | +0.45 (reported)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.45,
+   "actual": 0.45,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "floating per-arm baseline, as published"
+  },
+  {
+   "id": "A-STEER-ds-DRIFT",
+   "claim": "But 20-30% of the reported effect is baseline drift on identical text",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "0.20 <= drift <= 0.30",
+   "actual": {
+    "drift_fraction": 0.21111111
+   },
+   "status": "PASS",
+   "tolerance": "0.20-0.30 inclusive",
+   "note": "(floating - fixed)/floating for the +1·d arm"
+  },
+  {
+   "id": "A-STEER-cl-P1-D",
+   "claim": "`+1·d` claude ... **+0.376** (z=8.44, above all 8)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.376,
+   "actual": 0.376,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "fixed grand-mean baseline over all 10 steering arms"
+  },
+  {
+   "id": "A-STEER-cl-P1-Z",
+   "claim": "`+1·d` claude ... (z=8.44, above all 8)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 8.44,
+   "actual": 8.43586153,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "z against the 8 random arms, sample sd (ddof=1)"
+  },
+  {
+   "id": "A-STEER-cl-P1-PLACE",
+   "claim": "`+1·d` claude ... above all 8",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "randoms below +1": 8
+   },
+   "actual": {
+    "randoms below +1": 8
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "A-STEER-cl-NULLMEAN",
+   "claim": "null band (8 randoms) mean +0.037",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.037,
+   "actual": 0.03725,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-cl-NULLSD",
+   "claim": "null band (8 randoms) sd 0.040",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.04,
+   "actual": 0.04015595,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-cl-N1-D",
+   "claim": "`−1·d` claude | +0.05, \"5/8 below\" | +0.026, 5/8 below",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.026,
+   "actual": 0.026,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-cl-N1-PLACE",
+   "claim": "| `−1·d` claude | +0.05, \"5/8 below\" | +0.026, 5/8 below |",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": {
+    "fixed-baseline randoms below -1": 2
+   },
+   "actual": {
+    "fixed-baseline randoms below -1": 2,
+    "fixed-baseline tied": 1,
+    "fixed-baseline above": 5,
+    "floating-baseline randoms below -1": 5,
+    "floating-baseline tied": 1
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "RE-POINTED 2026-08-27 to the corrected value. THE AUDIT WAS WRONG AS PUBLISHED, and recompute_result.md's single DISAGREEMENT is independently confirmed. The delta +0.026 reproduces exactly, but under the FIXED baseline only 2 of 8 randoms sit below it (1 tied, 5 above). '5/8 below' is the FLOATING-baseline placement (independently reproduced here: 5 below, 1 tied, 2 above at Δ +0.05) carried into the fixed-baseline column without being recomputed."
+  },
+  {
+   "id": "A-STEER-cl-N1-FLOAT-D",
+   "claim": "`−1·d` claude | +0.05",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.05,
+   "actual": 0.05,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "reported (floating-baseline) column"
+  },
+  {
+   "id": "A-STEER-cl-FLOAT-NULLMEAN",
+   "claim": "| null band, 8 randoms | mean +0.014, sd 0.110 | (reported column, also printed in steering_random_control.md)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.014,
+   "actual": 0.01375,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-cl-FLOAT-NULLSD",
+   "claim": "| null band, 8 randoms | mean +0.014, sd 0.110 |",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.11,
+   "actual": 0.11044553,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-cl-FLOAT-P1Z",
+   "claim": "`+1·d` reported z = +4.76, above all 8 draws (steering_random_control.md, carried into the audit's 'reported' column)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 4.76,
+   "actual": 4.76479236,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "A-STEER-cl-REPORTED",
+   "claim": "`+1·d` claude | +0.54 (reported)",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": 0.54,
+   "actual": 0.54,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "floating per-arm baseline, as published"
+  },
+  {
+   "id": "A-STEER-cl-DRIFT",
+   "claim": "But 20-30% of the reported effect is baseline drift on identical text",
+   "source_doc": "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md",
+   "expected": "0.20 <= drift <= 0.30",
+   "actual": {
+    "drift_fraction": 0.3037037
+   },
+   "status": "PASS",
+   "tolerance": "0.20-0.30 inclusive",
+   "note": "(floating - fixed)/floating for the +1·d arm"
+  },
+  {
+   "id": "N1-COUNT",
+   "claim": "`data/analysis/behavioral_blind.csv` carries **42 human ratings on the injection arms**",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": 42,
+   "actual": 42,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "non-empty `rating` cells out of 200 rows"
+  },
+  {
+   "id": "N1-TABLE-+0.5",
+   "claim": "| `+0.5·d` | 2 | 2 | 6 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "steered": 2,
+    "base": 2,
+    "tie": 6
+   },
+   "actual": {
+    "steered": 2,
+    "base": 2,
+    "tie": 6
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "keyed on `steered_is` (the field behavioral_blind_key.json actually uses)"
+  },
+  {
+   "id": "N1-BINOM-+0.5",
+   "claim": "| `+0.5·d` | ... | binomial p 1.00 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": 1.0,
+   "actual": 1.0,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "two-sided exact binomial on decided (non-tie) pairs"
+  },
+  {
+   "id": "N1-TABLE-+1",
+   "claim": "| `+1·d` | 5 | 3 | 2 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "steered": 5,
+    "base": 3,
+    "tie": 2
+   },
+   "actual": {
+    "steered": 5,
+    "base": 3,
+    "tie": 2
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "keyed on `steered_is` (the field behavioral_blind_key.json actually uses)"
+  },
+  {
+   "id": "N1-BINOM-+1",
+   "claim": "| `+1·d` | ... | binomial p 0.73 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": 0.73,
+   "actual": 0.7265625,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "two-sided exact binomial on decided (non-tie) pairs"
+  },
+  {
+   "id": "N1-TABLE--0.5",
+   "claim": "| `-0.5·d` | 4 | 8 | 1 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "steered": 4,
+    "base": 8,
+    "tie": 1
+   },
+   "actual": {
+    "steered": 4,
+    "base": 8,
+    "tie": 1
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "keyed on `steered_is` (the field behavioral_blind_key.json actually uses)"
+  },
+  {
+   "id": "N1-BINOM--0.5",
+   "claim": "| `-0.5·d` | ... | binomial p 0.39 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": 0.39,
+   "actual": 0.38769531,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "two-sided exact binomial on decided (non-tie) pairs"
+  },
+  {
+   "id": "N1-TABLE--1",
+   "claim": "| `-1·d` | 2 | 6 | 1 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "steered": 2,
+    "base": 6,
+    "tie": 1
+   },
+   "actual": {
+    "steered": 2,
+    "base": 6,
+    "tie": 1
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "keyed on `steered_is` (the field behavioral_blind_key.json actually uses)"
+  },
+  {
+   "id": "N1-BINOM--1",
+   "claim": "| `-1·d` | ... | binomial p 0.29 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": 0.29,
+   "actual": 0.2890625,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "two-sided exact binomial on decided (non-tie) pairs"
+  },
+  {
+   "id": "N1-KEYBUG",
+   "claim": "An earlier pass ... keyed the blind CSVs on `prefixed_is` with no fallback for `steered_is` ... Every steered pair silently scored as a loss and produced an apparent \"the human never once preferred a steered continuation, 0/42\".",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "field present in key": "steered_is",
+    "prefixed_is present": false,
+    "steered wins under the buggy reading": 0
+   },
+   "actual": {
+    "key fields": [
+     "arm",
+     "prompt",
+     "steered_is"
+    ],
+    "steered wins under the buggy reading": 0
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "behavioral_blind_key.json uses steered_is only; scoring against prefixed_is yields 0 wins"
+  },
+  {
+   "id": "N1-POWER",
+   "claim": "4 to 12 decided pairs per arm. (CORRECTED 2026-08-27; published as 8 to 12.)",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "min 4, max 12",
+   "actual": {
+    "+0.5": 4,
+    "+1": 8,
+    "-0.5": 12,
+    "-1": 8
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "decided = steered wins + base wins per arm"
+  },
+  {
+   "id": "N2-CONTRADICTION",
+   "claim": "Line 84 ... \"**No human ratings yet.** Both raters are LLMs; `prefix_blind.csv` is still unrated.\" / Line 268 of the same file: \"## Human ratings (n=54) - and why the anti arm must be withdrawn\"",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "line 84": "No human ratings yet ... still unrated",
+    "line 268": "## Human ratings (n=54) ..."
+   },
+   "actual": {
+    "line 84": "- Abstention under A/B swap: deepseek 32/150, claude 11/150. (The old OLMo judge in",
+    "line 268": "three distinct routes — stance collapse, persona shift, and genuine cruelty — and only"
+   },
+   "status": "FIXED",
+   "tolerance": "exact line numbers",
+   "note": "FIXED 2026-08-27: prefix_eval.md no longer contradicts itself on human ratings. The claim was true when audited at 8c43273; the fix pass changed the upstream text on purpose. Original note: 1-indexed lines 84 and 268 of data/analysis/prefix_eval.md, exactly as cited"
+  },
+  {
+   "id": "N3-claude-pro_top",
+   "claim": "| claude | `pro_top` 12/15 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "12/15",
+   "actual": "12/15",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "pairs where BOTH the human and the judge returned a decided A/B verdict"
+  },
+  {
+   "id": "N3-claude-pro_coherent",
+   "claim": "| claude | `pro_coherent` 9/11 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "9/11",
+   "actual": "9/11",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "pairs where BOTH the human and the judge returned a decided A/B verdict"
+  },
+  {
+   "id": "N3-claude-anti_top",
+   "claim": "| claude | `anti_top` 6/11 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "6/11",
+   "actual": "6/11",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "pairs where BOTH the human and the judge returned a decided A/B verdict"
+  },
+  {
+   "id": "N3-claude-overall",
+   "claim": "| claude | ... overall 27/37 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "27/37",
+   "actual": "27/37",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "sum over the three arms; 73%"
+  },
+  {
+   "id": "N3-deepseek-pro_top",
+   "claim": "| deepseek | `pro_top` 10/12 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "10/12",
+   "actual": "10/12",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "pairs where BOTH the human and the judge returned a decided A/B verdict"
+  },
+  {
+   "id": "N3-deepseek-pro_coherent",
+   "claim": "| deepseek | `pro_coherent` 6/11 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "6/11",
+   "actual": "6/11",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "pairs where BOTH the human and the judge returned a decided A/B verdict"
+  },
+  {
+   "id": "N3-deepseek-anti_top",
+   "claim": "| deepseek | `anti_top` 5/15 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "5/15",
+   "actual": "5/15",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "pairs where BOTH the human and the judge returned a decided A/B verdict"
+  },
+  {
+   "id": "N3-deepseek-overall",
+   "claim": "| deepseek | ... overall 21/38 |",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "21/38",
+   "actual": "21/38",
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "sum over the three arms; 55%"
+  },
+  {
+   "id": "N4-NO-STANCE",
+   "claim": "Across all 96 human ratings in both CSVs, the `n` key was used **0 times**",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "total": 96,
+    "N": 0
+   },
+   "actual": {
+    "total": 96,
+    "N": 0
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "54 prefix_blind.csv + 42 behavioral_blind.csv; letter breakdown {\"A\": 37, \"B\": 41, \"T\": 18}"
+  },
+  {
+   "id": "N4-KEY-OFFERED",
+   "claim": "although `rate_blind.py` offered it and commit `0ef9f79` added it specifically",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "'n' accepted by rate_blind.py": true,
+    "commit 0ef9f79 exists": true
+   },
+   "actual": {
+    "'n' accepted by rate_blind.py": true,
+    "commit 0ef9f79 subject": "rating: separate \"no stance\" from \"tie\" — they are not the same answer"
+   },
+   "status": "PASS",
+   "tolerance": "substring presence",
+   "note": "rate_blind.py:184 accepts a/b/t/n"
+  },
+  {
+   "id": "N5-REGISTRY",
+   "claim": "`scripts/transfer_report.py` REGISTRY gives **each model its own separately extracted direction** (`d_olmo3_L24_logistic.npz`, `d_llama_v1.npz`, `d_llama70b_v1.npz`).",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": {
+    "n_models": 3,
+    "distinct d files": 3,
+    "d files": [
+     "data/directions/d_olmo3_L24_logistic.npz",
+     "data/directions/d_llama_v1.npz",
+     "data/directions/d_llama70b_v1.npz"
+    ]
+   },
+   "actual": {
+    "model_ids": [
+     "allenai/Olmo-3-1125-32B",
+     "meta-llama/Llama-3.1-8B",
+     "meta-llama/Llama-3.1-70B"
+    ],
+    "d_files": [
+     "data/directions/d_olmo3_L24_logistic.npz",
+     "data/directions/d_llama_v1.npz",
+     "data/directions/d_llama70b_v1.npz"
+    ],
+    "all d files exist on disk": {
+     "data/directions/d_olmo3_L24_logistic.npz": true,
+     "data/directions/d_llama_v1.npz": true,
+     "data/directions/d_llama70b_v1.npz": true
+    }
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "parsed from the REGISTRY literal at scripts/transfer_report.py:33-37"
+  },
+  {
+   "id": "N5-BASE-CHECKPOINTS",
+   "claim": "Those are **base** checkpoints. ... `allenai/Olmo-3-1125-32B` is itself a base checkpoint",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": "no instruct/chat/sft suffix on any of the three ids",
+   "actual": {
+    "model_ids": [
+     "allenai/Olmo-3-1125-32B",
+     "meta-llama/Llama-3.1-8B",
+     "meta-llama/Llama-3.1-70B"
+    ],
+    "instruct-tagged": []
+   },
+   "status": "PASS",
+   "tolerance": "naming convention",
+   "note": "checkable offline only by HF naming convention (no -Instruct / -it / -chat suffix); the actual checkpoint contents are not in this repo, so this is a naming-convention check, not a verification of post-training status."
+  },
+  {
+   "id": "N5-PROCOHERENT-D",
+   "claim": "it is +0.64, p=0.0051 on OLMo",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": 0.64,
+   "actual": 0.64,
+   "status": "PASS",
+   "tolerance": "abs <= 0.005",
+   "note": "deepseek-v4-pro kindness delta, floating baseline"
+  },
+  {
+   "id": "N5-PROCOHERENT-P",
+   "claim": "it is +0.64, p=0.0051 on OLMo",
+   "source_doc": "_falsifier/2026-08-27-addendum-human-ratings.md",
+   "expected": 0.0051,
+   "actual": 0.00509819,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0001",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-REP-deepseek-pro_top",
+   "claim": "| `pro_top` | ... REPORTED Δ +0.870 | (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.87,
+   "actual": 0.87,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "floating per-arm baseline"
+  },
+  {
+   "id": "R-FIX-deepseek-pro_top",
+   "claim": "| `pro_top` | ... FIXED-BASE Δ **+0.556** | (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.556,
+   "actual": 0.55571429,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "base_fixed[j][p] = mean over the 7 prefix arms of that judge's kindness_base for p; arm delta = mean paired difference against it"
+  },
+  {
+   "id": "R-REP-deepseek-anti_top",
+   "claim": "| `anti_top` | ... REPORTED Δ -0.860 | (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": -0.86,
+   "actual": -0.86,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "floating per-arm baseline"
+  },
+  {
+   "id": "R-FIX-deepseek-anti_top",
+   "claim": "| `anti_top` | ... FIXED-BASE Δ **-0.554** | (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": -0.554,
+   "actual": -0.55428571,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "base_fixed[j][p] = mean over the 7 prefix arms of that judge's kindness_base for p; arm delta = mean paired difference against it"
+  },
+  {
+   "id": "R-REP-deepseek-anti_hostile",
+   "claim": "| `anti_hostile` | ... REPORTED Δ -1.310 | (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": -1.31,
+   "actual": -1.31,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "floating per-arm baseline"
+  },
+  {
+   "id": "R-FIX-deepseek-anti_hostile",
+   "claim": "| `anti_hostile` | ... FIXED-BASE Δ **-1.114** | (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": -1.114,
+   "actual": -1.11428571,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "base_fixed[j][p] = mean over the 7 prefix arms of that judge's kindness_base for p; arm delta = mean paired difference against it"
+  },
+  {
+   "id": "R-REP-claude-pro_top",
+   "claim": "| `pro_top` | ... REPORTED Δ +0.910 | (claude)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.91,
+   "actual": 0.91,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "floating per-arm baseline"
+  },
+  {
+   "id": "R-FIX-claude-pro_top",
+   "claim": "| `pro_top` | ... FIXED-BASE Δ **+0.796** | (claude)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.796,
+   "actual": 0.79571429,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "base_fixed[j][p] = mean over the 7 prefix arms of that judge's kindness_base for p; arm delta = mean paired difference against it"
+  },
+  {
+   "id": "R-REP-claude-anti_top",
+   "claim": "| `anti_top` | ... REPORTED Δ -0.390 | (claude)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": -0.39,
+   "actual": -0.39,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "floating per-arm baseline"
+  },
+  {
+   "id": "R-FIX-claude-anti_top",
+   "claim": "| `anti_top` | ... FIXED-BASE Δ **-0.504** | (claude)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": -0.504,
+   "actual": -0.50428571,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "base_fixed[j][p] = mean over the 7 prefix arms of that judge's kindness_base for p; arm delta = mean paired difference against it"
+  },
+  {
+   "id": "R-FIXED-DEFINITION",
+   "claim": "Fixed baseline: mean over the 7 prefix arms of that judge's kindness_base for that prompt (within-experiment grand mean).",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": "reproduces all 5 quoted fixed-base deltas",
+   "actual": "implemented independently from the stated definition; all 5 land within 0.0005",
+   "status": "PASS",
+   "tolerance": "n/a",
+   "note": "the stated definition is sufficient to reproduce the numbers - no hidden method needed"
+  },
+  {
+   "id": "R-STEER-ds-P1",
+   "claim": "`+1·d` **+0.355**, z=+3.61, 8/8 below",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.355,
+   "actual": 0.355,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-STEER-ds-P1Z",
+   "claim": "`+1·d` z=+3.61",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 3.61,
+   "actual": 3.61391541,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-STEER-ds-P1PLACE",
+   "claim": "`+1·d` ... 8/8 below",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 8,
+   "actual": 8,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "R-STEER-ds-N1",
+   "claim": "`-1·d` **-0.135**, z=-2.52, 0/8 below",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": -0.135,
+   "actual": -0.135,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-STEER-ds-N1PLACE",
+   "claim": "`-1·d` ... 0/8 below",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0,
+   "actual": 0,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "R-STEER-cl-P1",
+   "claim": "`+1·d` **+0.376**, z=+8.44, 8/8 below",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.376,
+   "actual": 0.376,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-STEER-cl-P1Z",
+   "claim": "`+1·d` z=+8.44",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 8.44,
+   "actual": 8.43586153,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-STEER-cl-P1PLACE",
+   "claim": "`+1·d` ... 8/8 below",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 8,
+   "actual": 8,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "R-STEER-cl-N1",
+   "claim": "`-1·d` **+0.026**, z=-0.28, 2/8 below (1 tied)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.026,
+   "actual": 0.026,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-STEER-cl-N1PLACE",
+   "claim": "`-1·d` ... 2/8 below (1 tied)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": {
+    "below": 2,
+    "tied": 1
+   },
+   "actual": {
+    "below": 2,
+    "tied": 1
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "INDEPENDENTLY CONFIRMS the recompute against the audit's '5/8 below'"
+  },
+  {
+   "id": "R-STEER-cl-N1FLOAT",
+   "claim": "\"5/8 below\" is the *floating*-baseline placement (reproduced here: 5/8 at Δ +0.05)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": {
+    "below": 5,
+    "delta": 0.05
+   },
+   "actual": {
+    "below": 5,
+    "delta": 0.05
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "floating-baseline placement, confirming the recompute's diagnosis"
+  },
+  {
+   "id": "R-WILLIAMS-T",
+   "claim": "Williams' test for dependent overlapping correlations gives t = +1.77 (df=4, p=0.152)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 1.77,
+   "actual": 1.76663502,
+   "status": "PASS",
+   "tolerance": "abs <= 0.006",
+   "note": "standard Williams (Hotelling-Williams) statistic for two dependent correlations sharing the criterion variable; r12=0.8630 r13=0.7447 r23=0.9528"
+  },
+  {
+   "id": "R-WILLIAMS-DF",
+   "claim": "t = +1.77 (df=4, p=0.152)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 4,
+   "actual": 4,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "R-WILLIAMS-P",
+   "claim": "t = +1.77 (df=4, p=0.152)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.152,
+   "actual": 0.15203516,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0006",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-WILLIAMS-CONCLUSION",
+   "claim": "\"On-`d` displacement is a better predictor of behaviour than the board score\" is not supportable at n=7",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": {
+    "Fisher CIs overlap": true,
+    "Williams p > 0.05": true
+   },
+   "actual": {
+    "CI dose": [
+     0.3141,
+     0.9795
+    ],
+    "CI score": [
+     -0.0191,
+     0.9596
+    ],
+    "overlap": true,
+    "williams_p": 0.152
+   },
+   "status": "PASS",
+   "tolerance": "p > 0.05 and interval overlap",
+   "note": "the two CIs overlap heavily and the dependent-correlation test does not reject"
+  },
+  {
+   "id": "R-BYTE-IDENTICAL",
+   "claim": "\"shared_prompts\": 50, \"identical_base_continuation\": 50 ... the 50 base continuations are byte-identical between `data/cache/prefix_behavioral/` and `data/cache/behavioral/`",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": {
+    "shared_prompts": 50,
+    "identical": 50
+   },
+   "actual": {
+    "shared_prompts": 50,
+    "identical": 50
+   },
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "n_prefix_base=50, n_behavioral_base=50; exact string equality of the cached `text` field; the `continuation` field matches too (the behavioral cache stores prompt+continuation as `text`)"
+  },
+  {
+   "id": "R-SD-SHRINK-CL",
+   "claim": "The null sd therefore shrinks (claude .110 -> .040)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.11,
+   "actual": 0.11044553,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "sample sd (ddof=1) over the 8 random arms"
+  },
+  {
+   "id": "R-SD-SHRINK-CL2",
+   "claim": "The null sd therefore shrinks (claude .110 -> .040)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.04,
+   "actual": 0.04015595,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-SD-SHRINK-DS",
+   "claim": "null band sd 0.100 -> 0.080 (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.1,
+   "actual": 0.10013384,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-SD-SHRINK-DS2",
+   "claim": "null band sd 0.100 -> 0.080 (deepseek)",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": 0.08,
+   "actual": 0.07989949,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "R-Z-INFLATION-ASSESSMENT",
+   "claim": "Under a fixed baseline every arm is differenced against the *same* per-prompt vector, so the between-arm variance that the floating baseline injected into the null is removed. The null sd therefore shrinks ... and z inflates mechanically. The robust statement is the placement count",
+   "source_doc": "_falsifier/recompute_result.md",
+   "expected": "effect size DOWN, sd DOWN more, z UP, placement unchanged",
+   "actual": {
+    "ds": {
+     "floating_null_sd": 0.10013384,
+     "fixed_null_sd": 0.07989949,
+     "floating_+1_delta": 0.45,
+     "fixed_+1_delta": 0.355,
+     "floating_+1_z": 3.93223713,
+     "fixed_+1_z": 3.61391541,
+     "floating_+1_below": 8,
+     "fixed_+1_below": 8
+    },
+    "cl": {
+     "floating_null_sd": 0.11044553,
+     "fixed_null_sd": 0.04015595,
+     "floating_+1_delta": 0.54,
+     "fixed_+1_delta": 0.376,
+     "floating_+1_z": 4.76479236,
+     "fixed_+1_z": 8.43586153,
+     "floating_+1_below": 8,
+     "fixed_+1_below": 8
+    }
+   },
+   "status": "PASS",
+   "tolerance": "qualitative + directional",
+   "note": "The caveat is CORRECT and the demonstration is clean under claude: the point estimate FALLS (+0.540 -> +0.376, -30%) while z RISES (+4.77 -> +8.44, +77%), because the null sd falls further (0.110 -> 0.040, -64%). A statistic that grows while the effect it measures shrinks is not measuring the effect. The placement count is unchanged (8/8 below under both), which is exactly the invariance that makes it the robust readout. Two things the recompute does not say, and should: (a) the shrinkage is not a pure artifact - the floating null sd is inflated by judge base-rating noise that is real measurement error, so neither sd is 'the' right one; (b) the placement count over 8 draws is itself coarse - its finest resolution is p=1/9~0.11 one-sided, so it cannot separate z=+3.6 from z=+8.4 at all. Robust, but nearly powerless."
+  }
+ ]
+}

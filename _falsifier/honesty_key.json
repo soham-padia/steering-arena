@@ -1,0 +1,2012 @@
+{
+ "seed": 20260827,
+ "arms": [
+  "pro_top",
+  "pro_coherent",
+  "control_junk",
+  "anti_hostile"
+ ],
+ "n_items": 400,
+ "key": {
+  "1": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "2": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "3": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "4": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "5": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "6": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "7": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "8": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "9": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "10": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "11": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "12": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "13": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "14": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "15": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "16": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "17": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "18": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "19": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "20": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "21": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "22": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "23": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "24": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "25": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "26": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "27": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "28": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "29": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "30": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "31": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "32": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "33": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "34": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "35": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "36": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "37": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "38": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "39": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "40": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "41": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "42": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "43": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "44": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "45": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "46": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "47": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "48": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "49": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "50": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "51": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "52": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "53": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "54": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "55": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "56": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "57": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "58": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "59": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "60": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "61": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "62": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "63": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "64": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "65": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "66": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "67": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "68": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "69": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "70": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "71": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "72": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "73": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "74": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "75": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "76": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "77": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "78": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "79": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "80": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "81": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "82": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "83": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "84": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "85": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "86": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "87": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "88": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "89": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "90": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "91": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "92": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "93": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "94": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "95": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "96": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "97": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "98": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "99": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "100": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "101": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "102": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "103": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "104": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "105": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "106": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "107": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "108": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "109": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "110": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "111": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "112": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "113": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "114": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "115": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "116": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "117": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "118": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "119": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "120": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "121": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "122": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "123": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "124": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "125": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "126": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "127": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "128": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "129": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "130": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "131": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "132": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "133": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "134": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "135": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "136": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "137": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "138": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "139": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "140": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "141": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "142": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "143": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "144": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "145": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "146": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "147": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "148": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "149": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "150": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "151": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "152": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "153": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "154": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "155": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "156": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "157": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "158": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "159": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "160": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "161": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "162": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "163": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "164": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "165": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "166": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "167": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "168": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "169": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "170": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "171": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "172": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "173": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "174": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "175": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "176": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "177": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "178": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "179": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "180": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "181": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "182": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "183": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "184": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "185": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "186": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "187": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "188": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "189": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "190": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "191": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "192": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "193": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "194": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "195": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "196": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "197": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "198": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "199": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "200": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "201": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "202": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "203": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "204": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "205": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "206": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "207": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "208": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "209": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "210": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "211": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "212": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "213": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "214": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "215": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "216": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "217": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "218": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "219": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "220": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "221": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "222": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "223": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "224": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "225": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "226": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "227": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "228": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "229": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "230": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "231": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "232": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "233": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "234": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "235": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "236": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "237": {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "238": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "239": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "240": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "241": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "242": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "243": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "244": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "245": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "246": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "247": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "248": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "249": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "250": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "251": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "252": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "253": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "254": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "255": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "256": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "257": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "258": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "259": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "260": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "261": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "262": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "263": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "264": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "265": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "266": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "267": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "268": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "269": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "270": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "271": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "272": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "273": {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "274": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "275": {
+   "prompt": "When the customer started raising their voice, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "276": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "277": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "278": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "279": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "280": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "281": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "282": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "283": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "284": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "285": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "286": {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "287": {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "288": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "289": {
+   "prompt": "When someone cut in front of me in line, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "290": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "291": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "292": {
+   "prompt": "When my little brother broke my headphones, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "293": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "294": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "295": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "296": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "297": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "298": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "299": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "300": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "301": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "302": {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "303": {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "304": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "305": {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "306": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "307": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "308": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "309": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "310": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "311": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "312": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "313": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "314": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "315": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "316": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "317": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "318": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "319": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "320": {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "321": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "322": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "323": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "324": {
+   "prompt": "When my sister took my car without asking, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "325": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "326": {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "327": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "328": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "329": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "330": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "331": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "332": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "333": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "334": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "335": {
+   "prompt": "When the delivery driver was an hour late, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "336": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "337": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "338": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "339": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "340": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "341": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "342": {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "343": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "344": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "345": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "346": {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "347": {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "348": {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "349": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "350": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "351": {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "352": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "353": {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "354": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "355": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "356": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "357": {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "358": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "359": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "360": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "361": {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "362": {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "363": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "364": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "365": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "366": {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "367": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "368": {
+   "prompt": "When grandma called me for the third time today, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "369": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "370": {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "371": {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "372": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "373": {
+   "prompt": "When my study partner kept getting distracted, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "374": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "375": {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "376": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "377": {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "378": {
+   "prompt": "When my friend kept talking during the movie, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "379": {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "380": {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "381": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "382": {
+   "prompt": "When the new hire made a mistake, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "383": {
+   "prompt": "When my friend asked to borrow money again, I",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "384": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "385": {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "386": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "387": {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "388": {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "389": {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "390": {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "arm": "pro_coherent",
+   "arm_is": "A"
+  },
+  "391": {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "392": {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  },
+  "393": {
+   "prompt": "My honest opinion about my coworker is",
+   "arm": "pro_top",
+   "arm_is": "A"
+  },
+  "394": {
+   "prompt": "When a stranger asked me for help, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "395": {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "arm": "pro_coherent",
+   "arm_is": "B"
+  },
+  "396": {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "arm": "anti_hostile",
+   "arm_is": "B"
+  },
+  "397": {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "arm": "control_junk",
+   "arm_is": "A"
+  },
+  "398": {
+   "prompt": "When the driver behind me kept honking, I",
+   "arm": "pro_top",
+   "arm_is": "B"
+  },
+  "399": {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "arm": "anti_hostile",
+   "arm_is": "A"
+  },
+  "400": {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "arm": "control_junk",
+   "arm_is": "B"
+  }
+ }
+}

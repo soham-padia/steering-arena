@@ -1,0 +1,3494 @@
+{
+  "meta": {
+    "git_rev": "8c43273",
+    "generated_by": "_falsifier/recompute.py",
+    "inputs": [
+      "data/analysis/prefix_gallery_judge.json",
+      "data/analysis/prefix_judge_verdicts.json",
+      "data/analysis/prefix_judge_claude.json",
+      "data/analysis/prefix_blind_key.json",
+      "data/analysis/steering_random_control.json",
+      "data/analysis/compile_check.json",
+      "data/cache/prefix_behavioral/",
+      "data/cache/behavioral/"
+    ],
+    "network_calls": 0,
+    "new_generations": 0
+  },
+  "integrity": {
+    "prefix records per judge|arm (expect 50)": "all 50",
+    "distinct eval prompts": 50,
+    "prefix arms": 7,
+    "steering arms": 10,
+    "judges": "deepseek-v4-pro, claude-opus-5",
+    "base_texts::prefix_experiment": "{\"available\": true, \"n_base_texts\": 50}",
+    "base_texts::steering_experiment": "{\"available\": true, \"n_base_texts\": 50}",
+    "base_texts::cross_experiment": "{\"shared_prompts\": 50, \"identical_base_continuation\": 50, \"same_first_40_chars\": 50, \"note\": \"if these do not match, the two experiments generated their own base continuations and their baselines are NOT interchangeable\"}"
+  },
+  "fix2_prefix": {
+    "design": {
+      "fixed_baseline_scope": "mean over the 7 prefix arms of that judge's kindness_base for that prompt (within-experiment grand mean)",
+      "test": "Wilcoxon signed-rank over non-zero paired deltas, the project's own convention in scripts/prefix_behavior_eval.py:_paired_p"
+    },
+    "per_judge": {
+      "deepseek-v4-pro": {
+        "arms": {
+          "pro_top": {
+            "reported": {
+              "delta": 0.87,
+              "prefixed_mean": 3.64,
+              "base_mean": 2.77,
+              "p_wilcoxon": 0.0002594658955981369,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "fixed": {
+              "delta": 0.5557142857142857,
+              "prefixed_mean": 3.64,
+              "base_mean": 3.0842857142857145,
+              "p_wilcoxon": 0.005181707310379045,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "drift_reported_minus_fixed": 0.3142857142857143,
+            "drift_pct_of_reported": 36.1247947454844,
+            "sign_flip": false
+          },
+          "pro_coherent": {
+            "reported": {
+              "delta": 0.64,
+              "prefixed_mean": 3.49,
+              "base_mean": 2.85,
+              "p_wilcoxon": 0.005098192141379922,
+              "n": 50,
+              "n_nonzero": 43
+            },
+            "fixed": {
+              "delta": 0.4057142857142857,
+              "prefixed_mean": 3.49,
+              "base_mean": 3.0842857142857145,
+              "p_wilcoxon": 0.02669270144086886,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "drift_reported_minus_fixed": 0.23428571428571432,
+            "drift_pct_of_reported": 36.60714285714286,
+            "sign_flip": false
+          },
+          "control_junk": {
+            "reported": {
+              "delta": -0.18,
+              "prefixed_mean": 2.89,
+              "base_mean": 3.07,
+              "p_wilcoxon": 0.49157804767048097,
+              "n": 50,
+              "n_nonzero": 44
+            },
+            "fixed": {
+              "delta": -0.19428571428571428,
+              "prefixed_mean": 2.89,
+              "base_mean": 3.0842857142857145,
+              "p_wilcoxon": 0.33450246231335656,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": 0.01428571428571429,
+            "drift_pct_of_reported": -7.936507936507939,
+            "sign_flip": false
+          },
+          "control_text": {
+            "reported": {
+              "delta": -0.1,
+              "prefixed_mean": 3.06,
+              "base_mean": 3.16,
+              "p_wilcoxon": 0.5450863046741914,
+              "n": 50,
+              "n_nonzero": 42
+            },
+            "fixed": {
+              "delta": -0.02428571428571428,
+              "prefixed_mean": 3.06,
+              "base_mean": 3.0842857142857145,
+              "p_wilcoxon": 0.8461271191125128,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": -0.07571428571428573,
+            "drift_pct_of_reported": 75.71428571428572,
+            "sign_flip": false
+          },
+          "anti_coherent": {
+            "reported": {
+              "delta": -0.27,
+              "prefixed_mean": 2.8,
+              "base_mean": 3.07,
+              "p_wilcoxon": 0.1892501884851494,
+              "n": 50,
+              "n_nonzero": 41
+            },
+            "fixed": {
+              "delta": -0.28428571428571425,
+              "prefixed_mean": 2.8,
+              "base_mean": 3.0842857142857145,
+              "p_wilcoxon": 0.0936194469226881,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": 0.014285714285714235,
+            "drift_pct_of_reported": -5.291005291005272,
+            "sign_flip": false
+          },
+          "anti_hostile": {
+            "reported": {
+              "delta": -1.31,
+              "prefixed_mean": 1.97,
+              "base_mean": 3.28,
+              "p_wilcoxon": 4.654955338124097e-06,
+              "n": 50,
+              "n_nonzero": 46
+            },
+            "fixed": {
+              "delta": -1.1142857142857143,
+              "prefixed_mean": 1.97,
+              "base_mean": 3.0842857142857145,
+              "p_wilcoxon": 9.789643506055345e-06,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "drift_reported_minus_fixed": -0.19571428571428573,
+            "drift_pct_of_reported": 14.940021810250819,
+            "sign_flip": false
+          },
+          "anti_top": {
+            "reported": {
+              "delta": -0.86,
+              "prefixed_mean": 2.53,
+              "base_mean": 3.39,
+              "p_wilcoxon": 0.0004612257759121628,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "fixed": {
+              "delta": -0.5542857142857143,
+              "prefixed_mean": 2.53,
+              "base_mean": 3.0842857142857145,
+              "p_wilcoxon": 0.0041339061313120954,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "drift_reported_minus_fixed": -0.3057142857142857,
+            "drift_pct_of_reported": 35.548172757475086,
+            "sign_flip": false
+          }
+        },
+        "base_fixed_grand_mean": 3.0842857142857145,
+        "contrast_effect": {
+          "identical_base_rating_across_all_7_arms": 1,
+          "identical_within_3arm_run(pro_top,pro_coherent,anti_top)": 5,
+          "identical_within_4arm_gallery_run": 5,
+          "mean_within_prompt_range_across_arms": 1.16,
+          "mean_within_prompt_sd_across_arms": 0.40982718187388945,
+          "pro_top_base_mean": 2.77,
+          "anti_top_base_mean": 3.39,
+          "anti_minus_pro_base_shift": 0.6200000000000001,
+          "wilcoxon_p_proTopBase_vs_antiTopBase": 7.061057267349246e-07,
+          "n_nonzero": 39,
+          "n": 50
+        }
+      },
+      "claude-opus-5": {
+        "arms": {
+          "pro_top": {
+            "reported": {
+              "delta": 0.91,
+              "prefixed_mean": 4.07,
+              "base_mean": 3.16,
+              "p_wilcoxon": 0.00012952762839455796,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "fixed": {
+              "delta": 0.7957142857142857,
+              "prefixed_mean": 4.07,
+              "base_mean": 3.2742857142857145,
+              "p_wilcoxon": 0.0004512047528401104,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "drift_reported_minus_fixed": 0.11428571428571432,
+            "drift_pct_of_reported": 12.558869701726849,
+            "sign_flip": false
+          },
+          "pro_coherent": {
+            "reported": {
+              "delta": 0.57,
+              "prefixed_mean": 3.73,
+              "base_mean": 3.16,
+              "p_wilcoxon": 0.006259401622892141,
+              "n": 50,
+              "n_nonzero": 44
+            },
+            "fixed": {
+              "delta": 0.4557142857142857,
+              "prefixed_mean": 3.73,
+              "base_mean": 3.2742857142857145,
+              "p_wilcoxon": 0.02267673533067814,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "drift_reported_minus_fixed": 0.11428571428571427,
+            "drift_pct_of_reported": 20.050125313283207,
+            "sign_flip": false
+          },
+          "control_junk": {
+            "reported": {
+              "delta": -0.15,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.36,
+              "p_wilcoxon": 0.5206642637065821,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "fixed": {
+              "delta": -0.06428571428571431,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.2742857142857145,
+              "p_wilcoxon": 0.8132916244376784,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "drift_reported_minus_fixed": -0.08571428571428569,
+            "drift_pct_of_reported": 57.14285714285713,
+            "sign_flip": false
+          },
+          "control_text": {
+            "reported": {
+              "delta": -0.18,
+              "prefixed_mean": 3.15,
+              "base_mean": 3.33,
+              "p_wilcoxon": 0.12446813843541583,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "fixed": {
+              "delta": -0.1242857142857143,
+              "prefixed_mean": 3.15,
+              "base_mean": 3.2742857142857145,
+              "p_wilcoxon": 0.16709293616147847,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "drift_reported_minus_fixed": -0.05571428571428569,
+            "drift_pct_of_reported": 30.95238095238094,
+            "sign_flip": false
+          },
+          "anti_coherent": {
+            "reported": {
+              "delta": -0.13,
+              "prefixed_mean": 3.15,
+              "base_mean": 3.28,
+              "p_wilcoxon": 0.48424472300347243,
+              "n": 50,
+              "n_nonzero": 43
+            },
+            "fixed": {
+              "delta": -0.1242857142857143,
+              "prefixed_mean": 3.15,
+              "base_mean": 3.2742857142857145,
+              "p_wilcoxon": 0.41425956276526144,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": -0.0057142857142856995,
+            "drift_pct_of_reported": 4.395604395604384,
+            "sign_flip": false
+          },
+          "anti_hostile": {
+            "reported": {
+              "delta": -1.31,
+              "prefixed_mean": 2.16,
+              "base_mean": 3.47,
+              "p_wilcoxon": 1.0878808247099435e-06,
+              "n": 50,
+              "n_nonzero": 44
+            },
+            "fixed": {
+              "delta": -1.1142857142857143,
+              "prefixed_mean": 2.16,
+              "base_mean": 3.2742857142857145,
+              "p_wilcoxon": 4.083085607829389e-06,
+              "n": 50,
+              "n_nonzero": 46
+            },
+            "drift_reported_minus_fixed": -0.19571428571428573,
+            "drift_pct_of_reported": 14.940021810250819,
+            "sign_flip": false
+          },
+          "anti_top": {
+            "reported": {
+              "delta": -0.39,
+              "prefixed_mean": 2.77,
+              "base_mean": 3.16,
+              "p_wilcoxon": 0.027699886849617616,
+              "n": 50,
+              "n_nonzero": 37
+            },
+            "fixed": {
+              "delta": -0.5042857142857143,
+              "prefixed_mean": 2.77,
+              "base_mean": 3.2742857142857145,
+              "p_wilcoxon": 0.0039175720958878136,
+              "n": 50,
+              "n_nonzero": 44
+            },
+            "drift_reported_minus_fixed": 0.11428571428571432,
+            "drift_pct_of_reported": -29.304029304029314,
+            "sign_flip": false
+          }
+        },
+        "base_fixed_grand_mean": 3.2742857142857145,
+        "contrast_effect": {
+          "identical_base_rating_across_all_7_arms": 18,
+          "identical_within_3arm_run(pro_top,pro_coherent,anti_top)": 50,
+          "identical_within_4arm_gallery_run": 21,
+          "mean_within_prompt_range_across_arms": 0.53,
+          "mean_within_prompt_sd_across_arms": 0.21948586104414833,
+          "pro_top_base_mean": 3.16,
+          "anti_top_base_mean": 3.16,
+          "anti_minus_pro_base_shift": 0.0,
+          "wilcoxon_p_proTopBase_vs_antiTopBase": 1.0,
+          "n_nonzero": 0,
+          "n": 50
+        }
+      }
+    }
+  },
+  "fix2_steering": {
+    "setup": {
+      "layer": 24,
+      "r_norm": 30.07038116455078,
+      "alpha": 30.07038116455078,
+      "mult": 1.0,
+      "seed": 20260826,
+      "n_dirs": 8,
+      "cos_with_d": [
+        0.014369086119413104,
+        0.005666048724971957,
+        0.0011822161990680292,
+        0.0032415563099734276,
+        0.005306473568357331,
+        0.00045970026083656107,
+        0.0014305857633301992,
+        0.002087392987101702
+      ],
+      "model_id": "allenai/Olmo-3-1125-32B"
+    },
+    "per_judge": {
+      "deepseek-v4-pro": {
+        "arms": {
+          "+1": {
+            "reported": {
+              "delta": 0.45,
+              "prefixed_mean": 3.43,
+              "base_mean": 2.98,
+              "p_wilcoxon": 0.007040722079892395,
+              "n": 50,
+              "n_nonzero": 39
+            },
+            "fixed": {
+              "delta": 0.355,
+              "prefixed_mean": 3.43,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.011106505994864025,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "fixed_randbase_only": {
+              "delta": 0.345,
+              "prefixed_mean": 3.43,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.01384347378847295,
+              "n": 50,
+              "n_nonzero": 47
+            },
+            "drift_reported_minus_fixed": 0.09500000000000003
+          },
+          "-1": {
+            "reported": {
+              "delta": -0.15,
+              "prefixed_mean": 2.94,
+              "base_mean": 3.09,
+              "p_wilcoxon": 0.38732207976741795,
+              "n": 50,
+              "n_nonzero": 39
+            },
+            "fixed": {
+              "delta": -0.13499999999999998,
+              "prefixed_mean": 2.94,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.4435530931996875,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "fixed_randbase_only": {
+              "delta": -0.145,
+              "prefixed_mean": 2.94,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.40626363994087433,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "drift_reported_minus_fixed": -0.015000000000000013
+          },
+          "rand1s20260826": {
+            "reported": {
+              "delta": -0.18,
+              "prefixed_mean": 2.99,
+              "base_mean": 3.17,
+              "p_wilcoxon": 0.314998013602683,
+              "n": 50,
+              "n_nonzero": 39
+            },
+            "fixed": {
+              "delta": -0.08499999999999998,
+              "prefixed_mean": 2.99,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.514704065794013,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "fixed_randbase_only": {
+              "delta": -0.095,
+              "prefixed_mean": 2.99,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.5049376267419499,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": -0.09500000000000001
+          },
+          "rand2s20260826": {
+            "reported": {
+              "delta": 0.1,
+              "prefixed_mean": 3.16,
+              "base_mean": 3.06,
+              "p_wilcoxon": 0.4641464877516682,
+              "n": 50,
+              "n_nonzero": 38
+            },
+            "fixed": {
+              "delta": 0.08500000000000002,
+              "prefixed_mean": 3.16,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.8655792338774388,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "fixed_randbase_only": {
+              "delta": 0.075,
+              "prefixed_mean": 3.16,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.8780002828938158,
+              "n": 50,
+              "n_nonzero": 47
+            },
+            "drift_reported_minus_fixed": 0.014999999999999986
+          },
+          "rand3s20260826": {
+            "reported": {
+              "delta": 0.13,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.08,
+              "p_wilcoxon": 0.44653436045624306,
+              "n": 50,
+              "n_nonzero": 38
+            },
+            "fixed": {
+              "delta": 0.135,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.28930429575839045,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "fixed_randbase_only": {
+              "delta": 0.125,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.2925413270460947,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "drift_reported_minus_fixed": -0.0050000000000000044
+          },
+          "rand4s20260826": {
+            "reported": {
+              "delta": 0.06,
+              "prefixed_mean": 3.18,
+              "base_mean": 3.12,
+              "p_wilcoxon": 0.9938950912412079,
+              "n": 50,
+              "n_nonzero": 37
+            },
+            "fixed": {
+              "delta": 0.10500000000000004,
+              "prefixed_mean": 3.18,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.6851873146071737,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "fixed_randbase_only": {
+              "delta": 0.095,
+              "prefixed_mean": 3.18,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.7507306784912001,
+              "n": 50,
+              "n_nonzero": 47
+            },
+            "drift_reported_minus_fixed": -0.04500000000000004
+          },
+          "rand5s20260826": {
+            "reported": {
+              "delta": 0.06,
+              "prefixed_mean": 3.1,
+              "base_mean": 3.04,
+              "p_wilcoxon": 0.6989456015402018,
+              "n": 50,
+              "n_nonzero": 39
+            },
+            "fixed": {
+              "delta": 0.025000000000000022,
+              "prefixed_mean": 3.1,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.7684004054685796,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "fixed_randbase_only": {
+              "delta": 0.015,
+              "prefixed_mean": 3.1,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.8112652072390282,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": 0.034999999999999976
+          },
+          "rand6s20260826": {
+            "reported": {
+              "delta": 0.11,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.14,
+              "p_wilcoxon": 0.40073499355991427,
+              "n": 50,
+              "n_nonzero": 36
+            },
+            "fixed": {
+              "delta": 0.175,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.31758705550893807,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "fixed_randbase_only": {
+              "delta": 0.165,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.3268483443169776,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": -0.06499999999999999
+          },
+          "rand7s20260826": {
+            "reported": {
+              "delta": 0.12,
+              "prefixed_mean": 3.14,
+              "base_mean": 3.02,
+              "p_wilcoxon": 0.5974644354658945,
+              "n": 50,
+              "n_nonzero": 38
+            },
+            "fixed": {
+              "delta": 0.06500000000000002,
+              "prefixed_mean": 3.14,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.9384281847677058,
+              "n": 50,
+              "n_nonzero": 50
+            },
+            "fixed_randbase_only": {
+              "delta": 0.055,
+              "prefixed_mean": 3.14,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.9444663930280379,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": 0.05499999999999998
+          },
+          "rand8s20260826": {
+            "reported": {
+              "delta": 0.05,
+              "prefixed_mean": 3.1,
+              "base_mean": 3.05,
+              "p_wilcoxon": 0.8554379300205339,
+              "n": 50,
+              "n_nonzero": 37
+            },
+            "fixed": {
+              "delta": 0.025000000000000026,
+              "prefixed_mean": 3.1,
+              "base_mean": 3.075,
+              "p_wilcoxon": 0.8422424745488608,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "fixed_randbase_only": {
+              "delta": 0.015,
+              "prefixed_mean": 3.1,
+              "base_mean": 3.085,
+              "p_wilcoxon": 0.8539268755275738,
+              "n": 50,
+              "n_nonzero": 49
+            },
+            "drift_reported_minus_fixed": 0.024999999999999977
+          }
+        },
+        "null_band_reported": {
+          "mean": 0.05625,
+          "sd": 0.10013383900702956,
+          "min": -0.18,
+          "max": 0.13,
+          "values": [
+            -0.18,
+            0.1,
+            0.13,
+            0.06,
+            0.06,
+            0.11,
+            0.12,
+            0.05
+          ],
+          "+1": {
+            "delta": 0.45,
+            "z": 3.9322371328673227,
+            "n_randoms_below": 8,
+            "n_randoms_above": 0,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.007040722079892395
+          },
+          "-1": {
+            "delta": -0.15,
+            "z": -2.0597432600733594,
+            "n_randoms_below": 1,
+            "n_randoms_above": 7,
+            "n_randoms_tied": 0,
+            "outside_all_8": false,
+            "p_wilcoxon": 0.38732207976741795
+          },
+          "n_randoms_p_lt_.05": 0
+        },
+        "null_band_fixed": {
+          "mean": 0.06625000000000002,
+          "sd": 0.07989949043284676,
+          "min": -0.08499999999999998,
+          "max": 0.175,
+          "values": [
+            -0.08499999999999998,
+            0.08500000000000002,
+            0.135,
+            0.10500000000000004,
+            0.025000000000000022,
+            0.175,
+            0.06500000000000002,
+            0.025000000000000026
+          ],
+          "+1": {
+            "delta": 0.355,
+            "z": 3.613915413424145,
+            "n_randoms_below": 8,
+            "n_randoms_above": 0,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.011106505994864025
+          },
+          "-1": {
+            "delta": -0.13499999999999998,
+            "z": -2.518789530568344,
+            "n_randoms_below": 0,
+            "n_randoms_above": 8,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.4435530931996875
+          },
+          "n_randoms_p_lt_.05": 0
+        },
+        "null_band_fixed_randbase_only": {
+          "mean": 0.05625,
+          "sd": 0.07989949043284676,
+          "min": -0.095,
+          "max": 0.165,
+          "values": [
+            -0.095,
+            0.075,
+            0.125,
+            0.095,
+            0.015,
+            0.165,
+            0.055,
+            0.015
+          ],
+          "+1": {
+            "delta": 0.345,
+            "z": 3.613915413424145,
+            "n_randoms_below": 8,
+            "n_randoms_above": 0,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.01384347378847295
+          },
+          "-1": {
+            "delta": -0.145,
+            "z": -2.518789530568344,
+            "n_randoms_below": 0,
+            "n_randoms_above": 8,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.40626363994087433
+          },
+          "n_randoms_p_lt_.05": 0
+        },
+        "base_fixed_grand_mean": 3.075,
+        "contrast_effect": {
+          "identical_base_rating_across_all_10_arms": 0,
+          "mean_within_prompt_range_across_arms": 1.1,
+          "n": 50
+        }
+      },
+      "claude-opus-5": {
+        "arms": {
+          "+1": {
+            "reported": {
+              "delta": 0.54,
+              "prefixed_mean": 3.6,
+              "base_mean": 3.06,
+              "p_wilcoxon": 0.001512339431698187,
+              "n": 50,
+              "n_nonzero": 40
+            },
+            "fixed": {
+              "delta": 0.376,
+              "prefixed_mean": 3.6,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.0034513798868611553,
+              "n": 50,
+              "n_nonzero": 48
+            },
+            "fixed_randbase_only": {
+              "delta": 0.3525,
+              "prefixed_mean": 3.6,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.005776204324574182,
+              "n": 50,
+              "n_nonzero": 46
+            },
+            "drift_reported_minus_fixed": 0.16400000000000003
+          },
+          "-1": {
+            "reported": {
+              "delta": 0.05,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.2,
+              "p_wilcoxon": 0.8413516857567308,
+              "n": 50,
+              "n_nonzero": 38
+            },
+            "fixed": {
+              "delta": 0.026000000000000013,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.7604775583671983,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "fixed_randbase_only": {
+              "delta": 0.0025,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.8839553794112976,
+              "n": 50,
+              "n_nonzero": 44
+            },
+            "drift_reported_minus_fixed": 0.02399999999999999
+          },
+          "rand1s20260826": {
+            "reported": {
+              "delta": -0.16,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.37,
+              "p_wilcoxon": 0.2904699550689779,
+              "n": 50,
+              "n_nonzero": 40
+            },
+            "fixed": {
+              "delta": -0.013999999999999986,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.615052637394882,
+              "n": 50,
+              "n_nonzero": 47
+            },
+            "fixed_randbase_only": {
+              "delta": -0.0375,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.5684012919383936,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "drift_reported_minus_fixed": -0.14600000000000002
+          },
+          "rand2s20260826": {
+            "reported": {
+              "delta": 0.05,
+              "prefixed_mean": 3.29,
+              "base_mean": 3.24,
+              "p_wilcoxon": 0.6641931337291987,
+              "n": 50,
+              "n_nonzero": 38
+            },
+            "fixed": {
+              "delta": 0.06600000000000002,
+              "prefixed_mean": 3.29,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.6306236865617916,
+              "n": 50,
+              "n_nonzero": 46
+            },
+            "fixed_randbase_only": {
+              "delta": 0.0425,
+              "prefixed_mean": 3.29,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.7512443175816421,
+              "n": 50,
+              "n_nonzero": 46
+            },
+            "drift_reported_minus_fixed": -0.016000000000000014
+          },
+          "rand3s20260826": {
+            "reported": {
+              "delta": 0.02,
+              "prefixed_mean": 3.26,
+              "base_mean": 3.24,
+              "p_wilcoxon": 0.8958689912408169,
+              "n": 50,
+              "n_nonzero": 37
+            },
+            "fixed": {
+              "delta": 0.03600000000000001,
+              "prefixed_mean": 3.26,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.8744008170247117,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "fixed_randbase_only": {
+              "delta": 0.0125,
+              "prefixed_mean": 3.26,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.7580259030047922,
+              "n": 50,
+              "n_nonzero": 43
+            },
+            "drift_reported_minus_fixed": -0.01600000000000001
+          },
+          "rand4s20260826": {
+            "reported": {
+              "delta": 0.13,
+              "prefixed_mean": 3.33,
+              "base_mean": 3.2,
+              "p_wilcoxon": 0.6435132118964891,
+              "n": 50,
+              "n_nonzero": 38
+            },
+            "fixed": {
+              "delta": 0.10600000000000001,
+              "prefixed_mean": 3.33,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.7087241101381523,
+              "n": 50,
+              "n_nonzero": 44
+            },
+            "fixed_randbase_only": {
+              "delta": 0.0825,
+              "prefixed_mean": 3.33,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.8847328938451982,
+              "n": 50,
+              "n_nonzero": 43
+            },
+            "drift_reported_minus_fixed": 0.023999999999999994
+          },
+          "rand5s20260826": {
+            "reported": {
+              "delta": -0.06,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.27,
+              "p_wilcoxon": 0.666003468922338,
+              "n": 50,
+              "n_nonzero": 42
+            },
+            "fixed": {
+              "delta": -0.013999999999999986,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.8613568716572902,
+              "n": 50,
+              "n_nonzero": 47
+            },
+            "fixed_randbase_only": {
+              "delta": -0.0375,
+              "prefixed_mean": 3.21,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.7101793581217719,
+              "n": 50,
+              "n_nonzero": 46
+            },
+            "drift_reported_minus_fixed": -0.04600000000000001
+          },
+          "rand6s20260826": {
+            "reported": {
+              "delta": -0.03,
+              "prefixed_mean": 3.26,
+              "base_mean": 3.29,
+              "p_wilcoxon": 0.8210914148237075,
+              "n": 50,
+              "n_nonzero": 35
+            },
+            "fixed": {
+              "delta": 0.03600000000000001,
+              "prefixed_mean": 3.26,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.8832851558266809,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "fixed_randbase_only": {
+              "delta": 0.0125,
+              "prefixed_mean": 3.26,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.7051616691059541,
+              "n": 50,
+              "n_nonzero": 45
+            },
+            "drift_reported_minus_fixed": -0.066
+          },
+          "rand7s20260826": {
+            "reported": {
+              "delta": 0.19,
+              "prefixed_mean": 3.28,
+              "base_mean": 3.09,
+              "p_wilcoxon": 0.24699338880712862,
+              "n": 50,
+              "n_nonzero": 35
+            },
+            "fixed": {
+              "delta": 0.056000000000000015,
+              "prefixed_mean": 3.28,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.6506315461711493,
+              "n": 50,
+              "n_nonzero": 43
+            },
+            "fixed_randbase_only": {
+              "delta": 0.0325,
+              "prefixed_mean": 3.28,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.7592570431736849,
+              "n": 50,
+              "n_nonzero": 42
+            },
+            "drift_reported_minus_fixed": 0.13399999999999998
+          },
+          "rand8s20260826": {
+            "reported": {
+              "delta": -0.03,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.28,
+              "p_wilcoxon": 0.6904680592521546,
+              "n": 50,
+              "n_nonzero": 36
+            },
+            "fixed": {
+              "delta": 0.026000000000000013,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.2239999999999998,
+              "p_wilcoxon": 0.96077822133128,
+              "n": 50,
+              "n_nonzero": 46
+            },
+            "fixed_randbase_only": {
+              "delta": 0.0025,
+              "prefixed_mean": 3.25,
+              "base_mean": 3.2475,
+              "p_wilcoxon": 0.7972934972992256,
+              "n": 50,
+              "n_nonzero": 44
+            },
+            "drift_reported_minus_fixed": -0.05600000000000001
+          }
+        },
+        "null_band_reported": {
+          "mean": 0.013750000000000002,
+          "sd": 0.11044552632729986,
+          "min": -0.16,
+          "max": 0.19,
+          "values": [
+            -0.16,
+            0.05,
+            0.02,
+            0.13,
+            -0.06,
+            -0.03,
+            0.19,
+            -0.03
+          ],
+          "+1": {
+            "delta": 0.54,
+            "z": 4.764792359633328,
+            "n_randoms_below": 8,
+            "n_randoms_above": 0,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.001512339431698187
+          },
+          "-1": {
+            "delta": 0.05,
+            "z": 0.32821610078234337,
+            "n_randoms_below": 5,
+            "n_randoms_above": 2,
+            "n_randoms_tied": 1,
+            "outside_all_8": false,
+            "p_wilcoxon": 0.8413516857567308
+          },
+          "n_randoms_p_lt_.05": 0
+        },
+        "null_band_fixed": {
+          "mean": 0.03725000000000001,
+          "sd": 0.040155946010522525,
+          "min": -0.013999999999999986,
+          "max": 0.10600000000000001,
+          "values": [
+            -0.013999999999999986,
+            0.06600000000000002,
+            0.03600000000000001,
+            0.10600000000000001,
+            -0.013999999999999986,
+            0.03600000000000001,
+            0.056000000000000015,
+            0.026000000000000013
+          ],
+          "+1": {
+            "delta": 0.376,
+            "z": 8.435861526241554,
+            "n_randoms_below": 8,
+            "n_randoms_above": 0,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.0034513798868611553
+          },
+          "-1": {
+            "delta": 0.026000000000000013,
+            "z": -0.28015776286411065,
+            "n_randoms_below": 2,
+            "n_randoms_above": 5,
+            "n_randoms_tied": 1,
+            "outside_all_8": false,
+            "p_wilcoxon": 0.7604775583671983
+          },
+          "n_randoms_p_lt_.05": 0
+        },
+        "null_band_fixed_randbase_only": {
+          "mean": 0.013750000000000002,
+          "sd": 0.040155946010522525,
+          "min": -0.0375,
+          "max": 0.0825,
+          "values": [
+            -0.0375,
+            0.0425,
+            0.0125,
+            0.0825,
+            -0.0375,
+            0.0125,
+            0.0325,
+            0.0025
+          ],
+          "+1": {
+            "delta": 0.3525,
+            "z": 8.435861526241554,
+            "n_randoms_below": 8,
+            "n_randoms_above": 0,
+            "n_randoms_tied": 0,
+            "outside_all_8": true,
+            "p_wilcoxon": 0.005776204324574182
+          },
+          "-1": {
+            "delta": 0.0025,
+            "z": -0.2801577628641107,
+            "n_randoms_below": 2,
+            "n_randoms_above": 5,
+            "n_randoms_tied": 1,
+            "outside_all_8": false,
+            "p_wilcoxon": 0.8839553794112976
+          },
+          "n_randoms_p_lt_.05": 0
+        },
+        "base_fixed_grand_mean": 3.2239999999999998,
+        "contrast_effect": {
+          "identical_base_rating_across_all_10_arms": 8,
+          "mean_within_prompt_range_across_arms": 0.77,
+          "n": 50
+        }
+      }
+    },
+    "design": {
+      "fixed_baseline_scope": "mean over all 10 steering arms (+1, -1, rand1..8) of that judge's kindness_base for that prompt",
+      "sensitivity": "also computed over the 8 random arms only",
+      "null_band_sd": "sample sd (ddof=1) over the 8 random arms, matching scripts/steering_random_control.py (statistics.stdev)"
+    }
+  },
+  "fix2_steering_verdict": "- **`deepseek-v4-pro`**: `+1\u00b7d` SURVIVES the fixed-baseline re-analysis (\u0394 +0.355, z +3.61, above 8/8 randoms). `-1\u00b7d` was **inside** the published floating-baseline band and is **outside** the fixed-baseline band (\u0394 -0.135, z -2.52, 0/8 randoms below it).\n- **`claude-opus-5`**: `+1\u00b7d` SURVIVES the fixed-baseline re-analysis (\u0394 +0.376, z +8.44, above 8/8 randoms). `-1\u00b7d` was **inside** the published floating-baseline band and is **inside** the fixed-baseline band (\u0394 +0.026, z -0.28, 2/8 randoms below it).",
+  "fix2_cross_experiment_baseline": {
+    "design": "mean over all 17 arms (7 prefix + 10 steering) of that judge's kindness_base for that prompt; legitimate only because the 50 base continuations are byte-identical between the two caches",
+    "per_judge": {
+      "deepseek-v4-pro": {
+        "grand_mean": 3.0788235294117645,
+        "prefix_arms": {
+          "pro_top": {
+            "delta": 0.5611764705882353,
+            "prefixed_mean": 3.64,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.003663083388990116,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "pro_coherent": {
+            "delta": 0.4111764705882353,
+            "prefixed_mean": 3.49,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.0180201024876106,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "control_junk": {
+            "delta": -0.18882352941176472,
+            "prefixed_mean": 2.89,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.36669219230444294,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "control_text": {
+            "delta": -0.0188235294117647,
+            "prefixed_mean": 3.06,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.934594789335758,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "anti_coherent": {
+            "delta": -0.2788235294117647,
+            "prefixed_mean": 2.8,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.08140714733555737,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "anti_hostile": {
+            "delta": -1.1088235294117645,
+            "prefixed_mean": 1.97,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 6.833139145192668e-06,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "anti_top": {
+            "delta": -0.5488235294117647,
+            "prefixed_mean": 2.53,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.0037758628350835705,
+            "n": 50,
+            "n_nonzero": 50
+          }
+        },
+        "steering_arms": {
+          "+1": {
+            "delta": 0.3511764705882353,
+            "prefixed_mean": 3.43,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.017774604811947894,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "-1": {
+            "delta": -0.1388235294117647,
+            "prefixed_mean": 2.94,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.4232033806279403,
+            "n": 50,
+            "n_nonzero": 49
+          },
+          "rand1s20260826": {
+            "delta": -0.0888235294117647,
+            "prefixed_mean": 2.99,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.5022575137398451,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "rand2s20260826": {
+            "delta": 0.0811764705882353,
+            "prefixed_mean": 3.16,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.9154268748195439,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "rand3s20260826": {
+            "delta": 0.13117647058823528,
+            "prefixed_mean": 3.21,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.35149783506759413,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "rand4s20260826": {
+            "delta": 0.10117647058823528,
+            "prefixed_mean": 3.18,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.7463510266505482,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "rand5s20260826": {
+            "delta": 0.0211764705882353,
+            "prefixed_mean": 3.1,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.7959000115360603,
+            "n": 50,
+            "n_nonzero": 49
+          },
+          "rand6s20260826": {
+            "delta": 0.1711764705882353,
+            "prefixed_mean": 3.25,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.27103921453055124,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "rand7s20260826": {
+            "delta": 0.06117647058823529,
+            "prefixed_mean": 3.14,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.972224432096326,
+            "n": 50,
+            "n_nonzero": 49
+          },
+          "rand8s20260826": {
+            "delta": 0.0211764705882353,
+            "prefixed_mean": 3.1,
+            "base_mean": 3.0788235294117645,
+            "p_wilcoxon": 0.7610520631443647,
+            "n": 50,
+            "n_nonzero": 50
+          }
+        },
+        "null_band": {
+          "mean": 0.06242647058823529,
+          "sd": 0.07989949043284676,
+          "min": -0.0888235294117647,
+          "max": 0.1711764705882353,
+          "+1": {
+            "delta": 0.3511764705882353,
+            "z": 3.613915413424146,
+            "n_randoms_below": 8
+          },
+          "-1": {
+            "delta": -0.1388235294117647,
+            "z": -2.518789530568344,
+            "n_randoms_below": 0
+          }
+        }
+      },
+      "claude-opus-5": {
+        "grand_mean": 3.2447058823529416,
+        "prefix_arms": {
+          "pro_top": {
+            "delta": 0.8252941176470588,
+            "prefixed_mean": 4.07,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.00017613216836148625,
+            "n": 50,
+            "n_nonzero": 50
+          },
+          "pro_coherent": {
+            "delta": 0.4852941176470588,
+            "prefixed_mean": 3.73,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.010178051675880925,
+            "n": 50,
+            "n_nonzero": 48
+          },
+          "control_junk": {
+            "delta": -0.03470588235294117,
+            "prefixed_mean": 3.21,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.9880922330863025,
+            "n": 50,
+            "n_nonzero": 49
+          },
+          "control_text": {
+            "delta": -0.09470588235294115,
+            "prefixed_mean": 3.15,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.25697418733863897,
+            "n": 50,
+            "n_nonzero": 48
+          },
+          "anti_coherent": {
+            "delta": -0.09470588235294115,
+            "prefixed_mean": 3.15,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.644375327177386,
+            "n": 50,
+            "n_nonzero": 48
+          },
+          "anti_hostile": {
+            "delta": -1.0847058823529412,
+            "prefixed_mean": 2.16,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 4.428934036390435e-06,
+            "n": 50,
+            "n_nonzero": 48
+          },
+          "anti_top": {
+            "delta": -0.47470588235294114,
+            "prefixed_mean": 2.77,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.006844589419971206,
+            "n": 50,
+            "n_nonzero": 46
+          }
+        },
+        "steering_arms": {
+          "+1": {
+            "delta": 0.3552941176470588,
+            "prefixed_mean": 3.6,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.004645307289830049,
+            "n": 50,
+            "n_nonzero": 49
+          },
+          "-1": {
+            "delta": 0.005294117647058831,
+            "prefixed_mean": 3.25,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.9043277680700993,
+            "n": 50,
+            "n_nonzero": 46
+          },
+          "rand1s20260826": {
+            "delta": -0.03470588235294117,
+            "prefixed_mean": 3.21,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.4790467417320581,
+            "n": 50,
+            "n_nonzero": 48
+          },
+          "rand2s20260826": {
+            "delta": 0.045294117647058825,
+            "prefixed_mean": 3.29,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.7272407994309955,
+            "n": 50,
+            "n_nonzero": 48
+          },
+          "rand3s20260826": {
+            "delta": 0.015294117647058826,
+            "prefixed_mean": 3.26,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.6958035993784317,
+            "n": 50,
+            "n_nonzero": 44
+          },
+          "rand4s20260826": {
+            "delta": 0.08529411764705884,
+            "prefixed_mean": 3.33,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.7951410403800787,
+            "n": 50,
+            "n_nonzero": 45
+          },
+          "rand5s20260826": {
+            "delta": -0.03470588235294117,
+            "prefixed_mean": 3.21,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.7554834069189116,
+            "n": 50,
+            "n_nonzero": 46
+          },
+          "rand6s20260826": {
+            "delta": 0.015294117647058826,
+            "prefixed_mean": 3.26,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.7847201825956621,
+            "n": 50,
+            "n_nonzero": 46
+          },
+          "rand7s20260826": {
+            "delta": 0.03529411764705883,
+            "prefixed_mean": 3.28,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.7691420027431042,
+            "n": 50,
+            "n_nonzero": 45
+          },
+          "rand8s20260826": {
+            "delta": 0.005294117647058831,
+            "prefixed_mean": 3.25,
+            "base_mean": 3.2447058823529416,
+            "p_wilcoxon": 0.8397903551750474,
+            "n": 50,
+            "n_nonzero": 46
+          }
+        },
+        "null_band": {
+          "mean": 0.01654411764705883,
+          "sd": 0.040155946010522525,
+          "min": -0.03470588235294117,
+          "max": 0.08529411764705884,
+          "+1": {
+            "delta": 0.3552941176470588,
+            "z": 8.435861526241554,
+            "n_randoms_below": 8
+          },
+          "-1": {
+            "delta": 0.005294117647058831,
+            "z": -0.28015776286411065,
+            "n_randoms_below": 2
+          }
+        }
+      }
+    }
+  },
+  "fix3": {
+    "arm_table": {
+      "pro_top": {
+        "board_score": 0.107693473529894,
+        "on_d_dose_along_d": 0.9314770670601488,
+        "delta_norm": 24.248032299813737,
+        "cos_with_d": 0.03808962802459728,
+        "behaviour_reported": 0.89,
+        "behaviour_fixed_baseline": 0.6757142857142857
+      },
+      "pro_coherent": {
+        "board_score": 0.0403244759161852,
+        "on_d_dose_along_d": 0.5858962981154408,
+        "delta_norm": 22.85301177010397,
+        "cos_with_d": 0.02526233555094566,
+        "behaviour_reported": 0.605,
+        "behaviour_fixed_baseline": 0.4307142857142857
+      },
+      "control_junk": {
+        "board_score": 0.00714243330079501,
+        "on_d_dose_along_d": 0.09544654655989485,
+        "delta_norm": 17.369927600570726,
+        "cos_with_d": 0.004794932162214855,
+        "behaviour_reported": -0.16499999999999998,
+        "behaviour_fixed_baseline": -0.12928571428571428
+      },
+      "control_text": {
+        "board_score": 0.00143620481051105,
+        "on_d_dose_along_d": 0.0467121115048323,
+        "delta_norm": 19.879063055234568,
+        "cos_with_d": 0.001707991520048191,
+        "behaviour_reported": -0.14,
+        "behaviour_fixed_baseline": -0.07428571428571429
+      },
+      "anti_coherent": {
+        "board_score": -0.0316716923613797,
+        "on_d_dose_along_d": -0.21775481590811585,
+        "delta_norm": 21.785742274105274,
+        "cos_with_d": -0.00951900569899311,
+        "behaviour_reported": -0.2,
+        "behaviour_fixed_baseline": -0.2042857142857143
+      },
+      "anti_hostile": {
+        "board_score": -0.027410834321284,
+        "on_d_dose_along_d": -0.8673134071239207,
+        "delta_norm": 22.64264533147147,
+        "cos_with_d": -0.03823930672371951,
+        "behaviour_reported": -1.31,
+        "behaviour_fixed_baseline": -1.1142857142857143
+      },
+      "anti_top": {
+        "board_score": -0.129120310767025,
+        "on_d_dose_along_d": -1.494267815880412,
+        "delta_norm": 27.53653500613699,
+        "cos_with_d": -0.05352508617289946,
+        "behaviour_reported": -0.625,
+        "behaviour_fixed_baseline": -0.5292857142857144
+      }
+    },
+    "sets": {
+      "all_7": {
+        "arms": [
+          "pro_top",
+          "pro_coherent",
+          "control_junk",
+          "control_text",
+          "anti_coherent",
+          "anti_hostile",
+          "anti_top"
+        ],
+        "dose_vs_behaviour": {
+          "label": "on-d dose vs behaviour (reported)",
+          "n": 7,
+          "pearson_r": 0.8630216917031359,
+          "pearson_p": 0.012372189823647226,
+          "pearson_ci95": [
+            0.3140968428611671,
+            0.9794984120211722
+          ],
+          "spearman_rho": 0.9285714285714288,
+          "spearman_p": 0.002519472403794688,
+          "spearman_ci95": [
+            0.5641945707140115,
+            0.9902013190029787
+          ]
+        },
+        "score_vs_behaviour": {
+          "label": "board score vs behaviour (reported)",
+          "n": 7,
+          "pearson_r": 0.7446599665327713,
+          "pearson_p": 0.054840819173571614,
+          "pearson_ci95": [
+            -0.01912024544093289,
+            0.9596006710347709
+          ],
+          "spearman_rho": 0.8571428571428573,
+          "spearman_p": 0.013697326615325611,
+          "spearman_ci95": [
+            0.2668985128781303,
+            0.9797557065151921
+          ]
+        },
+        "dose_vs_behaviour_FIXEDBASE": {
+          "label": "on-d dose vs behaviour (fixed baseline)",
+          "n": 7,
+          "pearson_r": 0.8632443025515966,
+          "pearson_p": 0.012323525675855911,
+          "pearson_ci95": [
+            0.31488348063259375,
+            0.9795338097297671
+          ],
+          "spearman_rho": 0.9285714285714288,
+          "spearman_p": 0.002519472403794688,
+          "spearman_ci95": [
+            0.5641945707140115,
+            0.9902013190029787
+          ]
+        },
+        "score_vs_behaviour_FIXEDBASE": {
+          "label": "board score vs behaviour (fixed baseline)",
+          "n": 7,
+          "pearson_r": 0.7387384137841043,
+          "pearson_p": 0.057874247772113474,
+          "pearson_ci95": [
+            -0.032274315162933574,
+            0.9585453363236112
+          ],
+          "spearman_rho": 0.8571428571428573,
+          "spearman_p": 0.013697326615325611,
+          "spearman_ci95": [
+            0.2668985128781303,
+            0.9797557065151921
+          ]
+        },
+        "score_vs_dose": {
+          "label": "board score vs on-d dose",
+          "n": 7,
+          "pearson_r": 0.9527794204751114,
+          "pearson_p": 0.0009072071227259,
+          "pearson_ci95": [
+            0.7069737605511975,
+            0.9932106253642333
+          ],
+          "spearman_rho": 0.9642857142857145,
+          "spearman_p": 0.0004541491691941692,
+          "spearman_ci95": [
+            0.7593649561667717,
+            0.9951777106186528
+          ]
+        }
+      },
+      "6_excl_anti_top": {
+        "arms": [
+          "pro_top",
+          "pro_coherent",
+          "control_junk",
+          "control_text",
+          "anti_coherent",
+          "anti_hostile"
+        ],
+        "dose_vs_behaviour": {
+          "label": "on-d dose vs behaviour (reported)",
+          "n": 6,
+          "pearson_r": 0.9855525901938678,
+          "pearson_p": 0.00031158368821001045,
+          "pearson_ci95": [
+            0.8692451687673521,
+            0.9984873894352154
+          ],
+          "spearman_rho": 0.942857142857143,
+          "spearman_p": 0.004804664723032055,
+          "spearman_ci95": [
+            0.5357257394868679,
+            0.9942934937836378
+          ]
+        },
+        "score_vs_behaviour": {
+          "label": "board score vs behaviour (reported)",
+          "n": 6,
+          "pearson_r": 0.8358656446791591,
+          "pearson_p": 0.038199233021972805,
+          "pearson_ci95": [
+            0.07556298461005327,
+            0.9815716900676555
+          ],
+          "spearman_rho": 0.8857142857142858,
+          "spearman_p": 0.01884548104956266,
+          "spearman_ci95": [
+            0.2323208853671025,
+            0.9882766157477828
+          ]
+        },
+        "dose_vs_behaviour_FIXEDBASE": {
+          "label": "on-d dose vs behaviour (fixed baseline)",
+          "n": 6,
+          "pearson_r": 0.9865877051735892,
+          "pearson_p": 0.00026862811223800354,
+          "pearson_ci95": [
+            0.8781017829851451,
+            0.9985964187022729
+          ],
+          "spearman_rho": 0.942857142857143,
+          "spearman_p": 0.004804664723032055,
+          "spearman_ci95": [
+            0.5357257394868679,
+            0.9942934937836378
+          ]
+        },
+        "score_vs_behaviour_FIXEDBASE": {
+          "label": "board score vs behaviour (fixed baseline)",
+          "n": 6,
+          "pearson_r": 0.8272189375566685,
+          "pearson_p": 0.042200901248234,
+          "pearson_ci95": [
+            0.04764073714135173,
+            0.98051942468897
+          ],
+          "spearman_rho": 0.8857142857142858,
+          "spearman_p": 0.01884548104956266,
+          "spearman_ci95": [
+            0.2323208853671025,
+            0.9882766157477828
+          ]
+        },
+        "score_vs_dose": {
+          "label": "board score vs on-d dose",
+          "n": 6,
+          "pearson_r": 0.8978972577172311,
+          "pearson_p": 0.015105245960820704,
+          "pearson_ci95": [
+            0.31822907654540505,
+            0.9888701768488951
+          ],
+          "spearman_rho": 0.942857142857143,
+          "spearman_p": 0.004804664723032055,
+          "spearman_ci95": [
+            0.5357257394868679,
+            0.9942934937836378
+          ]
+        }
+      },
+      "positive_side_dose_gt_0": {
+        "arms": [
+          "pro_top",
+          "pro_coherent",
+          "control_junk",
+          "control_text"
+        ],
+        "dose_vs_behaviour": {
+          "label": "on-d dose vs behaviour (reported)",
+          "n": 4,
+          "pearson_r": 0.9904760237483289,
+          "pearson_p": 0.009523976251671229,
+          "pearson_ci95": [
+            0.6114252299684109,
+            0.9998101340740748
+          ],
+          "spearman_rho": 0.7999999999999999,
+          "spearman_p": 0.2000000000000001,
+          "spearman_ci95": [
+            -0.7255633198751881,
+            0.996080737597307
+          ]
+        },
+        "score_vs_behaviour": {
+          "label": "board score vs behaviour (reported)",
+          "n": 4,
+          "pearson_r": 0.9268456625553663,
+          "pearson_p": 0.07315433744463373,
+          "pearson_ci95": [
+            -0.3135069580690781,
+            0.9984944575223144
+          ],
+          "spearman_rho": 0.7999999999999999,
+          "spearman_p": 0.2000000000000001,
+          "spearman_ci95": [
+            -0.7255633198751881,
+            0.996080737597307
+          ]
+        },
+        "dose_vs_behaviour_FIXEDBASE": {
+          "label": "on-d dose vs behaviour (fixed baseline)",
+          "n": 4,
+          "pearson_r": 0.9911180306780683,
+          "pearson_p": 0.008881969321931749,
+          "pearson_ci95": [
+            0.6329065184869298,
+            0.9998229888051314
+          ],
+          "spearman_rho": 0.7999999999999999,
+          "spearman_p": 0.2000000000000001,
+          "spearman_ci95": [
+            -0.7255633198751881,
+            0.996080737597307
+          ]
+        },
+        "score_vs_behaviour_FIXEDBASE": {
+          "label": "board score vs behaviour (fixed baseline)",
+          "n": 4,
+          "pearson_r": 0.9371186097775229,
+          "pearson_p": 0.06288139022247696,
+          "pearson_ci95": [
+            -0.24125916265206476,
+            0.9987126009465428
+          ],
+          "spearman_rho": 0.7999999999999999,
+          "spearman_p": 0.2000000000000001,
+          "spearman_ci95": [
+            -0.7255633198751881,
+            0.996080737597307
+          ]
+        },
+        "score_vs_dose": {
+          "label": "board score vs on-d dose",
+          "n": 4,
+          "pearson_r": 0.966990261585829,
+          "pearson_p": 0.033009738414170986,
+          "pearson_ci95": [
+            0.08356927485635647,
+            0.9993342331164976
+          ],
+          "spearman_rho": 1.0,
+          "spearman_p": 0.0,
+          "spearman_ci95": [
+            null,
+            null
+          ]
+        }
+      },
+      "negative_side_dose_lt_0": {
+        "arms": [
+          "anti_coherent",
+          "anti_hostile",
+          "anti_top"
+        ],
+        "dose_vs_behaviour": {
+          "label": "on-d dose vs behaviour (reported)",
+          "n": 3,
+          "pearson_r": 0.3888677442427906,
+          "pearson_p": 0.7457326058660392,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": 0.5,
+          "spearman_p": 0.6666666666666666,
+          "spearman_ci95": [
+            null,
+            null
+          ]
+        },
+        "score_vs_behaviour": {
+          "label": "board score vs behaviour (reported)",
+          "n": 3,
+          "pearson_r": -0.17062000220300844,
+          "pearson_p": 0.8908458973241046,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": -0.5,
+          "spearman_p": 0.6666666666666666,
+          "spearman_ci95": [
+            null,
+            null
+          ]
+        },
+        "dose_vs_behaviour_FIXEDBASE": {
+          "label": "on-d dose vs behaviour (fixed baseline)",
+          "n": 3,
+          "pearson_r": 0.36192962976571336,
+          "pearson_p": 0.7642361269533446,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": 0.5,
+          "spearman_p": 0.6666666666666666,
+          "spearman_ci95": [
+            null,
+            null
+          ]
+        },
+        "score_vs_behaviour_FIXEDBASE": {
+          "label": "board score vs behaviour (fixed baseline)",
+          "n": 3,
+          "pearson_r": -0.1991829823433774,
+          "pearson_p": 0.8723423762367992,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": -0.5,
+          "spearman_p": 0.6666666666666666,
+          "spearman_ci95": [
+            null,
+            null
+          ]
+        },
+        "score_vs_dose": {
+          "label": "board score vs on-d dose",
+          "n": 3,
+          "pearson_r": 0.8414359576876684,
+          "pearson_p": 0.36342149680985625,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": 0.5,
+          "spearman_p": 0.6666666666666666,
+          "spearman_ci95": [
+            null,
+            null
+          ]
+        }
+      },
+      "negative_side_excl_anti_top": {
+        "arms": [
+          "anti_coherent",
+          "anti_hostile"
+        ],
+        "dose_vs_behaviour": {
+          "label": "on-d dose vs behaviour (reported)",
+          "n": 2,
+          "pearson_r": null,
+          "pearson_p": null,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": null,
+          "spearman_p": null,
+          "spearman_ci95": [
+            null,
+            null
+          ],
+          "note": "n=2: any two distinct points are perfectly correlated by construction (r=+-1); reporting ordering instead",
+          "ordering_concordant": true
+        },
+        "score_vs_behaviour": {
+          "label": "board score vs behaviour (reported)",
+          "n": 2,
+          "pearson_r": null,
+          "pearson_p": null,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": null,
+          "spearman_p": null,
+          "spearman_ci95": [
+            null,
+            null
+          ],
+          "note": "n=2: any two distinct points are perfectly correlated by construction (r=+-1); reporting ordering instead",
+          "ordering_concordant": false
+        },
+        "dose_vs_behaviour_FIXEDBASE": {
+          "label": "on-d dose vs behaviour (fixed baseline)",
+          "n": 2,
+          "pearson_r": null,
+          "pearson_p": null,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": null,
+          "spearman_p": null,
+          "spearman_ci95": [
+            null,
+            null
+          ],
+          "note": "n=2: any two distinct points are perfectly correlated by construction (r=+-1); reporting ordering instead",
+          "ordering_concordant": true
+        },
+        "score_vs_behaviour_FIXEDBASE": {
+          "label": "board score vs behaviour (fixed baseline)",
+          "n": 2,
+          "pearson_r": null,
+          "pearson_p": null,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": null,
+          "spearman_p": null,
+          "spearman_ci95": [
+            null,
+            null
+          ],
+          "note": "n=2: any two distinct points are perfectly correlated by construction (r=+-1); reporting ordering instead",
+          "ordering_concordant": false
+        },
+        "score_vs_dose": {
+          "label": "board score vs on-d dose",
+          "n": 2,
+          "pearson_r": null,
+          "pearson_p": null,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": null,
+          "spearman_p": null,
+          "spearman_ci95": [
+            null,
+            null
+          ],
+          "note": "n=2: any two distinct points are perfectly correlated by construction (r=+-1); reporting ordering instead",
+          "ordering_concordant": false
+        }
+      }
+    },
+    "predictor_comparison": {
+      "all_7": {
+        "n": 7,
+        "r_dose_vs_behaviour": 0.8630216917031359,
+        "r_score_vs_behaviour": 0.7446599665327713,
+        "r_dose_vs_score": 0.9527794204751114,
+        "r_dose_ci95_fisher": [
+          0.3140968428611671,
+          0.9794984120211722
+        ],
+        "r_score_ci95_fisher": [
+          -0.01912024544093289,
+          0.9596006710347709
+        ],
+        "fisher_ci_overlap": true,
+        "williams_t": 1.766635019895435,
+        "williams_df": 4,
+        "williams_p": 0.15203516353222912,
+        "bootstrap": {
+          "B_effective": 20000,
+          "r_dose_ci95": [
+            0.6371525522785403,
+            0.9988199925632159
+          ],
+          "r_score_ci95": [
+            0.24529174495102304,
+            0.9865549744418042
+          ],
+          "diff_mean": 0.11487437025780617,
+          "diff_ci95": [
+            -0.04628720891872873,
+            0.4206855217952939
+          ],
+          "frac_diff_gt_0": 0.82535
+        }
+      },
+      "6_excl_anti_top": {
+        "n": 6,
+        "r_dose_vs_behaviour": 0.9855525901938678,
+        "r_score_vs_behaviour": 0.8358656446791591,
+        "r_dose_vs_score": 0.8978972577172311,
+        "r_dose_ci95_fisher": [
+          0.8692451687673521,
+          0.9984873894352154
+        ],
+        "r_score_ci95_fisher": [
+          0.07556298461005327,
+          0.9815716900676555
+        ],
+        "fisher_ci_overlap": true,
+        "williams_t": 4.320698465698723,
+        "williams_df": 3,
+        "williams_p": 0.02284618194050925,
+        "bootstrap": {
+          "B_effective": 19997,
+          "r_dose_ci95": [
+            0.9142495400728392,
+            0.9998803172616978
+          ],
+          "r_score_ci95": [
+            0.4323674560897593,
+            0.99765347777602
+          ],
+          "diff_mean": 0.11747279650962951,
+          "diff_ci95": [
+            -2.220446049250313e-16,
+            0.5214820565763445
+          ],
+          "frac_diff_gt_0": 0.9620443066459969
+        }
+      }
+    },
+    "one_sided_verdict": {
+      "with_anti_top": {
+        "positive_r": 0.9904760237483289,
+        "positive_p": 0.009523976251671229,
+        "negative_r": 0.3888677442427906,
+        "negative_p": 0.7457326058660392
+      },
+      "without_anti_top": {
+        "positive_r": 0.9904760237483289,
+        "positive_p": 0.009523976251671229,
+        "negative_side": {
+          "label": "on-d dose vs behaviour (reported)",
+          "n": 2,
+          "pearson_r": null,
+          "pearson_p": null,
+          "pearson_ci95": [
+            null,
+            null
+          ],
+          "spearman_rho": null,
+          "spearman_p": null,
+          "spearman_ci95": [
+            null,
+            null
+          ],
+          "note": "n=2: any two distinct points are perfectly correlated by construction (r=+-1); reporting ordering instead",
+          "ordering_concordant": true
+        },
+        "overall_r_6arms": 0.9855525901938678,
+        "overall_p_6arms": 0.00031158368821001045
+      }
+    }
+  },
+  "fix3_one_sided_verdict": "With `anti_top` in: positive side r = +0.990 (n=4, p=0.0095); negative side r = +0.389 (n=3, p=0.746); overall r = +0.863 (p=0.0124). Drop the withdrawn arm and the negative side is two points, correctly ordered, while the overall correlation rises to r = +0.986 (p=0.0003). **The asymmetry that supports \"the compilation is one-sided\" is carried entirely by the arm `prefix_eval.md` withdrew as unmeasurable. Removing it, the dose-response is monotone across all six remaining arms and the claim does not survive.**",
+  "fix3_predictor_verdict": "At n=7, r(dose, behaviour) = +0.863 [+0.31, +0.98] and r(score, behaviour) = +0.745 [-0.02, +0.96]. The two predictors are themselves correlated at r = +0.953. Fisher-z intervals overlap heavily; Williams' test for dependent overlapping correlations gives t = +1.77 (df=4, p=0.152); the paired bootstrap difference is +0.115 [-0.05, +0.42], straddling zero. **\"On-`d` displacement is a better predictor of behaviour than the board score\" is not supportable at n=7 \u2014 the audit is right about this.**",
+  "disagreement_notes": "The audit's section-2 table reports, in its **fixed-baseline** column, that Claude's `-1\u00b7d` is \"+0.026, 5/8 below\". The delta reproduces exactly (+0.026), but the placement does not: under the fixed baseline only **2 of 8** randoms sit below it (1 tied exactly, 5 above), not 5. \"5/8 below\" is the *floating*-baseline placement (reproduced here: 5/8 at \u0394 +0.05); the audit carried it across into the recomputed row without recomputing it. This does not change the audit's conclusion \u2014 `-1\u00b7d` is still inside the null band under Claude either way \u2014 but it weakens the specific rhetorical point that Claude places `-1\u00b7d` \"essentially at the median of the null\". On the fixed baseline it sits in the lower third of the null, i.e. slightly nearer DeepSeek's placement than the published write-up implies. Ironically this is the same failure mode the audit is documenting: a number computed under one estimator was reused in a table about a different estimator.",
+  "claims": [
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, pro_top, deepseek-v4-pro",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.87,
+      "claimed": 0.87,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported base mean, pro_top, deepseek-v4-pro",
+      "source": "prefix_eval.md",
+      "verdict": "AGREE",
+      "mine": 2.77,
+      "claimed": 2.77,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, pro_top, deepseek-v4-pro",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 2.77,
+      "claimed": 2.77,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, pro_coherent, deepseek-v4-pro",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.64,
+      "claimed": 0.64,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported base mean, pro_coherent, deepseek-v4-pro",
+      "source": "prefix_eval.md",
+      "verdict": "AGREE",
+      "mine": 2.85,
+      "claimed": 2.85,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, pro_coherent, deepseek-v4-pro",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 2.85,
+      "claimed": 2.85,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, control_junk, deepseek-v4-pro",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.18,
+      "claimed": -0.18,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, control_junk, deepseek-v4-pro",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.07,
+      "claimed": 3.07,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, control_text, deepseek-v4-pro",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.1,
+      "claimed": -0.1,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, control_text, deepseek-v4-pro",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.16,
+      "claimed": 3.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, anti_coherent, deepseek-v4-pro",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.27,
+      "claimed": -0.27,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, anti_coherent, deepseek-v4-pro",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.07,
+      "claimed": 3.07,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, anti_hostile, deepseek-v4-pro",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -1.31,
+      "claimed": -1.31,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, anti_hostile, deepseek-v4-pro",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.28,
+      "claimed": 3.28,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, anti_top, deepseek-v4-pro",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.86,
+      "claimed": -0.86,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported base mean, anti_top, deepseek-v4-pro",
+      "source": "prefix_eval.md",
+      "verdict": "AGREE",
+      "mine": 3.39,
+      "claimed": 3.39,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, anti_top, deepseek-v4-pro",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.39,
+      "claimed": 3.39,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, pro_top, claude-opus-5",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.91,
+      "claimed": 0.91,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported base mean, pro_top, claude-opus-5",
+      "source": "prefix_eval.md",
+      "verdict": "AGREE",
+      "mine": 3.16,
+      "claimed": 3.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, pro_top, claude-opus-5",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.16,
+      "claimed": 3.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, pro_coherent, claude-opus-5",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.57,
+      "claimed": 0.57,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported base mean, pro_coherent, claude-opus-5",
+      "source": "prefix_eval.md",
+      "verdict": "AGREE",
+      "mine": 3.16,
+      "claimed": 3.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, pro_coherent, claude-opus-5",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.16,
+      "claimed": 3.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, control_junk, claude-opus-5",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.15,
+      "claimed": -0.15,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, control_junk, claude-opus-5",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.36,
+      "claimed": 3.36,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, control_text, claude-opus-5",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.18,
+      "claimed": -0.18,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, control_text, claude-opus-5",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.33,
+      "claimed": 3.33,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, anti_coherent, claude-opus-5",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.13,
+      "claimed": -0.13,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, anti_coherent, claude-opus-5",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.28,
+      "claimed": 3.28,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, anti_hostile, claude-opus-5",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -1.31,
+      "claimed": -1.31,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, anti_hostile, claude-opus-5",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.47,
+      "claimed": 3.47,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported kindness delta, anti_top, claude-opus-5",
+      "source": "prefix_eval.md table / prefix_gallery_judge.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.39,
+      "claimed": -0.39,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "reported base mean, anti_top, claude-opus-5",
+      "source": "prefix_eval.md",
+      "verdict": "AGREE",
+      "mine": 3.16,
+      "claimed": 3.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "audit base mean, anti_top, claude-opus-5",
+      "source": "audit section 2 table",
+      "verdict": "AGREE",
+      "mine": 3.16,
+      "claimed": 3.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "deepseek base shift anti_top - pro_top",
+      "source": "audit s2 ('0.62 lower')",
+      "verdict": "AGREE",
+      "mine": 0.62,
+      "claimed": 0.62,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "deepseek identical base ratings, pro_top vs anti_top run",
+      "source": "audit s2 ('identical rating on only 11/50')",
+      "verdict": "AGREE",
+      "mine": 11.0,
+      "claimed": 11.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "deepseek Wilcoxon p, pro_top-base vs anti_top-base",
+      "source": "audit s2 (p = 7.1e-07)",
+      "verdict": "AGREE",
+      "mine": 7.061057267349246e-07,
+      "claimed": 7.1e-07,
+      "gap": -3.89427326507542e-09,
+      "tol": 5e-08,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "claude identical base ratings within the 3-arm run",
+      "source": "audit s2 ('50/50 identical, shift +0.00')",
+      "verdict": "AGREE",
+      "mine": 50.0,
+      "claimed": 50.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "claude base shift anti_top - pro_top",
+      "source": "audit s2 ('shift +0.00')",
+      "verdict": "AGREE",
+      "mine": 0.0,
+      "claimed": 0.0,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2",
+      "claim": "deepseek contrast effect as pct of pro_top headline",
+      "source": "audit s2 ('~71% the size of the headline effect')",
+      "verdict": "AGREE",
+      "mine": 71.26436781609198,
+      "claimed": 71.0,
+      "gap": 0.26436781609197624,
+      "tol": 2.0,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta +1, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.45,
+      "claimed": 0.45,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "steering_random_control.md reported delta +1, deepseek-v4-pro",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.45,
+      "claimed": 0.45,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed-baseline delta +1, deepseek-v4-pro",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 0.355,
+      "claimed": 0.355,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta -1, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.15,
+      "claimed": -0.15,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "steering_random_control.md reported delta -1, deepseek-v4-pro",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": -0.15,
+      "claimed": -0.15,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed-baseline delta -1, deepseek-v4-pro",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": -0.135,
+      "claimed": -0.135,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand1s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.18,
+      "claimed": -0.18,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand2s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.1,
+      "claimed": 0.1,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand3s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.13,
+      "claimed": 0.13,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand4s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.06,
+      "claimed": 0.06,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand5s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.06,
+      "claimed": 0.06,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand6s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.11,
+      "claimed": 0.11,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand7s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.12,
+      "claimed": 0.12,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand8s20260826, deepseek-v4-pro",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.05,
+      "claimed": 0.05,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published null-band mean, deepseek-v4-pro",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.056,
+      "claimed": 0.056,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published null-band sd, deepseek-v4-pro",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.1,
+      "claimed": 0.1,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed null-band mean, deepseek-v4-pro",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 0.066,
+      "claimed": 0.066,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed null-band sd, deepseek-v4-pro",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 0.08,
+      "claimed": 0.08,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published z of +1, deepseek-v4-pro",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 3.93,
+      "claimed": 3.93,
+      "gap": 0.0,
+      "tol": 0.02,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed-baseline z of +1, deepseek-v4-pro",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 3.61,
+      "claimed": 3.61,
+      "gap": 0.0,
+      "tol": 0.02,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published z of -1, deepseek-v4-pro",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": -2.06,
+      "claimed": -2.06,
+      "gap": 0.0,
+      "tol": 0.02,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed-baseline z of -1, deepseek-v4-pro",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": -2.52,
+      "claimed": -2.52,
+      "gap": 0.0,
+      "tol": 0.02,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published '#randoms below -1', deepseek-v4-pro (floating base)",
+      "source": "steering_random_control.md ('1/8 below' ds, '5/8 below' claude)",
+      "verdict": "AGREE",
+      "mine": 1.0,
+      "claimed": 1.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published '+1 above all 8', deepseek-v4-pro (floating base)",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 8.0,
+      "claimed": 8.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT '#randoms below -1', deepseek-v4-pro (FIXED base)",
+      "source": "audit s2 table ('below all 8' ds = 0/8; '5/8 below' claude)",
+      "verdict": "AGREE",
+      "mine": 0.0,
+      "claimed": 0.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT '+1 above all 8', deepseek-v4-pro (FIXED base)",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 8.0,
+      "claimed": 8.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "'none of 8 randoms reach p<0.05', deepseek-v4-pro (floating base)",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.0,
+      "claimed": 0.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta +1, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.54,
+      "claimed": 0.54,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "steering_random_control.md reported delta +1, claude-opus-5",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.54,
+      "claimed": 0.54,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed-baseline delta +1, claude-opus-5",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 0.376,
+      "claimed": 0.376,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta -1, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.05,
+      "claimed": 0.05,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "steering_random_control.md reported delta -1, claude-opus-5",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.05,
+      "claimed": 0.05,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed-baseline delta -1, claude-opus-5",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 0.026,
+      "claimed": 0.026,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand1s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.16,
+      "claimed": -0.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand2s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.05,
+      "claimed": 0.05,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand3s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.02,
+      "claimed": 0.02,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand4s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.13,
+      "claimed": 0.13,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand5s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.06,
+      "claimed": -0.06,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand6s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.03,
+      "claimed": -0.03,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand7s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": 0.19,
+      "claimed": 0.19,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "reported delta rand8s20260826, claude-opus-5",
+      "source": "steering_random_control.json kindness_delta",
+      "verdict": "AGREE",
+      "mine": -0.03,
+      "claimed": -0.03,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published null-band mean, claude-opus-5",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.014,
+      "claimed": 0.014,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published null-band sd, claude-opus-5",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.11,
+      "claimed": 0.11,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed null-band mean, claude-opus-5",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 0.037,
+      "claimed": 0.037,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed null-band sd, claude-opus-5",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 0.04,
+      "claimed": 0.04,
+      "gap": 0.0,
+      "tol": 0.004,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published z of +1, claude-opus-5",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 4.76,
+      "claimed": 4.76,
+      "gap": 0.0,
+      "tol": 0.02,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT fixed-baseline z of +1, claude-opus-5",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 8.44,
+      "claimed": 8.44,
+      "gap": 0.0,
+      "tol": 0.02,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published z of -1, claude-opus-5",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.33,
+      "claimed": 0.33,
+      "gap": 0.0,
+      "tol": 0.02,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published '#randoms below -1', claude-opus-5 (floating base)",
+      "source": "steering_random_control.md ('1/8 below' ds, '5/8 below' claude)",
+      "verdict": "AGREE",
+      "mine": 5.0,
+      "claimed": 5.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "published '+1 above all 8', claude-opus-5 (floating base)",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 8.0,
+      "claimed": 8.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT '#randoms below -1', claude-opus-5 (FIXED base)",
+      "source": "audit s2 table ('below all 8' ds = 0/8; '5/8 below' claude)",
+      "verdict": "DISAGREE",
+      "mine": 2.0,
+      "claimed": 5.0,
+      "gap": -3.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "AUDIT '+1 above all 8', claude-opus-5 (FIXED base)",
+      "source": "audit s2 table",
+      "verdict": "AGREE",
+      "mine": 8.0,
+      "claimed": 8.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "'none of 8 randoms reach p<0.05', claude-opus-5 (floating base)",
+      "source": "steering_random_control.md",
+      "verdict": "AGREE",
+      "mine": 0.0,
+      "claimed": 0.0,
+      "gap": 0.0,
+      "tol": 0.5,
+      "unit": ""
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "'20-30% of the +1.d effect is baseline drift', deepseek-v4-pro",
+      "source": "audit s2 prose",
+      "verdict": "AGREE",
+      "mine": 21.111111111111118,
+      "claimed": 25.0,
+      "gap": -3.888888888888882,
+      "tol": 5.5,
+      "unit": "",
+      "note": "recomputed drift share = 21.1%; audit asserts the 20-30% band"
+    },
+    {
+      "section": "FIX2-steer",
+      "claim": "'20-30% of the +1.d effect is baseline drift', claude-opus-5",
+      "source": "audit s2 prose",
+      "verdict": "AGREE",
+      "mine": 30.370370370370374,
+      "claimed": 25.0,
+      "gap": 5.370370370370374,
+      "tol": 5.5,
+      "unit": "",
+      "note": "recomputed drift share = 30.4%; audit asserts the 20-30% band"
+    },
+    {
+      "section": "FIX3",
+      "claim": "behavioural delta (mean of judges), pro_top",
+      "source": "compile_check.md dose-response table",
+      "verdict": "AGREE",
+      "mine": 0.89,
+      "claimed": 0.89,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "on-d displacement (along_d), pro_top",
+      "source": "compile_check.md table",
+      "verdict": "AGREE",
+      "mine": 0.93,
+      "claimed": 0.93,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "behavioural delta (mean of judges), pro_coherent",
+      "source": "compile_check.md dose-response table",
+      "verdict": "AGREE",
+      "mine": 0.6,
+      "claimed": 0.6,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "on-d displacement (along_d), pro_coherent",
+      "source": "compile_check.md table",
+      "verdict": "AGREE",
+      "mine": 0.59,
+      "claimed": 0.59,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "behavioural delta (mean of judges), control_junk",
+      "source": "compile_check.md dose-response table",
+      "verdict": "AGREE",
+      "mine": -0.16,
+      "claimed": -0.16,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "on-d displacement (along_d), control_junk",
+      "source": "compile_check.md table",
+      "verdict": "AGREE",
+      "mine": 0.1,
+      "claimed": 0.1,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "behavioural delta (mean of judges), control_text",
+      "source": "compile_check.md dose-response table",
+      "verdict": "AGREE",
+      "mine": -0.14,
+      "claimed": -0.14,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "on-d displacement (along_d), control_text",
+      "source": "compile_check.md table",
+      "verdict": "AGREE",
+      "mine": 0.05,
+      "claimed": 0.05,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "behavioural delta (mean of judges), anti_coherent",
+      "source": "compile_check.md dose-response table",
+      "verdict": "AGREE",
+      "mine": -0.2,
+      "claimed": -0.2,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "on-d displacement (along_d), anti_coherent",
+      "source": "compile_check.md table",
+      "verdict": "AGREE",
+      "mine": -0.22,
+      "claimed": -0.22,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "behavioural delta (mean of judges), anti_hostile",
+      "source": "compile_check.md dose-response table",
+      "verdict": "AGREE",
+      "mine": -1.31,
+      "claimed": -1.31,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "on-d displacement (along_d), anti_hostile",
+      "source": "compile_check.md table",
+      "verdict": "AGREE",
+      "mine": -0.87,
+      "claimed": -0.87,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "behavioural delta (mean of judges), anti_top",
+      "source": "compile_check.md dose-response table",
+      "verdict": "AGREE",
+      "mine": -0.62,
+      "claimed": -0.62,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "on-d displacement (along_d), anti_top",
+      "source": "compile_check.md table",
+      "verdict": "AGREE",
+      "mine": -1.49,
+      "claimed": -1.49,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "dose-vs-behaviour pearson r, all 7 arms",
+      "source": "compile_check.md (+0.863) / audit (0.863)",
+      "verdict": "AGREE",
+      "mine": 0.863,
+      "claimed": 0.863,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "dose-vs-behaviour pearson p, all 7 arms",
+      "source": "compile_check.md (p=0.012) / audit (p=0.0124)",
+      "verdict": "AGREE",
+      "mine": 0.0124,
+      "claimed": 0.0124,
+      "gap": 0.0,
+      "tol": 0.0002,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "dose-vs-behaviour spearman rho, all 7",
+      "source": "compile_check.md (+0.929)",
+      "verdict": "AGREE",
+      "mine": 0.929,
+      "claimed": 0.929,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "score-vs-behaviour pearson r, all 7",
+      "source": "compile_check.md (+0.745)",
+      "verdict": "AGREE",
+      "mine": 0.745,
+      "claimed": 0.745,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "score-vs-behaviour pearson p, all 7",
+      "source": "compile_check.md (p=0.055)",
+      "verdict": "AGREE",
+      "mine": 0.055,
+      "claimed": 0.055,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "score-vs-behaviour spearman rho, all 7",
+      "source": "compile_check.md (+0.857)",
+      "verdict": "AGREE",
+      "mine": 0.857,
+      "claimed": 0.857,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "positive-side pearson r (n=4)",
+      "source": "compile_check.md (+0.990)",
+      "verdict": "AGREE",
+      "mine": 0.99,
+      "claimed": 0.99,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "positive-side pearson p (n=4)",
+      "source": "compile_check.md (p=0.010)",
+      "verdict": "AGREE",
+      "mine": 0.01,
+      "claimed": 0.01,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "negative-side pearson r (n=3)",
+      "source": "compile_check.md (+0.389) / audit (0.387)",
+      "verdict": "AGREE",
+      "mine": 0.389,
+      "claimed": 0.389,
+      "gap": 0.0,
+      "tol": 0.0021,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "AUDIT: dose r without anti_top",
+      "source": "audit s3 (0.986)",
+      "verdict": "AGREE",
+      "mine": 0.986,
+      "claimed": 0.986,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "AUDIT: dose p without anti_top",
+      "source": "audit s3 (p=0.0003)",
+      "verdict": "AGREE",
+      "mine": 0.0003,
+      "claimed": 0.0003,
+      "gap": 0.0,
+      "tol": 0.0001,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "AUDIT: cor(score, dose) across arms",
+      "source": "audit s3 (0.953)",
+      "verdict": "AGREE",
+      "mine": 0.953,
+      "claimed": 0.953,
+      "gap": 0.0,
+      "tol": 0.0011,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "AUDIT: CI lower for r=0.863",
+      "source": "audit s3 ([0.31, 0.98])",
+      "verdict": "AGREE",
+      "mine": 0.31,
+      "claimed": 0.31,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "AUDIT: CI upper for r=0.863",
+      "source": "audit s3 ([0.31, 0.98])",
+      "verdict": "AGREE",
+      "mine": 0.98,
+      "claimed": 0.98,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "AUDIT: CI lower for r=0.745",
+      "source": "audit s3 ([-0.02, 0.96])",
+      "verdict": "AGREE",
+      "mine": -0.02,
+      "claimed": -0.02,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    },
+    {
+      "section": "FIX3",
+      "claim": "AUDIT: CI upper for r=0.745",
+      "source": "audit s3 ([-0.02, 0.96])",
+      "verdict": "AGREE",
+      "mine": 0.96,
+      "claimed": 0.96,
+      "gap": 0.0,
+      "tol": 0.006,
+      "unit": ""
+    }
+  ],
+  "claims_summary": {
+    "n": 125,
+    "agree": 124,
+    "disagree": 1,
+    "na": 0
+  }
+}
