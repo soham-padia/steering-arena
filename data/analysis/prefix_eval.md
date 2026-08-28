@@ -41,6 +41,13 @@ closely, so the pilot contamination did not drive the result.
 | `pro_coherent` | +0.64 (3.49 vs 2.85) p=0.0051 | +0.57 (3.73 vs 3.16) p=0.0063 |
 | `anti_top` | −0.86 (2.53 vs 3.39) p=0.0005 | −0.39 (2.77 vs 3.16) p=0.0277 |
 
+> **CORRECTED 2026-08-27.** Every Δ in this table is computed against a baseline **re-rated
+> inside each arm's run**, and that baseline drifts. Corrected fixed-baseline values, and the
+> mechanism of the drift, are in §"Corrected 2026-08-27: the judge baseline floats". Short
+> version: `pro_top` becomes +0.556 (deepseek) / +0.796 (claude), effects shrink 13% to 37%
+> across all 14 rows, and no sign flips. The `anti_top` row is separately WITHDRAWN
+> (§"Human ratings (n=54)").
+
 ## Markers (flagged in BOTH presentation orders, out of 50 per arm)
 
 | arm | claude, prefixed | claude, base |
@@ -81,12 +88,36 @@ deepseek agrees on the shape: `anti_top` prefixed repetition 25 / incoherent 12;
 
 ## What this does NOT establish
 
-- **No human ratings yet.** Both raters are LLMs; `prefix_blind.csv` is still unrated.
+- ~~**No human ratings yet.** Both raters are LLMs; `prefix_blind.csv` is still unrated.~~
+  **CORRECTED 2026-08-27.** False, and contradicted by this file's own
+  "## Human ratings (n=54)" section below, which analyses that exact CSV. The bullet was
+  written before the human pass and was never retracted when the pass landed. 54 of the 150
+  pairs are human-rated. What survives of the original point: the other 96 are LLM-only.
 - One model (OLMo-3-32B), one season, one 40-token generation budget.
 - Judges may share biases no LLM rater can see; 89% agreement is consistency, not truth.
 - The v1 rubric (bare forced letter, no context that continuations are truncated) is
   archived in `prefix_judge_verdicts_v1.json`: 35/42, 29/39, 6/43. Same ordering, so the
   conclusion survives the rubric rewrite.
+- **The controls do not control for semantic content.** (ADDED 2026-08-27.) `control_junk`
+  is 37 chars / 6 words of pseudo-words; `pro_top` is 209 chars / 19 words containing three
+  human first names and interpersonal-affect English (`misunderstanding`, `hurt`, `calm`,
+  `clear`). `control_text` is length-comparable but Italian, so it controls for fluent
+  foreign text, not for English affect words. The missing control is `pro_top` with its
+  tokens shuffled, or with its affect words swapped for frequency-matched neutral ones.
+- **Prompt-set scope.** (ADDED 2026-08-27.) All 50 eval prompts are open sentence stems and
+  all 50 are first person, every one about interpersonal friction, so kindness is the live
+  axis in every item by construction. There is zero overlap with the 16 scoring probes, so
+  there is no leakage; but the behavioural claim is scoped to "where kindness is already the
+  question", not to behaviour in general. The neutral set that would separate the two
+  already exists in the repo as `data/probes/season2.json` and has never been generated on.
+- **No random-direction control for the TOKEN-OPTIMISATION arm.** (ADDED 2026-08-27; the
+  largest outstanding threat to the headline.) Mody et al., arXiv:2607.25907, ran GCG-style
+  token optimisation against a latent direction and found that a placebo RANDOM direction
+  was suppressed just as hard and shifted behaviour just as far. This project has no such
+  control: `control_junk` and `control_text` are hand-written, not optimised. Until a string
+  optimised against a random direction to a matched board score is judged on these 50
+  prompts, "the behaviour comes from optimising against `d`" is not established against the
+  rival "optimising against ANY direction produces a prefix that shifts judged kindness".
 
 ## Generalized behavior of each arm (claude-opus-5 ratings + comments, n=50 per arm)
 
@@ -329,7 +360,31 @@ stands, and now rests on the arm that can actually be measured.
 It should be *either* text: if one side does not respond to anyone, the pair is outside
 the kindness scale and must be excluded rather than decided.
 
-## The missing baseline: norm-matched neutral prefixes
+**What the `n` key actually recorded (ADDED 2026-08-27): nothing.** Across all 96 human
+ratings in both blind CSVs the `n` key was used **zero times**, although `rate_blind.py`
+offered it and commit `0ef9f79` added it specifically to separate no-stance from tie. So the
+no-stance rate is **not measured anywhere in this project**. The stance-collapse account of
+`anti_top` therefore rests on the sign inversion (the human preferred the anti-prefixed text
+**14-3, p=0.0127**) plus the rater's verbal report, not on recorded no-stance counts. The
+withdrawal is still correct. Its stated evidence should match what was collected, and above
+it did not.
+
+**One residual blinding channel the section above missed (ADDED 2026-08-27).** 32 of the 54
+rated pairs share a prompt, and therefore a base continuation, with another rated pair; 14
+base texts were shown to the rater two or three times. Repeat exposure identifies the base
+side independently of any prefix signature. This section discusses blinding failure at
+length and did not mention it.
+
+## The missing baseline: score-matched neutral prefixes
+
+> **CORRECTED 2026-08-27.** This section was published under the heading
+> "The missing baseline: norm-matched neutral prefixes" and that word was wrong. The two
+> controls are **score**-matched, not norm-matched: ‖Δ‖ = **24.25** for `pro_top` against
+> **17.37** for `control_junk` and **19.88** for `control_text`, a **28% shortfall**
+> (`compile_check.json`). The distinction is load-bearing because this corpus elsewhere uses
+> a norm difference as evidence, and norm-matching is what the injection arm's random control
+> spent a whole run establishing. These prefixes never had it. Everything else in this
+> section stands; only the label changes.
 
 Every arm above was compared against **no prefix at all**. That leaves the headline
 ambiguous in a way nothing else in this document resolves: "prefixing `pro_top` makes the
@@ -393,6 +448,16 @@ headline claim on one rater, and two model families with different rubric reflex
 returned the same number to two decimal places. Every arm agrees within 0.14, and the
 disagreements are all on arms whose effect is null anyway.
 
+> **CORRECTED 2026-08-27.** "Returned the same number to two decimal places" is not
+> corroboration and should not have been offered as it. The two judges use **different
+> baseline estimators**: Claude's 3-arm run assigns one base rating per prompt and reuses it
+> (identical on 50/50, drift 0.00), while DeepSeek re-rates the base inside every arm's run
+> (identical on 11/50, drift +0.62, p=7.1e-07). `Δ_deepseek` and `Δ_claude` are therefore
+> different statistics, and the two-decimal agreement on `anti_hostile` is a coincidence of
+> two different means offset by a constant 0.19. See §"Corrected 2026-08-27: the judge
+> baseline floats". The `anti_hostile` effect itself is unharmed: on a fixed baseline it is
+> **−1.114 under both judges**, p<1e-05.
+
 Note what this does NOT rescue: `anti_top` remains withdrawn. Judge agreement cannot fix
 a comparison that is unrankable and pairs that cannot be blinded (§"Human ratings").
 Agreement between raters answering the same ill-posed question is not evidence the
@@ -403,3 +468,149 @@ silently erased the first; and both did a read-modify-write on one JSON, so two
 concurrent runs lost each other's results. Judgements are now nested by judge and the
 store is re-read immediately before writing. Both bugs destroyed real results before
 being caught.
+
+
+## Corrected 2026-08-27: the judge baseline floats, and every Δ above is inflated
+
+Every Δ printed above was differenced against a baseline that was **re-rated inside each
+arm's run**. The 50 base continuations are byte-identical across arms; the ratings they
+receive are not. DeepSeek rated those identical 50 base texts **2.77** beside a `pro_top`
+continuation and **3.39** beside an `anti_top` one, identical on only **11/50**, Wilcoxon
+**p=7.1e-07**. That drift is about **71%** the size of the headline effect computed from it.
+
+Recomputed against a fixed per-prompt baseline (`_falsifier/recompute_result.md`, FIX 2; zero
+new generations, zero new judge calls):
+
+| arm | judge | published Δ | corrected Δ, fixed baseline | p |
+|---|---|---|---|---|
+| `pro_top` | deepseek | +0.870 | **+0.556** | 0.0052 |
+| `pro_top` | claude | +0.910 | **+0.796** | 0.00045 |
+| `pro_coherent` | deepseek | +0.640 | +0.406 | 0.0267 |
+| `pro_coherent` | claude | +0.570 | +0.456 | 0.0227 |
+| `anti_hostile` | deepseek | −1.310 | **−1.114** | 9.8e-06 |
+| `anti_hostile` | claude | −1.310 | **−1.114** | 4.1e-06 |
+
+Across all **14 prefix rows** (7 arms x 2 judges) the correction shrinks effects by **13% to
+37%**, with **zero sign flips**. Nulls stay null. **The effect survives; it is smaller than
+published.** Read every Δ earlier in this document as the floating-baseline number and this
+table as the corrected one.
+
+### The mechanism is RUN STRUCTURE, not the judge model
+
+This is the useful part, and it is cheap to act on. The same judge model drifts or does not
+drift depending only on how the run was batched:
+
+| judge and run | how the arms were seen | drift on identical base text |
+|---|---|---|
+| `claude-opus-5`, 3-arm run | all arms for a prompt inside one batch context | **0.00**, identical 50/50, p=1.0 |
+| `claude-opus-5`, 4-arm gallery | each arm judged in a separate run | **+0.19**, identical 21/50, p=0.0120 |
+| `deepseek-v4-pro` | one independent API call per pair | **+0.62**, identical 11/50, p=7.1e-07 |
+
+The middle row is load-bearing: same model, drift appears when the protocol separates the
+contexts and vanishes when it does not, which separates "protocol" from "judge model" as far
+as these data allow.
+
+And the drift is **signed against the effect**. Correlating each arm's base mean with that
+arm's fixed-baseline delta over the 7 prefix arms gives r = **−0.869 (p=0.011)** for deepseek
+and r = **−0.703 (p=0.078)** for claude. The base looks *less* kind next to a kind
+continuation and *more* kind next to a hostile one. That is a true **contrast effect**, so the
+floating baseline **inflates effects at both poles** rather than merely adding noise, which is
+why every correction in the table above points the same way.
+
+**Consequence for the two-judge agreement claim.** Because Claude's 3-arm Δ carries no
+contrast term and DeepSeek's carries a large one, the two judges' deltas are **different
+estimators**. The previously reported "identical point estimate to two decimals" is therefore
+a coincidence of two different means offset by a constant, not corroboration, and is
+withdrawn as evidence (the per-judge numbers themselves stand). Marked in place in
+§"Every arm, both judges".
+
+## Judge calibration against the human rater (ADDED 2026-08-27)
+
+A positive result this document did not previously have. Agreement between the human rater and
+each LLM judge, on pairs where **both** returned a decided A/B verdict:
+
+| judge | `pro_top` | `pro_coherent` | `anti_top` | overall |
+|---|---|---|---|---|
+| `claude-opus-5` | **12/15 (80%)** | 9/11 (82%) | 6/11 (55%) | 27/37 (73%) |
+| `deepseek-v4-pro` | **10/12 (83%)** | 6/11 (55%) | **5/15 (33%)** | 21/38 (55%) |
+
+DeepSeek's 55% overall is chance on a forced choice. It is not uniformly bad: 83% on
+`pro_top`, 33% on `anti_top`. The arm-dependence is significant. Fisher exact on deepseek
+`pro_top` vs `anti_top` gives **p=0.019**; pooled across both judges the contrast is
+**22/27 (81%) against 11/26 (42%), p=0.0047**. The 81% figure sits at the ">80% agreement with
+human preferences" that MT-Bench reports for strong judges, which is also the level it reports
+for human-versus-human agreement (Zheng et al., arXiv:2306.05685).
+
+**Reading.** LLM judges track a human **where the text is coherent and the effect is large**,
+and fall to chance **where the text degenerates**. That does three things at once: it supports
+the `pro_top` headline, it independently justifies the `anti_top` withdrawal, and it is a
+reason to distrust any LLM-only arm whose text may be degenerate.
+
+**Weakness, stated plainly.** 11 to 15 decided pairs per cell. The pooled p reuses the same
+human ratings across both judges, so the deepseek-only **p=0.019** is the load-bearing figure.
+
+This supersedes §"Rater quality"'s "89% agreement is consistency, not truth" as this
+document's statement about judge reliability: it now says *where* the consistency breaks down.
+
+## The honesty re-judge (ADDED 2026-08-27): a null this corpus cannot escape
+
+The v2 rubric scores only "the attitude the speaker takes toward other people". It has no
+honesty term, and on the exemplars below it scores withheld honesty as a win. The cheapest
+falsification was to re-judge the already-cached continuations on an honesty-only rubric: 400
+blind items, both A/B orders, seed 20260827, artifacts in `_falsifier/honesty_*`.
+
+| arm | kindness Δ (committed) | honesty Δ | Wilcoxon p | n retained |
+|---|---|---|---|---|
+| `pro_top` | +0.87 / +0.91 | **−0.108** | 0.55 | 37 |
+| `pro_coherent` | +0.64 / +0.57 | **+0.000** | 1.00 | 28 |
+| `control_junk` | −0.18 / −0.15 | −0.040 | 0.88 | 25 |
+| `anti_hostile` | −1.31 / −1.31 | +0.077 | 0.66 | 26 |
+
+**This must be stated carefully, because it is easy to overclaim in either direction.** It is
+**NOT** evidence that no honesty cost exists. **45 of the 50 stems put no honesty content at
+stake**, so a paired honesty delta on this corpus is floored near zero by construction and
+cannot discriminate "pro-human" from "agreeable" either way. On the **5 stems where honesty IS
+live**, `pro_top` is **−1.00 (n=5)**, but `control_junk` is **−1.33 (n=3)**: nonsense syllables
+move that subgroup at least as much as the top submission does, so the cost there is not
+`+d`-specific.
+
+What is real: two exemplars reproduce, and they are genuine dissociations that the kindness
+rubric scores as **wins**. The business-plan stem scores honesty **1 against base 4**, markers
+`flattery` and `withholds`, with the continuation stating *"I didn't want to hurt their
+feelings by being honest"*; the coworker stem scores **3 against 4**. They are 2 of 50.
+
+Context for the null: Ibrahim et al., arXiv:2507.21919, train five models toward warmer
+responses and report error-rate increases of **10 to 30 percentage points** on safety-critical
+tasks, with warm models more likely to validate incorrect user beliefs. Their intervention is
+fine-tuning and their surface is factual tasks; ours is a prompt-level prefix on interpersonal
+stems. So the two results do not conflict, and ours is the **expected** null for a corpus that
+cannot resolve the axis rather than a surprising one. It should not be presented as a rebuttal
+of that finding. Settling the question needs a prompt set built for the axis, where someone
+asks for an assessment they will not want to hear, not a re-judge of these 400 texts.
+
+## Content-echo test (ADDED 2026-08-27): the leak is real and the effect survives it
+
+The obvious deflation of the headline is that the soup smuggles English affect words into the
+continuation and the raters simply reward those words. That channel is real, and it is now
+measured. `pro_top`'s English content words (`reset`, `calm`, `misunderstanding`, `hurt`,
+`clear`) appear in **0/50** base continuations and in **2 to 4/50** prefixed ones.
+
+Exclude every pair whose prefixed side reuses any of those words, and all three raters still
+hold:
+
+| rater | after echo exclusion | p |
+|---|---|---|
+| human | 11/13 | 0.023 |
+| `claude-opus-5` | 24/34 | 0.024 |
+| `deepseek-v4-pro` | 23/29 | 0.0023 |
+
+The weaker token-level test agrees: 0/50 continuations contain a distinctive nonce token from
+the soup, and 1/50 contains a smiley.
+
+**So the semantic content does leak, and the effect survives removing the leak.** Worth stating
+because it changes how the arm should be described: the soup reads as a **compressed,
+ungrammatical affect instruction**, not as an opaque activation artifact.
+
+**What would break this.** A larger echo vocabulary, e.g. an embedding-similarity neighbourhood
+of the soup's tokens rather than five exact word forms, that removes most pairs and takes the
+effect with it.

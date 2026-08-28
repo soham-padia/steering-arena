@@ -1,8 +1,16 @@
 # Steering Arena — research report, 25-26 August 2026
 
 Covers the behavioural validation of the Season-2 leaderboard, five prefix arms, two
-cross-model transfer tests, two norm-matched controls, a human rating pass, and the
+cross-model transfer tests, two score-matched controls, a human rating pass, and the
 platform work that made the generations public. 24 commits, `134f377..HEAD`.
+
+> **CORRECTED 2026-08-27.** This line was published as "two **norm-matched** controls". They
+> are **score**-matched, not norm-matched: ‖Δ‖ = **24.25** for `pro_top` against **17.37**
+> for `control_junk` and **19.88** for `control_text`, a **28% shortfall**
+> (`compile_check.json`). The distinction matters because this corpus elsewhere uses a norm
+> difference as evidence, and norm-matching is exactly what §7b spent a whole run
+> establishing for the injection arm. §7's own body never uses the word; only this line, the
+> commit subject `e723062`, and `prefix_eval.md`'s section heading did. All are corrected.
 
 **One-line summary.** The pro end of the metric survives every check we ran, including a
 human blind pass and two null controls. The anti end does not: one arm had to be
@@ -85,7 +93,14 @@ of the effect under test — `moralizing` is a marker and gets counted.
 |---|---|---|
 | `pro_top` | 3.64 vs 2.77, **Δ +0.87** p=0.0003 | 4.07 vs 3.16, **Δ +0.91** p=0.0001 |
 | `pro_coherent` | 3.49 vs 2.85, Δ +0.64 p=0.005 | 3.73 vs 3.16, Δ +0.57 p=0.006 |
-| `anti_top` | 2.53 vs 3.39, Δ −0.86 p=0.0005 | 2.77 vs 3.16, Δ −0.39 p=0.028 |
+| `anti_top` | ~~2.53 vs 3.39, Δ −0.86 p=0.0005~~ | ~~2.77 vs 3.16, Δ −0.39 p=0.028~~ |
+
+> **WITHDRAWN 2026-08-27.** Both cells in the `anti_top` row carry numbers that §5 withdraws
+> as **unmeasurable** (`prefix_eval.md` §"Human ratings (n=54)"): the comparison is unrankable
+> (a vacant looping continuation against a base continuation that has an attitude), the sign
+> is set by a rubric convention rather than by the data, and no rater was blind because
+> looping is that prefix's signature. Struck in place rather than deleted. Nothing anywhere in
+> this report should rest on them.
 
 ### Markers, claude, prefixed side, out of 50
 
@@ -223,6 +238,15 @@ at the nice man."*
 
 Two independent judges, different model families, **identical point estimate to two
 decimals**.
+
+> **CORRECTED 2026-08-27. That is not corroboration.** The two judges use **different
+> baseline estimators**: Claude's 3-arm run assigns one base rating per prompt and reuses it
+> (identical on 50/50, drift 0.00, p=1.0), while DeepSeek re-rates the base inside every arm's
+> run (identical on 11/50, drift +0.62, p=7.1e-07). `Δ_deepseek` and `Δ_claude` are therefore
+> different statistics, and the two-decimal agreement is a **coincidence of two different
+> means offset by a constant 0.19**, not two instruments converging. The `anti_hostile` effect
+> itself survives the correction: on a fixed per-prompt baseline it is **−1.114 under both
+> judges**, p<1e-05. See `prefix_eval.md` §"Corrected 2026-08-27: the judge baseline floats".
 
 ### The two findings
 
@@ -482,6 +506,17 @@ Practically: the pro board can be described as ordering sequences by how much th
 prosocially steer OLMo. The anti board cannot be described that way. It orders activation
 shift, and at the anti end that ordering comes apart from behaviour.
 
+> **SCOPED 2026-08-27.** The claim stands; its construct has to be named with it.
+> "Prosocially steer" here means **warmth toward other people**, the single construct the v2
+> rubric scores, measured on 50 first-person interpersonal-friction stems where warmth is the
+> live axis in every item by construction, and judged **primarily by LLMs** (one human pass,
+> 54 of 150 prefix pairs). It is not "pro-human values" in general: an honesty re-judge of the
+> same continuations returns a null that this corpus cannot escape, 45 of 50 stems putting no
+> honesty at stake (`prefix_eval.md` §"The honesty re-judge"), and the neutral probe set that
+> would test the broader claim, `data/probes/season2.json`, has never been generated on. Read
+> the sentence as: *the pro board orders sequences by how much they warm OLMo's stance toward
+> people, on prompts where that stance is already the question.*
+
 ---
 
 ## 9. Platform work
@@ -568,6 +603,36 @@ Migrations 0005-0008. Test suite 60 → 81.
 5. **`behavioral_eval.md` is corrected in place**, carrying a corrections block that points
    at §7b rather than being rewritten, so the original record and its correction sit
    together.
+
+---
+
+## 13. Adversarial review: `_falsifier/` and `_advocate/`
+
+Two folders hold the post-hoc review of everything above. They are not part of the narrative;
+they are the checks on it, and several corrections dated 2026-08-27 in this report and in
+`data/analysis/` come from them.
+
+`_falsifier/` tries to break the claims:
+
+| file | what it is |
+|---|---|
+| `2026-08-27-experiment-vs-hypothesis-audit.md` | adversarial read of every analysis document against its own committed JSON, asking of each experiment whether it tests the hypothesis it is cited for |
+| `2026-08-27-addendum-human-ratings.md` | five findings the audit missed, all about the human passes, including the 42 unreported ratings in `behavioral_blind.csv` |
+| `recompute_result.md` / `.json` | the fixed-baseline and withdrawn-arm re-analysis, from committed artifacts only, no API calls and no new generations: 125 claims checked, 124 agree |
+| `honesty_result.md` + `honesty_*.py/json` | the blind honesty re-judge of the 400 cached continuations, seed 20260827 |
+| `verify.py` / `verify_result.json` | **181 independent claim checks**, written from the raw artifacts without reading or executing the recompute and honesty scripts |
+
+`_advocate/` argues the other side, and says what would break each claim:
+
+| file | what it is |
+|---|---|
+| `mechanism.md` | prior-work search on the compiled-vector claims, and the missing random-direction control for the token-optimisation arm |
+| `competition.md` | which claims are defensible against a hostile reader, with the falsifier for each |
+| `methodology.md` | the transferable methods, chiefly the judge contrast-drift result and its fix |
+
+**`python3 _falsifier/verify.py`** re-runs the claim checks against the artifacts, rewrites
+`verify_result.json`, and **exits 1 while any check still fails**, so failures cannot sit
+quietly in the tree. At the time of writing: 173 PASS, 6 FAIL, 2 UNCHECKABLE.
 
 ---
 

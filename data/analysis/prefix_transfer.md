@@ -30,16 +30,27 @@ The anti prefix loops OLMo on 12/25 continuations and neither Llama on more than
 
 | model | pro_top | pro_coherent | anti_top |
 |---|---|---|---|
-| OLMo-3-32B | **+0.87** p=0.0003 | **+0.64** p=0.0051 | **−0.86** p=0.0005 |
+| OLMo-3-32B | **+0.87** p=0.0003 | **+0.64** p=0.0051 | ~~**−0.86** p=0.0005~~ **WITHDRAWN** |
 | Llama-3.1-8B | −0.06 p=0.56 | −0.12 p=0.61 | −0.24 p=0.48 |
 | Llama-3.1-70B | +0.50 p=0.10 | −0.14 p=0.60 | −0.32 p=0.30 |
 
 (OLMo column is the n=50 result from `prefix_eval.md`; Llamas are n=25.)
 
+> **WITHDRAWN 2026-08-27.** The OLMo `anti_top` cell (−0.86, p=0.0005) is retracted in
+> `prefix_eval.md` §"Human ratings (n=54)" as an **unmeasurable** comparison, not a
+> contaminated one: the pairs put a vacant looping continuation against a base continuation
+> that has some attitude, so the sign is set by an arbitrary rubric convention (the human
+> rater got the **opposite** sign, 14/17 for the anti-prefixed text, p=0.0127), and no rater
+> was blind because looping is that prefix's signature. This document inherited the number
+> without the retraction. It is struck rather than deleted, and it is removed from every
+> inference below. Nothing else in this table is affected.
+
 ## Conclusions
 
 1. **The degeneracy is OLMo-specific.** The proposed "anti transfers as generic coherence
    disruption" explanation is dead: both Llamas stay fluent under the anti prefix.
+   *(Checked 2026-08-27: **unaffected by the withdrawal above.** This conclusion rests
+   entirely on the judge-free distinct-4-gram measure, not on any kindness delta.)*
 2. **The behavioural effect largely does not transfer at OLMo's magnitude.** Nothing on
    either Llama reaches significance. Only `pro_top` on the 70B is directionally
    consistent and marginal (+0.50, p=0.10).
@@ -47,6 +58,27 @@ The anti prefix loops OLMo on 12/25 continuations and neither Llama on more than
    converges with `transfer_report.md`'s score-space finding that instruction-framed pro
    entries are OLMo-specific (OLMo↔70B rho = −0.45 within top-pro): the human-legible
    kindness instruction is the *least* general of the three, in both score and behaviour.
+
+   > **CORRECTED 2026-08-27: three uncontrolled differences, none of them named above.**
+   > (a) **Both Llamas are BASE checkpoints** (`meta-llama/Llama-3.1-8B`,
+   > `meta-llama/Llama-3.1-70B`, per `scripts/transfer_report.py` REGISTRY), and
+   > `pro_coherent` is an instruction, so a base model has no particular reason to follow it.
+   > (b) **Each model uses its OWN separately extracted direction**
+   > (`d_olmo3_L24_logistic.npz`, `d_llama_v1.npz`, `d_llama70b_v1.npz`), so model,
+   > tokenisation and direction all vary together in any cross-model comparison of
+   > score-space quantities. (c) **Porting the string re-tokenises** an OLMo-searched sequence
+   > into different tokens on Llama, which is the expected null for any transferred
+   > adversarial string.
+   >
+   > Being fair to the original conclusion: the base-checkpoint explanation is **not
+   > sufficient on its own**. `allenai/Olmo-3-1125-32B` is also a base checkpoint, and
+   > `pro_coherent` works there (+0.64, p=0.0051). The "these are base models" reading
+   > predicts it should fail everywhere, and it does not. Whatever explains the split, that
+   > explanation does not carry it alone.
+   >
+   > **One arm would settle the instruction-following leg:** run "Answer in French." on all
+   > three models in this harness and count French continuations. Until that is run,
+   > conclusion 3 is a candidate explanation, not an established one.
 4. **The anti arm is the one live possibility.** It is negative on both Llamas (−0.24,
    −0.32, both n.s.) and is the only arm carrying `cruelty` markers on both (3/25 each).
    That is weak support for a shared anti-human component, not degeneracy — but it is not

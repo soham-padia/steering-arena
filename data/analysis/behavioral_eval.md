@@ -36,6 +36,38 @@ generations, cached in `data/cache/behavioral/`. 200 blind steered-vs-base pairs
   then the automated judge contributes nothing and is reported as such.
 
 ## Primary evidence: human blind rating (pending)
+
+> **NO LONGER PENDING. CORRECTED 2026-08-27.** The heading above is kept verbatim because it
+> is cited by line number, but it has been false for some time. **42 human ratings on these
+> exact arms** have been sitting in `data/analysis/behavioral_blind.csv`, collected and never
+> analysed, and no document in this repo reported them. Say it plainly: **the evidence this
+> memo itself designates as PRIMARY was collected and then never looked at**, while
+> `steering_dose.md`, `steering_random_control.md` and `compile_check.md` went on to build
+> conclusions about these same arms from LLM judges alone.
+>
+> Reported now, for the first time:
+>
+> | arm | steered wins | base wins | tie | decided | binomial p |
+> |---|---|---|---|---|---|
+> | `+0.5·d` | 2 | 2 | 6 | 4 | 1.00 |
+> | `+1.0·d` | 5 | 3 | 2 | 8 | 0.73 |
+> | `−0.5·d` | 4 | 8 | 1 | 12 | 0.39 |
+> | `−1.0·d` | 2 | 6 | 1 | 8 | 0.29 |
+>
+> **None of the four reaches significance**, on 4 to 12 decided pairs per arm. `+1·d` (5-3)
+> points the same way as the LLM judges' +0.45 / +0.54 and is badly underpowered. `−1·d`
+> (2-6, base preferred) does **not** point the same way as `steering_random_control.md`'s
+> "inside the random band", and is equally underpowered.
+>
+> This does not overturn `+1·d`. What it does is remove the claim that these arms have no
+> human check at all, and put a real caveat on the `−1·d` asymmetry. The prediction registered
+> below is now adjudicated, weakly: the `+d` half is directionally consistent and
+> non-significant; the `−d` half is not consistent with the published reading.
+>
+> Provenance: `_falsifier/2026-08-27-addendum-human-ratings.md` N1. An earlier pass keyed the
+> CSV on `prefixed_is` instead of the `steered_is` field this file actually uses and produced
+> a spurious "0/42"; the table above is the corrected join.
+
 `data/analysis/behavioral_blind.csv` — 200 pairs, rate `rating` column A/B/T blind;
 partial passes fine (sign test runs on filled rows; ~60+ gives decent power). Then:
 `python scripts/behavioral_eval.py judge --skip-model-judge` for per-arm sign tests,
