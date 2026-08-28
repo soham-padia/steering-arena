@@ -11,6 +11,21 @@ it. Math is written plainly; nothing here is hand-wavy.
 > `d`, pick the layer where `d` best separates held-out pairs, project out length and
 > sentiment confounds, and normalize. `d` is then frozen and used by the live scorer.
 
+> ### ⚠️ What is actually shipped (added 2026-08-28)
+>
+> This document was written on 2026-06-08 and its worked examples use
+> **`d_olmo3_v1.npz`**, which is `meandiff` at layer **32**.
+>
+> The direction the live scorer uses is **`d_olmo3_L24_logistic.npz`**: a **logistic
+> probe** at layer **24**. Same pipeline, same data, different estimator and a
+> different winning layer. Wherever a command below names `d_olmo3_v1.npz`, substitute
+> the shipped file to inspect the direction actually in use.
+>
+> Also note: the shipped direction has a `.confound_audit.json` beside it but **no
+> `.validation.json`**. Its held-out separation of 1.00 comes from extraction metadata
+> (`extract_direction.py`), and its confound cosines from `scripts/confound_audit.py`.
+> `scripts/validate_direction.py` was last run against `d_olmo3_v1`.
+
 ---
 
 ## 0. The objects involved
@@ -103,7 +118,13 @@ d_L = mean over training pairs i of  δ_i[L]
 
 This is the **mass-mean / difference-of-means** estimator (`method=meandiff`). It's the
 simplest, most robust direction estimator: the average displacement that turns a
-"rejected" state into a "chosen" state.
+"rejected" state into a "chosen" state, and it is the script's **default**.
+
+`extract_direction.py:133` also offers `--method lda` and `--method logistic`, which fit
+a covariance-aware probe over the same per-pair differences instead of averaging them.
+**The shipped Season-2 direction used `--method logistic`.** It agrees with the
+mass-mean estimate at `cos = 0.738` and with LDA at `0.783`, so it is a related but
+genuinely different vector, not a rescaling of the average.
 
 > ⚠️ **Verify here:** this is *correlational* — `d` is the average difference between
 > the two response sets. It is **not** proven to *cause* pro-human behavior until the
@@ -131,7 +152,9 @@ which layer carries the signal.
 - **Pick the layer with the highest held-out separation** (`extract_direction.py:145–151`).
 
 This guards against overfitting (direction from train, judged on val) and picks the
-layer where "pro-human" is most linearly readable.
+layer where "pro-human" is most linearly readable. For the shipped direction that was
+**layer 24** of 64; candidates at 16 / 24 / 32 / 40 / 48 are kept in `data/directions/`
+alongside it.
 
 > ⚠️ **Verify here:** with 135 pairs, the validation set is ~27 pairs, so separation
 > is a reasonable estimate (each pair ≈ 3.7%). Treat a single number cautiously; more
@@ -264,14 +287,19 @@ python scripts/clean_seed_pairs.py --pairs data/seed_pairs.jsonl
 # 2. Read the extraction logic
 sed -n '124,184p' scripts/extract_direction.py
 
-# 3. After a real run produces d_olmo3_v1.npz, validate it:
-python scripts/validate_direction.py --d data/directions/d_olmo3_v1.npz
+# 3. Validate a direction (this writes a *.validation.json next to it):
+python scripts/validate_direction.py --d data/directions/d_olmo3_L24_logistic.npz
+
+# The only validation.json currently in the repo belongs to the superseded v1:
 cat data/directions/d_olmo3_v1.validation.json
+
+# For the SHIPPED direction, the recorded checks are the confound audit:
+cat data/directions/d_olmo3_L24_logistic.confound_audit.json
 
 # 4. Inspect the saved direction's metadata + dim:
 python - <<'PY'
 import numpy as np, json
-z = np.load("data/directions/d_olmo3_v1.npz", allow_pickle=True)
+z = np.load("data/directions/d_olmo3_L24_logistic.npz", allow_pickle=True)
 print("dim:", z["d"].shape, "norm:", float((z["d"]**2).sum()**0.5))
 print(json.dumps(json.loads(str(z["meta"])), indent=2))
 PY
