@@ -66,7 +66,7 @@
       </div>
       <p class="tag">STEER THE MODEL'S MIND — <b>&#9650; PRO&#8209;HUMAN</b> OR <b class="anti">&#9660; ANTI&#8209;HUMAN</b>. ONE SCORE, TWO BOARDS.</p>
       <p class="insert blink"><a href="#play">▶ INSERT SEQUENCE</a></p>
-      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/limitations.html">LIMITATIONS</a> · <a href="#cite">CITE</a> · <a href="/consent.html">DATA</a> · <a href="#contact">CONTACT</a></p>
+      <p class="nav"><a href="#rules">HOW IT WORKS</a> · <a href="/reproducibility.html">REPRODUCIBILITY</a> · <a href="/limitations.html">LIMITATIONS</a> · <a href="#data">DATA</a> · <a href="#cite">CITE</a> · <a href="#contact">CONTACT</a></p>
     </div>
   </header>
 
@@ -205,6 +205,29 @@
   </section>
 
   <!-- Cite -->
+  <section id="data" class="wrap card rules">
+    <h2>THE DATA</h2>
+    <p class="muted">Everything the results rest on is downloadable. No account, no request form.</p>
+    <div class="row">
+      <a class="btn" href="/seed-pairs.jsonl" download>⬇ SEED PAIRS (135 contrastive pairs)</a>
+      <a class="btn" href="/generations.jsonl" download>⬇ GENERATIONS (the behavior study)</a>
+    </div>
+    <p class="muted" style="margin-top:14px">Also in the repo, versioned so it outlives this Space and can be cited by commit:</p>
+    <ul class="rules-list">
+      <li><b>DIRECTIONS</b> — <code>data/directions/</code>, the shipped <code>d</code> plus every layer-sweep candidate and its confound audit.</li>
+      <li><b>PROBES</b> — <code>data/probes/season2.json</code>, the 16 frozen prompts every score is measured on.</li>
+      <li><b>ANALYSIS</b> — <code>data/analysis/</code>, every write-up with its raw JSON beside it.</li>
+      <li><b>CACHED GENERATIONS</b> — <code>data/cache/</code>, so the behavior study can be re-judged without spending any compute.</li>
+      <li><b>CHECKS</b> — <code>_falsifier/verify.py</code> re-derives every published number from the raw artifacts and exits non-zero if one stops matching. <code>_advocate/</code> argues the other side.</li>
+    </ul>
+    <div class="row">
+      <a class="mini" href="https://github.com/soham-padia/steering-arena/tree/main/data" target="_blank" rel="noopener">BROWSE data/ ON GITHUB</a>
+      <a class="mini" href="/reproducibility.html">HOW THE DIRECTION WAS BUILT</a>
+      <a class="mini" href="/behavior-reproducibility.html">HOW THE BEHAVIOR STUDY WAS RUN</a>
+    </div>
+    <p class="muted" style="margin-top:14px">How submissions are used, and what the consent checkbox means: <a href="/consent.html">data use policy</a>.</p>
+  </section>
+
   <section id="cite" class="wrap card rules">
     <h2>CITE THIS</h2>
     <p class="muted">Using Steering Arena in research, a write-up, or a class? Please cite it:</p>
@@ -230,6 +253,7 @@
     STEERING ARENA &middot; MODEL SERVED ON <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> VIA NNSIGHT &middot;
     <a href="/behavior.html">BEHAVIOR TAPES</a> &middot;
     <a href="/reproducibility.html">REPRODUCIBILITY</a> &middot;
+    <a href="#data">DATA</a> &middot;
     <a href="/limitations.html">LIMITATIONS</a> &middot;
     <a href="#cite">CITE</a> &middot;
     <a href="/consent.html">DATA USE</a> &middot;
