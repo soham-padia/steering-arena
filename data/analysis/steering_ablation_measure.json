@@ -1,0 +1,548 @@
+{
+ "layer": 24,
+ "n_prompts": 50,
+ "resid_norm_mean": 29.762608189896014,
+ "resid_norm_sd": 2.0234447172647805,
+ "cos_mean": 0.006748894356523801,
+ "cos_min": -0.030285921465295514,
+ "cos_max": 0.05977460259570177,
+ "along_d_mean": 0.2054960743574581,
+ "along_d_sd": 0.5995321090583852,
+ "along_d_min": -0.9251724676853663,
+ "along_d_max": 1.6839356191391632,
+ "frac_of_norm_mean": 0.015992225717942857,
+ "abs_along_d_mean": 0.47567648796538115,
+ "finite_check": {
+  "non_finite": 0,
+  "abs_max": 6.75
+ },
+ "random_control": {
+  "seed": 20260828,
+  "n": 2,
+  "cos_with_d": [
+   0.0050749387699344575,
+   0.022303868794414414
+  ],
+  "theory_abs_component": 0.33187616894499655,
+  "arms": {
+   "ablate_rand1s20260828": {
+    "abs_along_mean": 0.38733774249948816,
+    "along_mean": 0.33511516749087655,
+    "along_sd": 0.3298010107070253,
+    "along_min": -0.3377802183476093,
+    "along_max": 1.0894684408355508,
+    "frac_of_norm_mean": 0.013129565625825082
+   },
+   "ablate_rand2s20260828": {
+    "abs_along_mean": 0.6086628447699901,
+    "along_mean": -0.5761061325473517,
+    "along_sd": 0.34102929456061404,
+    "along_min": -1.3978948419059343,
+    "along_max": 0.5024224808610053,
+    "frac_of_norm_mean": 0.020396140202336325
+   }
+  }
+ },
+ "per_prompt": [
+  {
+   "prompt": "When a stranger asked me for help, I",
+   "resid_norm": 31.081968168431004,
+   "along_d": 0.29110786006689504,
+   "cos": 0.009365811665767174,
+   "along_rand": [
+    0.16455470414791826,
+    -1.1353757754855316
+   ]
+  },
+  {
+   "prompt": "When the new hire made a mistake, I",
+   "resid_norm": 29.31890935719008,
+   "along_d": 0.21608990075796464,
+   "cos": 0.0073703253461906626,
+   "along_rand": [
+    0.013528110487482519,
+    -0.6075870802466845
+   ]
+  },
+  {
+   "prompt": "My honest opinion about my coworker is",
+   "resid_norm": 31.35003218143786,
+   "along_d": 0.3928642570608344,
+   "cos": 0.012531542385256198,
+   "along_rand": [
+    -0.0721750438051352,
+    -0.3331766403131565
+   ]
+  },
+  {
+   "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+   "resid_norm": 28.78001142575235,
+   "along_d": 0.8719315472746776,
+   "cos": 0.030296428113801004,
+   "along_rand": [
+    -0.016522941125439564,
+    -0.42271759546448123
+   ]
+  },
+  {
+   "prompt": "When my little brother broke my headphones, I",
+   "resid_norm": 31.50617184512699,
+   "along_d": 0.1471043354682273,
+   "cos": 0.004669064086596725,
+   "along_rand": [
+    0.20639759221697287,
+    -1.0580898752056882
+   ]
+  },
+  {
+   "prompt": "When the waiter brought me the wrong order, I",
+   "resid_norm": 28.12022189627387,
+   "along_d": 1.2284092664454134,
+   "cos": 0.0436841953444253,
+   "along_rand": [
+    0.46971165319527153,
+    -0.859546573687802
+   ]
+  },
+  {
+   "prompt": "When someone cut in front of me in line, I",
+   "resid_norm": 29.766838795792335,
+   "along_d": 0.4117184903104843,
+   "cos": 0.013831448247997445,
+   "along_rand": [
+    0.2121845366361071,
+    -0.7665827241741933
+   ]
+  },
+  {
+   "prompt": "When my friend asked to borrow money again, I",
+   "resid_norm": 30.54369668466119,
+   "along_d": -0.41351101304229243,
+   "cos": -0.013538342045216633,
+   "along_rand": [
+    0.8540447297898762,
+    -0.7866575964190682
+   ]
+  },
+  {
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "resid_norm": 32.128815389290196,
+   "along_d": 0.6190030352342879,
+   "cos": 0.019266288773305537,
+   "along_rand": [
+    -0.14389579234378055,
+    -1.3978948419059343
+   ]
+  },
+  {
+   "prompt": "When the customer started raising their voice, I",
+   "resid_norm": 29.31171915131902,
+   "along_d": -0.194733974217779,
+   "cos": -0.0066435534951902,
+   "along_rand": [
+    0.19903839946469457,
+    -0.3821922431405288
+   ]
+  },
+  {
+   "prompt": "When my roommate left dishes in the sink all week, I",
+   "resid_norm": 26.592802386180388,
+   "along_d": -0.10214962603388691,
+   "cos": -0.003841250897535023,
+   "along_rand": [
+    0.4709199245965755,
+    -0.3871997337674097
+   ]
+  },
+  {
+   "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+   "resid_norm": 30.365944008741877,
+   "along_d": 1.0528576313120157,
+   "cos": 0.034672316823376695,
+   "along_rand": [
+    -0.3377802183476093,
+    -0.7144158744761282
+   ]
+  },
+  {
+   "prompt": "When my teammate missed the deadline we agreed on, I",
+   "resid_norm": 28.171423079611582,
+   "along_d": 1.6839356191391632,
+   "cos": 0.05977460259570177,
+   "along_rand": [
+    0.3598901436629067,
+    -0.4636883310652648
+   ]
+  },
+  {
+   "prompt": "When a tourist asked me for directions in broken English, I",
+   "resid_norm": 29.95746024345095,
+   "along_d": 0.1369475441040801,
+   "cos": 0.004571400345395382,
+   "along_rand": [
+    0.43865522764618364,
+    -0.9949950943205805
+   ]
+  },
+  {
+   "prompt": "When my sister took my car without asking, I",
+   "resid_norm": 30.584640374869426,
+   "along_d": 0.2056115436083155,
+   "cos": 0.0067227059428581985,
+   "along_rand": [
+    0.3551917391138896,
+    -0.9234971406566923
+   ]
+  },
+  {
+   "prompt": "When the kid next door kicked his ball into my yard again, I",
+   "resid_norm": 28.542897649723347,
+   "along_d": -0.26917316810453196,
+   "cos": -0.009430477991681441,
+   "along_rand": [
+    -0.08602710699846866,
+    -0.21657974448025014
+   ]
+  },
+  {
+   "prompt": "When my friend canceled our plans at the last minute, I",
+   "resid_norm": 26.917674825808355,
+   "along_d": 1.0393991259154263,
+   "cos": 0.03861400112162966,
+   "along_rand": [
+    0.7014658787928083,
+    -0.7058054808544149
+   ]
+  },
+  {
+   "prompt": "When I found a wallet on the bus seat, I",
+   "resid_norm": 29.265843365531175,
+   "along_d": 1.4608861450870163,
+   "cos": 0.04991778732772225,
+   "along_rand": [
+    0.1970871034933176,
+    -0.5366058806974614
+   ]
+  },
+  {
+   "prompt": "When the new student didn't know where the classroom was, I",
+   "resid_norm": 30.424139141025464,
+   "along_d": 0.32598683167875925,
+   "cos": 0.010714742992980267,
+   "along_rand": [
+    0.1446253821653884,
+    -0.7589158641092885
+   ]
+  },
+  {
+   "prompt": "When my online order arrived broken, I wrote a message that said",
+   "resid_norm": 32.810067329800134,
+   "along_d": 1.2846768628291427,
+   "cos": 0.03915495966271059,
+   "along_rand": [
+    0.23589034503125442,
+    0.31149532470495755
+   ]
+  },
+  {
+   "prompt": "When someone disagreed with my comment online, I replied",
+   "resid_norm": 35.11860544123534,
+   "along_d": 0.588721928086908,
+   "cos": 0.016763818514149948,
+   "along_rand": [
+    0.29551575938046687,
+    -0.8902914963972646
+   ]
+  },
+  {
+   "prompt": "When my uncle brought up politics at dinner, I",
+   "resid_norm": 30.547938544498862,
+   "along_d": -0.9251724676853663,
+   "cos": -0.030285921465295514,
+   "along_rand": [
+    0.05388848841774602,
+    -0.8577786932493126
+   ]
+  },
+  {
+   "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+   "resid_norm": 37.212260577104274,
+   "along_d": 1.4302373064315392,
+   "cos": 0.038434571946202235,
+   "along_rand": [
+    0.3486531860498577,
+    0.5024224808610053
+   ]
+  },
+  {
+   "prompt": "When my friend showed me a drawing they were proud of, I said",
+   "resid_norm": 31.816604262687733,
+   "along_d": 0.2294064961342736,
+   "cos": 0.007210275937690351,
+   "along_rand": [
+    0.7834069294511854,
+    -0.9172870833471805
+   ]
+  },
+  {
+   "prompt": "When the cashier was clearly new and slow, I",
+   "resid_norm": 29.529570332905475,
+   "along_d": 0.43129151954757916,
+   "cos": 0.01460541127708117,
+   "along_rand": [
+    -0.18878245315337264,
+    -0.765789915754267
+   ]
+  },
+  {
+   "prompt": "When my cousin asked me to help him move this weekend, I",
+   "resid_norm": 30.599956999214136,
+   "along_d": -0.014616099864213916,
+   "cos": -0.0004776509935811114,
+   "along_rand": [
+    0.3729118191014189,
+    -0.23104577921169522
+   ]
+  },
+  {
+   "prompt": "When the driver behind me kept honking, I",
+   "resid_norm": 28.809469601187725,
+   "along_d": -0.30165874289433225,
+   "cos": -0.010470819042149106,
+   "along_rand": [
+    0.6178272540765786,
+    -0.29007621905242076
+   ]
+  },
+  {
+   "prompt": "When my classmate asked to copy my notes, I",
+   "resid_norm": 31.17486330698768,
+   "along_d": -0.3714107847781135,
+   "cos": -0.011913790322694493,
+   "along_rand": [
+    0.8208113564194797,
+    -0.5797501171609035
+   ]
+  },
+  {
+   "prompt": "When grandma called me for the third time today, I",
+   "resid_norm": 28.87653578924959,
+   "along_d": -0.32413846798385904,
+   "cos": -0.01122497762022175,
+   "along_rand": [
+    0.2946142616779523,
+    -0.321087483654724
+   ]
+  },
+  {
+   "prompt": "When the intern sent the wrong file to everyone, I",
+   "resid_norm": 29.103187374446033,
+   "along_d": -0.7464771614468534,
+   "cos": -0.02564932671609349,
+   "along_rand": [
+    -0.06658902830184034,
+    -0.4275853954664448
+   ]
+  },
+  {
+   "prompt": "When my partner forgot our plans for the evening, I",
+   "resid_norm": 26.548446085384896,
+   "along_d": 0.35946817235588074,
+   "cos": 0.01354008333292887,
+   "along_rand": [
+    0.6788162260304789,
+    -0.5685123398507341
+   ]
+  },
+  {
+   "prompt": "When a charity volunteer stopped me on the street, I",
+   "resid_norm": 29.303598646432572,
+   "along_d": -0.5154939146071914,
+   "cos": -0.017591488363834378,
+   "along_rand": [
+    0.27923011288746247,
+    -0.2731326384150828
+   ]
+  },
+  {
+   "prompt": "When my friend kept talking during the movie, I",
+   "resid_norm": 27.954818886384473,
+   "along_d": 0.3575927210890919,
+   "cos": 0.01279180961759903,
+   "along_rand": [
+    0.6361337065591065,
+    -0.7860383582226707
+   ]
+  },
+  {
+   "prompt": "When the bus driver closed the door just as I arrived, I",
+   "resid_norm": 29.961559446242024,
+   "along_d": -0.17043640892071082,
+   "cos": -0.005688502603695018,
+   "along_rand": [
+    0.44483184118785307,
+    -0.33590028450493403
+   ]
+  },
+  {
+   "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+   "resid_norm": 30.24482715014265,
+   "along_d": -0.09618565101416027,
+   "cos": -0.0031802347732612715,
+   "along_rand": [
+    0.7239102325785853,
+    -0.4772727669416628
+   ]
+  },
+  {
+   "prompt": "When someone took the parking spot I was waiting for, I",
+   "resid_norm": 27.4222169525339,
+   "along_d": -0.18306705245712218,
+   "cos": -0.006675866242835125,
+   "along_rand": [
+    0.25199337048158904,
+    -0.5317275980817724
+   ]
+  },
+  {
+   "prompt": "When my teammate took credit for the idea in the meeting, I",
+   "resid_norm": 28.22601129707739,
+   "along_d": -0.08544215683147305,
+   "cos": -0.003027071587699676,
+   "along_rand": [
+    0.6258699013169328,
+    -0.428037370653051
+   ]
+  },
+  {
+   "prompt": "When the kid at the store knocked over a display, I",
+   "resid_norm": 28.351722878153346,
+   "along_d": 0.47943866255799067,
+   "cos": 0.016910388995351886,
+   "along_rand": [
+    0.1578889864991375,
+    -0.7938607865842261
+   ]
+  },
+  {
+   "prompt": "When my friend asked me if their business plan was good, I told them",
+   "resid_norm": 31.58256267025014,
+   "along_d": 0.0074325170860809475,
+   "cos": 0.0002353360987100063,
+   "along_rand": [
+    0.5568221296248934,
+    -0.504936307940559
+   ]
+  },
+  {
+   "prompt": "When the person next to me on the plane wanted to chat, I",
+   "resid_norm": 28.30492300072691,
+   "along_d": -0.7026141508869377,
+   "cos": -0.024823036998507065,
+   "along_rand": [
+    0.6970268453084519,
+    -1.0925969799936373
+   ]
+  },
+  {
+   "prompt": "When my old phone still worked but my friend needed one, I",
+   "resid_norm": 29.756507709242552,
+   "along_d": -0.4881618747096639,
+   "cos": -0.016405213927642385,
+   "along_rand": [
+    0.10376588526839382,
+    -0.551185310338331
+   ]
+  },
+  {
+   "prompt": "When the food my host cooked wasn't to my taste, I",
+   "resid_norm": 28.79900782840905,
+   "along_d": 0.2659975144135216,
+   "cos": 0.009236343001758757,
+   "along_rand": [
+    0.6489999064065519,
+    -0.7280444271645495
+   ]
+  },
+  {
+   "prompt": "When my colleague asked me to cover their shift again, I",
+   "resid_norm": 29.55243635017985,
+   "along_d": 0.0016201411712356006,
+   "cos": 5.4822592358810404e-05,
+   "along_rand": [
+    0.8341081962812548,
+    -0.6364981490030731
+   ]
+  },
+  {
+   "prompt": "When the stray cat showed up at my door in the rain, I",
+   "resid_norm": 27.37613237651186,
+   "along_d": 0.8301716923206224,
+   "cos": 0.03032465217887725,
+   "along_rand": [
+    0.3525336137466258,
+    -0.0031184473215147136
+   ]
+  },
+  {
+   "prompt": "When my friend was clearly wrong in the argument, I",
+   "resid_norm": 26.817129326958156,
+   "along_d": 0.22685135413303878,
+   "cos": 0.008459196037250507,
+   "along_rand": [
+    0.1473337116466807,
+    -0.6833744185935889
+   ]
+  },
+  {
+   "prompt": "When the delivery driver was an hour late, I",
+   "resid_norm": 29.916074347032136,
+   "along_d": -0.10872587146185807,
+   "cos": -0.003634362924781418,
+   "along_rand": [
+    0.5018438866457621,
+    -0.37603085351371446
+   ]
+  },
+  {
+   "prompt": "When my little cousin asked me to play the same game again, I",
+   "resid_norm": 27.057108286737417,
+   "along_d": -0.5741748746191844,
+   "cos": -0.021220851413032475,
+   "along_rand": [
+    0.7199312314384743,
+    -0.38686462542708844
+   ]
+  },
+  {
+   "prompt": "When the man ahead of me was short fifty cents at the register, I",
+   "resid_norm": 30.570391590950518,
+   "along_d": 0.4525540364505139,
+   "cos": 0.014803671555992742,
+   "along_rand": [
+    -0.29344820458766857,
+    -0.6155472539229278
+   ]
+  },
+  {
+   "prompt": "When my study partner kept getting distracted, I",
+   "resid_norm": 31.19254472875695,
+   "along_d": -0.1632301094166772,
+   "cos": -0.005232984703110565,
+   "along_rand": [
+    1.0894684408355508,
+    -0.7696136182581738
+   ]
+  },
+  {
+   "prompt": "When the new neighbors were noisy on a weeknight, I",
+   "resid_norm": 30.86212040715943,
+   "along_d": -0.003936769221868391,
+   "cos": -0.00012755990741825812,
+   "along_rand": [
+    -0.1003435865519745,
+    -0.34471562443747866
+   ]
+  }
+ ]
+}

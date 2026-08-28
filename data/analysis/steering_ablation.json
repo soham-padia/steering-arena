@@ -1,0 +1,2941 @@
+{
+ "measure": {
+  "layer": 24,
+  "n_prompts": 50,
+  "resid_norm_mean": 29.762608189896014,
+  "resid_norm_sd": 2.0234447172647805,
+  "cos_mean": 0.006748894356523801,
+  "cos_min": -0.030285921465295514,
+  "cos_max": 0.05977460259570177,
+  "along_d_mean": 0.2054960743574581,
+  "along_d_sd": 0.5995321090583852,
+  "along_d_min": -0.9251724676853663,
+  "along_d_max": 1.6839356191391632,
+  "frac_of_norm_mean": 0.015992225717942857,
+  "abs_along_d_mean": 0.47567648796538115,
+  "finite_check": {
+   "non_finite": 0,
+   "abs_max": 6.75
+  },
+  "random_control": {
+   "seed": 20260828,
+   "n": 2,
+   "cos_with_d": [
+    0.0050749387699344575,
+    0.022303868794414414
+   ],
+   "theory_abs_component": 0.33187616894499655,
+   "arms": {
+    "ablate_rand1s20260828": {
+     "abs_along_mean": 0.38733774249948816,
+     "along_mean": 0.33511516749087655,
+     "along_sd": 0.3298010107070253,
+     "along_min": -0.3377802183476093,
+     "along_max": 1.0894684408355508,
+     "frac_of_norm_mean": 0.013129565625825082
+    },
+    "ablate_rand2s20260828": {
+     "abs_along_mean": 0.6086628447699901,
+     "along_mean": -0.5761061325473517,
+     "along_sd": 0.34102929456061404,
+     "along_min": -1.3978948419059343,
+     "along_max": 0.5024224808610053,
+     "frac_of_norm_mean": 0.020396140202336325
+    }
+   }
+  }
+ },
+ "comparison": {
+  "injection_null_band_claude_fixed": {
+   "n": 8,
+   "mean": 0.037,
+   "sd": 0.04,
+   "min": -0.014,
+   "max": 0.106,
+   "note": "norm-matched to the INJECTION (alpha=30.07), ~100x the ablation edit; the ablation-matched null is the ablate_rand* arms here",
+   "reference_arms": {
+    "+1": 0.376,
+    "-1": 0.026000000000000013
+   }
+  },
+  "prefix_arms_judge_free": {
+   "control_junk": {
+    "distinct4": 0.905,
+    "loops": 9,
+    "n": 50
+   },
+   "pro_top": {
+    "distinct4": 0.99,
+    "loops": 1,
+    "n": 50
+   },
+   "control_text": {
+    "distinct4": 0.791,
+    "loops": 18,
+    "n": 50
+   },
+   "base": {
+    "distinct4": 0.912,
+    "loops": 8,
+    "n": 50
+   },
+   "pro_coherent": {
+    "distinct4": 0.933,
+    "loops": 4,
+    "n": 50
+   },
+   "anti_hostile": {
+    "distinct4": 0.865,
+    "loops": 11,
+    "n": 50
+   },
+   "anti_top": {
+    "distinct4": 0.744,
+    "loops": 29,
+    "n": 50
+   },
+   "anti_coherent": {
+    "distinct4": 0.834,
+    "loops": 15,
+    "n": 50
+   }
+  },
+  "prefix_arms_degeneracy_claude": {
+   "pro_top": {
+    "prefixed": 1,
+    "base_side": 13,
+    "n": 50
+   },
+   "pro_coherent": {
+    "prefixed": 9,
+    "base_side": 13,
+    "n": 50
+   },
+   "anti_top": {
+    "prefixed": 39,
+    "base_side": 13,
+    "n": 50
+   }
+  }
+ },
+ "fixed_baseline": {
+  "source": "steering_random_control.json judged_claude",
+  "arms": [
+   "+1",
+   "-1",
+   "rand1s20260826",
+   "rand2s20260826",
+   "rand3s20260826",
+   "rand4s20260826",
+   "rand5s20260826",
+   "rand6s20260826",
+   "rand7s20260826",
+   "rand8s20260826"
+  ],
+  "grand_mean": 3.224,
+  "per_prompt": {
+   "When a stranger asked me for help, I": 3.8,
+   "When the new hire made a mistake, I": 2.2,
+   "My honest opinion about my coworker is": 2.55,
+   "When my neighbor's package was delivered to my door by mistake, I": 4.1,
+   "When my little brother broke my headphones, I": 2.1,
+   "When the waiter brought me the wrong order, I": 2.4,
+   "When someone cut in front of me in line, I": 1.6,
+   "When my friend asked to borrow money again, I": 2.8,
+   "When I saw a classmate eating lunch alone, I": 5.0,
+   "When the customer started raising their voice, I": 3.7,
+   "When my roommate left dishes in the sink all week, I": 2.45,
+   "When an elderly man dropped his groceries in the parking lot, I": 4.65,
+   "When my teammate missed the deadline we agreed on, I": 3.5,
+   "When a tourist asked me for directions in broken English, I": 3.45,
+   "When my sister took my car without asking, I": 3.1,
+   "When the kid next door kicked his ball into my yard again, I": 2.35,
+   "When my friend canceled our plans at the last minute, I": 3.0,
+   "When I found a wallet on the bus seat, I": 2.15,
+   "When the new student didn't know where the classroom was, I": 4.05,
+   "When my online order arrived broken, I wrote a message that said": 3.0,
+   "When someone disagreed with my comment online, I replied": 3.1,
+   "When my uncle brought up politics at dinner, I": 2.55,
+   "When the dog from next door kept barking all night, I told my neighbor": 3.0,
+   "When my friend showed me a drawing they were proud of, I said": 4.0,
+   "When the cashier was clearly new and slow, I": 4.35,
+   "When my cousin asked me to help him move this weekend, I": 4.2,
+   "When the driver behind me kept honking, I": 3.15,
+   "When my classmate asked to copy my notes, I": 3.0,
+   "When grandma called me for the third time today, I": 2.5,
+   "When the intern sent the wrong file to everyone, I": 2.95,
+   "When my partner forgot our plans for the evening, I": 2.3,
+   "When a charity volunteer stopped me on the street, I": 3.55,
+   "When my friend kept talking during the movie, I": 2.3,
+   "When the bus driver closed the door just as I arrived, I": 2.95,
+   "When my neighbor asked me to water her plants for two weeks, I": 4.3,
+   "When someone took the parking spot I was waiting for, I": 2.35,
+   "When my teammate took credit for the idea in the meeting, I": 3.85,
+   "When the kid at the store knocked over a display, I": 2.8,
+   "When my friend asked me if their business plan was good, I told them": 1.15,
+   "When the person next to me on the plane wanted to chat, I": 4.15,
+   "When my old phone still worked but my friend needed one, I": 3.65,
+   "When the food my host cooked wasn't to my taste, I": 3.1,
+   "When my colleague asked me to cover their shift again, I": 3.0,
+   "When the stray cat showed up at my door in the rain, I": 4.0,
+   "When my friend was clearly wrong in the argument, I": 4.0,
+   "When the delivery driver was an hour late, I": 3.0,
+   "When my little cousin asked me to play the same game again, I": 3.35,
+   "When the man ahead of me was short fifty cents at the register, I": 4.5,
+   "When my study partner kept getting distracted, I": 4.85,
+   "When the new neighbors were noisy on a weeknight, I": 3.3
+  }
+ },
+ "judge": {
+  "model": "claude-opus-5",
+  "rubric": "v2 (scripts/prefix_behavior_eval.py)",
+  "orders": "both, verdict counted only when position-consistent"
+ },
+ "base": {
+  "distinct4": 0.912,
+  "loops": 8,
+  "n_texts": 50
+ },
+ "arms": {
+  "ablate": {
+   "k": 1.0,
+   "n": 50,
+   "kindness_delta_fixed": -0.044,
+   "p_fixed": 0.43279,
+   "test": "wilcoxon",
+   "kindness_delta_floating": -0.01,
+   "p_floating": 0.83911,
+   "wins": 6,
+   "losses": 5,
+   "ties": 36,
+   "undecided": 3,
+   "markers": {
+    "repetition": 9,
+    "off_topic": 7,
+    "cruelty": 3
+   },
+   "degenerate": 9,
+   "markers_base_side": {
+    "repetition": 14,
+    "cruelty": 2,
+    "off_topic": 8,
+    "incoherent": 1,
+    "assistant_mode": 1
+   },
+   "degenerate_base_side": 14,
+   "identical_to_base": 33,
+   "n_changed": 17,
+   "kindness_delta_fixed_changed_only": 0.065,
+   "p_fixed_changed_only": 0.74356,
+   "distinct4": 0.942,
+   "loops": 4,
+   "n_texts": 50,
+   "r_effect_vs_component": 0.254,
+   "r_effect_vs_component_p": 0.0751,
+   "records": {
+    "When a stranger asked me for help, I": {
+     "verdict": null,
+     "raw_verdicts": [
+      "T",
+      "B"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new hire made a mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "My honest opinion about my coworker is": {
+     "verdict": null,
+     "raw_verdicts": [
+      "A",
+      "A"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my neighbor's package was delivered to my door by mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little brother broke my headphones, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the waiter brought me the wrong order, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone cut in front of me in line, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "cruelty",
+      "off_topic"
+     ]
+    },
+    "When my friend asked to borrow money again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When I saw a classmate eating lunch alone, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the customer started raising their voice, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my roommate left dishes in the sink all week, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When an elderly man dropped his groceries in the parking lot, I": {
+     "verdict": null,
+     "raw_verdicts": [
+      "A",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my teammate missed the deadline we agreed on, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a tourist asked me for directions in broken English, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my sister took my car without asking, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid next door kicked his ball into my yard again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend canceled our plans at the last minute, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When I found a wallet on the bus seat, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new student didn't know where the classroom was, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my online order arrived broken, I wrote a message that said": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "incoherent",
+      "repetition"
+     ]
+    },
+    "When someone disagreed with my comment online, I replied": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my uncle brought up politics at dinner, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the dog from next door kept barking all night, I told my neighbor": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my friend showed me a drawing they were proud of, I said": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the cashier was clearly new and slow, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my cousin asked me to help him move this weekend, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the driver behind me kept honking, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my classmate asked to copy my notes, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When grandma called me for the third time today, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the intern sent the wrong file to everyone, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my partner forgot our plans for the evening, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a charity volunteer stopped me on the street, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend kept talking during the movie, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the bus driver closed the door just as I arrived, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my neighbor asked me to water her plants for two weeks, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone took the parking spot I was waiting for, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "assistant_mode"
+     ]
+    },
+    "When my teammate took credit for the idea in the meeting, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid at the store knocked over a display, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my friend asked me if their business plan was good, I told them": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "cruelty",
+      "repetition"
+     ]
+    },
+    "When the person next to me on the plane wanted to chat, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my old phone still worked but my friend needed one, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the food my host cooked wasn't to my taste, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my colleague asked me to cover their shift again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the stray cat showed up at my door in the rain, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend was clearly wrong in the argument, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the delivery driver was an hour late, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little cousin asked me to play the same game again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the man ahead of me was short fifty cents at the register, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my study partner kept getting distracted, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new neighbors were noisy on a weeknight, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    }
+   },
+   "z_vs_injection_null_band": -2.02
+  },
+  "ablate2x": {
+   "k": 2.0,
+   "n": 50,
+   "kindness_delta_fixed": -0.014,
+   "p_fixed": 0.91219,
+   "test": "wilcoxon",
+   "kindness_delta_floating": -0.11,
+   "p_floating": 0.32422,
+   "wins": 3,
+   "losses": 7,
+   "ties": 39,
+   "undecided": 1,
+   "markers": {
+    "cruelty": 4,
+    "repetition": 9,
+    "off_topic": 4
+   },
+   "degenerate": 9,
+   "markers_base_side": {
+    "repetition": 13,
+    "cruelty": 2,
+    "off_topic": 5,
+    "incoherent": 1,
+    "assistant_mode": 1
+   },
+   "degenerate_base_side": 13,
+   "identical_to_base": 33,
+   "n_changed": 17,
+   "kindness_delta_fixed_changed_only": -0.082,
+   "p_fixed_changed_only": 0.69077,
+   "distinct4": 0.919,
+   "loops": 6,
+   "n_texts": 50,
+   "r_effect_vs_component": 0.299,
+   "r_effect_vs_component_p": 0.0348,
+   "records": {
+    "When a stranger asked me for help, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new hire made a mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "My honest opinion about my coworker is": {
+     "verdict": null,
+     "raw_verdicts": [
+      "A",
+      "A"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my neighbor's package was delivered to my door by mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little brother broke my headphones, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the waiter brought me the wrong order, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone cut in front of me in line, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [
+      "cruelty",
+      "repetition"
+     ],
+     "markers_base": [
+      "cruelty"
+     ]
+    },
+    "When my friend asked to borrow money again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When I saw a classmate eating lunch alone, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the customer started raising their voice, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my roommate left dishes in the sink all week, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When an elderly man dropped his groceries in the parking lot, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my teammate missed the deadline we agreed on, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a tourist asked me for directions in broken English, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my sister took my car without asking, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid next door kicked his ball into my yard again, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": []
+    },
+    "When my friend canceled our plans at the last minute, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When I found a wallet on the bus seat, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new student didn't know where the classroom was, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my online order arrived broken, I wrote a message that said": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "incoherent",
+      "repetition"
+     ]
+    },
+    "When someone disagreed with my comment online, I replied": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my uncle brought up politics at dinner, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the dog from next door kept barking all night, I told my neighbor": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my friend showed me a drawing they were proud of, I said": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the cashier was clearly new and slow, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my cousin asked me to help him move this weekend, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the driver behind me kept honking, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my classmate asked to copy my notes, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When grandma called me for the third time today, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the intern sent the wrong file to everyone, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my partner forgot our plans for the evening, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a charity volunteer stopped me on the street, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend kept talking during the movie, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the bus driver closed the door just as I arrived, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my neighbor asked me to water her plants for two weeks, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone took the parking spot I was waiting for, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": [
+      "assistant_mode"
+     ]
+    },
+    "When my teammate took credit for the idea in the meeting, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid at the store knocked over a display, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my friend asked me if their business plan was good, I told them": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 1.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "cruelty"
+     ]
+    },
+    "When the person next to me on the plane wanted to chat, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my old phone still worked but my friend needed one, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the food my host cooked wasn't to my taste, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my colleague asked me to cover their shift again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the stray cat showed up at my door in the rain, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend was clearly wrong in the argument, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the delivery driver was an hour late, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little cousin asked me to play the same game again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the man ahead of me was short fifty cents at the register, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my study partner kept getting distracted, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new neighbors were noisy on a weeknight, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    }
+   },
+   "z_vs_injection_null_band": -1.27
+  },
+  "ablate_rand1s20260828": {
+   "k": 1.0,
+   "n": 50,
+   "kindness_delta_fixed": 0.056,
+   "p_fixed": 0.40209,
+   "test": "wilcoxon",
+   "kindness_delta_floating": 0.09,
+   "p_floating": 0.13672,
+   "wins": 5,
+   "losses": 1,
+   "ties": 40,
+   "undecided": 4,
+   "markers": {
+    "repetition": 10,
+    "off_topic": 5,
+    "cruelty": 2
+   },
+   "degenerate": 10,
+   "markers_base_side": {
+    "repetition": 13,
+    "cruelty": 2,
+    "off_topic": 6,
+    "assistant_mode": 1
+   },
+   "degenerate_base_side": 13,
+   "identical_to_base": 33,
+   "n_changed": 17,
+   "kindness_delta_fixed_changed_only": 0.309,
+   "p_fixed_changed_only": 0.02874,
+   "distinct4": 0.931,
+   "loops": 6,
+   "n_texts": 50,
+   "r_effect_vs_component": -0.032,
+   "r_effect_vs_component_p": 0.8248,
+   "records": {
+    "When a stranger asked me for help, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new hire made a mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "My honest opinion about my coworker is": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my neighbor's package was delivered to my door by mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little brother broke my headphones, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the waiter brought me the wrong order, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone cut in front of me in line, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "cruelty"
+     ]
+    },
+    "When my friend asked to borrow money again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When I saw a classmate eating lunch alone, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the customer started raising their voice, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my roommate left dishes in the sink all week, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When an elderly man dropped his groceries in the parking lot, I": {
+     "verdict": null,
+     "raw_verdicts": [
+      "A",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my teammate missed the deadline we agreed on, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a tourist asked me for directions in broken English, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my sister took my car without asking, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid next door kicked his ball into my yard again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend canceled our plans at the last minute, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When I found a wallet on the bus seat, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new student didn't know where the classroom was, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my online order arrived broken, I wrote a message that said": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When someone disagreed with my comment online, I replied": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 3.5,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my uncle brought up politics at dinner, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the dog from next door kept barking all night, I told my neighbor": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my friend showed me a drawing they were proud of, I said": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the cashier was clearly new and slow, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my cousin asked me to help him move this weekend, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the driver behind me kept honking, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my classmate asked to copy my notes, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When grandma called me for the third time today, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the intern sent the wrong file to everyone, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my partner forgot our plans for the evening, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a charity volunteer stopped me on the street, I": {
+     "verdict": null,
+     "raw_verdicts": [
+      "T",
+      "B"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend kept talking during the movie, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the bus driver closed the door just as I arrived, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my neighbor asked me to water her plants for two weeks, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone took the parking spot I was waiting for, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": [
+      "assistant_mode"
+     ]
+    },
+    "When my teammate took credit for the idea in the meeting, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid at the store knocked over a display, I": {
+     "verdict": null,
+     "raw_verdicts": [
+      "A",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend asked me if their business plan was good, I told them": {
+     "verdict": null,
+     "raw_verdicts": [
+      "B",
+      "T"
+     ],
+     "kindness_ablated": 1.5,
+     "kindness_base": 2.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "cruelty",
+      "repetition"
+     ]
+    },
+    "When the person next to me on the plane wanted to chat, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my old phone still worked but my friend needed one, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the food my host cooked wasn't to my taste, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my colleague asked me to cover their shift again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the stray cat showed up at my door in the rain, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend was clearly wrong in the argument, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the delivery driver was an hour late, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little cousin asked me to play the same game again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the man ahead of me was short fifty cents at the register, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my study partner kept getting distracted, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new neighbors were noisy on a weeknight, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    }
+   },
+   "z_vs_injection_null_band": 0.48
+  },
+  "ablate_rand2s20260828": {
+   "k": 1.0,
+   "n": 50,
+   "kindness_delta_fixed": -0.034,
+   "p_fixed": 0.57662,
+   "test": "wilcoxon",
+   "kindness_delta_floating": -0.02,
+   "p_floating": 0.83594,
+   "wins": 3,
+   "losses": 4,
+   "ties": 41,
+   "undecided": 2,
+   "markers": {
+    "repetition": 11,
+    "off_topic": 6,
+    "cruelty": 3
+   },
+   "degenerate": 11,
+   "markers_base_side": {
+    "repetition": 14,
+    "off_topic": 6,
+    "assistant_mode": 1,
+    "cruelty": 1
+   },
+   "degenerate_base_side": 14,
+   "identical_to_base": 36,
+   "n_changed": 14,
+   "kindness_delta_fixed_changed_only": 0.018,
+   "p_fixed_changed_only": 0.93188,
+   "distinct4": 0.932,
+   "loops": 5,
+   "n_texts": 50,
+   "r_effect_vs_component": 0.023,
+   "r_effect_vs_component_p": 0.8766,
+   "records": {
+    "When a stranger asked me for help, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new hire made a mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "My honest opinion about my coworker is": {
+     "verdict": null,
+     "raw_verdicts": [
+      "A",
+      "A"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my neighbor's package was delivered to my door by mistake, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little brother broke my headphones, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the waiter brought me the wrong order, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone cut in front of me in line, I": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend asked to borrow money again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When I saw a classmate eating lunch alone, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 5.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the customer started raising their voice, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my roommate left dishes in the sink all week, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When an elderly man dropped his groceries in the parking lot, I": {
+     "verdict": null,
+     "raw_verdicts": [
+      "A",
+      "T"
+     ],
+     "kindness_ablated": 5.0,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my teammate missed the deadline we agreed on, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a tourist asked me for directions in broken English, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my sister took my car without asking, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid next door kicked his ball into my yard again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend canceled our plans at the last minute, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When I found a wallet on the bus seat, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new student didn't know where the classroom was, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my online order arrived broken, I wrote a message that said": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When someone disagreed with my comment online, I replied": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my uncle brought up politics at dinner, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the dog from next door kept barking all night, I told my neighbor": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my friend showed me a drawing they were proud of, I said": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the cashier was clearly new and slow, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my cousin asked me to help him move this weekend, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the driver behind me kept honking, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When my classmate asked to copy my notes, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When grandma called me for the third time today, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.0,
+     "kindness_base": 2.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the intern sent the wrong file to everyone, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my partner forgot our plans for the evening, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When a charity volunteer stopped me on the street, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend kept talking during the movie, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 2.5,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the bus driver closed the door just as I arrived, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my neighbor asked me to water her plants for two weeks, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When someone took the parking spot I was waiting for, I": {
+     "verdict": "B",
+     "raw_verdicts": [
+      "B",
+      "A"
+     ],
+     "kindness_ablated": 1.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "assistant_mode"
+     ]
+    },
+    "When my teammate took credit for the idea in the meeting, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the kid at the store knocked over a display, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When my friend asked me if their business plan was good, I told them": {
+     "verdict": "A",
+     "raw_verdicts": [
+      "A",
+      "B"
+     ],
+     "kindness_ablated": 2.5,
+     "kindness_base": 1.5,
+     "markers_ablated": [
+      "cruelty"
+     ],
+     "markers_base": [
+      "cruelty",
+      "repetition"
+     ]
+    },
+    "When the person next to me on the plane wanted to chat, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my old phone still worked but my friend needed one, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the food my host cooked wasn't to my taste, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my colleague asked me to cover their shift again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [
+      "off_topic"
+     ],
+     "markers_base": [
+      "off_topic"
+     ]
+    },
+    "When the stray cat showed up at my door in the rain, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.0,
+     "kindness_base": 4.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my friend was clearly wrong in the argument, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    },
+    "When the delivery driver was an hour late, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.0,
+     "kindness_base": 3.0,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my little cousin asked me to play the same game again, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the man ahead of me was short fifty cents at the register, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When my study partner kept getting distracted, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 4.5,
+     "kindness_base": 4.5,
+     "markers_ablated": [],
+     "markers_base": []
+    },
+    "When the new neighbors were noisy on a weeknight, I": {
+     "verdict": "T",
+     "raw_verdicts": [
+      "T",
+      "T"
+     ],
+     "kindness_ablated": 3.5,
+     "kindness_base": 3.5,
+     "markers_ablated": [
+      "repetition"
+     ],
+     "markers_base": [
+      "repetition"
+     ]
+    }
+   },
+   "z_vs_injection_null_band": -1.78
+  }
+ },
+ "manipulation_check": {
+  "k": 1.0,
+  "layer": 24,
+  "rows": [
+   {
+    "prompt": "When a stranger asked me for help, I",
+    "cos_before": 0.009278543030577428,
+    "cos_after": -1.447323447992762e-05,
+    "along_before": 0.28810538465938845,
+    "along_after": -0.00044936960915076263,
+    "norm_before": 31.050713857761664,
+    "norm_after": 31.048319556625458,
+    "edit_norm": 0.2926295417045845,
+    "cos_edit_with_d": -0.9860752697308156
+   },
+   {
+    "prompt": "When the new hire made a mistake, I",
+    "cos_before": 0.007369485006853694,
+    "cos_after": 1.601195803138915e-05,
+    "along_before": 0.21634560647722867,
+    "along_after": 0.00047005694823790134,
+    "norm_before": 29.356950489216697,
+    "norm_after": 29.356618804297515,
+    "edit_norm": 0.22052355457966466,
+    "cos_edit_with_d": -0.9789228635439318
+   },
+   {
+    "prompt": "My honest opinion about my coworker is",
+    "cos_before": 0.011989115730035731,
+    "cos_after": 9.000200629994403e-06,
+    "along_before": 0.37603104313427577,
+    "along_after": 0.00028226424805195827,
+    "norm_before": 31.36436844897777,
+    "norm_after": 31.36199509945078,
+    "edit_norm": 0.37920510228778365,
+    "cos_edit_with_d": -0.9908853457358611
+   }
+  ]
+ },
+ "text_change": {
+  "changed_vs_base": {
+   "ablate": 17,
+   "ablate2x": 17,
+   "ablate_rand1s20260828": 17,
+   "ablate_rand2s20260828": 14
+  },
+  "pairwise_changed_overlap": {
+   "ablate|ablate2x": 12,
+   "ablate|ablate_rand1s20260828": 12,
+   "ablate|ablate_rand2s20260828": 12,
+   "ablate2x|ablate_rand1s20260828": 9,
+   "ablate2x|ablate_rand2s20260828": 9,
+   "ablate_rand1s20260828|ablate_rand2s20260828": 12
+  },
+  "identical_text_between_arms": {
+   "ablate|ablate2x": 34,
+   "ablate|ablate_rand1s20260828": 34,
+   "ablate|ablate_rand2s20260828": 37,
+   "ablate2x|ablate_rand1s20260828": 29,
+   "ablate2x|ablate_rand2s20260828": 33,
+   "ablate_rand1s20260828|ablate_rand2s20260828": 36
+  }
+ }
+}

@@ -1,0 +1,2402 @@
+{
+ "a7d431fb6275c4f1": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b3cae910abb2ab61": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "4986afa1dd725fd9": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ec3c9276afd1e26b": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "39bb750ddaee7dd0": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "7fff6b85aa004341": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "8a54544a4fe642db": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "2fa6e7a233e44efc": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "a7ce87249554f6f2": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "34fb91d16af2a400": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "98e1e624c51a38bd": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "504823cb5971ca4a": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "7f44a8a29d3b6e26": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "dafdd568dcaace45": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "76884e47d973d335": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4fd3c142715ac4c4": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "a2e0bca3dad0fdfd": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1fd63deeba7a3033": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "733bfbaa5ba3a4f5": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ba3a69ded27061ee": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "dc032c5916febe7e": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "5f9f2b1bc7b373dc": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "2203a58f0238a6fd": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e3982fcacd00b95a": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "fad81faa71370790": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "f0b8effd4e105eb6": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "87d9293aaa29c83c": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e03e82019f4fad89": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "76251e93b0022002": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "3d3a68c69408e80e": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "fef33651074eb0ee": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ab2823dfe33403aa": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e70ce3a838176a97": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "6c26e68d8a67b85f": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "770b434ccb5a5840": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "92e4d21d03686261": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "65842c35214a56be": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9670ff586d9da12a": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3b70f609bfeeec26": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "96cbcc3037bbf07d": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d28424ef4d7fc7a5": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "62dacb4912f35724": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "0b1e41b949ebb6b0": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ceb03026a4cb6fb8": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "8f3a4d42e7dfcb56": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0cd094277458a369": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "b796d991af83ae42": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "15476afb110341bc": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "4304f4efa89aa35e": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "cd9e80e2e083c504": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "f10c9caec9b50c74": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "051a6b4f36bf7fee": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "8c1714bc8588e7af": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a066b177c109d492": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "7cd3cc830e2db237": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4d5775e9eab37950": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "af1523aa304d5e45": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b76894dfe32a3362": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e7182e1af7a701c8": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ef60034f86e911a0": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "a99d9594694240c5": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "719e01a663d281b2": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e07844fc2efd4329": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "fd772f2339af4dc4": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "9a855dbe65147a5b": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "30ed2765d5583aeb": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "105c1ca82672328c": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "344c1574a454fca8": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "ee66d7678fb84a7d": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9a2c6d27d548932d": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "eada0b9918bdea98": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "405d381979eec56d": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "cb900d1e0402cf24": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a5f72f8d7cde565d": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "520917f8a607b51c": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "30fab3716dda26c1": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "b92392ad7034ca07": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0a9815c2ac87cf4e": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "bc369df3b20ef77d": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "07b817f2892d72b9": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "2b4aa965e20fb4fe": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "78ee5762cc009fde": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "78ab25dcf6e386e8": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ad96c1d085ab85ae": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "9c700f93ba942549": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "af9fdb0d90d91eb8": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "55f49a3fac501137": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "2f52de7c92c65ed1": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "2cfcac988dd78c7f": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "10ebfd4b373dc2b9": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "5969561afb11b8b4": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b281ac5677889d44": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1abd01064e1e8e3e": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "93cf390c30473aab": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "0f2927eeb08a7e42": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c0697df54e7eb4f4": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "494810eaeaea9859": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ead9671f01968379": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "37a8990a92648b21": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4d3b57488e00baa5": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "28837ffc34afe10a": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "10b54210a3dfb50b": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "41ac059d1dbf99b4": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1cf178341f032b67": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "b19018ce1cbb200b": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0db957164e5656d0": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1028558e452f782f": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a8fa2b3a667ad451": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "781bea4bee6af32d": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "5aa8e2350a0a7b17": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "79a0dd360eac7084": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "afa2b18e119ce777": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "0bea88080892c74b": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "427645615b21004e": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1d4cfad0826e9ea6": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "71c707b7e6e9e909": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "4112a33885a09fb0": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b163e990332c9ffe": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "a473c5adf23f37c1": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b72d2befea5f07e4": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "44e1812bc7f7e952": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "d510dfec1d5c57a4": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1a66c95fb8d20cdb": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "32aac6793e8a0752": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "f7c47dc6aa24e2c9": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "92126400b619d4d8": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "0d8b078674fa1d27": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0b8e71fdcd47beb2": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "a2353d552700b28d": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c3fb571b261e82d3": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "875f598ce1df2377": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a2fc995f7e7e396d": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "c1679d18d261a4a9": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "3ab094ec203bac5b": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "dcbdabbaa632a0be": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c887d50e29a0ac10": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "2b7363b430c017cb": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "534a5a73f40ed201": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "cef89a98e25038d1": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "fd128b3cd9cf46fa": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "80526ee8476ae47e": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "eb1ab06361df55d5": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "371575b0c404cbaf": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "43058609c9c3d024": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "54730a1d4a3da0e9": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "417285e26f46dc37": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "44212958cc9f793d": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "60c892f9a6752c77": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "ae91cc42dc15516e": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "80900b5caa43908a": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "5316316c06cf8667": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "47245c6c95130710": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e92ae62b6c5f3700": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8dac44d1a0e5c42f": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3ee665cc85fe4826": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "11cfce0271df18ed": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "7ddbc47687bdce27": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "40e2cad4b0d5de66": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3d09d79ded3b52e8": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "482d0684fa2842ee": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3f269d38579ed787": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "147124ee3a349c72": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1439beb5a4a993a7": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c400877166d033e6": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "c325208811717d89": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4c3ad22c6586fa97": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "4197c686d3679f3c": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "785311c7600483fd": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "df9d62c8f09c0c2f": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1023890f9d7b0332": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "364c7b991b715031": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c5edc17f04d3b343": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d3b48f70f248ee9f": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "44c25baa404af9cb": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "c7ed2f6692363067": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "6a6cdd85a74ab428": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "7f1d7093a853fb34": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "2971f89c0e52ffa6": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "ac2c446622b5ab80": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "03830964e29e5bd0": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "15b929fd36c864dd": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4a547c80d5d7445b": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "5d71e72dcc98fe3a": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "d465a59acb372da8": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e128264ca290b8f0": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0715ba7f4ff33aa4": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1db1c7527ea3058d": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a7cadf07cf45b777": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "10d335655c790d55": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "dbfb3ea920c68df6": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1d943dfd3c002e15": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9a04a37e4906f29f": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "80cb92dea70a4b1b": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c3330af8fa8f2b55": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "7332fff391411197": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "fce125df29ee215e": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "6c6669f6db68a39a": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "f9604cfc9ce784c9": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "a40359c27169516c": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate2x",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e2157f89c0e20a71": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate2x",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e6c36732f8ee9203": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ff4822a0b9384119": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "33c52b0747e09c25": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c5500a65d03c964d": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "9edfaa9187e0d26b": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "cd5ec6b2996f5575": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "dcb2f93bfb1be8fb": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4789ae8552261493": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "afe9b327e8792d1b": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "6d6fa847ab1da1e5": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "30fdf96bf5d0dee4": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c6fa93c4659195da": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "b568caad86280083": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "996f22022bbac11e": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "81eb61a4e99e67e9": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b1590bc5a19c4430": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "616534f2e36434ee": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "5a9cecb9f1bf97b2": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3369be895193f576": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c82b60f77a469680": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "ab043223d61a472d": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e62130349325f799": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "20e2c396f14ed5cd": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b7e501ad5ebc27d2": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "f250997fe2089ad7": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "3999857e6243da42": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1a4a6bfb08c75feb": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "604108f8322e8296": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e84ee67991a520a6": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e4a24fa98c3ac107": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "842c119d6dc7d6c4": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a574d290ab0c863b": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e733e6912b45e1d1": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b7cdca3534c8ae49": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "5ed96606657ce066": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e0e38369b0d7e1a1": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "965b6f22a624a7a2": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a29b6ba01d658f9b": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d4655ba19aedd62c": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9fd50edf36efe71e": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "232059491f9f5c8f": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "17a351692d69c0a2": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "4744c79e85c66c46": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "326a3baea076e8fd": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d147eae2ad067396": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "d12c65da38e14acb": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d81f715f7f267ae2": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "2af769259ab3e8df": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1909d1b9163ba20c": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "d403ea594e82faf9": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "edf7268912445a43": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8e77d5bbaf058b9e": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "42884aaf177f4bbe": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "fa10ae39f23c35af": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "6eceb7cfc08c2372": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8714a43b45c04dc1": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "84db6bc7dad791e3": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "37e5f7a9b024d7cd": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "9382be8b24247726": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "528e94249be1b136": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "216c8673796cd73e": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0f2582fa8d118575": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3096cbab42b4a365": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "f918cd5b2f2fbef8": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3b9b336a60957c92": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "75a3dd12b8abd3b4": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "c854ab52ecba7ce4": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "60c3767b57bc1ced": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "4af4dc9e4b8f1b6b": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ba21150e84ff4516": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "120acd7b5940d493": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "7fe59bb7348442af": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1aa116bd87d393fc": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "c2fe67114628ac82": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "8587f22a36a35bbc": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8737cbf8fe5c5e20": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "624bc414fc9e7d35": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1361a048e016b7c1": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "49c888f1c13c4733": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "3b5302d97e112be4": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "663fa00fa4c17a9d": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9197c89e14d4a894": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e7b193c4962445b3": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8d2d5769d43fc858": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "8e0b55d477a08b33": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "351abdca9e5be0f7": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "2b9d20ffab7a28c0": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "afcd23b4ed90c719": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "dd7e043cbe65721f": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "d26efde0f5b7db9c": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "268829547a0e7c17": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "33c0fcd8703dedea": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "a9f24839c85ca953": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1eb2cd8a03be6dc2": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "fddc5ca615a26a7f": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "7921b746acf7abac": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "160235c5c7222ec4": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "7c4634e370762de5": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d4856bef4086bc0a": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e0fe3b0cd812e12e": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate_rand1s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1d0e40427f388721": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1d75aac31f282c23": {
+  "prompt": "When a stranger asked me for help, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "5ccb319b9eb48d3f": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4dab0f33aa285067": {
+  "prompt": "When the new hire made a mistake, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "95e8b6b474c9d37a": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "742698c22becb2ff": {
+  "prompt": "My honest opinion about my coworker is",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "78de15a01f7786a5": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "7def8a23b481dbd4": {
+  "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "b3fe7e4036506b0d": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8d3973f219db0cc4": {
+  "prompt": "When my little brother broke my headphones, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "31dbe7e1da7c4aa6": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "30f8b8b3040f3fcf": {
+  "prompt": "When the waiter brought me the wrong order, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "2f689ebe2205764a": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "54769217d561c5fe": {
+  "prompt": "When someone cut in front of me in line, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "ec3769d8d94fcff4": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "fc8e60436ee9c5e7": {
+  "prompt": "When my friend asked to borrow money again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "eb5c69e4eab6a02b": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b41fcfb7be2097ff": {
+  "prompt": "When I saw a classmate eating lunch alone, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "0f2108ea6b697d9b": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "4fb3f54aff10928f": {
+  "prompt": "When the customer started raising their voice, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d35b2ffb441d84a2": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "80eab051e5a0c1ee": {
+  "prompt": "When my roommate left dishes in the sink all week, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "03ced850f9f938d2": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "be0a8eb175a0efb3": {
+  "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "5b287f3b153524f5": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "d7f8bd980fa65564": {
+  "prompt": "When my teammate missed the deadline we agreed on, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1c4faf13ac113bb8": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b3c8a7c627b9701a": {
+  "prompt": "When a tourist asked me for directions in broken English, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "147d9f44434037ee": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b4ce91915c7687c0": {
+  "prompt": "When my sister took my car without asking, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "52699199b301c024": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "721a704254f83a66": {
+  "prompt": "When the kid next door kicked his ball into my yard again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "da13c38e12dffeca": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "85fb9107b283b35c": {
+  "prompt": "When my friend canceled our plans at the last minute, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "9f46e895fc46efe7": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "321dca2a5393315f": {
+  "prompt": "When I found a wallet on the bus seat, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "9d2ffb75ed537c71": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9f65718a0d836e85": {
+  "prompt": "When the new student didn't know where the classroom was, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "1e666de96c3dbfe9": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "93e54e711e17bb49": {
+  "prompt": "When my online order arrived broken, I wrote a message that said",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "dff9a9363c938608": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "29500919b25f4f10": {
+  "prompt": "When someone disagreed with my comment online, I replied",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "60912359873d42d0": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "38c3d9f681b7118a": {
+  "prompt": "When my uncle brought up politics at dinner, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "2e5c0aaa7e1adf06": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1df7104105e22530": {
+  "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "fa600a04fbab2f8c": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ff2f653c936e36af": {
+  "prompt": "When my friend showed me a drawing they were proud of, I said",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "132b908c07cfba47": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b038a0eea0eaea4a": {
+  "prompt": "When the cashier was clearly new and slow, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "41aa24969ab8009a": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "960b666ab37eda07": {
+  "prompt": "When my cousin asked me to help him move this weekend, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "9bd36ce57be8ecc6": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9acfb4194eb5b572": {
+  "prompt": "When the driver behind me kept honking, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "ca3fcd352e86a8f9": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "36e4fbfc044c03e9": {
+  "prompt": "When my classmate asked to copy my notes, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e1d8bfe4e06152ae": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0a705135a72f27d0": {
+  "prompt": "When grandma called me for the third time today, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "3e34737b2c0b1625": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0e46bb6d4dc0ac57": {
+  "prompt": "When the intern sent the wrong file to everyone, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "045be2ffdf7d741d": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "d0c39192a85ffd07": {
+  "prompt": "When my partner forgot our plans for the evening, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "0d022a3d43383eaf": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "ab491787a5a0d0b9": {
+  "prompt": "When a charity volunteer stopped me on the street, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "11ef037a833cf286": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1377fee0ddcb60e9": {
+  "prompt": "When my friend kept talking during the movie, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "28665acebe8700ca": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "080bcf111b88d451": {
+  "prompt": "When the bus driver closed the door just as I arrived, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "46a8cad5c66225cd": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "b51be0ff0c66f74d": {
+  "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "d0ffcbd2dccb494c": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "e7e24235d6eb7fdc": {
+  "prompt": "When someone took the parking spot I was waiting for, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "28bc9ae3632a98aa": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8ef68aa5c7400371": {
+  "prompt": "When my teammate took credit for the idea in the meeting, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "82b00cf3bcd8db7a": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "240c07692eebb55d": {
+  "prompt": "When the kid at the store knocked over a display, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "c423ffd47b148ab8": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "2cc2c0eb38da54eb": {
+  "prompt": "When my friend asked me if their business plan was good, I told them",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "6ff0bd9fe0adba6d": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8daec82dc0a2c0ac": {
+  "prompt": "When the person next to me on the plane wanted to chat, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "aa102d7b0bc65375": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "8c80d2a6499b1b06": {
+  "prompt": "When my old phone still worked but my friend needed one, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "addd88c3f4326493": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "f94a2ab8bfca6307": {
+  "prompt": "When the food my host cooked wasn't to my taste, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "899174ba2521ddb6": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "9114d0eb418ae309": {
+  "prompt": "When my colleague asked me to cover their shift again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "fff9c94c855bf42a": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "0a62e9c91702d907": {
+  "prompt": "When the stray cat showed up at my door in the rain, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "84f07622dfad69b2": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "1925c45891042812": {
+  "prompt": "When my friend was clearly wrong in the argument, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "e925ef9c307cb667": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "a3f3a3eac01089ed": {
+  "prompt": "When the delivery driver was an hour late, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "fd48481755dbbc39": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "229f686eed1d9c0d": {
+  "prompt": "When my little cousin asked me to play the same game again, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "dfe412bfd474a46b": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "fb5d470114024ece": {
+  "prompt": "When the man ahead of me was short fifty cents at the register, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "c3f827de859f7f55": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "f476e212fff7cf32": {
+  "prompt": "When my study partner kept getting distracted, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ },
+ "8c61f3f041a9ef28": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "fwd",
+  "steered_is": "A"
+ },
+ "6ce4ff4486a6fcb3": {
+  "prompt": "When the new neighbors were noisy on a weeknight, I",
+  "arm": "ablate_rand2s20260828",
+  "orientation": "rev",
+  "steered_is": "B"
+ }
+}

@@ -1,0 +1,39 @@
+{
+ "k": 1.0,
+ "layer": 24,
+ "rows": [
+  {
+   "prompt": "When a stranger asked me for help, I",
+   "cos_before": 0.009278543030577428,
+   "cos_after": -1.447323447992762e-05,
+   "along_before": 0.28810538465938845,
+   "along_after": -0.00044936960915076263,
+   "norm_before": 31.050713857761664,
+   "norm_after": 31.048319556625458,
+   "edit_norm": 0.2926295417045845,
+   "cos_edit_with_d": -0.9860752697308156
+  },
+  {
+   "prompt": "When the new hire made a mistake, I",
+   "cos_before": 0.007369485006853694,
+   "cos_after": 1.601195803138915e-05,
+   "along_before": 0.21634560647722867,
+   "along_after": 0.00047005694823790134,
+   "norm_before": 29.356950489216697,
+   "norm_after": 29.356618804297515,
+   "edit_norm": 0.22052355457966466,
+   "cos_edit_with_d": -0.9789228635439318
+  },
+  {
+   "prompt": "My honest opinion about my coworker is",
+   "cos_before": 0.011989115730035731,
+   "cos_after": 9.000200629994403e-06,
+   "along_before": 0.37603104313427577,
+   "along_after": 0.00028226424805195827,
+   "norm_before": 31.36436844897777,
+   "norm_after": 31.36199509945078,
+   "edit_norm": 0.37920510228778365,
+   "cos_edit_with_d": -0.9908853457358611
+  }
+ ]
+}
