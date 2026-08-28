@@ -73,6 +73,7 @@ STRUCTURE.md
 steering_arena.zip
 steering_arena/
 
-# MATS application materials — drafts and other people's docs, never publish
+# MATS application materials. The docs now live in _local/ (already ignored above);
+# the root-level rule stays as a guard in case the folder is re-downloaded there.
 Neel Nanda/
 my_document.md
