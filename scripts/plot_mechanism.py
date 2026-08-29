@@ -205,6 +205,76 @@ def _intensity_key(fig):
              fontsize=7.8, color=MUTED)
 
 
+
+def make_doc(prefix, inj, rnd, null, alpha):
+    """A second render sized for a Google Doc.
+
+    Built at EXACTLY the 6.5in usable page width, so 1pt in the figure is 1pt on
+    the page and nothing shrinks. The key and the caveats are NOT baked in; they
+    belong in the document caption as real, selectable 10pt text. See
+    data/analysis/figures/mechanism_caption.md for the text to paste.
+    """
+    fig, ax = plt.subplots(figsize=(6.5, 4.35), facecolor=SURFACE)
+    ax.set_facecolor(SURFACE)
+    lo, hi = min(y for _, _, y in rnd), max(y for _, _, y in rnd)
+    _quadrant_field(ax, lo, hi)
+
+    ax.scatter([x for _, x, _ in rnd], [y for _, _, y in rnd], s=26, marker="^",
+               facecolor="none", edgecolor=AQUA, linewidth=1.2, zorder=3,
+               label="random direction (n=8)")
+    ax.scatter([x for _, x, _ in null], [y for _, _, y in null], s=34, marker="v",
+               color=AQUA, edgecolor=SURFACE, linewidth=0.9, zorder=4,
+               label="ablation: remove d")
+    solid = [t for t in inj if t[3]]
+    hollow = [t for t in inj if not t[3]]
+    ax.scatter([x for _, x, _, _ in solid], [y for _, _, y, _ in solid], s=58, marker="s",
+               color=ORANGE, edgecolor=SURFACE, linewidth=0.9, zorder=5,
+               label="vector injection along d")
+    ax.scatter([x for _, x, _, _ in hollow], [y for _, _, y, _ in hollow], s=58, marker="s",
+               facecolor="none", edgecolor=ORANGE, linewidth=1.3, zorder=5)
+    ax.scatter([x for _, x, _ in prefix], [y for _, _, y in prefix], s=58, marker="o",
+               color=BLUE, edgecolor=SURFACE, linewidth=0.9, zorder=6,
+               label="token prefix (leaderboard entry)")
+
+    lab = {"pro_top": (7, 4, "left"), "pro_coherent": (7, -10, "left"),
+           "anti_hostile": (8, -3, "left")}
+    for arm, x, y in prefix:
+        if arm in lab:
+            dx, dy, ha = lab[arm]
+            ax.annotate(arm, (x, y), textcoords="offset points", xytext=(dx, dy),
+                        ha=ha, fontsize=7, color=INK2)
+    for name, x, y, _ in inj:
+        if name in ("+1\u00b7d", "\u22121\u00b7d"):
+            ax.annotate(name, (x, y), textcoords="offset points",
+                        xytext=(0, 9 if y >= 0 else -14), ha="center", fontsize=7, color=INK2)
+
+    ax.set_xscale("symlog", linthresh=1.0, linscale=0.55)
+    ax.set_xlim(-60, 60)
+    ax.set_ylim(-1.45, 1.05)
+    ax.set_xlabel("displacement along d at layer 24  (symlog)", fontsize=8, color=INK2)
+    ax.set_ylabel("judged behavioural shift", fontsize=8, color=INK2)
+    ax.set_title("A token prefix moves 32x less along d than an injection,\nand does 1.9x the behaviour",
+                 fontsize=9.5, color=INK, pad=8, loc="left")
+    ax.annotate("", xy=(0.95, 0.676), xytext=(30.07, 0.365),
+                arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.8, ls=(0, (3, 3))), zorder=2)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    for sp in ("left", "bottom"):
+        ax.spines[sp].set_color(MUTED)
+    ax.tick_params(colors=INK2, labelsize=7.5)
+    ax.grid(True, axis="y", color="#e6e5e1", lw=0.7, zorder=0)
+    ax.set_axisbelow(True)
+    # the corners are taken by the quadrant labels; the mid-left band is the only
+    # reliably empty block in this aspect ratio
+    ax.legend(loc="center left", bbox_to_anchor=(0.015, 0.30), frameon=False,
+              fontsize=7, labelcolor=INK2, handletextpad=0.4, labelspacing=0.35)
+    fig.tight_layout(pad=0.6)
+    for ext in ("png", "svg"):
+        fig.savefig(OUT / f"mechanism_doc.{ext}", dpi=300, facecolor=SURFACE,
+                    metadata={"Date": None} if ext == "svg" else None)
+    print(f"wrote {OUT/'mechanism_doc.png'} (6.5in wide: 1pt here = 1pt on the page)")
+
+
 def main():
     prefix, inj, rnd, null, alpha = load()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -313,6 +383,7 @@ def main():
         fig.savefig(OUT / f"mechanism.{ext}", dpi=200, facecolor=SURFACE,
                     metadata={"Date": None} if ext == "svg" else None)
     print(f"wrote {OUT/'mechanism.png'} and .svg")
+    make_doc(prefix, inj, rnd, null, alpha)
     print(f"  prefix arms   {len(prefix)}   injections {len(inj)}   randoms {len(rnd)}   ablation {len(null)}")
 
 
