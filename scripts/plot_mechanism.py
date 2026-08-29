@@ -126,18 +126,18 @@ def _quadrant_field(ax, lo, hi, x0=-60, x1=60, y0=-1.45, y1=1.05):
     # axes-x 0.20 is NEGATIVE displacement, 0.80 is positive
     ax.text(0.80, 0.965, "+d \u2192 pro-human:\nthe direction works", color="#0a7a0a",
             transform=ax.transAxes, **t)
-    ax.text(0.20, 0.965, "\u2212d \u2192 pro-human: INVERTED,\nand good (nothing here)",
+    ax.text(0.20, 0.965, "\u2212d \u2192 pro-human: INVERTED,\nand good \u2014 INTERESTING HERE",
             color="#3b2e86", transform=ax.transAxes, **t)
     ax.text(0.20, 0.038, "\u2212d \u2192 anti-human: works,\nbut buys cruelty cheaply",
             color="#8a6100", transform=ax.transAxes, **t)
-    ax.text(0.80, 0.038, "+d \u2192 anti-human: INVERTED,\nand bad (nulls only)",
+    ax.text(0.80, 0.038, "+d \u2192 anti-human: INVERTED,\nand bad \u2014 INTERESTING HERE",
             color="#a82f2f", transform=ax.transAxes, **t)
 
 
 def _intensity_key(fig):
     """Explain what the colour intensity means. The mapping is identical in all
     four quadrants, so one ramp defines all of them; hue only says which quadrant."""
-    cax = fig.add_axes([0.545, 0.135, 0.235, 0.020])
+    cax = fig.add_axes([0.545, 0.180, 0.235, 0.019])
     g = np.linspace(0, 1, 256)[None, :]
     rgba = np.zeros((1, 256, 4))
     rgba[..., :3] = matplotlib.colors.to_rgb(Q_HUE[1])
@@ -152,18 +152,18 @@ def _intensity_key(fig):
         sp.set_linewidth(0.8)
     cax.set_facecolor(SURFACE)
 
-    fig.text(0.545, 0.213, "COLOUR INTENSITY  =  behavioural efficiency",
+    fig.text(0.545, 0.252, "COLOUR INTENSITY  =  behavioural efficiency",
              fontsize=9, color=INK, fontweight="bold")
-    fig.text(0.545, 0.185,
+    fig.text(0.545, 0.226,
              "|shift in behaviour|  \u00f7  (|displacement along d| + 1)",
              fontsize=8.5, color=INK2)
-    fig.text(0.545, 0.093,
+    fig.text(0.545, 0.140,
              "pale = no effect, or a large push on d to get it.  saturated = a large",
              fontsize=8, color=MUTED)
-    fig.text(0.545, 0.073,
+    fig.text(0.545, 0.121,
              "effect from almost no push. Zeroed inside the measured noise band.",
              fontsize=8, color=MUTED)
-    fig.text(0.545, 0.043,
+    fig.text(0.545, 0.090,
              "COLOUR HUE  =  which quadrant, labelled in each corner of the plot.",
              fontsize=8, color=MUTED)
 
@@ -171,7 +171,7 @@ def _intensity_key(fig):
 def main():
     prefix, inj, rnd, null, alpha = load()
     OUT.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(9.2, 7.0), facecolor=SURFACE)
+    fig, ax = plt.subplots(figsize=(9.2, 7.4), facecolor=SURFACE)
     ax.set_facecolor(SURFACE)
 
     # The "did nothing" zone, taken from the data rather than drawn at y=0:
@@ -254,17 +254,20 @@ def main():
     ax.tick_params(colors=INK2, labelsize=9.5)
     ax.grid(True, axis="y", color="#e6e5e1", lw=0.8, zorder=0)
     ax.set_axisbelow(True)
-    leg = ax.legend(loc="upper left", bbox_to_anchor=(-0.005, -0.125), ncol=1,
+    leg = ax.legend(loc="upper left", bbox_to_anchor=(-0.005, -0.115), ncol=1,
                     frameon=False, fontsize=9.5, labelcolor=INK2, handletextpad=0.6)
     leg.set_zorder(10)
 
-    fig.text(0.012, 0.028,
-             "Fixed-baseline deltas, mean of two blind judges. Hollow squares: ±0.5·d are single-judge,",
-             fontsize=8, color=MUTED)
-    fig.text(0.012, 0.008,
-             "floating-baseline. anti_top is excluded: its behaviour is withdrawn as unmeasurable.",
-             fontsize=8, color=MUTED)
-    fig.tight_layout(rect=(0, 0.048, 1, 1))
+    foot = [
+        "Fixed-baseline deltas, mean of two blind judges. Hollow squares:",
+        "±0.5·d are single-judge, floating-baseline. anti_top is excluded:",
+        "its behaviour is withdrawn as unmeasurable. No arm with a measurable",
+        "effect landed in either INVERTED quadrant; the only two points in one",
+        "are the score-zero controls, both inside the noise band.",
+    ]
+    for i, line in enumerate(foot):
+        fig.text(0.012, 0.083 - i * 0.0185, line, fontsize=8, color=MUTED)
+    fig.tight_layout(rect=(0, 0.105, 1, 1))
     _intensity_key(fig)
     for ext in ("png", "svg"):
         fig.savefig(OUT / f"mechanism.{ext}", dpi=200, facecolor=SURFACE,
