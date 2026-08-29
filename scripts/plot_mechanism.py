@@ -39,6 +39,7 @@ OUT = AN / "figures"
 
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 NEUTRAL = "#f0efec"          # diverging midpoint: reads as "nothing"
+GOOD, CRITICAL = "#0ca30c", "#d03b3b"   # status palette, used only as region tints
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#8a8985"
 SURFACE = "#fcfcfb"
 
@@ -90,7 +91,7 @@ def load():
 def main():
     prefix, inj, rnd, null, alpha = load()
     OUT.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(9.2, 5.6), facecolor=SURFACE)
+    fig, ax = plt.subplots(figsize=(9.2, 6.5), facecolor=SURFACE)
     ax.set_facecolor(SURFACE)
 
     # The "did nothing" zone, taken from the data rather than drawn at y=0:
@@ -100,11 +101,22 @@ def main():
     ax.axhspan(lo, hi, color=NEUTRAL, zorder=0)
     ax.axhline(0, color=MUTED, lw=1, zorder=1)
     ax.axvline(0, color=MUTED, lw=1, zorder=1)
-    # region labels live on the left, which is the only reliably empty column
-    ax.text(0.015, 0.955, "\u2191  MORE pro-human", transform=ax.transAxes,
-            fontsize=9.5, color=INK2, ha="left", va="center")
-    ax.text(0.015, 0.045, "\u2193  LESS pro-human", transform=ax.transAxes,
-            fontsize=9.5, color=INK2, ha="left", va="center")
+    # The interesting regions are defined by BOTH axes, not by the sign of y:
+    # a large behavioural shift bought with almost no displacement along d.
+    # x-bound = 1 unit, an order of magnitude below the smallest injection dose
+    # (15.04) and the edge of the linear zone. y-bounds = the random band.
+    # y-bound is NOT the band edge: with 8 draws that edge is far too tight to act
+    # as a threshold, and using it puts the two null controls (-0.13, -0.07) inside
+    # the ALARMING region. Require a shift 3x the band's half-width instead, so
+    # "large" means clearly outside the noise rather than barely outside it.
+    XB = 1.0
+    YB = 3 * (hi - lo) / 2
+    ax.fill_between([-XB, XB], YB, 1.05, color=GOOD, alpha=0.085, lw=0, zorder=0)
+    ax.fill_between([-XB, XB], -1.45, -YB, color=CRITICAL, alpha=0.085, lw=0, zorder=0)
+    ax.text(0, 0.965, "DESIRED  \u2191  large pro-human shift, almost no push on d",
+            fontsize=9, color="#0a7a0a", ha="center", va="center")
+    ax.text(0, -1.375, "ALARMING  \u2193  large anti-human shift, almost no push on d",
+            fontsize=9, color="#a82f2f", ha="center", va="center")
     # the band's left end is empty; label it by proximity rather than a second
     # arrow, which would cross the ablation annotation
     ax.text(-52, hi + 0.045, "no measurable change:\nthe span of 8 random directions",
@@ -169,16 +181,18 @@ def main():
     ax.tick_params(colors=INK2, labelsize=9.5)
     ax.grid(True, axis="y", color="#e6e5e1", lw=0.8, zorder=0)
     ax.set_axisbelow(True)
-    leg = ax.legend(loc="lower right", frameon=False, fontsize=9.5, labelcolor=INK2)
+    leg = ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.135), ncol=2,
+                    frameon=False, fontsize=9.5, labelcolor=INK2,
+                    handletextpad=0.6, columnspacing=2.4)
     leg.set_zorder(10)
 
-    fig.text(0.012, 0.032,
+    fig.text(0.012, 0.028,
              "Fixed-baseline deltas, mean of two blind judges. Hollow squares: ±0.5·d are single-judge,",
              fontsize=8, color=MUTED)
-    fig.text(0.012, 0.010,
+    fig.text(0.012, 0.008,
              "floating-baseline. anti_top is excluded: its behaviour is withdrawn as unmeasurable.",
              fontsize=8, color=MUTED)
-    fig.tight_layout(rect=(0, 0.055, 1, 1))
+    fig.tight_layout(rect=(0, 0.048, 1, 1))
     for ext in ("png", "svg"):
         fig.savefig(OUT / f"mechanism.{ext}", dpi=200, facecolor=SURFACE,
                     metadata={"Date": None} if ext == "svg" else None)
