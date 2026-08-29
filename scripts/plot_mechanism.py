@@ -42,11 +42,17 @@ BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 NEUTRAL = "#f0efec"          # diverging midpoint: reads as "nothing"
 # One hue per quadrant. Meaning is carried by the four corner labels; colour only
 # reinforces it, so the field stays under alpha 0.30 and never speaks alone.
-Q_HUE = {1: "#0ca30c",   # +x +y  the direction works as labelled
-         2: "#4a3aa7",   # -x +y  inverted and GOOD: the interesting anomaly
-         3: "#fab219",   # -x -y  works, but buys anti-human behaviour cheaply
-         4: "#d03b3b"}   # +x -y  inverted and BAD: pushed pro-human, got the opposite
-ALPHA_MAX, EFF_FULL = 0.30, 0.60   # EFF_FULL = the largest efficiency observed
+# TWO hues, not four. Four low-alpha tints are indistinguishable: composited onto
+# the surface they fail CVD separation at deutan dE 2.3 (validator, --pairs all),
+# which is "identical". The distinction that actually matters is ALIGNED vs
+# INVERTED, i.e. which intensity law applies; WHICH quadrant is carried by position
+# and by the label in each corner. At alpha 0.42 this pair clears both separation
+# checks (deutan dE 13.4, normal-vision 17.7). Inverted quadrants also carry a
+# hatch, so the split survives greyscale printing and full colour blindness.
+ALIGNED_HUE, INVERTED_HUE = "#0ca30c", "#4a3aa7"
+Q_HUE = {1: ALIGNED_HUE, 3: ALIGNED_HUE, 2: INVERTED_HUE, 4: INVERTED_HUE}
+ALPHA_MAX, EFF_FULL = 0.42, 0.60   # EFF_FULL = the largest efficiency observed
+XMAX, YMAX, FLOOR = 60.0, 1.45, 0.15   # axis extents, and the inverted-quadrant floor
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#8a8985"
 SURFACE = "#fcfcfb"
 
@@ -108,10 +114,23 @@ def _quadrant_field(ax, lo, hi, x0=-60, x1=60, y0=-1.45, y1=1.05):
                          np.linspace(1, x1, 260)[1:]])
     ys = np.linspace(y0, y1, 420)
     X, Y = np.meshgrid(xs, ys)
-    eff = np.abs(Y) / (np.abs(X) + 1.0)
-    inside = (Y >= lo) & (Y <= hi)                 # measured noise: no claim here
-    a = ALPHA_MAX * np.clip(eff / EFF_FULL, 0, 1) * (~inside)
     q = np.where(X > 0, np.where(Y > 0, 1, 4), np.where(Y > 0, 2, 3))
+    aligned = (q == 1) | (q == 3)
+
+    # ALIGNED quadrants: the direction did what it says, so what is notable is
+    # EFFICIENCY. A big shift from a small push is remarkable; the same shift
+    # bought with a 30-unit push is not. Peaks on the centre line.
+    eff = np.clip((np.abs(Y) / (np.abs(X) + 1.0)) / EFF_FULL, 0, 1)
+
+    # INVERTED quadrants: the logic reverses. A small push that inverts could be
+    # noise. Pushing HARD against d and still getting the opposite outcome is a
+    # flat contradiction, and the harder the push the more damning. So intensity
+    # grows with BOTH |x| and |y|, and peaks in the far corners, not the centre.
+    u = np.log10(1 + np.abs(X)) / np.log10(1 + XMAX)      # 0 at x=0, 1 at the edge
+    contra = np.clip(np.abs(Y) / YMAX, 0, 1) * (FLOOR + (1 - FLOOR) * u)
+
+    inside = (Y >= lo) & (Y <= hi)                 # measured noise: no claim here
+    a = ALPHA_MAX * np.where(aligned, eff, contra) * (~inside)
     rgba = np.zeros(X.shape + (4,))
     for k, hexs in Q_HUE.items():
         m = q == k
@@ -120,58 +139,76 @@ def _quadrant_field(ax, lo, hi, x0=-60, x1=60, y0=-1.45, y1=1.05):
             rgba[..., c][m] = rgb[c]
     rgba[..., 3] = a
     ax.pcolormesh(xs, ys, rgba, shading="auto", zorder=0, rasterized=True)
+
+    # secondary encoding: the inverted quadrants are hatched, so aligned-vs-inverted
+    # survives greyscale and does not rest on hue alone
+    from matplotlib.patches import Rectangle
+    for rx, ry, rw, rh in ((x0, 0, -x0, y1), (0, y0, x1, -y0)):
+        ax.add_patch(Rectangle((rx, ry), rw, rh, facecolor="none", edgecolor=INVERTED_HUE,
+                               hatch="\\\\", linewidth=0, alpha=0.085, zorder=0.25))
     ax.axhspan(lo, hi, color=NEUTRAL, zorder=0.5)
 
     t = dict(fontsize=8.6, ha="center", va="center", linespacing=1.3)
     # axes-x 0.20 is NEGATIVE displacement, 0.80 is positive
     ax.text(0.80, 0.965, "+d \u2192 pro-human:\nthe direction works", color="#0a7a0a",
             transform=ax.transAxes, **t)
-    ax.text(0.20, 0.965, "\u2212d \u2192 pro-human: INVERTED,\nand good \u2014 INTERESTING HERE",
+    ax.text(0.20, 0.965, "\u2212d \u2192 pro-human: INVERTED\nWEIRD HERE \u2014 suspect the rig",
             color="#3b2e86", transform=ax.transAxes, **t)
     ax.text(0.20, 0.038, "\u2212d \u2192 anti-human: works,\nbut buys cruelty cheaply",
-            color="#8a6100", transform=ax.transAxes, **t)
-    ax.text(0.80, 0.038, "+d \u2192 anti-human: INVERTED,\nand bad \u2014 INTERESTING HERE",
-            color="#a82f2f", transform=ax.transAxes, **t)
+            color="#0a7a0a", transform=ax.transAxes, **t)
+    ax.text(0.80, 0.038, "+d \u2192 anti-human: INVERTED\nWEIRD HERE \u2014 suspect the rig",
+            color="#3b2e86", transform=ax.transAxes, **t)
 
 
-def _intensity_key(fig):
-    """Explain what the colour intensity means. The mapping is identical in all
-    four quadrants, so one ramp defines all of them; hue only says which quadrant."""
-    cax = fig.add_axes([0.545, 0.180, 0.235, 0.019])
+def _ramp(fig, rect, hexs, labels):
+    cax = fig.add_axes(rect)
     g = np.linspace(0, 1, 256)[None, :]
     rgba = np.zeros((1, 256, 4))
-    rgba[..., :3] = matplotlib.colors.to_rgb(Q_HUE[1])
+    rgba[..., :3] = matplotlib.colors.to_rgb(hexs)
     rgba[..., 3] = g * ALPHA_MAX
-    cax.imshow(rgba, aspect="auto", origin="lower", extent=(0, EFF_FULL, 0, 1))
+    cax.imshow(rgba, aspect="auto", origin="lower", extent=(0, 1, 0, 1))
     cax.set_yticks([])
-    cax.set_xticks([0, EFF_FULL / 2, EFF_FULL])
-    cax.set_xticklabels(["0", f"{EFF_FULL/2:.2f}", f"\u2265 {EFF_FULL:.2f}"], fontsize=8)
-    cax.tick_params(colors=INK2, length=3, pad=2)
+    cax.set_xticks([0, 1])
+    cax.set_xticklabels(labels, fontsize=7.6)
+    cax.tick_params(colors=INK2, length=0, pad=2)
+    for lbl, ha in zip(cax.get_xticklabels(), ("left", "right")):
+        lbl.set_horizontalalignment(ha)
     for sp in cax.spines.values():
         sp.set_color(MUTED)
         sp.set_linewidth(0.8)
     cax.set_facecolor(SURFACE)
 
-    fig.text(0.545, 0.252, "COLOUR INTENSITY  =  behavioural efficiency",
+
+def _intensity_key(fig):
+    """Two laws, because the two kinds of quadrant disagree about what is notable."""
+    X0 = 0.545
+    fig.text(X0, 0.268, "COLOUR INTENSITY  =  how notable that combination is",
              fontsize=9, color=INK, fontweight="bold")
-    fig.text(0.545, 0.226,
-             "|shift in behaviour|  \u00f7  (|displacement along d| + 1)",
-             fontsize=8.5, color=INK2)
-    fig.text(0.545, 0.140,
-             "pale = no effect, or a large push on d to get it.  saturated = a large",
-             fontsize=8, color=MUTED)
-    fig.text(0.545, 0.121,
-             "effect from almost no push. Zeroed inside the measured noise band.",
-             fontsize=8, color=MUTED)
-    fig.text(0.545, 0.090,
-             "COLOUR HUE  =  which quadrant, labelled in each corner of the plot.",
-             fontsize=8, color=MUTED)
+    fig.text(X0, 0.246, "and the two kinds of quadrant define it oppositely:",
+             fontsize=8.3, color=INK2)
+
+    fig.text(X0, 0.212, "ALIGNED (green, plain)  \u2014  EFFICIENCY", fontsize=8.3, color="#0a7a0a")
+    fig.text(X0, 0.192, "|shift| \u00f7 (|displacement| + 1). A big shift from a small",
+             fontsize=7.8, color=MUTED)
+    fig.text(X0, 0.174, "push is notable; the same shift for a 30-unit push is not.",
+             fontsize=7.8, color=MUTED)
+    _ramp(fig, [X0, 0.148, 0.235, 0.017], Q_HUE[1], ["0", "\u2265 0.60"])
+
+    fig.text(X0, 0.104, "INVERTED (violet, hatched)  \u2014  CONTRADICTION", fontsize=8.3, color="#3b2e86")
+    fig.text(X0, 0.084, "grows with BOTH. A small push that inverts could be noise; a hard",
+             fontsize=7.8, color=MUTED)
+    fig.text(X0, 0.066, "push that still inverts is more likely a broken rig than a finding.",
+             fontsize=7.8, color=MUTED)
+    _ramp(fig, [X0, 0.040, 0.235, 0.017], Q_HUE[2], ["weak", "strong"])
+
+    fig.text(X0, 0.010, "HUE + HATCH  =  aligned or inverted; corner labels name each.",
+             fontsize=7.8, color=MUTED)
 
 
 def main():
     prefix, inj, rnd, null, alpha = load()
     OUT.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(9.2, 7.4), facecolor=SURFACE)
+    fig, ax = plt.subplots(figsize=(9.6, 8.2), facecolor=SURFACE)
     ax.set_facecolor(SURFACE)
 
     # The "did nothing" zone, taken from the data rather than drawn at y=0:
@@ -228,7 +265,7 @@ def main():
                     xytext=(0, 13 if y >= 0 else -20), ha="center", fontsize=9, color=INK2)
     # the four aqua down-triangles overlap; label the GROUP from clear space
     ax.annotate("remove d entirely\n(and random-direction controls):\nnothing happens",
-                xy=(-0.42, 0.02), xytext=(-6.0, 0.46), fontsize=9.5, color=INK2,
+                xy=(-0.42, 0.02), xytext=(-4.2, 0.64), fontsize=9.5, color=INK2,
                 ha="center", va="center",
                 arrowprops=dict(arrowstyle="->", color=MUTED, lw=1,
                                 connectionstyle="arc3,rad=0.15"))
@@ -254,20 +291,23 @@ def main():
     ax.tick_params(colors=INK2, labelsize=9.5)
     ax.grid(True, axis="y", color="#e6e5e1", lw=0.8, zorder=0)
     ax.set_axisbelow(True)
-    leg = ax.legend(loc="upper left", bbox_to_anchor=(-0.005, -0.115), ncol=1,
-                    frameon=False, fontsize=9.5, labelcolor=INK2, handletextpad=0.6)
-    leg.set_zorder(10)
+    # legend in FIGURE coords so it sits level with the key block, instead of
+    # hanging off the axes and leaving a dead column beneath it
+    h, l = ax.get_legend_handles_labels()
+    fig.legend(h, l, loc="upper left", bbox_to_anchor=(0.028, 0.262), ncol=1,
+               frameon=False, fontsize=9.5, labelcolor=INK2, handletextpad=0.6)
 
     foot = [
         "Fixed-baseline deltas, mean of two blind judges. Hollow squares:",
         "±0.5·d are single-judge, floating-baseline. anti_top is excluded:",
         "its behaviour is withdrawn as unmeasurable. No arm with a measurable",
         "effect landed in either INVERTED quadrant; the only two points in one",
-        "are the score-zero controls, both inside the noise band.",
+        "are the score-zero controls, both inside the noise band. Treat anything",
+        "that lands there as a bug in the harness until proven otherwise.",
     ]
     for i, line in enumerate(foot):
-        fig.text(0.012, 0.083 - i * 0.0185, line, fontsize=8, color=MUTED)
-    fig.tight_layout(rect=(0, 0.105, 1, 1))
+        fig.text(0.028, 0.112 - i * 0.0175, line, fontsize=8, color=MUTED)
+    fig.tight_layout(rect=(0, 0.285, 1, 1))
     _intensity_key(fig)
     for ext in ("png", "svg"):
         fig.savefig(OUT / f"mechanism.{ext}", dpi=200, facecolor=SURFACE,
