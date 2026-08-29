@@ -28,6 +28,9 @@ from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
+# deterministic SVG: fixed salt for element ids, no date stamp on save, so
+# regenerating the figure does not dirty the tree with a spurious diff
+matplotlib.rcParams["svg.hashsalt"] = "steering-arena-mechanism"
 import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -162,7 +165,8 @@ def main():
              fontsize=8, color=MUTED)
     fig.tight_layout(rect=(0, 0.055, 1, 1))
     for ext in ("png", "svg"):
-        fig.savefig(OUT / f"mechanism.{ext}", dpi=200, facecolor=SURFACE)
+        fig.savefig(OUT / f"mechanism.{ext}", dpi=200, facecolor=SURFACE,
+                    metadata={"Date": None} if ext == "svg" else None)
     print(f"wrote {OUT/'mechanism.png'} and .svg")
     print(f"  prefix arms   {len(prefix)}   injections {len(inj)}   randoms {len(rnd)}   ablation {len(null)}")
 
