@@ -26,6 +26,7 @@ import json
 import statistics as st
 from pathlib import Path
 
+import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 # deterministic SVG: fixed salt for element ids, no date stamp on save, so
@@ -39,7 +40,13 @@ OUT = AN / "figures"
 
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 NEUTRAL = "#f0efec"          # diverging midpoint: reads as "nothing"
-GOOD, CRITICAL = "#0ca30c", "#d03b3b"   # status palette, used only as region tints
+# One hue per quadrant. Meaning is carried by the four corner labels; colour only
+# reinforces it, so the field stays under alpha 0.30 and never speaks alone.
+Q_HUE = {1: "#0ca30c",   # +x +y  the direction works as labelled
+         2: "#4a3aa7",   # -x +y  inverted and GOOD: the interesting anomaly
+         3: "#fab219",   # -x -y  works, but buys anti-human behaviour cheaply
+         4: "#d03b3b"}   # +x -y  inverted and BAD: pushed pro-human, got the opposite
+ALPHA_MAX, EFF_FULL = 0.30, 0.60   # EFF_FULL = the largest efficiency observed
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#8a8985"
 SURFACE = "#fcfcfb"
 
@@ -88,6 +95,45 @@ def load():
     return prefix, inj, rnd, null, alpha
 
 
+def _quadrant_field(ax, lo, hi, x0=-60, x1=60, y0=-1.45, y1=1.05):
+    """Colour the plane by quadrant, with intensity = behavioural efficiency.
+
+    intensity ~ |y| / (|x| + 1): a large shift bought with a small push on d is
+    saturated; the same shift bought with a 30-unit push is nearly colourless.
+    Contours of constant intensity are V-shaped, which is the point: travelling
+    further along d for the same effect is worse, not better.
+    Inside the measured noise band the field is suppressed to zero.
+    """
+    xs = np.concatenate([np.linspace(x0, -1, 260), np.linspace(-1, 1, 260)[1:],
+                         np.linspace(1, x1, 260)[1:]])
+    ys = np.linspace(y0, y1, 420)
+    X, Y = np.meshgrid(xs, ys)
+    eff = np.abs(Y) / (np.abs(X) + 1.0)
+    inside = (Y >= lo) & (Y <= hi)                 # measured noise: no claim here
+    a = ALPHA_MAX * np.clip(eff / EFF_FULL, 0, 1) * (~inside)
+    q = np.where(X > 0, np.where(Y > 0, 1, 4), np.where(Y > 0, 2, 3))
+    rgba = np.zeros(X.shape + (4,))
+    for k, hexs in Q_HUE.items():
+        m = q == k
+        rgb = matplotlib.colors.to_rgb(hexs)
+        for c in range(3):
+            rgba[..., c][m] = rgb[c]
+    rgba[..., 3] = a
+    ax.pcolormesh(xs, ys, rgba, shading="auto", zorder=0, rasterized=True)
+    ax.axhspan(lo, hi, color=NEUTRAL, zorder=0.5)
+
+    t = dict(fontsize=8.6, ha="center", va="center", linespacing=1.3)
+    # axes-x 0.20 is NEGATIVE displacement, 0.80 is positive
+    ax.text(0.80, 0.965, "+d \u2192 pro-human:\nthe direction works", color="#0a7a0a",
+            transform=ax.transAxes, **t)
+    ax.text(0.20, 0.965, "\u2212d \u2192 pro-human: INVERTED,\nand good (nothing here)",
+            color="#3b2e86", transform=ax.transAxes, **t)
+    ax.text(0.20, 0.038, "\u2212d \u2192 anti-human: works,\nbut buys cruelty cheaply",
+            color="#8a6100", transform=ax.transAxes, **t)
+    ax.text(0.80, 0.038, "+d \u2192 anti-human: INVERTED,\nand bad (nulls only)",
+            color="#a82f2f", transform=ax.transAxes, **t)
+
+
 def main():
     prefix, inj, rnd, null, alpha = load()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -109,14 +155,7 @@ def main():
     # as a threshold, and using it puts the two null controls (-0.13, -0.07) inside
     # the ALARMING region. Require a shift 3x the band's half-width instead, so
     # "large" means clearly outside the noise rather than barely outside it.
-    XB = 1.0
-    YB = 3 * (hi - lo) / 2
-    ax.fill_between([-XB, XB], YB, 1.05, color=GOOD, alpha=0.085, lw=0, zorder=0)
-    ax.fill_between([-XB, XB], -1.45, -YB, color=CRITICAL, alpha=0.085, lw=0, zorder=0)
-    ax.text(0, 0.965, "DESIRED  \u2191  large pro-human shift, almost no push on d",
-            fontsize=9, color="#0a7a0a", ha="center", va="center")
-    ax.text(0, -1.375, "ALARMING  \u2193  large anti-human shift, almost no push on d",
-            fontsize=9, color="#a82f2f", ha="center", va="center")
+    _quadrant_field(ax, lo, hi)
     # the band's left end is empty; label it by proximity rather than a second
     # arrow, which would cross the ablation annotation
     ax.text(-52, hi + 0.045, "no measurable change:\nthe span of 8 random directions",
