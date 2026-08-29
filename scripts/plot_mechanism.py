@@ -38,6 +38,7 @@ AN = ROOT / "data" / "analysis"
 OUT = AN / "figures"
 
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
+NEUTRAL = "#f0efec"          # diverging midpoint: reads as "nothing"
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#8a8985"
 SURFACE = "#fcfcfb"
 
@@ -92,13 +93,27 @@ def main():
     fig, ax = plt.subplots(figsize=(9.2, 5.6), facecolor=SURFACE)
     ax.set_facecolor(SURFACE)
 
+    # The "did nothing" zone, taken from the data rather than drawn at y=0:
+    # the span of the 8 norm-matched random directions. Anything inside it is a
+    # shift no larger than what a direction unrelated to d already produces.
+    lo, hi = min(y for _, _, y in rnd), max(y for _, _, y in rnd)
+    ax.axhspan(lo, hi, color=NEUTRAL, zorder=0)
     ax.axhline(0, color=MUTED, lw=1, zorder=1)
     ax.axvline(0, color=MUTED, lw=1, zorder=1)
+    # region labels live on the left, which is the only reliably empty column
+    ax.text(0.015, 0.955, "\u2191  MORE pro-human", transform=ax.transAxes,
+            fontsize=9.5, color=INK2, ha="left", va="center")
+    ax.text(0.015, 0.045, "\u2193  LESS pro-human", transform=ax.transAxes,
+            fontsize=9.5, color=INK2, ha="left", va="center")
+    # the band's left end is empty; label it by proximity rather than a second
+    # arrow, which would cross the ablation annotation
+    ax.text(-52, hi + 0.045, "no measurable change:\nthe span of 8 random directions",
+            fontsize=8.5, color=MUTED, ha="left", va="bottom", linespacing=1.35)
 
     # family 3 first (background): things that should do nothing
     ax.scatter([x for _, x, _ in rnd], [y for _, _, y in rnd], s=46, marker="^",
                facecolor="none", edgecolor=AQUA, linewidth=1.8, zorder=3,
-               label="random direction, full magnitude (n=8)")
+               label="random direction, full magnitude (n=8) \u2014 sets the band")
     ax.scatter([x for _, x, _ in null], [y for _, _, y in null], s=90, marker="v",
                color=AQUA, edgecolor=SURFACE, linewidth=1.5, zorder=4,
                label="ablation: remove the d component")
