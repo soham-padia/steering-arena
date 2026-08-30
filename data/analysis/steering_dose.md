@@ -36,6 +36,10 @@ only when consistent.
 
 ## Reading
 
+**Reading (b) is falsified, on the positive side.** *Qualified 2026-08-29: everything in this
+paragraph concerns `+d` only. The negative arms go the other way (see below), so "still
+climbing" must never be stated of the injection in general.*
+
 **Reading (b) is falsified.** The injection's response is still *climbing* at α = 1.0·‖R‖:
 half the dose gives less than a third of the effect, and at 0.5 the effect is not
 significant at all. The vector is not overdriven. If anything it is under-applied, and the

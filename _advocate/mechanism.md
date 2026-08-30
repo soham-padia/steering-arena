@@ -253,7 +253,9 @@ failed to clear that null, the direction-specificity claim would need restating.
 
 ---
 
-## 7. Prefill-only steering tolerates 10x to 40x the coefficient that published per-token steering tolerates, and its effect is still climbing there
+## 7. Prefill-only steering tolerates 10x to 40x the coefficient that published per-token steering tolerates, and its POSITIVE effect is still climbing there
+
+*Qualified 2026-08-29: "still climbing" holds for `+d` only. `-0.5*d` gives -0.19 and `-1.0*d` gives -0.15, i.e. the negative side reduces with dose. Both are non-significant, so this is two nulls ordering the wrong way, not a demonstration that the negative injection is overdriven.*
 
 **STRONGEST DEFENSIBLE VERSION.**
 The manipulation check measured, rather than assumed, what the intervention does: the edit is

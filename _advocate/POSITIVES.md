@@ -86,7 +86,7 @@ This got **stronger** through the audit. It was r = +0.863, p = 0.012 over 7 arm
 
 ### 3f. Prefill-only steering has headroom nobody has used
 
-Published CAA-style practice applies steering during generation at ~0.1x the normalised residual norm as a maximum, with one reproduction reporting 0.025x. This project applies **1.0x**, prefill-only, and the response is **still climbing** at that dose. So prefill-only appears to have 10 to 40x more magnitude headroom than per-token practice. New and useful. (The 0.1x / 0.025x figures are second-hand and marked unverified.)
+Published CAA-style practice applies steering during generation at ~0.1x the normalised residual norm as a maximum, with one reproduction reporting 0.025x. This project applies **1.0x**, prefill-only, and the response is **still climbing** at that dose **on the positive side only** (+0.13 at 0.5x, +0.45 at 1.0x). The negative arms reduce with dose (-0.19 at 0.5x, -0.15 at 1.0x), though both are n.s., so that is two nulls ordering the wrong way rather than evidence of overdriving. So prefill-only appears to have 10 to 40x more magnitude headroom than per-token practice. New and useful. (The 0.1x / 0.025x figures are second-hand and marked unverified.)
 
 ## 4. The methodological contributions
 
