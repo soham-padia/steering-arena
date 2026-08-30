@@ -44,8 +44,29 @@ Paired t over 50 prompts, df = 49.
 
 **It came out SPIKE.** `pro_top`'s alignment with "pro-human" exists at the layer it was
 optimised against and essentially nowhere else. Four layers away in either direction it is
-1/5 the size; at L40 it is zero to four decimal places; at L48 it is negative and
-significantly so.
+1/5 the size; at L40 it is zero to four decimal places; at L48 it is negative.
+
+*Corrected 2026-08-29: this sentence originally read "negative and significantly so". That
+overstates it and contradicts Surprise 1 below. t = -2.2 is p ~ 0.03 uncorrected, and across
+the 10 tests here (5 layers x 2 arms) it survives no multiple-comparison correction. It is
+recorded, not claimed. Note also that "essentially nowhere else" is a shade strong: L16
+(t = 3.9) and L32 (t = 4.8) are small but significantly positive.*
+
+**A null model the first pass did not run, and it sharpens the result.** If `pro_top` simply
+writes a displacement at ~L24 and the residual stream carries it forward, the later native
+shift should be about `shift_24 x cos(d_L, d_24) x (||R_24|| / ||R_L||)`. Measured against
+that prediction:
+
+| layer | carry-forward predicts | observed `pro_top` | ratio |
+|---|---|---|---|
+| 32 | +0.0141 | +0.0071 | 0.50 |
+| 40 | +0.0095 | +0.0000 | 0.00 |
+| 48 | +0.0070 | -0.0049 | -0.70 |
+
+`pro_top` decays **faster** than dilution and basis rotation alone predict, and overshoots
+into negative. The same null applied to `pro_coherent` predicts +0.0087 / +0.0058 / +0.0043
+against observed +0.0223 / +0.0207 / +0.0243, i.e. 2.6x to 5.6x above carry-forward, so it is
+being actively re-established at each depth rather than coasting.
 
 **And the control does exactly what a control is for.** `pro_coherent`, a readable
 instruction never optimised against any readout, varies by **6%** across five layers spanning
@@ -54,7 +75,8 @@ instruction never optimised against any readout, varies by **6%** across five la
 cannot be dismissed as "the L32/L40/L48 probes are just worse". The probes detect a pro-human
 prefix fine. They do not detect `pro_top`.
 
-**The board ranking is a layer-24 artifact.** Head to head on native directions:
+**The board's ranking of these two inverts at every other depth.** Head to head on native
+directions:
 
 | layer | winner |
 |---|---|
@@ -64,9 +86,15 @@ prefix fine. They do not detect `pro_top`.
 | 40 | `pro_coherent` |
 | 48 | `pro_coherent` |
 
-`pro_top` outscores `pro_coherent` on the leaderboard by **2.7×** (+0.1077 against +0.0403)
-and loses to it at **four of the five** layers where the question can be asked. It wins at
-exactly the one layer the board reads.
+`pro_top` loses to `pro_coherent` at **four of the five** layers where the question can be
+asked, and wins at exactly the one layer the board reads.
+
+*Scoped 2026-08-29.* Two things this does NOT establish. The leaderboard margin is 2.7x
+(+0.1077 against +0.0403) but that is measured on the **16 committed probes**, whereas
+everything here is the **50 eval prompts**; on the same measurement set at L24 the margin is
+**1.63x** (+0.0354 against +0.0217). Do not put the 2.7x next to this table. And no part of
+this experiment was run on the board's own probe set, so "the board ranking is an artifact"
+is an inference from a different corpus, not a measurement of the board.
 
 ## (A) Every sampled layer, projected onto `d_L24`
 
@@ -125,9 +153,19 @@ control remains missing.
    would test whether the anti soup shows the mirror-image spike.
 2. **Five native directions, all logistic, all fit on the same seed pairs.** They share a
    construction and could share a blind spot. They are not independent probes of "pro-human".
-3. **Held-out separation is 1.000 at all five layers** (`layer_sweep_olmo-3-1125-32b_logistic.json`),
-   so no native probe can be dismissed as a bad classifier. That is what licenses the L40 and
-   L48 nulls. It is a linear-separability claim, not a claim that all five encode the same thing.
+3. **Held-out separation is 1.000 at all five layers**
+   (`layer_sweep_olmo-3-1125-32b_logistic.json`), but *corrected 2026-08-29:* this cannot bear
+   the weight originally put on it. 1.000 on ~27 held-out pairs from the same 135-pair
+   distribution is a saturated metric. It cannot rank the five probes and says nothing about
+   sensitivity to out-of-distribution text such as a token soup. **What actually licenses the
+   L40 and L48 nulls is `pro_coherent`'s flatness**: those probes demonstrably move (+0.0207,
+   +0.0243, t = 9.7 and 10.6) for a semantic prefix, so the `pro_top` null there is about
+   `pro_top`, not about dead probes.
+
+   Related, and worth recording because it removes a rival explanation: **layer 24 was not
+   selected for best held-out separation.** Separation ties at 1.000 across all five, and the
+   sweep artifact's own note says "best-reading layer != best-steering layer". So the spike
+   cannot be explained by `d_L24` being the best-fitting direction by construction.
 4. **Last-token residual only.** The prefix changes every position; this reads one. A prefix
    could carry depth-general effects through earlier positions or through attention in ways
    this does not see. Inherited unchanged from `compile_check.md` Limit 1.
