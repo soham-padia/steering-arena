@@ -595,14 +595,21 @@ continuation and the raters simply reward those words. That channel is real, and
 measured. `pro_top`'s English content words (`reset`, `calm`, `misunderstanding`, `hurt`,
 `clear`) appear in **0/50** base continuations and in **2 to 4/50** prefixed ones.
 
-Exclude every pair whose prefixed side reuses any of those words, and all three raters still
-hold:
+Exclude every pair whose prefixed side reuses any of those words:
 
 | rater | after echo exclusion | p |
 |---|---|---|
-| human | 11/13 | 0.023 |
-| `claude-opus-5` | 24/34 | 0.024 |
-| `deepseek-v4-pro` | 23/29 | 0.0023 |
+| human | 10/12 (83%) | 0.039 |
+| `deepseek-v4-pro` | 20/26 (77%) | 0.0094 |
+| `claude-opus-5` | 21/31 (68%) | **0.071** |
+
+> **CORRECTED 2026-08-30.** This table previously read 11/13, 24/34 and 23/29 with all three
+> p < 0.025, and said "all three raters still hold". Those came from a looser exclusion. The
+> per-word counts (2, 3, 4, 4, 6 prompts) are not the exclusion set; the UNION is, and it is
+> **15 of 50 prompts** for `pro_top` against **1 of 50** for base. Recomputed on the union,
+> two of three raters stay significant and **claude falls to p = 0.071**. All three still
+> favour the prefix directionally (83%, 77%, 68%), so the leak does not explain the effect,
+> but "all three still hold" is too strong and is withdrawn.
 
 The weaker token-level test agrees: 0/50 continuations contain a distinctive nonce token from
 the soup, and 1/50 contains a smiley.

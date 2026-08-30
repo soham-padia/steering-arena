@@ -22,6 +22,11 @@
 
 **Strongest defensible version.** The obvious deflation of Claim 1 is that the soup smuggles English affect words into the continuation and the raters simply reward those words. That channel is real and now measured: `reset`, `calm`, `misunderstanding`, `hurt` and `clear` appear in 0 of 50 base continuations and in 3, 4, 2, 4 and 2 of 50 `pro_top` continuations respectively (NEW, recomputed from `prefix_blind.csv`). Drop every pair whose prefixed side reuses any of those words and the result holds on all three raters: human 11/13 (p = 0.023), `claude-opus-5` 24/34 (p = 0.024), `deepseek-v4-pro` 23/29 (p = 0.0023) (NEW). The audit's own weaker echo test agrees at the token level: 0 of 50 continuations contain a distinctive nonce token from the soup (`Undert`, `Rog`, `colloNL…`, `hurtEmoji`), and 1 of 50 contains a smiley (`audit` §7).
 
+**Corrected 2026-08-30.** The exclusion counts originally reported here (11/13, 24/34, 23/29) used a
+looser exclusion than the union over the five words. On the union (15 of 50 prompts), it is human
+10/12 p=0.039, deepseek 20/26 p=0.0094, claude 21/31 **p=0.071**. Directionally all three still
+favour the prefix; "all three still hold" at p<0.05 does not survive.
+
 **Fallback version.** Blinding did not fail on the pro arm, and the measured effect is not an artifact of the judge spotting vocabulary carried over from the prefix.
 
 **Why this is interesting beyond robustness.** The leak itself is the mechanism, and it points the other way from "opaque adversarial artifact". The alphabetic content of the winning soup is three human first names plus interpersonal-affect English, and the model reads it: it emits `reset the conversation with a calm tone` where the base emits nothing of the kind. The soup looks less like a random adversarial suffix and more like a compressed, ungrammatical instruction that the metric found and a person would not have written.

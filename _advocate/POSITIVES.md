@@ -36,7 +36,7 @@ Listed because the count is the point. Each was a real opportunity to fail.
 1. **Fixed-baseline re-analysis.** Effects shrink 13 to 37%, no arm changes sign.
 2. **Human blind rating.** 14-2, agrees with both machines.
 3. **Prefix-token echo.** 0 of 50 continuations contain prefix-distinctive tokens.
-4. **Content-word echo (new).** The soup's English words (`reset`, `calm`, `misunderstanding`, `hurt`, `clear`) appear 0/50 in base and 2-4/50 in prefixed continuations. **Excluding every pair containing an echo, all three raters still hold:** human 11/13 (p=0.023), claude 24/34 (p=0.024), deepseek 23/29 (p=0.0023).
+4. **Content-word echo (new).** The soup's English words (`reset`, `calm`, `misunderstanding`, `hurt`, `clear`) appear 0/50 in base and 2-4/50 in prefixed continuations. **Corrected 2026-08-30:** excluding every pair containing an echo (the UNION over the five words, 15 of 50 prompts, against 1 of 50 for base), human 10/12 (p=0.039) and deepseek 20/26 (p=0.0094) stay significant; **claude falls to 21/31, p=0.071**. All three still favour the prefix directionally, so the leak does not explain the effect, but the original "all three raters still hold" used a looser exclusion and is withdrawn.
 5. **Length.** Median continuation length 145-175 chars across all eight arms.
 6. **Two score-zero controls.** Both null.
 7. **Honesty re-judge.** 400 blind items, no general cost detected.
