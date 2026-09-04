@@ -1,9 +1,9 @@
 {
  "generated_by": "_falsifier/verify.py",
- "repo_commit": "90e8d88",
+ "repo_commit": "939d2fb",
  "independence": "written from the raw artifacts only; _falsifier/recompute.py and _falsifier/honesty_*.py were never read, imported or executed",
  "totals": {
-  "PASS": 175,
+  "PASS": 195,
   "FIXED": 4,
   "UNCHECKABLE": 2
  },
@@ -19,6 +19,9 @@
   },
   "_falsifier/recompute_result.md": {
    "PASS": 32
+  },
+  "data/analysis/coherence_confound.md": {
+   "PASS": 20
   }
  },
  "inconsistencies": [
@@ -2331,6 +2334,206 @@
    "status": "PASS",
    "tolerance": "qualitative + directional",
    "note": "The caveat is CORRECT and the demonstration is clean under claude: the point estimate FALLS (+0.540 -> +0.376, -30%) while z RISES (+4.77 -> +8.44, +77%), because the null sd falls further (0.110 -> 0.040, -64%). A statistic that grows while the effect it measures shrinks is not measuring the effect. The placement count is unchanged (8/8 below under both), which is exactly the invariance that makes it the robust readout. Two things the recompute does not say, and should: (a) the shrinkage is not a pure artifact - the floating null sd is inflated by judge base-rating noise that is real measurement error, so neither sd is 'the' right one; (b) the placement count over 8 draws is itself coarse - its finest resolution is p=1/9~0.11 one-sided, so it cannot separate z=+3.6 from z=+8.4 at all. Robust, but nearly powerless."
+  },
+  {
+   "id": "C-D4-base",
+   "claim": "| base | 0.912 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.912,
+   "actual": 0.91160043,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "distinct-4 over n=50 continuations, judge-free"
+  },
+  {
+   "id": "C-LOOP-base",
+   "claim": "| base | ... 8/50 loops |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 8,
+   "actual": 8,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "C-D4-pro_top",
+   "claim": "| pro_top | 0.990 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.99,
+   "actual": 0.99037037,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "distinct-4 over n=50 continuations, judge-free"
+  },
+  {
+   "id": "C-LOOP-pro_top",
+   "claim": "| pro_top | ... 1/50 loops |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 1,
+   "actual": 1,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "C-D4-plus1d",
+   "claim": "| plus1d | 0.872 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.872,
+   "actual": 0.87218494,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "distinct-4 over n=50 continuations, judge-free"
+  },
+  {
+   "id": "C-LOOP-plus1d",
+   "claim": "| plus1d | ... 8/50 loops |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 8,
+   "actual": 8,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "C-D4-anti_top",
+   "claim": "| anti_top | 0.744 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.744,
+   "actual": 0.74397647,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "distinct-4 over n=50 continuations, judge-free"
+  },
+  {
+   "id": "C-LOOP-anti_top",
+   "claim": "| anti_top | ... 29/50 loops |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 29,
+   "actual": 29,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "C-RAND-N",
+   "claim": "the 8 norm-matched random draws",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 8,
+   "actual": 8,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "C-PLUS1-RANK",
+   "claim": "it ranks 4th of 9 - three randoms are more degraded",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 3,
+   "actual": 3,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "count of random directions with LOWER distinct-4 than +1*d"
+  },
+  {
+   "id": "C-GAP-ALL-deepseek",
+   "claim": "| deepseek | n=50, +0.420 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.42,
+   "actual": 0.42,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "pro_top minus +1*d, paired on n=50 prompts"
+  },
+  {
+   "id": "C-GAP-CLEAN-deepseek",
+   "claim": "| deepseek | ... n=36, +0.514 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.514,
+   "actual": 0.51388889,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "same pairing, every item where anything loops dropped"
+  },
+  {
+   "id": "C-GAP-CLEAN-N-deepseek",
+   "claim": "n=36, no loop anywhere",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 36,
+   "actual": 36,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "C-PEARSON-deepseek",
+   "claim": "| deepseek | **+0.0175** |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.0175,
+   "actual": 0.01747027,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "per-item dKindness vs d distinct-4 inside the +1*d arm"
+  },
+  {
+   "id": "C-GAP-ALL-claude",
+   "claim": "| claude | n=50, +0.370 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.37,
+   "actual": 0.37,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "pro_top minus +1*d, paired on n=50 prompts"
+  },
+  {
+   "id": "C-GAP-CLEAN-claude",
+   "claim": "| claude | ... n=36, +0.389 |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.389,
+   "actual": 0.38888889,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "same pairing, every item where anything loops dropped"
+  },
+  {
+   "id": "C-GAP-CLEAN-N-claude",
+   "claim": "n=36, no loop anywhere",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 36,
+   "actual": 36,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "C-PEARSON-claude",
+   "claim": "| claude | **+0.0414** |",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": 0.0414,
+   "actual": 0.04139358,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "per-item dKindness vs d distinct-4 inside the +1*d arm"
+  },
+  {
+   "id": "C-GAP-WIDENS-deepseek",
+   "claim": "The objection predicts this collapses toward zero. It widens, under both judges.",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "clean-subset gap must exceed the all-items gap or the rebuttal fails"
+  },
+  {
+   "id": "C-GAP-WIDENS-claude",
+   "claim": "The objection predicts this collapses toward zero. It widens, under both judges.",
+   "source_doc": "data/analysis/coherence_confound.md",
+   "expected": true,
+   "actual": true,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "clean-subset gap must exceed the all-items gap or the rebuttal fails"
   }
  ]
 }

@@ -1449,6 +1449,79 @@ def check_sd_caveat():
         "qualitative + directional")
 
 
+COH = "data/analysis/coherence_confound.md"
+
+
+def check_coherence_confound():
+    """Re-derive coherence_confound.md from the caches. Guards the over-steering rebuttal.
+
+    Every number here answers the objection that `pro_top` only beats a full injection
+    because alpha = 1.0 damaged the injection arm. If a future rerun changes any of them,
+    that rebuttal is no longer supported and this fails loudly.
+    """
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "cc", str(Path(__file__).resolve().parent.parent / "scripts" / "coherence_confound.py"))
+    cc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cc)
+    inj, pre = cc.load_generations()
+
+    d4 = lambda m: st.mean(cc.distinct_n(t) for t in m.values())
+    lp = lambda m: sum(cc.looping(t) for t in m.values())
+
+    for lbl, m, exp_d4, exp_lp in (("base", inj["base"], 0.912, 8),
+                                   ("pro_top", pre["pro_top"], 0.990, 1),
+                                   ("plus1d", inj["+1"], 0.872, 8),
+                                   ("anti_top", pre["anti_top"], 0.744, 29)):
+        num(f"C-D4-{lbl}", f"| {lbl} | {exp_d4:.3f} |", COH, exp_d4, d4(m), 0.0005,
+            note=f"distinct-4 over n={len(m)} continuations, judge-free")
+        exact(f"C-LOOP-{lbl}", f"| {lbl} | ... {exp_lp}/50 loops |", COH, exp_lp, lp(m))
+
+    # the injection arm is not the most degraded thing in its own control band
+    rnd = sorted(d4(inj[a]) for a in inj if a.startswith("rand") and "ablate" not in a)
+    exact("C-RAND-N", "the 8 norm-matched random draws", COH, 8, len(rnd))
+    exact("C-PLUS1-RANK", "it ranks 4th of 9 - three randoms are more degraded",
+          COH, 3, sum(1 for r in rnd if r < d4(inj["+1"])),
+          note="count of random directions with LOWER distinct-4 than +1*d")
+
+    # the load-bearing test: the gap does not shrink when degenerate items are dropped
+    for jkey, pfile, jname, g_all, g_clean, pear in (
+            ("judged", "prefix_judge_verdicts.json", "deepseek", 0.420, 0.514, 0.0175),
+            ("judged_claude", "prefix_judge_claude.json", "claude", 0.370, 0.389, 0.0414)):
+        ij, pt = cc.injection_deltas(jkey), cc.prefix_deltas(pfile)
+        shared = [p for p in pt if p in ij and p in inj["+1"]]
+        clean = [p for p in shared if not cc.looping(inj["+1"][p])
+                 and not cc.looping(pre["pro_top"][p]) and not cc.looping(pre["base"][p])]
+        num(f"C-GAP-ALL-{jname}", f"| {jname} | n=50, {g_all:+.3f} |", COH, g_all,
+            st.mean(pt[p] - ij[p] for p in shared), 0.0005,
+            note=f"pro_top minus +1*d, paired on n={len(shared)} prompts")
+        num(f"C-GAP-CLEAN-{jname}", f"| {jname} | ... n=36, {g_clean:+.3f} |", COH, g_clean,
+            st.mean(pt[p] - ij[p] for p in clean), 0.0005,
+            note="same pairing, every item where anything loops dropped")
+        exact(f"C-GAP-CLEAN-N-{jname}", "n=36, no loop anywhere", COH, 36, len(clean))
+        # NB: over every item the judge scored in the +1*d arm, NOT the pro_top-shared
+        # subset. Restricting to shared items gives 0.0175, a different quantity.
+        items = [p for p in ij if p in inj["+1"]]
+        dk = [ij[p] for p in items]
+        dd = [cc.distinct_n(inj["+1"][p]) - cc.distinct_n(inj["base"][p]) for p in items]
+        num(f"C-PEARSON-{jname}", f"| {jname} | **{pear:+.4f}** |", COH, pear,
+            cc.pearson(dk, dd), 0.0005,
+            note="per-item dKindness vs d distinct-4 inside the +1*d arm")
+
+    # the gap must WIDEN, not shrink - this is the whole rebuttal in one assertion
+    for jkey, pfile, jname in (("judged", "prefix_judge_verdicts.json", "deepseek"),
+                               ("judged_claude", "prefix_judge_claude.json", "claude")):
+        ij, pt = cc.injection_deltas(jkey), cc.prefix_deltas(pfile)
+        shared = [p for p in pt if p in ij and p in inj["+1"]]
+        clean = [p for p in shared if not cc.looping(inj["+1"][p])
+                 and not cc.looping(pre["pro_top"][p]) and not cc.looping(pre["base"][p])]
+        wid = st.mean(pt[p] - ij[p] for p in clean) > st.mean(pt[p] - ij[p] for p in shared)
+        exact(f"C-GAP-WIDENS-{jname}",
+              "The objection predicts this collapses toward zero. It widens, under both judges.",
+              COH, True, wid,
+              note="clean-subset gap must exceed the all-items gap or the rebuttal fails")
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # reporting
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1463,6 +1536,7 @@ CHECKS = [
     check_n1, check_n2, check_n3, check_n4, check_n5,
     check_recompute_fixed, check_recompute_steer, check_williams,
     check_byte_identical, check_sd_caveat,
+    check_coherence_confound,
 ]
 
 

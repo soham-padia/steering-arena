@@ -1,0 +1,252 @@
+{
+ "inventory": {
+  "inj:+0.5": {
+   "n": 50,
+   "distinct4": 0.8897,
+   "delta_vs_base": -0.0219,
+   "loops": 7
+  },
+  "inj:+1": {
+   "n": 50,
+   "distinct4": 0.8722,
+   "delta_vs_base": -0.0394,
+   "loops": 8
+  },
+  "inj:-0.5": {
+   "n": 50,
+   "distinct4": 0.8901,
+   "delta_vs_base": -0.0215,
+   "loops": 8
+  },
+  "inj:-1": {
+   "n": 50,
+   "distinct4": 0.8888,
+   "delta_vs_base": -0.0228,
+   "loops": 12
+  },
+  "inj:ablate": {
+   "n": 50,
+   "distinct4": 0.9423,
+   "delta_vs_base": 0.0307,
+   "loops": 4
+  },
+  "inj:ablate2x": {
+   "n": 50,
+   "distinct4": 0.919,
+   "delta_vs_base": 0.0074,
+   "loops": 6
+  },
+  "inj:ablate_rand1s20260828": {
+   "n": 50,
+   "distinct4": 0.9312,
+   "delta_vs_base": 0.0196,
+   "loops": 6
+  },
+  "inj:ablate_rand2s20260828": {
+   "n": 50,
+   "distinct4": 0.9319,
+   "delta_vs_base": 0.0203,
+   "loops": 5
+  },
+  "inj:base": {
+   "n": 50,
+   "distinct4": 0.9116,
+   "delta_vs_base": 0.0,
+   "loops": 8
+  },
+  "inj:rand1s20260826": {
+   "n": 50,
+   "distinct4": 0.8437,
+   "delta_vs_base": -0.0679,
+   "loops": 17
+  },
+  "inj:rand2s20260826": {
+   "n": 50,
+   "distinct4": 0.8666,
+   "delta_vs_base": -0.045,
+   "loops": 12
+  },
+  "inj:rand3s20260826": {
+   "n": 50,
+   "distinct4": 0.9404,
+   "delta_vs_base": 0.0288,
+   "loops": 9
+  },
+  "inj:rand4s20260826": {
+   "n": 50,
+   "distinct4": 0.8885,
+   "delta_vs_base": -0.0231,
+   "loops": 9
+  },
+  "inj:rand5s20260826": {
+   "n": 50,
+   "distinct4": 0.9392,
+   "delta_vs_base": 0.0276,
+   "loops": 7
+  },
+  "inj:rand6s20260826": {
+   "n": 50,
+   "distinct4": 0.8917,
+   "delta_vs_base": -0.0199,
+   "loops": 13
+  },
+  "inj:rand7s20260826": {
+   "n": 50,
+   "distinct4": 0.8936,
+   "delta_vs_base": -0.018,
+   "loops": 10
+  },
+  "inj:rand8s20260826": {
+   "n": 50,
+   "distinct4": 0.8656,
+   "delta_vs_base": -0.046,
+   "loops": 12
+  },
+  "pre:anti_coherent": {
+   "n": 50,
+   "distinct4": 0.8342,
+   "delta_vs_base": -0.0774,
+   "loops": 15
+  },
+  "pre:anti_hostile": {
+   "n": 50,
+   "distinct4": 0.8647,
+   "delta_vs_base": -0.0469,
+   "loops": 11
+  },
+  "pre:anti_top": {
+   "n": 50,
+   "distinct4": 0.744,
+   "delta_vs_base": -0.1676,
+   "loops": 29
+  },
+  "pre:base": {
+   "n": 50,
+   "distinct4": 0.9116,
+   "delta_vs_base": 0.0,
+   "loops": 8
+  },
+  "pre:control_junk": {
+   "n": 50,
+   "distinct4": 0.9051,
+   "delta_vs_base": -0.0065,
+   "loops": 9
+  },
+  "pre:control_text": {
+   "n": 50,
+   "distinct4": 0.7912,
+   "delta_vs_base": -0.1204,
+   "loops": 18
+  },
+  "pre:pro_coherent": {
+   "n": 50,
+   "distinct4": 0.9334,
+   "delta_vs_base": 0.0218,
+   "loops": 4
+  },
+  "pre:pro_top": {
+   "n": 50,
+   "distinct4": 0.9904,
+   "delta_vs_base": 0.0788,
+   "loops": 1
+  }
+ },
+ "per_item": {
+  "deepseek:+1*d": {
+   "n": 50,
+   "mean_dK": 0.45,
+   "pearson_dK_dD4": 0.0175,
+   "spearman_dK_dD4": 0.106
+  },
+  "deepseek:pro_top": {
+   "n": 50,
+   "mean_dK": 0.87,
+   "pearson_dK_dD4": 0.1646,
+   "spearman_dK_dD4": 0.0498
+  },
+  "claude:+1*d": {
+   "n": 50,
+   "mean_dK": 0.54,
+   "pearson_dK_dD4": 0.0414,
+   "spearman_dK_dD4": 0.0278
+  },
+  "claude:pro_top": {
+   "n": 50,
+   "mean_dK": 0.91,
+   "pearson_dK_dD4": 0.2232,
+   "spearman_dK_dD4": 0.1741
+  }
+ },
+ "loop_split": {
+  "deepseek:+1*d": {
+   "neither": [
+    37,
+    0.3108
+   ],
+   "treated_only": [
+    5,
+    0.8
+   ],
+   "base_only": [
+    5,
+    1.1
+   ]
+  },
+  "deepseek:pro_top": {
+   "neither": [
+    41,
+    0.8902
+   ],
+   "treated_only": [
+    1,
+    -2.5
+   ],
+   "base_only": [
+    8,
+    1.1875
+   ]
+  },
+  "claude:+1*d": {
+   "neither": [
+    37,
+    0.3514
+   ],
+   "treated_only": [
+    5,
+    0.8
+   ],
+   "base_only": [
+    5,
+    1.2
+   ]
+  },
+  "claude:pro_top": {
+   "neither": [
+    41,
+    0.8171
+   ],
+   "treated_only": [
+    1,
+    -1.5
+   ],
+   "base_only": [
+    8,
+    1.6875
+   ]
+  }
+ },
+ "gap": {
+  "deepseek": {
+   "n_all": 50,
+   "gap_all": 0.42,
+   "n_clean": 36,
+   "gap_clean": 0.5139
+  },
+  "claude": {
+   "n_all": 50,
+   "gap_all": 0.37,
+   "n_clean": 36,
+   "gap_clean": 0.3889
+  }
+ }
+}
