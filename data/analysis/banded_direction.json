@@ -1,0 +1,86 @@
+{
+ "32_40_48": {
+  "band": [
+   32,
+   40,
+   48
+  ],
+  "n_pairs": 135,
+  "n_train": 101,
+  "n_val": 34,
+  "split_seed": 0,
+  "variants": {
+   "A_banded_mean": {
+    "held_out_separation": 1.0,
+    "confounds_removed": [
+     "length",
+     "sentiment"
+    ],
+    "cos_with_each_native": {
+     "32": 0.9392,
+     "40": 0.9793,
+     "48": 0.9484
+    }
+   },
+   "B_concat_probe": {
+    "held_out_separation": 0.9706,
+    "weight_share_by_layer": {
+     "32": 0.3741,
+     "40": 0.3465,
+     "48": 0.2794
+    },
+    "max_share": 0.3741,
+    "uniform_share": 0.3333,
+    "degenerate": false
+   },
+   "C_per_layer_min": {
+    "held_out_separation": 1.0
+   }
+  }
+ },
+ "all": {
+  "band": [
+   16,
+   24,
+   32,
+   40,
+   48
+  ],
+  "n_pairs": 135,
+  "n_train": 101,
+  "n_val": 34,
+  "split_seed": 0,
+  "variants": {
+   "A_banded_mean": {
+    "held_out_separation": 1.0,
+    "confounds_removed": [
+     "length",
+     "sentiment"
+    ],
+    "cos_with_each_native": {
+     "16": 0.5311,
+     "24": 0.8085,
+     "32": 0.9136,
+     "40": 0.9035,
+     "48": 0.8573
+    }
+   },
+   "B_concat_probe": {
+    "held_out_separation": 0.9706,
+    "weight_share_by_layer": {
+     "16": 0.186,
+     "24": 0.2374,
+     "32": 0.2156,
+     "40": 0.1999,
+     "48": 0.1611
+    },
+    "max_share": 0.2374,
+    "uniform_share": 0.2,
+    "degenerate": false
+   },
+   "C_per_layer_min": {
+    "held_out_separation": 1.0
+   }
+  }
+ }
+}
