@@ -1,9 +1,9 @@
 {
  "generated_by": "_falsifier/verify.py",
- "repo_commit": "939d2fb",
+ "repo_commit": "a2cdbd5",
  "independence": "written from the raw artifacts only; _falsifier/recompute.py and _falsifier/honesty_*.py were never read, imported or executed",
  "totals": {
-  "PASS": 195,
+  "PASS": 212,
   "FIXED": 4,
   "UNCHECKABLE": 2
  },
@@ -22,6 +22,9 @@
   },
   "data/analysis/coherence_confound.md": {
    "PASS": 20
+  },
+  "data/analysis/REVISIONS_2026-09-05.md": {
+   "PASS": 17
   }
  },
  "inconsistencies": [
@@ -2534,6 +2537,176 @@
    "status": "PASS",
    "tolerance": "exact",
    "note": "clean-subset gap must exceed the all-items gap or the rebuttal fails"
+  },
+  {
+   "id": "V-ANGLE-ABLATE",
+   "claim": "| **ablate `d`, k=1** | **0.92deg** |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 0.92,
+   "actual": 0.91644342,
+   "status": "PASS",
+   "tolerance": "abs <= 0.01",
+   "note": "mean rotation of the L24 last-token residual, n=50 prompts"
+  },
+  {
+   "id": "V-ANGLE-ABL2X",
+   "claim": "| ablate `d`, k=2 | 1.83deg |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 1.83,
+   "actual": 1.83288684,
+   "status": "PASS",
+   "tolerance": "abs <= 0.01",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "V-ANGLE-INJECT",
+   "claim": "| `+1.0*d` injection | **45.16deg** |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 45.16,
+   "actual": 45.16529736,
+   "status": "PASS",
+   "tolerance": "abs <= 0.01",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "V-ANGLE-RATIO-49X",
+   "claim": "perturbs the residual **49x** harder",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 49,
+   "actual": 49,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "ratio of injection rotation to k=1 ablation rotation, rounded"
+  },
+  {
+   "id": "V-COS-ONES-L24",
+   "claim": "`d` is 0.41% to 2.55% aligned with the all-ones axis",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 0.0255,
+   "actual": 0.02552009,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "RMSNorm does not centre, so this is not removed; recorded as a clean negative"
+  },
+  {
+   "id": "V-CURVE-L16",
+   "claim": "| L16 | ... 33/50 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 33,
+   "actual": 33,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "byte-identical continuations, ablation at L16 with its own native d"
+  },
+  {
+   "id": "V-CURVE-L24",
+   "claim": "| L24 | ... 33/50 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 33,
+   "actual": 33,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "byte-identical continuations, ablation at L24 with its own native d"
+  },
+  {
+   "id": "V-CURVE-L32",
+   "claim": "| L32 | ... 38/50 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 38,
+   "actual": 38,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "byte-identical continuations, ablation at L32 with its own native d"
+  },
+  {
+   "id": "V-CURVE-L40",
+   "claim": "| L40 | ... 37/50 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 37,
+   "actual": 37,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "byte-identical continuations, ablation at L40 with its own native d"
+  },
+  {
+   "id": "V-CURVE-L48",
+   "claim": "| L48 | ... 41/50 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 41,
+   "actual": 41,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "byte-identical continuations, ablation at L48 with its own native d"
+  },
+  {
+   "id": "V-COS-APPROACH",
+   "claim": "`cos(d, approach) = 0.1501`",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 0.1501,
+   "actual": 0.1501,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "from direction_purity.json"
+  },
+  {
+   "id": "V-PURITY-SEP",
+   "claim": "| `d`, approach removed | 1.000 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 1.0,
+   "actual": 1.0,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "exact match required"
+  },
+  {
+   "id": "V-PURITY-APPROACH-ALONE",
+   "claim": "| approach alone | 0.824 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 0.824,
+   "actual": 0.8235,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "V-NULL-REAL-OFFDIAG",
+   "claim": "| layer-to-layer cosine | 0.556 |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 0.556,
+   "actual": 0.5564,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "V-NULL-SHUF-OFFDIAG",
+   "claim": "| layer-to-layer cosine | ... **0.435** |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 0.435,
+   "actual": 0.4354,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
+  },
+  {
+   "id": "V-NULL-CLEARS",
+   "claim": "clears the null on every layer pair ... 40/40 draws",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 40,
+   "actual": 40,
+   "status": "PASS",
+   "tolerance": "exact",
+   "note": "real off-diagonal mean must exceed EVERY shuffled draw"
+  },
+  {
+   "id": "V-NULL-SHUF-SEP",
+   "claim": "| held-out separation | ... **0.519** |",
+   "source_doc": "data/analysis/REVISIONS_2026-09-05.md",
+   "expected": 0.519,
+   "actual": 0.5191,
+   "status": "PASS",
+   "tolerance": "abs <= 0.0005",
+   "note": "recomputed from raw artifacts"
   }
  ]
 }

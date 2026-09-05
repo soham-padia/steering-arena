@@ -37,6 +37,7 @@ CACHE = ROOT / "data" / "cache"
 FALS = ROOT / "_falsifier"
 
 AUDIT = "_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md"
+AN_DIR = Path(__file__).resolve().parent.parent / "data" / "analysis"
 ADDEND = "_falsifier/2026-08-27-addendum-human-ratings.md"
 RECOMP = "_falsifier/recompute_result.md"
 
@@ -1522,6 +1523,112 @@ def check_coherence_confound():
               note="clean-subset gap must exceed the all-items gap or the rebuttal fails")
 
 
+REV = "data/analysis/REVISIONS_2026-09-05.md"
+
+
+def check_revisions_20260905():
+    """Guard the 2026-09-05 revisions. Recomputed from CACHE, not from the JSON they wrote.
+
+    The load-bearing one is the angle comparison. If a rerun ever makes the ablation and the
+    injection comparable in rotation, the withdrawal in section 1 was wrong and this fails.
+    """
+    import hashlib as _h
+    import numpy as np          # verify.py otherwise avoids numpy; scoped to this check
+    np.seterr(all="ignore")     # spurious BLAS warnings, see compile_check.md
+    ROOTP = Path(__file__).resolve().parent.parent
+    if str(ROOTP) not in sys.path:
+        sys.path.insert(0, str(ROOTP))
+    u = lambda v, ax=-1: v / np.linalg.norm(v, axis=ax, keepdims=True)
+
+    def load_d(name):
+        z = np.load(ROOTP / "data" / "directions" / name, allow_pickle=True)
+        k = "d" if "d" in z.files else [x for x in z.files
+                                        if z[x].ndim == 1 and z[x].size > 1000][0]
+        return u(np.asarray(z[k], dtype=np.float64))
+
+    prompts = json.loads((ROOTP / "data/eval/steering_prompts.json").read_text())["prompts"]
+
+    def base_resid(layer):
+        h = _h.sha256()
+        h.update(f"allenai/Olmo-3-1125-32B\x00L{layer}\x00n={len(prompts)}".encode())
+        for t in prompts:
+            h.update(b"\x00")
+            h.update(t.encode("utf-8"))
+        fp = ROOTP / "data/cache/layer_sweep" / f"{h.hexdigest()}.npy"
+        return np.load(fp).astype(np.float64) if fp.exists() else None
+
+    def ang(X, Y):
+        return float(np.degrees(np.arccos(np.clip((u(X) * u(Y)).sum(1), -1, 1))).mean())
+
+    B = base_resid(24)
+    if B is None:
+        unchk("V-ANGLE", "angle table", REV, "recomputed", "layer_sweep cache")
+        return
+    d = load_d("d_olmo3_L24_logistic.npz")
+    c = B @ d
+    a_abl = ang(B, B - c[:, None] * d)
+    a_inj = ang(B, B + 30.07038116455078 * d)
+    num("V-ANGLE-ABLATE", "| **ablate `d`, k=1** | **0.92deg** |", REV, 0.92, a_abl, 0.01,
+        note="mean rotation of the L24 last-token residual, n=50 prompts")
+    num("V-ANGLE-ABL2X", "| ablate `d`, k=2 | 1.83deg |", REV, 1.83,
+        ang(B, B - 2 * c[:, None] * d), 0.01)
+    num("V-ANGLE-INJECT", "| `+1.0*d` injection | **45.16deg** |", REV, 45.16, a_inj, 0.01)
+    # the claim the withdrawal rests on: the two arms are NOT comparable in size
+    exact("V-ANGLE-RATIO-49X", "perturbs the residual **49x** harder", REV, 49,
+          int(round(a_inj / a_abl)),
+          note="ratio of injection rotation to k=1 ablation rotation, rounded")
+    num("V-COS-ONES-L24", "`d` is 0.41% to 2.55% aligned with the all-ones axis", REV,
+        0.0255, float(d @ (np.ones(5120) / np.sqrt(5120))), 0.0005,
+        note="RMSNorm does not centre, so this is not removed; recorded as a clean negative")
+
+    # causal curve: byte-identical counts per layer, recomputed from the generation cache
+    from scripts.behavioral_eval import CACHE_DIR, _gen_key
+    def conts(layer, arm, alpha):
+        out = {}
+        for pmt in prompts:
+            fp = CACHE_DIR / f"{_gen_key('allenai/Olmo-3-1125-32B', layer, pmt, arm, alpha, 40)}.json"
+            if fp.exists():
+                t = json.loads(fp.read_text())["text"]
+                i = t.find(pmt)
+                out[pmt] = t[i + len(pmt):].strip() if i >= 0 else t.strip()
+        return out
+    base = conts(24, "base", 0.0)
+    for L, exp in ((16, 33), (24, 33), (32, 38), (40, 37), (48, 41)):
+        cs = conts(L, "ablate", 1.0)
+        if len(cs) != 50 or len(base) != 50:
+            unchk(f"V-CURVE-L{L}", f"L{L} ... {exp}/50 identical", REV, exp, "generation cache")
+            continue
+        exact(f"V-CURVE-L{L}", f"| L{L} | ... {exp}/50 |", REV, exp,
+              sum(cs[p] == base[p] for p in cs),
+              note=f"byte-identical continuations, ablation at L{L} with its own native d")
+
+    # purity: approach is a passenger
+    ap = json.loads((AN_DIR / "direction_purity.json").read_text()) \
+        if (AN_DIR / "direction_purity.json").exists() else None
+    if ap:
+        num("V-COS-APPROACH", "`cos(d, approach) = 0.1501`", REV, 0.1501,
+            ap["cos_d_approach"], 0.0005, note="from direction_purity.json")
+        v = ap["variants"]
+        exact("V-PURITY-SEP", "| `d`, approach removed | 1.000 |", REV, 1.0,
+              v["d, approach removed"]["held_out_sep"])
+        num("V-PURITY-APPROACH-ALONE", "| approach alone | 0.824 |", REV, 0.824,
+            v["approach alone"]["held_out_sep"], 0.0005)
+
+    # label-shuffled null: the real direction must clear it, and separation must not
+    dn = json.loads((AN_DIR / "direction_null.json").read_text()) \
+        if (AN_DIR / "direction_null.json").exists() else None
+    if dn:
+        num("V-NULL-REAL-OFFDIAG", "| layer-to-layer cosine | 0.556 |", REV, 0.556,
+            dn["real"]["off_diag_mean"], 0.0005)
+        num("V-NULL-SHUF-OFFDIAG", "| layer-to-layer cosine | ... **0.435** |", REV, 0.435,
+            dn["shuffled"]["off_diag_mean"], 0.0005)
+        exact("V-NULL-CLEARS", "clears the null on every layer pair ... 40/40 draws", REV,
+              dn["real_exceeds_n_of_n"][1], dn["real_exceeds_n_of_n"][0],
+              note="real off-diagonal mean must exceed EVERY shuffled draw")
+        num("V-NULL-SHUF-SEP", "| held-out separation | ... **0.519** |", REV, 0.519,
+            dn["shuffled"]["held_out_separation_mean"], 0.0005)
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # reporting
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1537,6 +1644,7 @@ CHECKS = [
     check_recompute_fixed, check_recompute_steer, check_williams,
     check_byte_identical, check_sd_caveat,
     check_coherence_confound,
+    check_revisions_20260905,
 ]
 
 

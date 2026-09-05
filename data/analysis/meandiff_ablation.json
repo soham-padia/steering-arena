@@ -1,0 +1,22 @@
+{
+ "layer": 24,
+ "k": 1.0,
+ "max_new": 40,
+ "cos_meandiff_logistic": 0.7523,
+ "meandiff_held_out_separation": 1.0,
+ "base_distinct4": 0.9116,
+ "arms": {
+  "ablate (logistic)": {
+   "n": 50,
+   "identical_to_base": 33,
+   "distinct4": 0.9423,
+   "loops": 4
+  },
+  "ablate (meandiff)": {
+   "n": 50,
+   "identical_to_base": 30,
+   "distinct4": 0.9277,
+   "loops": 5
+  }
+ }
+}
