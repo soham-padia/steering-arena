@@ -1,3 +1,14 @@
-data/directions/*.npz filter=lfs diff=lfs merge=lfs -text
-data/analysis/*.npz filter=lfs diff=lfs merge=lfs -text
-data/analysis/figures/*.png filter=lfs diff=lfs merge=lfs -text
+# Binary artifacts, stored directly in git — NOT in LFS.
+#
+# LFS was removed 2026-09-05. The repo had drifted into a mixed state: 14 files were
+# committed as raw bytes with the filter inactive (on a machine without git-lfs installed)
+# while 11 were true pointers. On any machine where git-lfs IS active the clean filter
+# rendered the first group as 130-byte pointers, so `git status` reported 14 permanent
+# phantom modifications that no checkout could clear.
+#
+# These files are 22 KB-518 KB in a ~100 MB repo, so LFS bought nothing and cost a fetch
+# dependency across two clones (laptop + AICR cluster) plus an HF Space remote. Converting
+# to plain git added 3.40 MB and rewrote no history.
+data/directions/*.npz -text
+data/analysis/*.npz -text
+data/analysis/figures/*.png -text
