@@ -49,6 +49,30 @@ component is indeed 0.205, but that number hides an sd of 0.600: mean `|componen
 `anti_top` prefix's entire on-`d` displacement of 1.49. The null below is not a null of
 magnitude. There was something to remove and removing it changed nothing.
 
+**CORRECTION, 2026-09-05, from `normalization_check.py`.** The claim above that this is
+"not a null of magnitude" compares **on-`d` components**, and that is the wrong comparison.
+OLMo-3 uses RMSNorm, which rescales the residual by a scalar, so the next block reads the
+residual's DIRECTION. Measured as rotation of the layer-24 residual:
+
+| intervention | mean angle | max | `‖Δ‖` | on-`d` |
+|---|---|---|---|---|
+| **ablate `d` (k=1)** | **0.92°** | 3.4° | 0.48 | 0.48 |
+| ablate `d` (meandiff) | 0.89° | 4.6° | 0.46 | 0.46 |
+| `+0.5·d` injection | 26.80° | 29.5° | 15.03 | 15.03 |
+| `+1.0·d` injection | 45.16° | 48.7° | 30.07 | 30.07 |
+| prefix `pro_coherent` | 46.85° | 60.6° | 22.85 | 0.64 |
+| prefix `pro_top` | **50.44°** | 64.7° | 24.25 | 0.93 |
+
+The ablation rotates the residual by **under one degree**; every arm that moved behaviour
+rotates it by **27 to 50**. `anti_top`'s on-`d` displacement of 1.49 is not its total
+perturbation, so "1.684 > 1.49" never established what it was used to establish.
+
+**So the ablation null is largely uninformative about whether `d` mediates behaviour.** It
+shows that removing 1.6% of the residual norm changes little, which is close to what should
+have been expected. It is NOT evidence that `d` is not a causal channel. The conclusion that
+survives is the narrower one: ablation at this scale is indistinguishable from ablating a
+random direction at the same scale. Any stronger reading of this section is withdrawn.
+
 ### Integrity of the measurement
 
 numpy emits spurious divide/overflow/invalid warnings on the matmul on this platform, a

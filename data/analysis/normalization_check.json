@@ -1,0 +1,49 @@
+{
+ "norm_type": "RMSNorm (no centering)",
+ "cos_with_ones": {
+  "L16": 0.0179,
+  "L24": 0.0255,
+  "L32": 0.0077,
+  "L40": 0.0045,
+  "L48": 0.0041
+ },
+ "interventions": {
+  "ablate d, logistic": {
+   "mean_angle_deg": 0.916,
+   "max_angle_deg": 3.427,
+   "mean_delta_norm": 0.476,
+   "mean_on_d": 0.476
+  },
+  "ablate d, meandiff": {
+   "mean_angle_deg": 0.893,
+   "max_angle_deg": 4.622,
+   "mean_delta_norm": 0.465,
+   "mean_on_d": 0.465
+  },
+  "+0.5*d injection": {
+   "mean_angle_deg": 26.8,
+   "max_angle_deg": 29.536,
+   "mean_delta_norm": 15.035,
+   "mean_on_d": 15.035
+  },
+  "+1.0*d injection": {
+   "mean_angle_deg": 45.165,
+   "max_angle_deg": 48.692,
+   "mean_delta_norm": 30.07,
+   "mean_on_d": 30.07
+  },
+  "prefix pro_coherent": {
+   "mean_angle_deg": 46.848,
+   "max_angle_deg": 60.594,
+   "mean_delta_norm": 22.853,
+   "mean_on_d": 0.638
+  },
+  "prefix pro_top": {
+   "mean_angle_deg": 50.437,
+   "max_angle_deg": 64.681,
+   "mean_delta_norm": 24.248,
+   "mean_on_d": 0.931
+  }
+ },
+ "base_resid_norm": 29.763
+}

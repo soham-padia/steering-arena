@@ -1,0 +1,25 @@
+{
+ "k": 1.0,
+ "max_new": 40,
+ "layers": [
+  16,
+  24,
+  32,
+  40,
+  48
+ ],
+ "base": {
+  "n": 50,
+  "distinct4": 0.9116,
+  "loops": 8
+ },
+ "ablate": {
+  "24": {
+   "n": 50,
+   "identical_to_base": 33,
+   "distinct4": 0.9423,
+   "delta_vs_base": 0.0307,
+   "loops": 4
+  }
+ }
+}
