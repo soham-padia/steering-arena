@@ -1,0 +1,25 @@
+{
+ "cos_d_approach": 0.1501,
+ "cos_d_dperp": 0.9887,
+ "n_control_pairs": 6,
+ "variants": {
+  "d (shipped)": {
+   "held_out_sep": 1.0,
+   "all_135_sep": 1.0,
+   "control_kind_higher": 1.0,
+   "control_gap": 0.2075
+  },
+  "d, approach removed": {
+   "held_out_sep": 1.0,
+   "all_135_sep": 1.0,
+   "control_kind_higher": 1.0,
+   "control_gap": 0.2067
+  },
+  "approach alone": {
+   "held_out_sep": 0.8235,
+   "all_135_sep": 0.837,
+   "control_kind_higher": 0.6667,
+   "control_gap": 0.0206
+  }
+ }
+}
