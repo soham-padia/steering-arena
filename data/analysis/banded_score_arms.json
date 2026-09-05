@@ -1,0 +1,53 @@
+{
+ "32_40_48": {
+  "band": [
+   32,
+   40,
+   48
+  ],
+  "arms": {
+   "pro_top": {
+    "board_L24_16probes": 0.107693473529894,
+    "A_banded_mean": -0.00308,
+    "C_per_layer_min": -0.00979
+   },
+   "pro_coherent": {
+    "board_L24_16probes": 0.0403244759161852,
+    "A_banded_mean": 0.02167,
+    "C_per_layer_min": 0.02148
+   }
+  }
+ },
+ "all": {
+  "band": [
+   16,
+   24,
+   32,
+   40,
+   48
+  ],
+  "arms": {
+   "pro_top": {
+    "board_L24_16probes": 0.107693473529894,
+    "A_banded_mean": 0.00437,
+    "C_per_layer_min": -0.00633
+   },
+   "pro_coherent": {
+    "board_L24_16probes": 0.0403244759161852,
+    "A_banded_mean": 0.01728,
+    "C_per_layer_min": 0.02327
+   }
+  }
+ },
+ "missing_arms": [
+  "anti_coherent",
+  "anti_hostile",
+  "anti_top",
+  "control_junk",
+  "control_text"
+ ],
+ "ndif_calls_to_complete": {
+  "late_band_only": 15,
+  "both_bands": 25
+ }
+}
