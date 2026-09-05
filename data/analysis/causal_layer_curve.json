@@ -14,12 +14,40 @@
   "loops": 8
  },
  "ablate": {
+  "16": {
+   "n": 50,
+   "identical_to_base": 33,
+   "distinct4": 0.9254,
+   "delta_vs_base": 0.0138,
+   "loops": 6
+  },
   "24": {
    "n": 50,
    "identical_to_base": 33,
    "distinct4": 0.9423,
    "delta_vs_base": 0.0307,
    "loops": 4
+  },
+  "32": {
+   "n": 50,
+   "identical_to_base": 38,
+   "distinct4": 0.9247,
+   "delta_vs_base": 0.0131,
+   "loops": 6
+  },
+  "40": {
+   "n": 50,
+   "identical_to_base": 37,
+   "distinct4": 0.9312,
+   "delta_vs_base": 0.0196,
+   "loops": 5
+  },
+  "48": {
+   "n": 50,
+   "identical_to_base": 41,
+   "distinct4": 0.9388,
+   "delta_vs_base": 0.0272,
+   "loops": 5
   }
  }
 }
