@@ -13,6 +13,13 @@ stream, so cosine between them is meaningful and the question is directly measur
       bands. This is the band-choice argument in one panel - the late band's mean represents
       all three members at 0.94+, while the all-five mean cannot get near L16.
 
+IMPORTANT QUALIFICATION, added after direction_null.py was run. Most of the SHAPE in (a)
+survives destroying the labels: a probe fit to a random split of the same 270 texts gives
+0.784 across the late band and 0.158 on the L16 row, against 0.870 and 0.284 here. So this
+panel shows how the residual stream is arranged, not something specific to pro-humanness.
+The real direction is above the null on every pair, but by +0.121 on average, not by the
+whole 0.557. Read this figure alongside figures/direction_null.png.
+
 Zero NDIF calls; reads the committed direction files only.
 
     python scripts/plot_layer_directions.py
@@ -69,7 +76,7 @@ def main():
     for i, j in itertools.product(range(5), range(5)):
         axa.text(j, i, f"{M[i,j]:.2f}", ha="center", va="center", fontsize=7,
                  color="white" if M[i, j] > 0.62 else INK)
-    axa.set_title("(a) the layers do not share one direction\ncos between layer-native $d$",
+    axa.set_title("(a) cos between layer-native $d$\n(most of this shape survives label-shuffling)",
                   fontsize=8, color=INK, loc="left", pad=6)
     for s in axa.spines.values():
         s.set_visible(False)
