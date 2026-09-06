@@ -40,6 +40,13 @@ def parse_args(argv=None):
     ap.add_argument("--cand-chunk", type=int, default=4,
                     help="Candidates scored per forward pass. Main memory/speed knob.")
     ap.add_argument("--max-iters", type=int, default=0, help="0 = run until killed")
+    ap.add_argument("--t-sa-scale", type=float, default=1.0,
+                    help="multiply the simulated-annealing temperature by this. T_SA is an "
+                         "ABSOLUTE constant inherited from the single-layer upstream, but the "
+                         "objectives have different step scales: score2's median improving "
+                         "step is ~3.4x smaller than score1's, so the same T_SA runs ~3.4x "
+                         "hotter on score2. Measured effect: score2 keeps only 40%% of the "
+                         "ground it gains vs score1's 69%%.")
     ap.add_argument("--anti", action="store_true",
                     help="optimise the ANTI-HUMAN board: the most NEGATIVE value of the same "
                          "metric. Negates the direction, AND for score2 swaps min->max, "
@@ -321,6 +328,10 @@ while args.max_iters == 0 or iter_idx < args.max_iters:
         N_TOPK_REPL, BATCH_SIZE_OPTIM, T_SA = 32, 256, 0.003
     else:
         N_TOPK_REPL, BATCH_SIZE_OPTIM, T_SA = 64, 1024, 0.003
+    # These temperatures are absolute, but the SA acceptance rule exp((cand-curr)/T_SA) is
+    # scale-free only if T_SA tracks the objective's own step size. It does not, so the
+    # schedule is implicitly tuned to score1's scale. See --t-sa-scale.
+    T_SA *= args.t_sa_scale
 
     model.zero_grad(set_to_none=True)
     ids_scored = ctrl_token_ids
