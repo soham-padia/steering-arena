@@ -280,3 +280,40 @@ def test_d_tag_distinguishes_the_two_season3_directions():
     a, b = np.random.default_rng(0).normal(size=H), np.random.default_rng(1).normal(size=H)
     assert G.d_tag(a) != G.d_tag(b)
     assert G.d_tag(a) == G.d_tag(a.copy())
+
+
+def test_anti_score2_needs_max_not_min_against_the_negated_direction():
+    """The anti arm must swap min->max, not merely negate the direction.
+
+    The anti board wants the most NEGATIVE value of the SAME metric, i.e. minimise
+    min_L cos(R_L, d_L). The identity that makes this reachable by a MAXIMISER is
+
+        max_L cos(R_L, -d_L) == -min_L cos(R_L, d_L)
+
+    whereas negating alone gives min_L cos(R_L, -d_L) == -max_L cos(R_L, d_L), which
+    optimises the model's BEST layer instead of its worst -- a different objective that
+    would still print plausible-looking positive numbers. This is the sign-convention
+    failure documented in _communication/004.
+    """
+    import torch as t
+    from gcg_utils import MAX, MIN, _aggregate
+
+    t.manual_seed(0)
+    cos = t.randn(4, 7)                      # 4 band layers x 7 candidates
+
+    correct = _aggregate(-cos, MAX)
+    assert t.allclose(correct, -_aggregate(cos, MIN), atol=1e-6)
+
+    naive = _aggregate(-cos, MIN)
+    assert not t.allclose(naive, correct), "the two must differ, else the test proves nothing"
+    assert t.allclose(naive, -cos.max(dim=0).values, atol=1e-6)
+
+
+def test_anti_score1_mean_is_symmetric_so_negating_alone_is_enough():
+    """MEAN is linear, so score1 needs no aggregate swap -- only score2 does."""
+    import torch as t
+    from gcg_utils import MEAN, _aggregate
+
+    t.manual_seed(1)
+    cos = t.randn(4, 7)
+    assert t.allclose(_aggregate(-cos, MEAN), -_aggregate(cos, MEAN), atol=1e-6)

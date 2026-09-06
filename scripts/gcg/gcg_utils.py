@@ -32,6 +32,7 @@ from jaxtyping import Float, Int
 MEAN = "banded_mean"
 MIN = "per_layer_min"
 SOFTMIN = "per_layer_softmin"   # SEARCH-ONLY surrogate for MIN; never a reported score
+MAX = "per_layer_max"           # ANTI counterpart of MIN -- see the note in _aggregate
 
 # Temperature for SOFTMIN. -> MIN as T->0, -> mean as T->inf. 0.02 is ~10% of the observed
 # per-layer cosine spread on the seed pairs, so it is harsh enough to still punish a weak
@@ -66,6 +67,16 @@ def _aggregate(stacked, aggregate: str):
         return stacked.mean(dim=0)
     if aggregate == MIN:
         return stacked.min(dim=0).values
+    if aggregate == MAX:
+        # ONLY for anti-human search on score2, and it is not an arbitrary choice. The anti
+        # board wants the most NEGATIVE value of the SAME metric, i.e. minimise
+        # min_L cos(R_L, d_L). Since min_L cos(R_L, -d_L) = -max_L cos(R_L, d_L), simply
+        # negating the direction would optimise the model's BEST layer, not its worst.
+        # Maximising MAX against a NEGATED direction is the correct transformation:
+        #     max_L cos(R_L, -d_L) = -min_L cos(R_L, d_L)
+        # Getting this wrong is exactly the sign confusion behind the ~7e-2 discrepancy in
+        # _communication/001, resolved in 004.
+        return stacked.max(dim=0).values
     if aggregate == SOFTMIN:
         import torch as _t
         return -SOFTMIN_T * _t.logsumexp(-stacked / SOFTMIN_T
@@ -223,7 +234,7 @@ def compute_scores_batch(
     n_sfx, sfx_seq, d_model = sfx_embed.shape
     seq = ctrl_seq + sfx_seq
 
-    if aggregate in (MIN, SOFTMIN) and dirs.shape[0] != len(layers):
+    if aggregate in (MIN, SOFTMIN, MAX) and dirs.shape[0] != len(layers):
         raise ValueError(f"{aggregate} needs one direction per layer: "
                          f"{dirs.shape[0]} dirs for {len(layers)} layers")
     if aggregate == MEAN and dirs.shape[0] != 1:

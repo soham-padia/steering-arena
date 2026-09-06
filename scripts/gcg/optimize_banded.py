@@ -40,6 +40,11 @@ def parse_args(argv=None):
     ap.add_argument("--cand-chunk", type=int, default=4,
                     help="Candidates scored per forward pass. Main memory/speed knob.")
     ap.add_argument("--max-iters", type=int, default=0, help="0 = run until killed")
+    ap.add_argument("--anti", action="store_true",
+                    help="optimise the ANTI-HUMAN board: the most NEGATIVE value of the same "
+                         "metric. Negates the direction, AND for score2 swaps min->max, "
+                         "because min_L cos(R,-d) = -max_L cos(R,d) -- negating alone would "
+                         "optimise the best layer instead of the worst.")
     ap.add_argument("--softmin-search", action="store_true",
                     help="score2 only: SEARCH with a smooth soft-min surrogate instead of a "
                          "hard min. The hard min routes gradient to one layer per step; the "
@@ -71,7 +76,7 @@ import torch as t  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from gcg_utils import (  # noqa: E402
-    MEAN, MIN, SOFTMIN, build_replicas, compute_scores_batch, d_tag,
+    MAX, MEAN, MIN, SOFTMIN, build_replicas, compute_scores_batch, d_tag,
     load_banded_direction, load_prompt_suffixes, plan_replica_placement,
     roundtrip_ok, truncate_to_layer,
 )
@@ -92,7 +97,12 @@ GPU_MEM_FRACTION = 0.7  # usable fraction of each card (headroom for activations
 # baseline that app/scoring.py subtracts: it is constant w.r.t. the prefix, so argmax is
 # identical and this is the cheaper quantity. Same argument upstream relies on.
 D_FILE = REPO_ROOT / "data" / "directions" / f"d_olmo3_s3_{args.role}.npz"
-AGGREGATE = MEAN if args.role == "score1" else MIN          # the TRUE objective; what the board computes
+# ANTI: negate the direction, and for score2 swap the aggregate (see gcg_utils._aggregate).
+# The optimiser always MAXIMISES; `anti` just changes what it maximises toward. Reported
+# board numbers are converted back to true board sign below, so a log is never ambiguous.
+ANTI = args.anti
+AGGREGATE = MEAN if args.role == "score1" else (MAX if ANTI else MIN)
+SIGN = -1.0 if ANTI else 1.0
 # A surrogate is legitimate for the SEARCH only. GCG's gradient merely proposes candidates;
 # the recorded number must still be the board's, so board_score() always uses AGGREGATE.
 SEARCH_AGG = SOFTMIN if (args.softmin_search and AGGREGATE == MIN) else AGGREGATE
@@ -100,11 +110,11 @@ PROBES_FILE = REPO_ROOT / "data" / "probes" / "season3.json"
 
 d_bar, per_layer, BAND, D_META = load_banded_direction(D_FILE)
 DIRS = t.tensor(d_bar[None] if AGGREGATE == MEAN else per_layer, dtype=t.float32)
-DIRS = DIRS / DIRS.norm(dim=-1, keepdim=True)
+DIRS = SIGN * (DIRS / DIRS.norm(dim=-1, keepdim=True))
 D_TAG = d_tag(d_bar if AGGREGATE == MEAN else per_layer)
 MODEL_NAME = "gpt2" if SMOKE else D_META["model_id"]
 
-print(f"role={args.role}  aggregate={AGGREGATE}  band={BAND}"
+print(f"role={args.role}{'  ANTI' if ANTI else ''}  aggregate={AGGREGATE}  band={BAND}"
       + (f"  search={SEARCH_AGG}" if SEARCH_AGG != AGGREGATE else ""))
 print(f"direction {D_FILE.name}  d_version={D_META.get('d_version')!r}  tag={D_TAG}")
 
@@ -269,7 +279,11 @@ if args.resume_from is not None:
     run_dir = Path(args.resume_from)
     assert run_dir.is_dir(), f"resume-from is not a directory: {run_dir}"
 else:
-    run_id = f"{args.role}-{dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H-%M-%SZ')}"
+    # The role alone does not identify the run: an anti arm optimises the SAME role toward
+    # the opposite sign, and its logs read positive-is-better like every other arm. Put it
+    # in the directory name so the two can never be confused on disk.
+    run_id = (f"{args.role}{'-anti' if ANTI else ''}"
+              f"-{dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H-%M-%SZ')}")
     run_dir = Path(args.out_root) / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
 LATEST, BEST, HISTORY = run_dir / "latest.json", run_dir / "best.json", run_dir / "history.jsonl"
@@ -350,7 +364,11 @@ while args.max_iters == 0 or iter_idx < args.max_iters:
         "iter": iter_idx, "score": true_curr, "search_score": score_curr, "ctrl_token_ids": ids_scored.tolist(),
         "prompt": prompt_str, "iter_time_s": iter_time, "model_id": MODEL_NAME,
         # provenance: `layer` alone cannot describe a banded run
-        "role": args.role, "band": BAND, "aggregate": AGGREGATE,
+        "role": args.role, "band": BAND, "aggregate": AGGREGATE, "anti": ANTI,
+        # The value the LEADERBOARD would show: negative for a good anti entry. The
+        # optimiser maximises, so its own numbers are always positive-is-better; recording
+        # both makes the sign unambiguous, which is what _communication/004 was about.
+        "board_score_true_sign": SIGN * bscore,
         "search_aggregate": SEARCH_AGG,
         "d_version": D_META.get("d_version"), "d_tag": D_TAG,
         # `score` is the optimiser's, on the raw ids. `board_score` is what the
