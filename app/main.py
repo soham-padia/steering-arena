@@ -311,7 +311,25 @@ def seed_pairs():
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "season": settings.season_id, "model": settings.model_id}
+    """Liveness, plus which season is actually live.
+
+    Reads the season from the DATABASE, with settings only as a fallback. It used to
+    report settings.season_id, which has never matched a real row — the env says 2 while
+    the DB ids are 1/3/4/5 — so /health has been advertising a season that does not exist
+    and anything scripting against it was reading a fiction. Taking it from the same row
+    that decides scoring also means a season flip needs no Space redeploy to stay honest.
+    """
+    s = None
+    try:
+        s = get_db().get_active_season()
+    except Exception:  # noqa: BLE001 — health must not 500 on a DB hiccup
+        s = None
+    return {
+        "status": "ok",
+        "season": s["id"] if s else settings.season_id,
+        "season_name": s["name"] if s else settings.season_name,
+        "model": s["model_id"] if s else settings.model_id,
+    }
 
 
 @app.get("/season")
