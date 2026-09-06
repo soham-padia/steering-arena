@@ -58,7 +58,8 @@ _gate = ScoringGate(settings.score_concurrency)
 # ── Lazy singletons ──────────────────────────────────────────
 
 _db = None
-_scorer = None  # (count_tokens, score_fn) tuple
+_scorer = None  # (season_id, count_tokens, score_fn) — cached PER SEASON, so flipping
+                # `active` in the DB swaps the scorer with no redeploy and no restart.
 
 
 def get_db():
@@ -92,20 +93,57 @@ def get_db():
     return _db
 
 
+def _season_bands(season):
+    """(band1, band2, d1_path, d2_path, probe_set) for the ACTIVE SEASON ROW.
+
+    The scored function follows the DATABASE, not the environment. Env vars are only a
+    local override for scripts; on the Space nothing needs setting to switch seasons.
+
+    This exists because the alternative has a corruption window in both directions. If the
+    band lived in env, then between deploying the new vars and flipping `active` the app
+    would score Season 3's metric and write those rows under Season 2's id -- silently
+    poisoning the LIVE board -- and doing it in the other order poisons the new one. Read
+    the band off the same row that decides where rows are written and neither can happen.
+    """
+    layers = str(season.get("layers") or "").strip() if season else ""
+    if not layers:
+        return [], [], None, None, None
+    band1 = [int(x) for x in layers.split(",") if x.strip()]
+    # Season 3 ships two files per d_version, distinguished by `role`.
+    ver = season["d_version"]
+    d1 = settings.score1_d_file or f"data/directions/d_{ver}_score1.npz"
+    d2 = settings.score2_d_file or f"data/directions/d_{ver}_score2.npz"
+    _, _, band2, _ = scoring.load_banded_direction(d2)
+    probe = f"data/probes/{season['probe_set_id']}.json" if season.get("probe_set_id") else None
+    return band1, band2, d1, d2, probe
+
+
 def get_scorer():
-    """Build the NDIF/local scorer + tokenizer once. Raises ScoringUnavailable on
-    any failure (missing deps, NDIF down, d/model dim mismatch)."""
+    """Build the NDIF/local scorer + tokenizer for the ACTIVE season.
+
+    Cached per season id, so flipping `active` in the database swaps the scorer on the
+    next submission with no redeploy and no restart. Raises ScoringUnavailable on any
+    failure (missing deps, NDIF down, d/model dim mismatch).
+    """
     global _scorer
-    if _scorer is not None:
-        return _scorer
 
     from app.errors import ScoringUnavailable
 
     try:
+        season = get_db().get_active_season()
+    except Exception:  # noqa: BLE001 — fall back to env-configured behaviour
+        season = None
+    season_id = (season or {}).get("id")
+    if _scorer is not None and _scorer[0] == season_id:
+        return _scorer[1], _scorer[2]
+
+    try:
         from app.ndif_client import ResidualReader
 
+        band1, band2, d1_file, d2_file, probe_file = _season_bands(season)
+        banded = bool(band1)
         d, meta = scoring.load_direction(settings.d_file)
-        probes = scoring.load_probes(settings.probe_set)
+        probes = scoring.load_probes(probe_file or settings.probe_set)
         reader = ResidualReader.from_settings(settings)
 
         hidden = reader.hidden_size
@@ -118,19 +156,28 @@ def get_scorer():
         def count_tokens(text: str) -> int:
             return len(reader.tokenizer(text, add_special_tokens=False)["input_ids"])
 
-        if settings.banded():
+        if banded:
             # ── Season 3: one multi-layer forward, two scores ──
             # score1 RANKS (banded mean over a shared d_bar); score2 is informational
             # (per-layer min over a wider band). read_layers() is the UNION of the two
             # bands, so BOTH come out of a single remote call — score2 costs no quota.
-            d1, per1, band1, meta1 = scoring.load_banded_direction(settings.score1_d_file)
-            d2, per2, band2, meta2 = scoring.load_banded_direction(settings.score2_d_file)
-            if band1 != settings.band1() or band2 != settings.band2():
+            d1, per1, f_band1, meta1 = scoring.load_banded_direction(d1_file)
+            d2, per2, f_band2, meta2 = scoring.load_banded_direction(d2_file)
+            # The season row and the d file must agree, or the board records numbers under
+            # a config that did not produce them. Fail CLOSED (503) rather than score wrong:
+            # a wrong score is indistinguishable from a right one after the fact.
+            if f_band1 != band1:
                 raise ScoringUnavailable(
-                    f"Band mismatch: config says {settings.band1()}/{settings.band2()} but "
-                    f"the d files say {band1}/{band2}. Run scripts/check_season_matches_d.py."
+                    f"Band mismatch: season row says {band1} but {d1_file} says {f_band1}. "
+                    f"Run scripts/check_season_matches_d.py."
                 )
-            read = settings.read_layers()
+            if meta1.get("d_version") != season["d_version"]:
+                raise ScoringUnavailable(
+                    f"d_version mismatch: season row says {season['d_version']!r} but "
+                    f"{d1_file} says {meta1.get('d_version')!r}."
+                )
+            band2 = f_band2
+            read = sorted(set(band1) | set(band2))
             _pos = {L: i for i, L in enumerate(read)}
 
             def _make_reader():
@@ -193,13 +240,13 @@ def get_scorer():
                     d, mode=settings.scoring_mode,
                 )
 
-        _scorer = (count_tokens, score_fn)
+        _scorer = (season_id, count_tokens, score_fn)
     except ScoringUnavailable:
         raise
     except Exception as exc:  # noqa: BLE001 — log detail server-side, return a generic message
         _log.exception("scorer build failed")
         raise ScoringUnavailable("Scoring is temporarily unavailable — please try again shortly.") from exc
-    return _scorer
+    return _scorer[1], _scorer[2]
 
 
 def _client_ip(request: Request) -> str:
