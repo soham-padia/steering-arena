@@ -159,13 +159,18 @@ def get_scorer():
             base2 = scoring.banded_baseline(probes, batch_layers_fn, band2)
 
             def score_fn(seq: str) -> scoring.ScoreResult:
-                s1 = scoring.banded_shift(seq, probes, batch_layers_fn, band1, base1, d1,
-                                          aggregate=scoring.BANDED_MEAN)
+                # Specificity survives the move to a band: score1 uses ONE direction
+                # (d_bar) over several layers, and the closed form is the same functional
+                # over L*P rows instead of P. It is the anti-token-soup measure, so the
+                # season built to resist Goodharting is the last one that should lose it.
+                # It is NOT defined for score2 (a min is not linear in the direction).
+                s1, z = scoring.banded_shift_and_specificity(
+                    seq, probes, batch_layers_fn, band1, base1, d1,
+                    eps=settings.specificity_eps)
                 s2 = scoring.banded_shift(seq, probes, batch_layers_fn, band2, base2, d2,
                                           per_layer=per2, aggregate=scoring.PER_LAYER_MIN)
-                # specificity is defined against a single direction; not meaningful for a
-                # band, so it stays null this season rather than being faked.
-                return scoring.ScoreResult(s1, s1, None, s2)
+                return scoring.ScoreResult(
+                    s1, s1, z if settings.specificity_enabled else None, s2)
         elif settings.scoring_mode in (scoring.STEERING_SHIFT, scoring.SPECIFICITY_Z):
             # One batched forward per submission; unit-normalized probe baselines
             # precomputed once. Raw shift AND the specificity z come from the same

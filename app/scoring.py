@@ -230,6 +230,44 @@ def banded_shift(
     return float(np.mean(seq_cos - base_cos))
 
 
+def banded_shift_and_specificity(
+    seq: str,
+    probes: Sequence[str],
+    batch_resid_layers_fn,
+    band: Sequence[int],
+    base_units: np.ndarray,
+    d: np.ndarray,
+    *,
+    eps: float = SPEC_EPS_DEFAULT,
+) -> tuple[float, float]:
+    """(banded-mean shift, closed-form specificity z) for a BAND, from one batched read.
+
+    Specificity generalises to the banded mean EXACTLY, with no new theory. The single-
+    layer derivation above needs the score to be linear in the direction and takes a mean
+    over P probe rows; the banded mean is the same functional over L*P rows, because
+
+        mean_L mean_i (m̂_{L,i} − b̂_{L,i})·d̄  =  mean over the flattened (L*P, H) stack.
+
+    So the null is the same with P → L·P:  σ = ‖Δ‖_F / √(L·P·H), and the bound is still
+    |z| ≤ √H, since ‖δ̄‖ ≤ ‖Δ‖_F/√(LP) gives |z| ≤ √(L·P·H)/√(LP) = √H.
+
+    This is defined ONLY for BANDED_MEAN. It does NOT extend to PER_LAYER_MIN (score2):
+    the closed form requires linearity in the direction, and a min over per-layer
+    directions is not linear. That is a real limit, not an implementation gap.
+    """
+    d64 = np.asarray(d, dtype=np.float64)
+    d64 = d64 / np.linalg.norm(d64)
+    mat = np.asarray(batch_resid_layers_fn([compose(seq, p) for p in probes], list(band)),
+                     dtype=np.float64)
+    units = np.stack([unit_rows(mat[i]) for i in range(mat.shape[0])])      # (L, P, H)
+    delta = units - np.asarray(base_units, dtype=np.float64)                # (L, P, H)
+    flat = delta.reshape(-1, delta.shape[-1])                               # (L*P, H)
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        shift = float(flat.mean(axis=0) @ d64)
+        sigma_null = float(np.linalg.norm(flat)) / float(np.sqrt(flat.size))
+    return shift, float(shift / max(sigma_null, eps))
+
+
 def load_banded_direction(path: str | Path) -> tuple[np.ndarray, np.ndarray, list[int], dict]:
     """(d_bar, per_layer, band, meta) from a banded d_<version>.npz.
 

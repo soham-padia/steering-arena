@@ -151,6 +151,53 @@ def test_banded_score_is_deterministic_across_calls():
     assert a == b, "scoring is the correctness contract; it must be bit-identical"
 
 
+def test_banded_specificity_reduces_to_single_layer_z():
+    """Specificity is NOT lost by going multi-layer, and this is why.
+
+    score1 scores a band against ONE shared direction, so the closed-form z is the same
+    functional over L*P rows as over P. A one-layer band must therefore reproduce
+    shift_and_specificity's z exactly.
+    """
+    resid = _rng_resid()
+    d = np.random.default_rng(21).normal(size=H)
+    layer = 24
+
+    b_shift, b_z = scoring.banded_shift_and_specificity(
+        "seq", PROBES, resid, [layer], scoring.banded_baseline(PROBES, resid, [layer]), d)
+
+    fn = _single(resid, layer)
+    s_shift, s_z = scoring.shift_and_specificity(
+        "seq", PROBES, fn, scoring.baseline_unit_rows(PROBES, fn), d)
+
+    assert b_shift == pytest.approx(s_shift, abs=1e-12)
+    assert b_z == pytest.approx(s_z, abs=1e-9)
+
+
+def test_banded_specificity_respects_the_sqrt_H_bound():
+    """|z| <= sqrt(H) is what makes z comparable across seasons; the band must not break
+    it. The bound survives because ‖δ̄‖ <= ‖Δ‖_F/sqrt(L*P)."""
+    resid = _rng_resid()
+    band = [19, 23, 27, 31]
+    base = scoring.banded_baseline(PROBES, resid, band)
+    for seed in range(6):
+        d = np.random.default_rng(seed).normal(size=H)
+        _, z = scoring.banded_shift_and_specificity("seq", PROBES, resid, band, base, d)
+        assert abs(z) <= np.sqrt(H) + 1e-9, f"z={z} exceeds sqrt(H)={np.sqrt(H)}"
+
+
+def test_banded_specificity_shift_matches_banded_shift():
+    """The two entry points must agree on the shift, or the ranked number depends on
+    which function the caller happened to use."""
+    resid = _rng_resid()
+    d = np.random.default_rng(4).normal(size=H)
+    band = [19, 23, 27, 31]
+    base = scoring.banded_baseline(PROBES, resid, band)
+    a = scoring.banded_shift("seq", PROBES, resid, band, base, d,
+                             aggregate=scoring.BANDED_MEAN)
+    b, _ = scoring.banded_shift_and_specificity("seq", PROBES, resid, band, base, d)
+    assert a == pytest.approx(b, abs=1e-12)
+
+
 def test_both_scores_come_from_one_batched_read():
     """The union-band design exists so the informational Score 2 is FREE.
 
