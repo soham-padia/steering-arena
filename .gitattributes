@@ -9,6 +9,6 @@
 # These files are 22 KB-518 KB in a ~100 MB repo, so LFS bought nothing and cost a fetch
 # dependency across two clones (laptop + AICR cluster) plus an HF Space remote. Converting
 # to plain git added 3.40 MB and rewrote no history.
-data/directions/*.npz -text
-data/analysis/*.npz -text
-data/analysis/figures/*.png -text
+data/directions/*.npz filter=lfs diff=lfs merge=lfs -text
+data/analysis/*.npz filter=lfs diff=lfs merge=lfs -text
+data/analysis/figures/*.png filter=lfs diff=lfs merge=lfs -text
