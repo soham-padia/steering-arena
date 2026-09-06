@@ -19,9 +19,55 @@ function arena() {
     error: null,
     submitting: false,
 
+    // Season switcher. `viewSeasonId === null` means "the active season", which is also
+    // what /leaderboard returns with no ?season param. Archived seasons are read-only:
+    // /submit always targets whatever is active server-side, so the form is hidden while
+    // viewing one rather than silently posting to a different board than you are looking at.
+    seasons: [],
+    viewSeasonId: null,
+
+    get viewSeason() {
+      if (this.viewSeasonId == null) return this.season;
+      return this.seasons.find((s) => s.id === this.viewSeasonId) || this.season;
+    },
+    get viewingArchive() {
+      return this.viewSeasonId != null && this.viewSeasonId !== this.season?.id;
+    },
+
+    // "Inactive" is not the same as "archived": a season with a HIGHER id than the live
+    // one has not opened yet. Calling an unopened season archived would be wrong in the
+    // one place a visitor is most likely to be confused.
+    seasonState(s) {
+      if (s.active) return "";
+      return s.id > (this.season?.id ?? 0) ? "preview" : "closed";
+    },
+    get viewStateLabel() {
+      const s = this.viewSeason;
+      if (!s || s.active) return "";
+      return this.seasonState(s) === "preview"
+        ? "NOT YET OPEN — PREVIEW"
+        : "CLOSED — READ ONLY";
+    },
+
+    async selectSeason(id) {
+      this.viewSeasonId = id;
+      this.collapsed = true;
+      await this.loadBoards();
+    },
+
     async init() {
       await this.loadSeason();
+      await this.loadSeasons();
       await this.loadBoards();
+    },
+
+    async loadSeasons() {
+      try {
+        const r = await fetch("/seasons");
+        const j = await r.json();
+        // Seasons with no submissions (the id=1 scaffold) would be dead tabs.
+        this.seasons = (j.seasons || []).filter((s) => s.d_version !== "v0-stub");
+      } catch (_) { this.seasons = []; }
     },
 
     // Rows for the currently selected board.
@@ -94,7 +140,8 @@ function arena() {
 
     async fetchBoard(board) {
       try {
-        const r = await fetch(`/leaderboard?board=${board}&limit=1000`);
+        const q = this.viewSeasonId == null ? "" : `&season=${encodeURIComponent(this.viewSeasonId)}`;
+        const r = await fetch(`/leaderboard?board=${board}&limit=1000${q}`);
         const j = await r.json();
         return j.entries || [];
       } catch (_) {

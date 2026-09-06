@@ -47,11 +47,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=10" />
+  <link rel="stylesheet" href="/styles.css?v=11" />
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
-  <script defer src="/app.js?v=10"></script>
+  <script defer src="/app.js?v=11"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -71,13 +71,32 @@
   </header>
 
   <!-- Season banner -->
-  <section class="wrap banner" x-show="season">
-    <span class="chip lit" x-text="season?.name"></span>
-    <span class="chip"><i>MODEL</i> <span x-text="season?.model_id"></span></span>
-    <span class="chip"><i>LAYER</i> <span x-text="season?.layer"></span></span>
-    <span class="chip"><i>DIR</i> <span x-text="season?.d_version"></span></span>
-    <span class="chip"><i>BUDGET</i> <span x-text="season?.token_budget"></span> TOK</span>
-    <span class="chip"><i>METRIC</i> <span x-text="season?.scoring_mode"></span></span>
+  <!-- Reflects the season being VIEWED, not always the active one — otherwise an
+       archived board would be labelled with the live season's model/layer/direction. -->
+  <section class="wrap banner" x-show="viewSeason">
+    <span class="chip lit" x-text="viewSeason?.name"></span>
+    <span class="chip"><i>MODEL</i> <span x-text="viewSeason?.model_id"></span></span>
+    <!-- `layers` is the authoritative band on a multi-layer season; `layer` is a single
+         representative kept for back-compat and is all Seasons 1/2 ever had. Show
+         whichever the season actually has, so an archived board still reads correctly. -->
+    <span class="chip"><i x-text="viewSeason?.layers ? 'LAYERS' : 'LAYER'"></i>
+      <span x-text="viewSeason?.layers || viewSeason?.layer"></span></span>
+    <span class="chip"><i>DIR</i> <span x-text="viewSeason?.d_version"></span></span>
+    <span class="chip"><i>BUDGET</i> <span x-text="viewSeason?.token_budget"></span> TOK</span>
+    <span class="chip"><i>METRIC</i> <span x-text="viewSeason?.scoring_mode"></span></span>
+    <span class="chip" x-show="viewingArchive" style="border-color:#8a8985;color:#8a8985"
+          x-text="viewStateLabel"></span>
+  </section>
+
+  <!-- Season switcher. Scores are only comparable WITHIN a season, so this is a switch
+       between separate boards, never a merged view. -->
+  <section class="wrap tabs" x-show="seasons.length > 1" style="margin-bottom:0">
+    <template x-for="s in seasons" :key="s.id">
+      <button class="tab" :class="{ on: (viewSeasonId ?? season?.id) === s.id }"
+              @click="selectSeason(s.id)"
+              :title="s.model_id + ' · ' + (s.layers ? 'layers ' + s.layers : 'layer ' + s.layer) + ' · ' + s.d_version"
+              x-text="s.name + (s.active ? '' : ' · ' + seasonState(s))"></button>
+    </template>
   </section>
 
   <!-- Rules (above the play area so first-timers read how to play first) -->
@@ -110,8 +129,21 @@
 
   <main class="wrap grid">
 
+    <!-- Viewing an archived board: /submit always targets the ACTIVE season server-side,
+         so showing the form here would post to a board other than the one on screen. -->
+    <section class="card" x-show="viewingArchive">
+      <h2 x-text="viewStateLabel"></h2>
+      <p class="muted">This board is not the live one. Its scores were computed with the model,
+        <span x-text="viewSeason?.layers ? 'layers' : 'layer'"></span>
+        <b x-text="viewSeason?.layers || viewSeason?.layer"></b> and direction
+        <b x-text="viewSeason?.d_version"></b> shown above, and are
+        <b>not comparable</b> with any other season's.
+        <a href="#" @click.prevent="selectSeason(season?.id)">Switch to <span x-text="season?.name"></span></a>
+        to submit.</p>
+    </section>
+
     <!-- Submit -->
-    <section id="play" class="card">
+    <section id="play" class="card" x-show="!viewingArchive">
       <h2>NEW CHALLENGER</h2>
       <p class="muted">A short string that, prepended to neutral prompts, shifts the model's last-token state along the direction — <b>▲ toward</b> pro-human or <b>▼ against</b> it. One submission scores once and ranks on both boards. Weird, opaque sequences are fair game.</p>
 
@@ -164,7 +196,17 @@
       <div class="board-wrap" :class="{ scroll: !collapsed }">
       <table class="board" x-show="entries.length">
         <thead>
-          <tr><th>#</th><th>PLAYER</th><th>SEQUENCE</th><th class="num">SCORE</th><th class="num" title="Direction-specificity: how much of the sequence's activation movement is ALONG the pro-human direction vs just movement anywhere. High = targeted; low = artifact-like.">SPEC</th></tr>
+          <tr><th>#</th><th>PLAYER</th><th>SEQUENCE</th>
+            <th class="num" x-text="season?.layers ? 'SCORE 1' : 'SCORE'"
+                :title="season?.layers
+                  ? 'Ranks the board. Mean cosine shift along d across layers ' + season.layers + '.'
+                  : 'Mean cosine shift along d at the season layer.'"></th>
+            <!-- Season 3 only. NOT bounded by SCORE 1 and does not bound it: the two use
+                 different directions and a min of shifts is not a shift of mins, so
+                 SCORE 2 > SCORE 1 is normal, not a bug. -->
+            <th class="num" x-show="season?.layers"
+                title="Weakest layer. The smallest shift across a WIDER band (15,23,31,39), using a separate direction per layer. A sequence that only moves d where it was optimised scores near zero here while SCORE 1 stays high.">SCORE 2</th>
+            <th class="num" title="Direction-specificity: how much of the sequence's activation movement is ALONG the pro-human direction vs just movement anywhere. High = targeted; low = artifact-like.">SPEC</th></tr>
         </thead>
         <tbody>
           <template x-for="(e, i) in visibleEntries" :key="i">
@@ -178,6 +220,7 @@
                      x-text="e.sequence"></div>
               </td>
               <td class="num" x-text="fmtScore(e.score)"></td>
+              <td class="num" x-show="season?.layers" x-text="fmtScore(e.score_alt)"></td>
               <td class="num spec" x-text="fmtSpec(e.specificity)"></td>
             </tr>
           </template>
