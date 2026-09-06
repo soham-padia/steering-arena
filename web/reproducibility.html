@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reproducibility &amp; Method — Steering Arena</title>
-  <meta name="description" content="How the Steering Arena 'pro-human' direction is extracted and scored: seed pairs, contrastive last-token activations, confound orthogonalization, layer sweep, and validation. Season 2 runs on OLMo-3-32B at layer 24. Download the data and reproduce it." />
+  <meta name="description" content="How the Steering Arena 'pro-human' direction is extracted and scored: seed pairs, contrastive last-token activations, confound orthogonalization, layer sweep, and validation. Season 3 runs on OLMo-3-32B across layers 19/23/27/31. Download the data and reproduce it." />
   <link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/reproducibility.html" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Soham Padia" />
@@ -35,16 +35,20 @@
   <main class="wrap">
 
     <section class="card">
-      <h2>⓪ WHAT SEASON 2 IS</h2>
-      <p class="muted">A season freezes a <code>(model, layer, direction, probe set, scoring config)</code> tuple. <b>Scores are only comparable inside one season.</b></p>
+      <h2>⓪ WHAT SEASON 3 IS</h2>
+      <p class="muted">A season freezes a <code>(model, layer(s), direction, probe set, scoring config)</code> tuple. <b>Scores are only comparable inside one season.</b></p>
       <ul class="rules-list">
-        <li><b>MODEL</b> — <code>allenai/Olmo-3-1125-32B</code>, the <em>base</em> checkpoint. No instruction tuning, no RLHF.</li>
-        <li><b>LAYER</b> — 24. Residual stream, 5120 dimensions.</li>
-        <li><b>DIRECTION</b> — <code>olmo3_L24_logistic</code>, extracted 2026-06-08 from 135 pairs.</li>
-        <li><b>PROBES</b> — 16 neutral prompts, frozen (<code>data/probes/season2.json</code>).</li>
-        <li><b>SCORING</b> — <code>cosine_steering_shift</code>, BOS prepended, forward pass only.</li>
+        <li><b>MODEL</b> — <code>allenai/Olmo-3-1125-32B</code>, the <em>base</em> checkpoint. No instruction tuning, no RLHF. Unchanged from Season 2.</li>
+        <li><b>LAYERS</b> — 19 / 23 / 27 / 31 for the ranked score. Residual stream, 5120 dimensions. Season 2 used layer 24 alone.</li>
+        <li><b>DIRECTION</b> — <code>olmo3_s3_banded</code>. One shared direction across the band, de-confounded against length, sentiment <em>and</em> action-vs-inaction.</li>
+        <li><b>SECOND SCORE</b> — over a wider band (15 / 23 / 31 / 39) with a separate direction per layer, reporting the <em>weakest</em> layer. Informational; it does not affect ranking.</li>
+        <li><b>PROBES</b> — the same 16 neutral prompts, frozen independently (<code>data/probes/season3.json</code>) so Season 2's set can never be edited out from under an archived board.</li>
+        <li><b>SCORING</b> — <code>banded_mean_multilayer</code>, forward pass only. OLMo-3's tokenizer prepends no BOS.</li>
       </ul>
-      <p class="muted">Season 1 ran on <b>Llama-3.1-8B</b> at layer 16 and is archived. Season 1 scores and Season 2 scores are not comparable and are never mixed.</p>
+      <p class="muted"><b>Why a band — and what it did and did not fix.</b> Season 2 ranked on one layer, and the sequence that won it was found by optimizing against that layer. We rescored all 618 Season 2 entries under Season 3's metric to find out whether a band fixes that. <b>It largely does not.</b> The ranked score correlates with Season 2 at <code>0.95</code> and the same optimized string is still rank 1, because the ranked band brackets layer 24 and adjacent layers are highly correlated.</p>
+      <p class="muted">The <b>second</b> score is where the separation happens. Over a wider band, keeping the weakest layer, it correlates with Season 2 at <code>0.84</code> and its top 20 contains <b>10 readable English entries against 0</b> for the ranked score. So the honest summary is: a banded <em>mean</em> over a narrow band is not much harder to game than one layer; a <em>minimum</em> over a spread band is. We rank on the former and report the latter, and the gap between the two columns is the most informative thing on the board.</p>
+      <p class="muted"><b>The honest cost.</b> A band separates the seed pairs slightly less sharply than layer 24 alone (margin 0.2365 against 0.2719, a 13% reduction). That is the price paid for the harder objective, not a free improvement.</p>
+      <p class="muted">Season 2 ran on the same model at <b>layer 24</b> with <code>olmo3_L24_logistic</code>; Season 1 ran on <b>Llama-3.1-8B</b> at layer 16. Both are archived and readable from the season switcher. Scores are never mixed across seasons.</p>
     </section>
 
     <section class="card">
@@ -60,11 +64,11 @@
     <section class="card">
       <h2>② HOW THE DIRECTION <code>d</code> IS EXTRACTED</h2>
       <ul class="rules-list">
-        <li><b>READ.</b> For each pair, read the model's residual-stream hidden state at the <em>last token</em> of <code>prompt + chosen</code> and <code>prompt + rejected</code>, at layer 24. (Last token, not mean-pooled — pooling would re-introduce a length signal.)</li>
+        <li><b>READ.</b> For each pair, read the model's residual-stream hidden state at the <em>last token</em> of <code>prompt + chosen</code> and <code>prompt + rejected</code>, at every layer in the band. (Last token, not mean-pooled — pooling would re-introduce a length signal.)</li>
         <li><b>DIFF.</b> Take the per-pair difference <code>δ = R_L(chosen) − R_L(rejected)</code>. The shared prompt cancels, isolating the value contrast.</li>
         <li><b>FIT.</b> The shipped <code>d</code> is a <b>logistic probe</b> over those differences, not a plain difference-of-means. It agrees with the mass-mean estimator at <code>cos = 0.738</code>, and with an LDA estimate at <code>0.783</code>.</li>
-        <li><b>PICK LAYER.</b> Sweep layers (16 / 24 / 32 / 40 / 48) and keep the one with the best held-out separation. Layer 24 won.</li>
-        <li><b>DE-CONFOUND.</b> Orthogonalize <code>d</code> against explicit "length" and "sentiment" directions (Gram-Schmidt).</li>
+        <li><b>PICK LAYERS.</b> Season 2 swept 16 / 24 / 32 / 40 / 48 and kept the best held-out separation; layer 24 won. For Season 3 we swept <b>all 64 layers</b> and found held-out separation is <em>saturated at 1.00 everywhere</em>, so it cannot rank layers at all — the usable criterion is the probe's <em>margin</em> against a label-shuffled null at each layer. That peaks at layer 25 and falls away smoothly with depth. We also found attention type does <em>not</em> predict probe quality: OLMo-3 alternates sliding and full attention, and depth-matched they are indistinguishable.</li>
+        <li><b>DE-CONFOUND.</b> Orthogonalize <code>d</code> against explicit "length", "sentiment" <em>and</em> "action-vs-inaction" directions (Gram-Schmidt). The third is new in Season 3: it was the one audited confound never removed, and unlike the others it does not fade with depth. Season 2's direction sat at <code>cos = 0.150</code> with it; Season 3's sits at <code>0.004</code>, below the <code>1/√5120 = 0.014</code> chance floor.</li>
         <li><b>NORMALIZE.</b> <code>d ← d / ‖d‖</code>, frozen for the season.</li>
       </ul>
       <div class="row">
@@ -75,11 +79,17 @@
 
     <section class="card">
       <h2>③ HOW A SEQUENCE IS SCORED</h2>
-      <p class="muted">Your sequence is prepended to the 16 frozen probe prompts. The score is the average shift it causes in the model's last-token state along <code>d</code>:</p>
-      <pre class="formula">score(seq) = mean over probes p of
-   [ cos(R_L(seq ⊕ p), d) − cos(R_L(p), d) ]</pre>
-      <p class="muted">Cosine (not raw projection) means inflating activation magnitude does nothing — only <em>direction</em> counts. ▲ pro-human ranks the most positive; ▼ anti-human the most negative (same score, opposite ranking).</p>
-      <p class="muted"><b>What scale is that on?</b> The model's neutral state is essentially orthogonal to <code>d</code>: base <code>cos(R, d) = 0.0067</code>. The top pro sequence moves it to <code>+0.0355</code>. So a score of <code>+0.1</code> is a large move on this axis even though it looks small.</p>
+      <p class="muted">Your sequence is prepended to the 16 frozen probe prompts. The ranked score is the average shift it causes in the model's last-token state along <code>d</code>, averaged over <em>every layer in the band</em>:</p>
+      <pre class="formula">SCORE 1 = mean over probes p of
+            mean over layers L in {19,23,27,31} of
+              [ cos(R_L(seq ⊕ p), d) − cos(R_L(p), d) ]</pre>
+      <p class="muted">The second, informational score uses a wider band and its own direction per layer, and keeps the <b>smallest</b> shift rather than the average — so it reports the layer where your sequence works least well:</p>
+      <pre class="formula">SCORE 2 = mean over probes p of
+            [ min over L in {15,23,31,39} of cos(R_L(seq ⊕ p), d_L)
+            − min over L in {15,23,31,39} of cos(R_L(p), d_L) ]</pre>
+      <p class="muted">The two are <b>not</b> on a common scale and neither bounds the other: they use different directions, and a minimum of shifts is not the shift of a minimum. A row where SCORE 2 exceeds SCORE 1 is normal.</p>
+      <p class="muted">Cosine (not raw projection) means inflating activation magnitude does nothing — only <em>direction</em> counts. ▲ pro-human ranks the most positive; ▼ anti-human the most negative (same score, opposite ranking). Both scores come from a single forward pass: the two bands share six layers in total.</p>
+      <p class="muted"><b>What scale is that on?</b> The model's neutral state is essentially orthogonal to <code>d</code>, so scores that look tiny are large moves on this axis. The precise calibration figures published for Season 2 (base <code>cos(R,d) = 0.0067</code>, top sequence <code>+0.0355</code>) were measured against the layer-24 metric and do <b>not</b> carry over to a banded score. The Season 3 equivalent has not been measured yet, and is deliberately left blank rather than restated from the old season.</p>
       <a class="mini" href="https://github.com/soham-padia/steering-arena/blob/main/app/scoring.py" target="_blank" rel="noopener">scoring.py</a>
     </section>
 
@@ -101,7 +111,7 @@
 
     <section class="card">
       <h2>⑤ THE MODEL &amp; THE ORACLE</h2>
-      <p class="muted">Season 2 runs on <b>OLMo-3-32B (base)</b>, served remotely on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> via <a href="https://nnsight.net" target="_blank" rel="noopener">NNsight</a> — the same model and layer used for both extraction and live scoring, so <code>d</code> lives in exactly the activation space it is scored in.</p>
+      <p class="muted">Season 3 runs on <b>OLMo-3-32B (base)</b>, served remotely on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> via <a href="https://nnsight.net" target="_blank" rel="noopener">NNsight</a> — the same model and the same layers used for both extraction and live scoring, so <code>d</code> lives in exactly the activation space it is scored in.</p>
       <p class="muted">The model and <code>d</code> are public, but a 32B is not something most players can self-host, so in practice the server is the scoring oracle. Determinism holds while NDIF serves the same model build; if that changes, scores shift and it becomes a new season.</p>
       <div class="row">
         <a class="mini" href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">FULL SOURCE ON GITHUB</a>
