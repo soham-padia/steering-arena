@@ -12,6 +12,13 @@ had to change; everything else — the GCG loop, the simulated-annealing accepta
 replica sharding, the checkpoint format — is his and is kept as close to the original as
 the change allows.
 
+**One upstream line is repaired, not preserved.** The SA acceptance calls
+`t.exp((cand − curr)/T_SA)` on a Python float, which raises
+`TypeError: exp(): argument 'input' must be Tensor, not float` under this repo's torch
+2.12.1 — verified. It evidently worked on upstream's torch. Here it is wrapped in
+`t.tensor(...)`; a 0-dim CPU tensor compares fine against a CUDA tensor, both sides are
+float32, so behaviour is otherwise identical.
+
 ## Why this run exists
 
 Not to top the leaderboard. `data/analysis/REVISIONS_2026-09-05.md` §6 showed a banded
@@ -55,8 +62,15 @@ the smoke run showed *every* candidate fails from iteration 0 — GCG's standard
 already merges under BPE, and adversarial sequences rarely round-trip. The guard silently
 disabled itself and `best.json` was never written at all.
 
-So instead each iteration **also scores the re-tokenised prefix** — literally what the board
-would compute — and `best` is chosen on that number. The gradient still runs on the raw ids,
+So instead each iteration **also scores the re-tokenised prefix** — the same aggregate the
+board applies, over the same probes — and `best` is chosen on that number.
+
+**It is not literally a leaderboard score**, and should not be quoted as one. Like the
+optimiser's own number it omits the per-probe baseline, so it is offset from a real board
+entry by the constant `mean_p agg_L cos(probe)`. The `drift` column is still valid because
+both sides omit the same constant. To get a submittable number, re-score `best.json`'s
+prompt through `app/scoring.py` — on NDIF, per the standing rule — rather than trusting
+the value in the file. The gradient still runs on the raw ids,
 which is fine: in GCG the gradient only *proposes* candidates; scoring decides between them.
 Only the recorded best has to be true.
 

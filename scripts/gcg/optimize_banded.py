@@ -76,6 +76,12 @@ from gcg_utils import (  # noqa: E402
     roundtrip_ok, truncate_to_layer,
 )
 
+# Upstream optimize_prompt.py:82, dropped while adapting and caught by the fidelity audit.
+# Without it the candidate sampler and the SA coin flip are unseeded, so no run is
+# reproducible and no two runs are comparable -- fatal for "a failure to beat Score 2 is a
+# result", which requires the failure to be repeatable.
+t.manual_seed(20260906)
+
 SMOKE = args.smoke
 N_CONTROLLED_TOKENS = args.n_controlled_tokens
 CAND_CHUNK = args.cand_chunk
@@ -144,9 +150,18 @@ print(f"model {MODEL_NAME} truncated to {len(getattr(trunk, 'layers', getattr(tr
 groups = plan_replica_placement(model, args.replicas, args.gpus_per_replica, GPU_MEM_FRACTION)
 if len(groups) > 1:
     replicas = build_replicas(model, groups, GPU_MEM_FRACTION)
+    # MUST rebind. build_replicas strips accelerate's hooks and does model.to("cpu") on the
+    # CALLER's module (nn.Module.to is in-place; its `del model` only unbinds a local name).
+    # Upstream reassigns for exactly this reason; dropping it left the module-level `model`
+    # CPU-resident, so compute_score_gradient would do cuda @ cpu and die on iteration 0.
+    # Only fires with >1 replica, which is why the 1-GPU smoke runs never saw it.
+    model, trunk = replicas[0], replicas[0].base_model
     print(f"{len(replicas)} replicas on groups {groups}")
 else:
     replicas = [model]
+gc.collect()
+if device.type == "cuda":
+    t.cuda.empty_cache()   # return the truncated-away blocks before the first forward
 
 # sfx -> suffix tokens. The leading space matches the board's f"{seq} {probe}" composition.
 sfx_enc = tokenizer([" " + s for s in suffixes], padding=True, return_tensors="pt",
@@ -268,12 +283,17 @@ if args.resume_from is not None:
         f"resuming would mix two objectives in one run")
     ctrl_token_ids = t.tensor(state["ctrl_token_ids"], device=device)
     iter_idx = state["iter"] + 1
-    best_score = json.loads(BEST.read_text())["score"] if BEST.exists() else float("-inf")
+    # board_score, NOT score: `best` is selected on the board number at the bottom of the
+    # loop, so resuming with the optimiser's number compares two different scales and either
+    # overwrites best immediately or freezes it behind an unreachable threshold.
+    best_score = (json.loads(BEST.read_text()).get("board_score", float("-inf"))
+                  if BEST.exists() else float("-inf"))
     print(f"resumed at iter {iter_idx} (best_score={best_score})")
 else:
     iter_idx, best_score = 0, float("-inf")
 
-n_rejected_roundtrip = 0
+n_rejected_roundtrip = (json.loads(LATEST.read_text()).get("n_not_roundtrip", 0)
+                        if args.resume_from is not None and LATEST.exists() else 0)
 
 while args.max_iters == 0 or iter_idx < args.max_iters:
     iter_start = time.perf_counter()

@@ -8,7 +8,10 @@ WHAT IS DIFFERENT FROM UPSTREAM
   compute_scores_batch  takes `layers: list[int]` and registers one forward hook per band
                         layer, then aggregates across them (mean, or per-layer min).
   truncate_to_layer     keeps max(band) + 2 blocks instead of layer + 2.
-  roundtrip_ok          new. GCG optimises token IDS; the board scores a STRING.
+  roundtrip_ok          new, diagnostic only. GCG optimises token IDS; the board scores a
+                        STRING. Candidates are NOT rejected on it -- see optimize_banded's
+                        board_score(), which scores the re-tokenised prefix instead.
+  _aggregate/SOFTMIN    MEAN / MIN, plus a smooth search-only surrogate for MIN.
 
 WHAT IS UNCHANGED, AND WHY IT MATTERS
   The per-probe baseline cos(R_L(probe), d) is NOT subtracted, exactly as upstream. It is
@@ -122,7 +125,11 @@ def d_tag(d: np.ndarray) -> str:
 def roundtrip_ok(tokenizer, ids) -> bool:
     """Does this token sequence survive decode -> encode unchanged?
 
-    NEW, and the single most important addition. GCG optimises token IDS while the
+    DIAGNOSTIC ONLY -- recorded in each checkpoint, never used to reject a candidate. An
+    earlier design did reject on it and was withdrawn: essentially every adversarial
+    candidate fails, so the guard disabled itself and best.json was never written.
+
+    GCG optimises token IDS while the
     leaderboard scores a STRING, so the real pipeline is
 
         optimise ids -> decode -> submit text -> board re-tokenises
@@ -133,7 +140,12 @@ def roundtrip_ok(tokenizer, ids) -> bool:
     scores and its own board entries (_communication/004), and it was never tested there.
     """
     seq = [int(x) for x in ids]
-    return tokenizer(tokenizer.decode(seq), add_special_tokens=False)["input_ids"] == seq
+    # skip_special_tokens=True to match decode_prompt(), which is what actually gets
+    # submitted. Decoding WITH specials reported roundtrip_ok=True for prefixes containing
+    # <|endoftext|> or <|pad|>, which vanish entirely from the submitted string -- verified
+    # on OLMo-3 ids 100257 and 100277.
+    txt = tokenizer.decode(seq, skip_special_tokens=True)
+    return tokenizer(txt, add_special_tokens=False)["input_ids"] == seq
 
 
 def _decoder_blocks_attr(trunk) -> str:
@@ -212,8 +224,12 @@ def compute_scores_batch(
     seq = ctrl_seq + sfx_seq
 
     if aggregate in (MIN, SOFTMIN) and dirs.shape[0] != len(layers):
-        raise ValueError(f"{MIN} needs one direction per layer: "
+        raise ValueError(f"{aggregate} needs one direction per layer: "
                          f"{dirs.shape[0]} dirs for {len(layers)} layers")
+    if aggregate == MEAN and dirs.shape[0] != 1:
+        # Passing score2's (4, H) per_layer array with MEAN would silently score against
+        # per_layer[0] alone and look entirely normal. One character away in the caller.
+        raise ValueError(f"{MEAN} takes exactly ONE shared direction, got {dirs.shape[0]}")
 
     # Right padding => last real token sits at ctrl_seq + n_sfx - 1.
     gather_pos = n_sfx_tokens + ctrl_seq - 1  # (n_sfx,)
@@ -235,8 +251,13 @@ def compute_scores_batch(
             captured[L] = output[0] if isinstance(output, tuple) else output
         return _capture
 
-    handles = [blocks[L].register_forward_hook(_make_capture(L)) for L in layers]
+    # Registration inside the try: if blocks[L] raises for a later L (a band layer beyond
+    # truncation), hooks already registered would otherwise leak permanently, each pinning a
+    # captured activation alive through its closure. Upstream registers one hook, so the
+    # equivalent failure registers nothing.
+    handles = []
     try:
+        handles = [blocks[L].register_forward_hook(_make_capture(L)) for L in layers]
         score_chunks = []
         for ce in t.split(ctrl_embed, chunk):
             c = ce.shape[0]  # chunk size; may be smaller than `chunk` for last iter
@@ -250,6 +271,11 @@ def compute_scores_batch(
             sm = sfx_mask[None].expand(c, n_sfx, sfx_seq)
             attn = t.cat([cm, sm], dim=2).reshape(c * n_sfx, seq)
 
+            # Every hook fires on every forward and overwrites captured[L], so a stale
+            # read is not currently possible -- but a stale tensor would be LARGER in the
+            # batch dim and would index silently on a short final chunk, returning wrong
+            # numbers with no error. Clearing turns that into a loud KeyError for free.
+            captured.clear()
             trunk(inputs_embeds=inp, attention_mask=attn)
 
             pos = gather_pos[None].expand(c, n_sfx).reshape(c * n_sfx)

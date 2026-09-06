@@ -179,19 +179,99 @@ def test_truncate_keeps_the_deepest_band_layer():
     assert max(band) < len(m.base_model.layers)
 
 
-def test_roundtrip_guard_catches_a_non_reencodable_sequence():
-    """The guard that upstream lacks. A sequence whose decode->encode differs would be
-    scored by the optimiser and never reproduced by the board."""
-    class _Tok:
-        def __init__(self, lossy): self.lossy = lossy
-        def decode(self, ids): return " ".join(str(i) for i in ids)
-        def __call__(self, s, add_special_tokens=False):
-            ids = [int(x) for x in s.split()]
-            if self.lossy: ids = ids[:-1]          # simulate a merge across the boundary
-            return {"input_ids": ids}
+class _Tok:
+    """Fake tokenizer. `decode` MUST accept skip_special_tokens: roundtrip_ok passes it, so
+    an earlier version of this stub raised TypeError and hid the very case below."""
 
+    SPECIAL = {99}
+
+    def __init__(self, lossy=False):
+        self.lossy = lossy
+
+    def decode(self, ids, skip_special_tokens=False):
+        keep = [i for i in ids if not (skip_special_tokens and i in self.SPECIAL)]
+        return " ".join(str(i) for i in keep)
+
+    def __call__(self, s, add_special_tokens=False):
+        ids = [int(x) for x in s.split()] if s else []
+        if self.lossy:
+            ids = ids[:-1]          # simulate a merge across the boundary
+        return {"input_ids": ids}
+
+
+def test_roundtrip_ok_detects_a_non_reencodable_sequence():
     assert G.roundtrip_ok(_Tok(lossy=False), [5, 6, 7]) is True
     assert G.roundtrip_ok(_Tok(lossy=True), [5, 6, 7]) is False
+
+
+def test_roundtrip_ok_decodes_the_way_the_prompt_is_actually_submitted():
+    """A special token vanishes from the submitted string but survives a naive round-trip.
+
+    roundtrip_ok used to decode WITH specials while decode_prompt used
+    skip_special_tokens=True, so a prefix containing <|endoftext|> or <|pad|> was recorded
+    as roundtrip_ok=True even though those tokens are absent from what the board receives.
+    Verified on the real OLMo-3 tokenizer for ids 100257 and 100277.
+    """
+    assert G.roundtrip_ok(_Tok(), [99, 5, 6]) is False, (
+        "a prefix whose special token disappears from the submitted string is NOT safe")
+    assert G.roundtrip_ok(_Tok(), [5, 6]) is True
+
+
+def test_chunking_does_not_change_the_score():
+    """`chunk` was never exercised: every other test uses the single-chunk default, so the
+    chunked loop, the SHORT FINAL CHUNK, and the 'read the right captured[L] for this chunk'
+    property were all untested. A stale capture would be larger in the batch dim and index
+    silently, returning wrong numbers with no error."""
+    trunk, ctrl, sfx, mask, ntok = _fixture()
+    ctrl = torch.cat([ctrl, ctrl * 0.5, ctrl * -0.3])          # 6 candidates
+    dirs = torch.nn.functional.normalize(torch.randn(3, H, generator=torch.Generator().manual_seed(8)), dim=1)
+    band = [1, 3, 5]
+    for agg, d_in in ((G.MEAN, dirs[:1]), (G.MIN, dirs)):
+        whole = G.compute_scores_batch(trunk, ctrl, sfx, mask, ntok, d_in, band, agg)
+        for chunk in (1, 4, 5):                                 # 5 => a short final chunk
+            got = G.compute_scores_batch(trunk, ctrl, sfx, mask, ntok, d_in, band, agg, chunk)
+            assert torch.allclose(got, whole, atol=1e-6), f"{agg} chunk={chunk}"
+
+
+def test_mean_rejects_a_per_layer_direction_array():
+    """MEAN used to accept any row count and silently score against dirs[0]. Passing
+    score2's (4, H) per_layer array with MEAN is one character away in the caller."""
+    trunk, ctrl, sfx, mask, ntok = _fixture()
+    per = torch.nn.functional.normalize(torch.randn(3, H), dim=1)
+    with pytest.raises(ValueError, match="exactly ONE"):
+        G.compute_scores_batch(trunk, ctrl, sfx, mask, ntok, per, [1, 3, 5], G.MEAN)
+
+
+def test_optimiser_objective_differs_from_app_scoring_by_a_CONSTANT():
+    """Contract 2, which this file's docstring advertised and no test implemented.
+
+    The optimiser drops the per-probe baseline; app/scoring.py subtracts it. The two must
+    therefore differ by a constant that does NOT depend on the prefix -- if it drifts with
+    the prefix, GCG is climbing a hill the leaderboard is not measuring.
+
+    Note this holds for MIN too, which is not obvious: app.scoring aggregates over layers
+    FIRST and subtracts the aggregated baseline, so the subtracted term is prefix-free.
+    """
+    n_layers, n_probes = 3, 4
+    base = torch.randn(n_layers, n_probes, generator=torch.Generator().manual_seed(12))
+
+    # THREE different prefixes. The invariant is not that the gap is constant across
+    # PROBES -- per probe it is agg_base(p), which of course varies. It is that the gap is
+    # the same for every PREFIX, because the subtracted term contains no prefix.
+    gaps = {G.MEAN: [], G.MIN: []}
+    for seed in (11, 21, 31):
+        cos = torch.randn(n_layers, n_probes, generator=torch.Generator().manual_seed(seed))
+        for agg in (G.MEAN, G.MIN):
+            optimiser = G._aggregate(cos, agg).mean()                       # baseline dropped
+            board = (G._aggregate(cos, agg) - G._aggregate(base, agg)).mean()  # subtracted
+            gaps[agg].append((optimiser - board).item())
+
+    for agg, g in gaps.items():
+        assert max(g) - min(g) < 1e-6, (
+            f"{agg}: the optimiser/board gap moved with the prefix ({g}) — GCG would be "
+            f"climbing a hill the leaderboard does not measure")
+        # and it is exactly the mean aggregated baseline
+        assert abs(g[0] - G._aggregate(base, agg).mean().item()) < 1e-6
 
 
 def test_d_tag_distinguishes_the_two_season3_directions():
