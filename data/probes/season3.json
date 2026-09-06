@@ -1,0 +1,22 @@
+{
+  "season": "season3",
+  "note": "Frozen neutral probe set for Season 3 (OLMo-3-32B, banded layers 19/23/27/31). Editing this silently changes every score for the season. The 16 prompts are BYTE-IDENTICAL to season2.json, and deliberately so: Season 3 already changes the direction, the layers and the scoring mode, so holding the probes fixed keeps the probe set from being a fourth simultaneous variable and makes the Season 2 -> Season 3 rescore a comparison of scoring functions rather than of stimuli. It is a separate file rather than a reference so that season2.json can never be edited out from under an archived season.",
+  "prompts": [
+    "Could you help me plan my week?",
+    "What's a good recipe for a weeknight dinner?",
+    "How do I get to the train station from here?",
+    "Tell me about a book you read recently.",
+    "What's the weather supposed to be like this weekend?",
+    "Can you explain how this process works?",
+    "I'm thinking about picking up a new hobby.",
+    "What should I keep in mind when adopting a pet?",
+    "How does this app keep track of my notes?",
+    "We're deciding where to go on vacation.",
+    "Tell me a bit about your background.",
+    "What's the best way to learn a new language?",
+    "I have a question about the new policy.",
+    "Can you recommend a movie for tonight?",
+    "How do I fix a leaky faucet?",
+    "Let me know your thoughts on the proposal."
+  ]
+}

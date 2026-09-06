@@ -1,0 +1,99 @@
+{
+ "model_id": "allenai/Olmo-3-1125-32B",
+ "d_version": "olmo3_s3_banded",
+ "n_pairs": 135,
+ "n_split": 40,
+ "hidden": 5120,
+ "directions": {
+  "score1": {
+   "band": [
+    19,
+    23,
+    27,
+    31
+   ],
+   "layer_types": [
+    "full_attention"
+   ],
+   "aggregate": "banded_mean",
+   "ranks_the_board": true,
+   "held_out_separation": 1.0,
+   "margin": 0.2365,
+   "confound_cosines": {
+    "approach": 0.0042,
+    "sentiment": 0.0041,
+    "length": 0.0013
+   },
+   "confounds_removed": [
+    "length",
+    "sentiment",
+    "approach"
+   ],
+   "min_cos_dbar_with_member": 0.7734,
+   "per_axis_margin": {
+    "accountability": 0.22984,
+    "boundaries": 0.2519,
+    "conflict_resolution": 0.28757,
+    "empathy": 0.29551,
+    "fairness": 0.26045,
+    "feedback": 0.23503,
+    "inclusion": 0.22357,
+    "integrity": 0.23204,
+    "leadership": 0.26504,
+    "learning": 0.23585,
+    "ownership": 0.27752,
+    "privacy": 0.20306,
+    "respect": 0.23592,
+    "safety": 0.26412,
+    "trust": 0.23534
+   },
+   "per_axis_min": 0.20306,
+   "per_axis_all_positive": true
+  },
+  "score2": {
+   "band": [
+    15,
+    23,
+    31,
+    39
+   ],
+   "layer_types": [
+    "full_attention"
+   ],
+   "aggregate": "per_layer_min",
+   "ranks_the_board": false,
+   "held_out_separation": 1.0,
+   "margin": 0.26028,
+   "confound_cosines": {
+    "approach": 0.0072,
+    "sentiment": 0.0047,
+    "length": 0.005
+   },
+   "confounds_removed": [
+    "length",
+    "sentiment",
+    "approach"
+   ],
+   "min_cos_dbar_with_member": 0.6106,
+   "per_axis_margin": {
+    "accountability": 0.27035,
+    "boundaries": 0.26801,
+    "conflict_resolution": 0.32699,
+    "empathy": 0.33151,
+    "fairness": 0.28145,
+    "feedback": 0.26449,
+    "inclusion": 0.25037,
+    "integrity": 0.25637,
+    "leadership": 0.2897,
+    "learning": 0.25832,
+    "ownership": 0.31524,
+    "privacy": 0.22089,
+    "respect": 0.24151,
+    "safety": 0.2829,
+    "trust": 0.26884
+   },
+   "per_axis_min": 0.22089,
+   "per_axis_all_positive": true
+  }
+ }
+}

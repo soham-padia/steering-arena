@@ -77,3 +77,6 @@ steering_arena/
 # the root-level rule stays as a guard in case the folder is re-downloaded there.
 Neel Nanda/
 my_document.md
+
+# Third-party: Jesse Li's GCG optimiser, cloned for reference (its own git repo)
+_Jesse/
