@@ -30,7 +30,9 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.config import settings  # noqa: E402
-from scripts.behavioral_eval import CACHE_DIR, _gen_key, _layer_norm, _load_d  # noqa: E402
+from scripts.behavioral_eval import (  # noqa: E402
+    CACHE_DIR, _gen_key, _layer_norm, _load_d, d_tag_for,
+)
 from scripts.behavioral_eval import _load_prompts, _reader  # noqa: E402
 from scripts.prefix_behavior_eval import _api_key, _judge_pair, _mean, _paired_p  # noqa: E402
 from scripts.prefix_transfer_eval import distinct_n, looping  # noqa: E402
@@ -76,13 +78,16 @@ def _cont(text, prompt):
 
 
 def cmd_generate(args):
-    d, layer = _load_d()
+    d, layer = _load_d(args.d)
+    dtag = d_tag_for(d) if args.d else ""
     prompts = _load_prompts(args.limit)
     reader = _reader()
     rnorm = _layer_norm(reader, layer)
     alpha = args.mult * rnorm
     dirs = random_dirs(args.dirs, d.shape[0])
     cos = [float(abs(np.dot(v, d))) for v in dirs]
+    print(f"direction: {args.d or settings.d_file}"
+          f"{f'  (cache tag {dtag})' if dtag else '  (season default)'}")
     print(f"L{layer} ‖R‖≈{rnorm:.1f}; α={alpha:.1f} (same as the +{args.mult:g} arm)")
     print(f"|cos(random_i, d)| = {[round(c, 4) for c in cos]}  (≈0 = properly unaligned)\n")
 
@@ -90,7 +95,7 @@ def cmd_generate(args):
     for pi, prompt in enumerate(prompts, 1):
         for i, v in enumerate(dirs):
             arm = arm_name(i)
-            fp = CACHE_DIR / f"{_gen_key(settings.model_id, layer, prompt, arm, alpha, args.max_new)}.json"
+            fp = CACHE_DIR / f"{_gen_key(settings.model_id, layer, prompt, arm, alpha, args.max_new, dtag)}.json"
             if fp.exists():
                 n_hit += 1
                 continue
@@ -102,9 +107,12 @@ def cmd_generate(args):
     print(f"\ndone: {n_new} generated, {n_hit} cached")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     store = json.loads(OUT.read_text()) if OUT.exists() else {}
+    # Record WHICH direction was under test in the artifact itself, not just in whatever
+    # D_FILE happened to be exported when the run was launched.
     store["setup"] = {"layer": layer, "r_norm": rnorm, "alpha": alpha, "mult": args.mult,
                       "seed": SEED, "n_dirs": args.dirs, "cos_with_d": cos,
-                      "model_id": settings.model_id}
+                      "model_id": settings.model_id,
+                      "d_file": str(args.d or settings.d_file), "d_tag": dtag}
     OUT.write_text(json.dumps(store, indent=2))
 
 
@@ -278,6 +286,11 @@ def main():
         p.add_argument("--limit", type=int, default=0)
         p.add_argument("--max-new", type=int, default=40)
         p.add_argument("--mult", type=float, default=1.0)
+        p.add_argument("--d", default=None,
+                       help="direction .npz to test; default = the season's d_file. "
+                            "A non-default direction gets its own cache namespace, so it "
+                            "can never collide with generations made from another d at "
+                            "the same layer.")
         if name == "generate":
             p.add_argument("--dirs", type=int, default=8)
         if name == "judge":

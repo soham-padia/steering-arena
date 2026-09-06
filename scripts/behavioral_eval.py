@@ -57,9 +57,33 @@ def _load_prompts(limit=0):
     return prompts[:limit] if limit else prompts
 
 
-def _gen_key(model_id, layer, prompt, arm, alpha, max_new):
+def _gen_key(model_id, layer, prompt, arm, alpha, max_new, d_tag=""):
+    """Cache key for one steered generation.
+
+    `d_tag` identifies WHICH direction produced the text, and defaults to "" so every
+    key written before it existed still resolves — the 1102 entries already in
+    data/cache/behavioral/ stay valid rather than being silently orphaned.
+
+    It exists because the steered text depends on `d` (steer = layer, alpha * d) but the
+    original key did not mention `d` at all. Re-running with a different direction at a
+    layer that had already been generated would therefore return the OLD direction's
+    generations from cache, silently, and the resulting "causal check" would be measuring
+    the wrong vector. Season 3 dodged that only because its layer (27) happens not to be
+    one of the cached ones (16/24/32/40/48). Pass d_tag whenever d is not the season default.
+    """
     raw = f"{model_id}\x00L{layer}\x00{prompt}\x00{arm}\x00{alpha:.4f}\x00{max_new}"
+    if d_tag:
+        raw += f"\x00d={d_tag}"
     return hashlib.sha256(raw.encode()).hexdigest()
+
+
+def d_tag_for(d) -> str:
+    """Short content hash of a direction vector — identifies it in a cache key.
+
+    Content-addressed rather than named after d_version, because Season 3 ships two files
+    that share a d_version and differ only by `role`; a name-based tag would collide.
+    """
+    return hashlib.sha256(np.asarray(d, dtype=np.float64).tobytes()).hexdigest()[:12]
 
 
 def _reader():
@@ -67,8 +91,14 @@ def _reader():
                                 prepend_bos=settings.prepend_bos)
 
 
-def _load_d():
-    data = np.load(settings.d_file, allow_pickle=True)
+def _load_d(path=None):
+    """(unit d, layer) from a direction .npz. `path` defaults to the season's d_file.
+
+    Callers that test a NON-default direction should pass `path` explicitly and thread
+    `d_tag_for(d)` into `_gen_key`, so the run is recorded in its own cache namespace and
+    in its own output provenance rather than depending on an exported D_FILE env var.
+    """
+    data = np.load(path or settings.d_file, allow_pickle=True)
     meta = json.loads(str(data["meta"]))
     return unit(np.asarray(data["d"], dtype=np.float64)), int(meta["layer"])
 
@@ -83,7 +113,10 @@ def _layer_norm(reader, layer):
 
 def cmd_generate(args):
     prompts = _load_prompts(args.limit)
-    d, layer = _load_d()
+    d, layer = _load_d(getattr(args, "d", None))
+    dtag = d_tag_for(d) if getattr(args, "d", None) else ""
+    print(f"direction: {args.d or settings.d_file}"
+          f"{f'  (cache tag {dtag})' if dtag else '  (season default)'}", flush=True)
     reader = _reader()
     rnorm = _layer_norm(reader, layer)
     mults = [float(m) for m in args.mults.split(",") if m.strip()]
@@ -95,7 +128,7 @@ def cmd_generate(args):
     n_new = n_hit = 0
     for pi, prompt in enumerate(prompts, 1):
         for arm, alpha in arms:
-            fp = CACHE_DIR / f"{_gen_key(settings.model_id, layer, prompt, arm, alpha, args.max_new)}.json"
+            fp = CACHE_DIR / f"{_gen_key(settings.model_id, layer, prompt, arm, alpha, args.max_new, dtag)}.json"
             if fp.exists():
                 n_hit += 1
                 continue
@@ -267,6 +300,11 @@ def main():
     g.add_argument("--mults", default="0.5,1.0")
     g.add_argument("--max-new", type=int, default=40)
     g.add_argument("--limit", type=int, default=0, help="cap prompts (smoke)")
+    g.add_argument("--d", default=None,
+                   help="direction .npz to steer with; default = the season's d_file. "
+                        "A non-default direction gets its own cache namespace (see "
+                        "_gen_key), so it can never collide with generations made from "
+                        "another d at the same layer.")
     sub.add_parser("blind")
     j = sub.add_parser("judge")
     j.add_argument("--skip-model-judge", action="store_true", help="stats on human CSV only")
