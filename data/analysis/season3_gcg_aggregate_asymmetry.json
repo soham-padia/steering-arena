@@ -1,0 +1,114 @@
+{
+ "question": "why does score2 lag score1, and why do the anti arms outrun the pro arms",
+ "answer": "aggregate structure: min is a conjunction and saturates; max is a disjunction and does not",
+ "matched_iteration_live_abs": {
+  "note": "|LIVE| = |sign*(best board so far - baseline)|; matched iterations, so hardware differences do not enter",
+  "score1_pro_mean": {
+   "50": 0.02462,
+   "100": 0.04364,
+   "150": 0.05348,
+   "200": 0.07166
+  },
+  "score1_anti_mean": {
+   "50": 0.03762,
+   "100": 0.07451,
+   "150": 0.0956,
+   "200": 0.10127
+  },
+  "score2_pro_min": {
+   "50": 0.02504,
+   "100": 0.03017,
+   "150": 0.03912,
+   "200": 0.0453
+  },
+  "score2_anti_max": {
+   "50": 0.07908,
+   "100": 0.09136,
+   "150": 0.12296,
+   "200": 0.12906
+  }
+ },
+ "anti_over_pro_ratio": {
+  "score1_aggregate_held_fixed": [
+   1.53,
+   1.71,
+   1.79,
+   1.41
+  ],
+  "score2_min_vs_max": [
+   3.16,
+   3.03,
+   3.14,
+   2.85
+  ],
+  "attribution": "~1.6x geometric (visible with the aggregate held fixed), ~1.9x extra from min->max"
+ },
+ "median_improving_step_by_window": {
+  "score1_pro_mean": [
+   0.000627,
+   0.000439,
+   0.000394,
+   0.000564,
+   0.001132
+  ],
+  "score2_pro_min": [
+   0.000599,
+   0.000446,
+   0.000415,
+   0.000292,
+   0.000316
+  ],
+  "score2_anti_max": [
+   0.000951,
+   0.001091,
+   0.001326,
+   null,
+   null
+  ],
+  "windows": [
+   "0-100",
+   "100-200",
+   "200-300",
+   "300-400",
+   "400-500"
+  ]
+ },
+ "net_gain_by_window": {
+  "score1_pro_mean": [
+   0.0545,
+   0.02574,
+   0.01601,
+   0.02899,
+   0.02486
+  ],
+  "score2_pro_min": [
+   0.04477,
+   0.01189,
+   0.00509,
+   0.00529,
+   0.00188
+  ],
+  "score2_anti_max": [
+   0.06907,
+   0.03462,
+   0.00982,
+   null,
+   null
+  ]
+ },
+ "withdrawn": {
+  "claim": "T_SA runs ~3.4x hotter on score2 because its steps are 3.4x smaller (commit 9517e05)",
+  "why_wrong": "measured only over iter>=384. Through iter 300 the two arms have near-identical median step sizes (5.99e-4 vs 6.27e-4), so the temperature was equally scaled. score2's small late steps are a CONSEQUENCE of saturation, not its cause.",
+  "status": "the --t-sa-scale flag and job 706969 remain a valid experiment (does cooling improve retention on a saturated objective?) but the stated mechanism was backwards."
+ },
+ "also_withdrawn": {
+  "claim": "score2's min creates a flat search landscape",
+  "why_wrong": "score2-hardmin has 3.6% identical consecutive states vs score1's 5.0% -- less flat, not more."
+ },
+ "corrupted_submission": {
+  "row_id": 1342,
+  "board_score1": 0.086,
+  "locally_measured": 0.14045,
+  "cause": "the prompt contains two real newline bytes (0x0a 0x0a); it was copied from a Python repr so they arrived as literal backslash-n text, plus an inserted newline. 38 tokens submitted vs 32 in the run."
+ }
+}
