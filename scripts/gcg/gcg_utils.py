@@ -28,6 +28,46 @@ from jaxtyping import Float, Int
 
 MEAN = "banded_mean"
 MIN = "per_layer_min"
+SOFTMIN = "per_layer_softmin"   # SEARCH-ONLY surrogate for MIN; never a reported score
+
+# Temperature for SOFTMIN. -> MIN as T->0, -> mean as T->inf. 0.02 is ~10% of the observed
+# per-layer cosine spread on the seed pairs, so it is harsh enough to still punish a weak
+# layer while spreading gradient across all of them.
+SOFTMIN_T = 0.02
+
+
+def _aggregate(stacked, aggregate: str):
+    """(n_layers, N) per-layer cosines -> (N,) aggregated score.
+
+    MEAN     the ranked Score 1 objective.
+    MIN      the true Score 2 objective. Exact, but its gradient reaches only the ARGMIN
+             layer, so a GCG step gets signal about one depth out of four.
+    SOFTMIN  a smooth surrogate for MIN, for the SEARCH ONLY:
+
+                 softmin_T(x) = -T * log( mean_L exp(-x_L / T) )
+
+             Gradient flows to every layer, weighted toward the weakest -- a strictly
+             better optimisation signal than a hard min. It is NOT a scoring mode: the
+             board computes MIN, so anything reported must use MIN.
+
+    A geometric mean was considered and REJECTED. The per-layer cosines are signed and, on
+    the seed pairs, 99.6% of texts have the SAME sign at all four band layers (49.6% all
+    positive, 50.0% all negative). A 4-way product is therefore positive 99.6% of the time,
+    half of it from four negatives multiplying -- so the geometric mean of a text that is
+    anti-human at every layer comes out strongly POSITIVE (measured: per-layer
+    [-0.196,-0.175,-0.154,-0.141] -> GM +0.165 against an arithmetic mean of -0.167). It
+    destroys the sign, and because the layers are correlated that is half the corpus, not
+    an edge case.
+    """
+    if aggregate == MEAN:
+        return stacked.mean(dim=0)
+    if aggregate == MIN:
+        return stacked.min(dim=0).values
+    if aggregate == SOFTMIN:
+        import torch as _t
+        return -SOFTMIN_T * _t.logsumexp(-stacked / SOFTMIN_T
+                                         - _t.log(_t.tensor(float(stacked.shape[0]))), dim=0)
+    raise ValueError(f"unknown aggregate: {aggregate}")
 
 
 # %%
@@ -171,7 +211,7 @@ def compute_scores_batch(
     n_sfx, sfx_seq, d_model = sfx_embed.shape
     seq = ctrl_seq + sfx_seq
 
-    if aggregate == MIN and dirs.shape[0] != len(layers):
+    if aggregate in (MIN, SOFTMIN) and dirs.shape[0] != len(layers):
         raise ValueError(f"{MIN} needs one direction per layer: "
                          f"{dirs.shape[0]} dirs for {len(layers)} layers")
 
@@ -219,11 +259,11 @@ def compute_scores_batch(
                 # recall dirs is on CPU and float32
                 acts = h[t.arange(c * n_sfx), pos].cpu().float()
                 norm = t.linalg.norm(acts, dim=-1)
-                dvec = dirs[0] if aggregate == MEAN else dirs[j]
+                dvec = dirs[0] if aggregate == MEAN else dirs[j]  # MIN/SOFTMIN: one per layer
                 per_layer_cos.append((acts @ dvec) / norm)  # (c*n_sfx,)
 
             stacked = t.stack(per_layer_cos)  # (n_layers, c*n_sfx)
-            sc = stacked.mean(dim=0) if aggregate == MEAN else stacked.min(dim=0).values
+            sc = _aggregate(stacked, aggregate)
             score_chunks.append(sc.reshape(c, n_sfx).mean(dim=1))
     finally:
         for h in handles:

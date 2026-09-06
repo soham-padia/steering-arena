@@ -40,6 +40,13 @@ def parse_args(argv=None):
     ap.add_argument("--cand-chunk", type=int, default=4,
                     help="Candidates scored per forward pass. Main memory/speed knob.")
     ap.add_argument("--max-iters", type=int, default=0, help="0 = run until killed")
+    ap.add_argument("--softmin-search", action="store_true",
+                    help="score2 only: SEARCH with a smooth soft-min surrogate instead of a "
+                         "hard min. The hard min routes gradient to one layer per step; the "
+                         "soft-min spreads it over all four, weighted toward the weakest "
+                         "(measured: [0.65,0.23,0.08,0.04] vs [1,0,0,0]). Reported and "
+                         "recorded scores ALWAYS use the true min -- this only changes what "
+                         "the search climbs.")
     ap.add_argument("--resume-from", type=str, default=None,
                     help="Path to an existing run dir to continue (default: fresh run)")
     ap.add_argument("--out-root", type=str,
@@ -64,7 +71,7 @@ import torch as t  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from gcg_utils import (  # noqa: E402
-    MEAN, MIN, build_replicas, compute_scores_batch, d_tag,
+    MEAN, MIN, SOFTMIN, build_replicas, compute_scores_batch, d_tag,
     load_banded_direction, load_prompt_suffixes, plan_replica_placement,
     roundtrip_ok, truncate_to_layer,
 )
@@ -79,7 +86,10 @@ GPU_MEM_FRACTION = 0.7  # usable fraction of each card (headroom for activations
 # baseline that app/scoring.py subtracts: it is constant w.r.t. the prefix, so argmax is
 # identical and this is the cheaper quantity. Same argument upstream relies on.
 D_FILE = REPO_ROOT / "data" / "directions" / f"d_olmo3_s3_{args.role}.npz"
-AGGREGATE = MEAN if args.role == "score1" else MIN
+AGGREGATE = MEAN if args.role == "score1" else MIN          # the TRUE objective; what the board computes
+# A surrogate is legitimate for the SEARCH only. GCG's gradient merely proposes candidates;
+# the recorded number must still be the board's, so board_score() always uses AGGREGATE.
+SEARCH_AGG = SOFTMIN if (args.softmin_search and AGGREGATE == MIN) else AGGREGATE
 PROBES_FILE = REPO_ROOT / "data" / "probes" / "season3.json"
 
 d_bar, per_layer, BAND, D_META = load_banded_direction(D_FILE)
@@ -88,7 +98,8 @@ DIRS = DIRS / DIRS.norm(dim=-1, keepdim=True)
 D_TAG = d_tag(d_bar if AGGREGATE == MEAN else per_layer)
 MODEL_NAME = "gpt2" if SMOKE else D_META["model_id"]
 
-print(f"role={args.role}  aggregate={AGGREGATE}  band={BAND}")
+print(f"role={args.role}  aggregate={AGGREGATE}  band={BAND}"
+      + (f"  search={SEARCH_AGG}" if SEARCH_AGG != AGGREGATE else ""))
 print(f"direction {D_FILE.name}  d_version={D_META.get('d_version')!r}  tag={D_TAG}")
 
 suffixes = load_prompt_suffixes(PROBES_FILE)
@@ -164,7 +175,7 @@ def compute_score_gradient(ctrl_token_ids):
     onehot.requires_grad = True
     ctrl_embed = (onehot @ model.get_input_embeddings().weight)[None]
     scores = compute_scores_batch(trunk, ctrl_embed, sfx_embed, sfx_enc["attention_mask"],
-                                  n_sfx_tokens, DIRS, BAND, AGGREGATE)
+                                  n_sfx_tokens, DIRS, BAND, SEARCH_AGG)
     mean_score = scores[0]
     mean_score.backward()  # Maximize score => pick top k gradients
     return mean_score.item(), onehot.grad
@@ -179,7 +190,7 @@ def score_candidates(candidates):
             ce = rep.get_input_embeddings()(cids.to(c["in_dev"]))
             return compute_scores_batch(rep.base_model, ce, c["sfx_embed"],
                                         sfx_enc["attention_mask"], n_sfx_tokens,
-                                        DIRS, BAND, AGGREGATE, CAND_CHUNK)
+                                        DIRS, BAND, SEARCH_AGG, CAND_CHUNK)
 
     if len(replicas) == 1:
         return score_shard((0, candidates))
@@ -191,6 +202,18 @@ def score_candidates(candidates):
 
 def decode_prompt(ids):
     return tokenizer.decode(ids.tolist(), skip_special_tokens=True)
+
+
+def true_score(ids, aggregate):
+    """Score a raw id sequence under a GIVEN aggregate. One forward, no grad."""
+    seq = [int(x) for x in ids]
+    if not seq:
+        return float("-inf")
+    with t.inference_mode():
+        ce = model.get_input_embeddings()(t.tensor([seq], device=device))
+        sc = compute_scores_batch(trunk, ce, sfx_embed, sfx_enc["attention_mask"],
+                                  n_sfx_tokens, DIRS, BAND, aggregate)
+    return float(sc[0])
 
 
 def board_score(ids):
@@ -290,17 +313,25 @@ while args.max_iters == 0 or iter_idx < args.max_iters:
     bscore, ids_rt = board_score(ids_scored)
     if not rt_ok:
         n_rejected_roundtrip += 1
+    # With a surrogate, `score_curr` is on a DIFFERENT SCALE from `bscore` (softmin >= min
+    # by construction), so score_curr - bscore would conflate the retokenisation gap with
+    # the surrogate gap and overstate the former. Evaluate the true aggregate on the raw
+    # ids so the reported drift is purely retokenisation. Costs one forward, and only when
+    # a surrogate is actually in use.
+    true_curr = score_curr if SEARCH_AGG == AGGREGATE else true_score(ids_scored, AGGREGATE)
 
     iter_time = time.perf_counter() - iter_start
-    print(f"{iter_idx=}, score {score_curr:.5f}, board {bscore:.5f}, rt_ok={rt_ok}, "
-          f"drift={score_curr - bscore:+.5f}, {iter_time:.2f}s")
+    surro = "" if SEARCH_AGG == AGGREGATE else f"search {score_curr:.5f}, "
+    print(f"{iter_idx=}, {surro}score {true_curr:.5f}, board {bscore:.5f}, rt_ok={rt_ok}, "
+          f"drift={true_curr - bscore:+.5f}, {iter_time:.2f}s")
     print(f"prompt: {prompt_str!r}")
 
     record = {
-        "iter": iter_idx, "score": score_curr, "ctrl_token_ids": ids_scored.tolist(),
+        "iter": iter_idx, "score": true_curr, "search_score": score_curr, "ctrl_token_ids": ids_scored.tolist(),
         "prompt": prompt_str, "iter_time_s": iter_time, "model_id": MODEL_NAME,
         # provenance: `layer` alone cannot describe a banded run
         "role": args.role, "band": BAND, "aggregate": AGGREGATE,
+        "search_aggregate": SEARCH_AGG,
         "d_version": D_META.get("d_version"), "d_tag": D_TAG,
         # `score` is the optimiser's, on the raw ids. `board_score` is what the
         # leaderboard would give, on the re-tokenised string. They differ exactly when the
