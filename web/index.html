@@ -51,7 +51,7 @@
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
-  <script defer src="/app.js?v=11"></script>
+  <script defer src="/app.js?v=12"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -115,11 +115,15 @@
   <section id="rules" class="wrap card rules">
     <h2>HOW TO PLAY</h2>
     <ul>
-      <li><b>THE GOAL.</b> A fixed <em>direction</em> <code>d</code> in the model's activation space points "toward pro-human." Submit a short token sequence; the server measures how far it shifts the model's internal state along <code>d</code>, averaged over fixed neutral probe prompts.</li>
+      <!-- Reads off viewSeason, so an archived board's rules describe THAT season rather
+           than the live one. A single-layer season and a banded one are different games. -->
+      <li><b>THE GOAL.</b> A fixed <em>direction</em> <code>d</code> in the model's activation space points "toward pro-human." Submit a short token sequence; the server measures how far it shifts the model's internal state along <code>d</code>, averaged over fixed neutral probe prompts<span x-show="viewSeason?.layers">, and averaged again across <b>several layers</b> (<span x-text="viewSeason?.layers"></span>) rather than one</span>.</li>
+      <li x-show="viewSeason?.layers"><b>TWO SCORES.</b> <b>SCORE 1</b> ranks the board: the mean shift across the band above. <b>SCORE 2</b> is informational — it takes your <em>weakest</em> layer over a wider, more spread-out band, so a sequence that only moves <code>d</code> where it was optimized scores near zero there while SCORE 1 stays high. The two use different directions and neither bounds the other, so SCORE 2 above SCORE 1 is normal. <em>The gap between them is the interesting number.</em></li>
       <li><b>OPEN BY DESIGN.</b> The model and <code>d</code> are public — it's an optimization game. The model runs on <a href="https://ndif.us" target="_blank" rel="noopener">NDIF</a> (via NNsight), so the <em>server is the scoring oracle</em>: it scores every entry canonically and that value is final. See the <a href="/reproducibility.html">reproducibility page</a> for the data + method.</li>
       <li><b>TWO BOARDS.</b> Every entry gets one signed score. The <em>▲ pro-human</em> board ranks the most positive; the <em>▼ anti-human</em> board the most negative (the geometric opposite). A strong push lands you near the top of one — and the bottom of the other.</li>
       <li><b>TOKEN BUDGET.</b> Sequences are capped at the season's budget. Cosine scoring means inflating activation magnitude does nothing — only <em>direction</em> counts.</li>
-      <li><b>SPEC = SPECIFICITY.</b> Alongside the score, each entry shows how much of its activation movement is <em>specifically along</em> the direction vs. just movement anywhere. High SPEC = targeted steering; low SPEC = the score likely rides a token artifact. (Informational this season — ranking is still by score.)</li>
+      <li><b>SPEC = SPECIFICITY.</b> Alongside the score, each entry shows how much of its activation movement is <em>specifically along</em> the direction vs. just movement anywhere. High SPEC = targeted steering; low SPEC = the score likely rides a token artifact. (Informational — ranking is still by score.)</li>
+      <li><b>ONE SEASON AT A TIME.</b> A season freezes the model, the layer(s), the direction and the probe set. Scores from different seasons are <em>not</em> comparable and are never mixed — the tabs above switch between separate boards. Older seasons stay readable but are closed to new entries.</li>
       <li><b>ANYTHING GOES (ON-THEME).</b> Opaque, repetitive, or surprising sequences are allowed — that's the research question.</li>
       <li><b>ONE PER SEQUENCE.</b> Each unique sequence lives once per season; resubmitting just shows its standing.</li>
       <li><b>RESEARCH, NOT PROFIT.</b> Non-commercial. Scores are only comparable within a season.</li>

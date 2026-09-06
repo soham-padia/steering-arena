@@ -52,12 +52,34 @@ function arena() {
     async selectSeason(id) {
       this.viewSeasonId = id;
       this.collapsed = true;
+      this.syncUrl();
       await this.loadBoards();
+    },
+
+    // Reflect the viewed season in the URL so a board is linkable and survives a reload.
+    // replaceState, not pushState: switching boards is not navigation, and stacking
+    // history entries would make Back feel broken. No storage is used (see the rule at
+    // the top of this file) — the URL is the only place this lives.
+    syncUrl() {
+      const u = new URL(window.location);
+      if (this.viewSeasonId == null || this.viewSeasonId === this.season?.id) {
+        u.searchParams.delete("season");
+      } else {
+        u.searchParams.set("season", this.viewSeasonId);
+      }
+      window.history.replaceState({}, "", u);
     },
 
     async init() {
       await this.loadSeason();
       await this.loadSeasons();
+      // ?season=N deep link — what the season bar on every other page links to.
+      // Ignored unless it names a real season, so a stale or hand-edited link falls
+      // back to the live board instead of showing an empty one.
+      const want = parseInt(new URLSearchParams(window.location.search).get("season"), 10);
+      if (!Number.isNaN(want) && this.seasons.some((s) => s.id === want)) {
+        this.viewSeasonId = want;
+      }
       await this.loadBoards();
     },
 

@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/styles.css?v=10" />
   <link rel="stylesheet" href="/behavior.css?v=9" />
   <script defer src="/auth.js?v=2"></script>
+  <script defer src="/seasonbar.js?v=1"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="tapes()" x-init="load()">
@@ -29,7 +30,27 @@
     </p>
   </header>
 
+  <!-- Shared season context. Scores are only comparable WITHIN a season, so every page
+       that states a number needs to say which season produced it. Links back to the
+       arena with ?season=N so an archived board is one click away. -->
+  <section class="wrap tabs" x-data="seasonBar()" x-init="init()" x-show="seasons.length"
+           style="margin-bottom:0">
+    <span class="chip" style="border:none"><i>SEASON</i></span>
+    <template x-for="s in seasons" :key="s.id">
+      <a class="tab" :class="{ on: s.active }" :href="'/?season=' + s.id"
+         :title="s.model_id + ' · ' + depth(s) + ' · ' + s.d_version"
+         x-text="s.name + ' · ' + state(s)"></a>
+    </template>
+  </section>
+
+
   <!-- ── live demo ────────────────────────────────────────────────────── -->
+  <section class="wrap card" style="border-color:#8a8985">
+    <p class="muted" style="margin:0"><b>SCOPE — Season 2.</b> These tapes are from
+      <b>Season 2</b>. Every prefix and continuation shown was generated against Season 2's
+      single-layer direction at layer 24, before Season 3's banded scoring existed.</p>
+  </section>
+
   <section class="wrap" x-show="gen.enabled">
     <h2 class="bh-h2">TRY A PREFIX</h2>
     <p class="bh-note bh-lead">

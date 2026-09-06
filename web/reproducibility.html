@@ -16,6 +16,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css?v=10" />
+  <script defer src="/seasonbar.js?v=1"></script>
+  <script defer src="/alpine.min.js"></script>
 </head>
 <body>
   <div class="scanlines" aria-hidden="true"></div>
@@ -31,6 +33,28 @@
       <p class="nav"><a href="/">&#9664; ARENA</a> &middot; <a href="/behavior.html">TAPES</a> &middot; <a href="/behavior-reproducibility.html">BEHAVIOR METHOD</a> &middot; <b>REPRODUCIBILITY</b> &middot; <a href="/limitations.html">LIMITATIONS</a> &middot; <a href="/#data">DATA</a></p>
     </div>
   </header>
+
+  <!-- Shared season context. Scores are only comparable WITHIN a season, so every page
+       that states a number needs to say which season produced it. Links back to the
+       arena with ?season=N so an archived board is one click away. -->
+  <section class="wrap tabs" x-data="seasonBar()" x-init="init()" x-show="seasons.length"
+           style="margin-bottom:0">
+    <span class="chip" style="border:none"><i>SEASON</i></span>
+    <template x-for="s in seasons" :key="s.id">
+      <a class="tab" :class="{ on: s.active }" :href="'/?season=' + s.id"
+         :title="s.model_id + ' · ' + depth(s) + ' · ' + s.d_version"
+         x-text="s.name + ' · ' + state(s)"></a>
+    </template>
+  </section>
+
+
+  <section class="wrap card" style="border-color:#8a8985">
+    <p class="muted" style="margin:0"><b>SCOPE — Season 3.</b> This page documents the
+      configuration that is currently <b>live</b>. Season 2 (layer 24) and Season 1
+      (Llama-3.1-8B, layer 16) are archived; their boards stay readable from the season tabs
+      above, but their numbers came from a different scoring function and are not comparable
+      with these.</p>
+  </section>
 
   <main class="wrap">
 
