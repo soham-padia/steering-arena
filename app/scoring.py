@@ -37,11 +37,19 @@ class ScoreResult(NamedTuple):
                   season's scoring_mode is SPECIFICITY_Z).
     shift       — raw cosine steering-shift (always computed; equals `score` today).
     specificity — closed-form direction-specificity z (None when disabled).
+    score_alt   — Season 3's second, INFORMATIONAL score: the per-layer-min shift over a
+                  wider band. None on single-layer seasons, which is why the DB column is
+                  nullable — a Season 1/2 row means "not scored", not "scored zero".
+                  It does NOT bound `score` and is not bounded by it; see
+                  tests/test_banded_scoring.py::test_min_shift_is_NOT_bounded_by_mean_shift.
+
+    Defaulted, so every existing 3-field construction and `res[0..2]` index still works.
     """
 
     score: float
     shift: float
     specificity: float | None
+    score_alt: float | None = None
 
 
 def cosine(a: np.ndarray, b: np.ndarray) -> float:
@@ -145,6 +153,96 @@ def shift_and_specificity(
         sigma_null = float(np.linalg.norm(delta)) / float(np.sqrt(delta.size))  # ‖Δ‖_F/√(P·H)
     z = shift / max(sigma_null, eps)
     return shift, float(z)
+
+
+# ── Banded (multi-layer) steering-shift — Season 3 ──────────────────────────
+#
+# Season 2 scored one layer. Season 3 scores a BAND, because a sequence that moves d at
+# a single depth is not the same thing as one that moves it throughout — REVISIONS §6
+# found the Season 2 winner went +0.10769 at L24 and NEGATIVE under a banded objective.
+#
+# Two aggregates, and they are deliberately different (see data/analysis/season3_directions.json):
+#
+#   BANDED_MEAN     one shared d_bar, score = mean over the band of the per-layer shift.
+#                   Ranks the board. The only aggregate that stays STEERABLE, which
+#                   matters because a causal check gates whatever ranks.
+#   PER_LAYER_MIN   one direction per layer, score = shift of the WEAKEST layer.
+#                   Informational. Never steered, so the steerability constraint that
+#                   forced the mean does not apply here — and a min is the sharper test
+#                   of "does this hold up at every depth, or only where it was optimised".
+#
+# Both are the same shape as the single-layer metric: a cosine SHIFT against a
+# precomputed per-probe baseline, so magnitude inflation is still worthless.
+
+BANDED_MEAN = "banded_mean"
+PER_LAYER_MIN = "per_layer_min"
+BANDED_MULTILAYER = "banded_mean_multilayer"   # the season's scoring_mode string
+
+
+def banded_baseline(probes, batch_resid_layers_fn, band: Sequence[int]) -> np.ndarray:
+    """(L, P, H) unit-normalized baseline activations, ONE batched multi-layer forward.
+
+    Constant per (season, probes, band) — precompute once, exactly as the single-layer
+    path precomputes baseline_unit_rows.
+    """
+    mat = np.asarray(batch_resid_layers_fn(list(probes), list(band)), dtype=np.float64)
+    return np.stack([unit_rows(mat[i]) for i in range(mat.shape[0])])
+
+
+def _band_cosines(units: np.ndarray, d: np.ndarray, per_layer: np.ndarray | None,
+                  aggregate: str) -> np.ndarray:
+    """(L, P, H) unit rows → (P,) aggregated cosine, one value per probe."""
+    if aggregate == BANDED_MEAN:
+        d64 = np.asarray(d, dtype=np.float64)
+        d64 = d64 / np.linalg.norm(d64)
+        return np.mean([units[i] @ d64 for i in range(units.shape[0])], axis=0)
+    if aggregate == PER_LAYER_MIN:
+        if per_layer is None:
+            raise ValueError(f"{PER_LAYER_MIN} needs per-layer directions")
+        p = np.asarray(per_layer, dtype=np.float64)
+        p = p / np.linalg.norm(p, axis=1, keepdims=True)
+        return np.min(np.stack([units[i] @ p[i] for i in range(units.shape[0])]), axis=0)
+    raise ValueError(f"unknown band aggregate: {aggregate}")
+
+
+def banded_shift(
+    seq: str,
+    probes: Sequence[str],
+    batch_resid_layers_fn,
+    band: Sequence[int],
+    base_units: np.ndarray,
+    d: np.ndarray,
+    per_layer: np.ndarray | None = None,
+    aggregate: str = BANDED_MEAN,
+) -> float:
+    """Mean over probes of [aggregate_cos(seq ⊕ p) − aggregate_cos(p)].
+
+    Reduces EXACTLY to the single-layer steering shift when band has one layer and
+    aggregate is BANDED_MEAN — tests/test_scoring_determinism.py pins that equivalence,
+    so the Season 2 metric is a special case of this one rather than a parallel code path.
+    """
+    mat = np.asarray(batch_resid_layers_fn([compose(seq, p) for p in probes], list(band)),
+                     dtype=np.float64)
+    units = np.stack([unit_rows(mat[i]) for i in range(mat.shape[0])])
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        seq_cos = _band_cosines(units, d, per_layer, aggregate)
+        base_cos = _band_cosines(np.asarray(base_units, dtype=np.float64), d, per_layer, aggregate)
+    return float(np.mean(seq_cos - base_cos))
+
+
+def load_banded_direction(path: str | Path) -> tuple[np.ndarray, np.ndarray, list[int], dict]:
+    """(d_bar, per_layer, band, meta) from a banded d_<version>.npz.
+
+    Season 3's files carry `d`, `band`, `per_layer` and `meta`; `meta.aggregate` says
+    which of the two aggregates the file is for, and `meta.role` distinguishes the two
+    files that share a d_version.
+    """
+    data = np.load(path, allow_pickle=True)
+    d = np.asarray(data["d"], dtype=np.float32)
+    per = np.asarray(data["per_layer"], dtype=np.float32) if "per_layer" in data else None
+    band = [int(x) for x in data["band"]] if "band" in data else []
+    meta = json.loads(str(data["meta"])) if "meta" in data else {}
+    return d, per, band, meta
 
 
 def score(

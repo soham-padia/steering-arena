@@ -118,7 +118,55 @@ def get_scorer():
         def count_tokens(text: str) -> int:
             return len(reader.tokenizer(text, add_special_tokens=False)["input_ids"])
 
-        if settings.scoring_mode in (scoring.STEERING_SHIFT, scoring.SPECIFICITY_Z):
+        if settings.banded():
+            # ── Season 3: one multi-layer forward, two scores ──
+            # score1 RANKS (banded mean over a shared d_bar); score2 is informational
+            # (per-layer min over a wider band). read_layers() is the UNION of the two
+            # bands, so BOTH come out of a single remote call — score2 costs no quota.
+            d1, per1, band1, meta1 = scoring.load_banded_direction(settings.score1_d_file)
+            d2, per2, band2, meta2 = scoring.load_banded_direction(settings.score2_d_file)
+            if band1 != settings.band1() or band2 != settings.band2():
+                raise ScoringUnavailable(
+                    f"Band mismatch: config says {settings.band1()}/{settings.band2()} but "
+                    f"the d files say {band1}/{band2}. Run scripts/check_season_matches_d.py."
+                )
+            read = settings.read_layers()
+            _pos = {L: i for i, L in enumerate(read)}
+
+            def _make_reader():
+                """One remote call per distinct text batch, sliced per band.
+
+                banded_shift asks for its OWN band, so a naive passthrough would issue a
+                separate forward for score1 and score2 — two calls where one suffices, and
+                the union-band design exists precisely to avoid that. Both scores request
+                the SAME texts, so caching the last batch collapses them to one call.
+                Cache is per-scorer and holds one entry: submissions are scored one at a
+                time behind the queue, so there is nothing to grow.
+                """
+                last = {"texts": None, "mat": None}
+
+                def fn(texts, layers):
+                    key = tuple(texts)
+                    if last["texts"] != key:
+                        last["mat"] = reader.batch_last_resids_layers(list(texts), read)
+                        last["texts"] = key
+                    return last["mat"][[_pos[L] for L in layers]]
+                return fn
+
+            batch_layers_fn = _make_reader()
+
+            base1 = scoring.banded_baseline(probes, batch_layers_fn, band1)
+            base2 = scoring.banded_baseline(probes, batch_layers_fn, band2)
+
+            def score_fn(seq: str) -> scoring.ScoreResult:
+                s1 = scoring.banded_shift(seq, probes, batch_layers_fn, band1, base1, d1,
+                                          aggregate=scoring.BANDED_MEAN)
+                s2 = scoring.banded_shift(seq, probes, batch_layers_fn, band2, base2, d2,
+                                          per_layer=per2, aggregate=scoring.PER_LAYER_MIN)
+                # specificity is defined against a single direction; not meaningful for a
+                # band, so it stays null this season rather than being faked.
+                return scoring.ScoreResult(s1, s1, None, s2)
+        elif settings.scoring_mode in (scoring.STEERING_SHIFT, scoring.SPECIFICITY_Z):
             # One batched forward per submission; unit-normalized probe baselines
             # precomputed once. Raw shift AND the specificity z come from the same
             # forward (the z is closed-form — pure numpy on the same matrices).
@@ -224,17 +272,48 @@ def season() -> dict:
     if s:
         return {
             "id": s["id"], "name": s["name"], "model_id": s["model_id"],
-            "layer": s["layer"], "d_version": s["d_version"],
+            # `layer` is the single representative layer and stays for back-compat;
+            # `layers` is the authoritative band on a multi-layer season and is null on
+            # Seasons 1/2, which really were single-layer. The banner renders whichever
+            # is present.
+            "layer": s["layer"], "layers": s.get("layers"),
+            "d_version": s["d_version"],
             "token_budget": s.get("token_budget", settings.token_budget),
             "scoring_mode": s.get("scoring_mode", settings.scoring_mode),
             "captcha_sitekey": settings.turnstile_sitekey,
         }
     return {
         "id": settings.season_id, "name": settings.season_name, "model_id": settings.model_id,
-        "layer": settings.layer, "d_version": settings.d_version,
+        "layer": settings.layer, "layers": settings.score1_layers or None,
+        "d_version": settings.d_version,
         "token_budget": settings.token_budget, "scoring_mode": settings.scoring_mode,
         "captcha_sitekey": settings.turnstile_sitekey,
     }
+
+
+@app.get("/seasons")
+def seasons() -> dict:
+    """Every season, newest first — what the season switcher lists.
+
+    /season returns only the ACTIVE one, so before this there was no way for a client to
+    discover that Season 2 exists or to learn what config an archived board was scored
+    under. /leaderboard already accepted ?season=<id>; this is the missing half.
+
+    Read-only and public: a season row is already fully described on the rules pages.
+    Must stay registered ABOVE the StaticFiles mount at "/", which is a catch-all.
+    """
+    try:
+        rows = get_db().client.table("seasons").select("*").order("id", desc=True).execute().data
+    except Exception:  # noqa: BLE001 — a read shouldn't 500; the switcher just won't populate
+        logging.getLogger("steering_arena").exception("seasons read failed")
+        return {"seasons": []}
+    return {"seasons": [
+        {"id": s["id"], "name": s["name"], "model_id": s["model_id"],
+         "layer": s["layer"], "layers": s.get("layers"), "d_version": s["d_version"],
+         "scoring_mode": s.get("scoring_mode"), "token_budget": s.get("token_budget"),
+         "active": bool(s.get("active"))}
+        for s in rows
+    ]}
 
 
 @app.get("/leaderboard")
@@ -254,6 +333,9 @@ def leaderboard(season: int | None = None, limit: int = 50, board: str = "pro") 
             "handle": r.get("user_handle"),
             "sequence": r.get("sequence_text"),
             "score": r.get("score"),
+            # null on Season 1/2 rows, which predate the banded scorer — the UI must
+            # render that as "not scored", never as 0.
+            "score_alt": r.get("score_alt"),
             "specificity": r.get("specificity"),
             "at": r.get("created_at"),
         }

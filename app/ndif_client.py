@@ -119,6 +119,35 @@ class ResidualReader:
         v = saved.value if hasattr(saved, "value") else saved
         return np.asarray(v.detach().to(torch.float32).cpu().numpy(), dtype=np.float32)
 
+    def batch_last_resids_layers(self, texts: list[str], layers: list[int]) -> np.ndarray:
+        """Last-token residual for a BATCH of texts at SEVERAL layers, ONE forward pass
+        → (len(layers), n, hidden).
+
+        The fusion of batch_last_resids (batching, left-padding) and last_resids_layers
+        (several .save()s in one trace). This is what makes multi-layer scoring free:
+        Season 3 reads six layers — the union of the score1 band [19,23,27,31] and the
+        score2 band [15,23,31,39] — so BOTH scores cost the same single remote call that
+        one layer used to.
+
+        Left-pads exactly as batch_last_resids does, so a row here is bit-identical to
+        the single-layer path for the same text and layer; the determinism test pins that.
+        As in last_resids_layers, the slices are moved to CPU before stacking (the 32B is
+        sharded, so layers sit on different devices) and only ONE name is .save()d, since
+        NNsight 0.7 rebinds assigned names and loses list mutations.
+        """
+        import torch
+
+        tok = self.model.tokenizer
+        if tok.pad_token is None:
+            tok.pad_token = tok.eos_token
+        tok.padding_side = "left"
+        saved = None
+        with self.model.trace(list(texts), remote=self.remote):
+            slices = [self._layer_module(L).output[:, -1, :].cpu() for L in layers]
+            saved = torch.stack(slices).save()  # (n_layers, n_texts, hidden)
+        v = saved.value if hasattr(saved, "value") else saved
+        return np.asarray(v.detach().to(torch.float32).cpu().numpy(), dtype=np.float32)
+
     @property
     def num_layers(self) -> int:
         return int(self.model.config.num_hidden_layers)

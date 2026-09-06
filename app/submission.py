@@ -92,9 +92,14 @@ def process_submission(
     # score_fn returns either a plain float (legacy/tests) or a scoring.ScoreResult
     # (score=ranked value, shift=raw steering shift, specificity=closed-form z).
     res = score_fn(sequence)
+    score_alt = None
     if isinstance(res, tuple):  # ScoreResult (NamedTuple)
         score, shift_raw, specificity = float(res[0]), float(res[1]), res[2]
         specificity = float(specificity) if specificity is not None else None
+        # 4th field arrived with Season 3's banded scorer; older 3-field results and the
+        # tests that build them keep working.
+        if len(res) > 3 and res[3] is not None:
+            score_alt = float(res[3])
     else:
         score, shift_raw, specificity = float(res), float(res), None
 
@@ -107,6 +112,7 @@ def process_submission(
         "score": score,
         "shift_raw": shift_raw,
         "specificity": specificity,
+        "score_alt": score_alt,
         "ip_hash": ip_hash,
         "research_consent": bool(research_consent),
         # record which notice they agreed to (null when not consented)
@@ -119,6 +125,7 @@ def process_submission(
 
     return {
         "score": score,
+        "score_alt": score_alt,
         "specificity": specificity,
         "rank": pro_rank,  # back-compat alias for pro_rank
         "pro_rank": pro_rank,

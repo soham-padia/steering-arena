@@ -36,6 +36,40 @@ class Settings(BaseSettings):
     d_file: str = "data/directions/d_olmo3_L24_logistic.npz"
     prepend_bos: bool = True
 
+    # ── Season 3: banded multi-layer scoring ──
+    # Empty `score1_layers` keeps the single-layer Season 2 path; set it (and
+    # scoring_mode = "banded_mean_multilayer") to switch the scorer to a band. The DB
+    # season row is authoritative for display — seasons.layers — and
+    # scripts/check_season_matches_d.py asserts the row and the d files agree before a
+    # season may open.
+    #
+    # score1 RANKS the board (banded mean over one shared d_bar; the only steerable
+    # aggregate). score2 is INFORMATIONAL (per-layer min over a wider band — the sharper
+    # test of whether a sequence holds up at every depth). The two bands union to six
+    # layers, which one batch_last_resids_layers call reads, so score2 is free.
+    score1_layers: str = ""                     # e.g. "19,23,27,31"
+    score1_d_file: str = "data/directions/d_olmo3_s3_score1.npz"
+    score2_layers: str = ""                     # e.g. "15,23,31,39"
+    score2_d_file: str = "data/directions/d_olmo3_s3_score2.npz"
+
+    @staticmethod
+    def _parse_layers(spec: str) -> list[int]:
+        return [int(x) for x in spec.split(",") if x.strip()]
+
+    def band1(self) -> list[int]:
+        return self._parse_layers(self.score1_layers)
+
+    def band2(self) -> list[int]:
+        return self._parse_layers(self.score2_layers)
+
+    def banded(self) -> bool:
+        """True when the active season scores across a band rather than one layer."""
+        return bool(self.band1())
+
+    def read_layers(self) -> list[int]:
+        """Every layer one forward pass must return: the union of both bands, sorted."""
+        return sorted(set(self.band1()) | set(self.band2()))
+
     # ── Direction-specificity metric (non-ranking column this season; see
     #    db/migrations/0003_specificity.sql + app/scoring.py closed-form notes) ──
     specificity_enabled: bool = True
