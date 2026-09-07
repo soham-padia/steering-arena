@@ -1,5 +1,8 @@
 /* Demo log — a maintainer tool, so it borrows the arcade shell but stays plain:
-   dense rows, no ornament, nothing competing with the text being read. */
+   dense rows, no ornament, nothing competing with the text being read.
+
+   Not served by the public site. app/main.py serves this from tools/admin/ only
+   when ADMIN_API is enabled; on the deployed Space /admin.css is a 404. */
 .ad-title {
   font-family: var(--pixel); font-size: clamp(16px, 4vw, 30px); margin: 18px 0 0;
   color: var(--gold); letter-spacing: 2px;
@@ -9,6 +12,7 @@
 .ad-off code { font-family: var(--pixel); font-size: 10px; color: var(--gold); }
 .ad-hint { color: var(--muted); font-size: 18px; margin: 0 0 8px; }
 .ad-hint b { color: var(--ink); }
+.ad-hint code { font-family: var(--pixel); font-size: 10px; color: var(--gold); }
 .ad-link {
   background: none; border: 0; cursor: pointer; color: var(--cyan);
   font-family: var(--term); font-size: 19px; padding: 6px 4px; text-decoration: underline;

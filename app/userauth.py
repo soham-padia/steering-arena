@@ -26,7 +26,7 @@ def verify_token(token: str, settings) -> dict:
     """{'id', 'email'} for a valid Supabase session, else AuthError. Fails closed on a
     missing token, missing config, an unreachable Supabase, or a rejected token."""
     if not token:
-        raise AuthError("Sign in to generate.")
+        raise AuthError("Sign in to continue.")
     if not settings.supabase_url or not settings.browser_key():
         raise AuthError("Sign-in is not configured on this server.")
 

@@ -21,7 +21,11 @@ function arenaAuth() {
     authErr: "",
 
     async initAuth() {
-      try { this.cfg = await (await fetch("/admin/config")).json(); }
+      // /auth/config, not /admin/config: this is the public sign-in config, and the
+      // old path made it look like an admin leak. Bump the ?v= on every <script>
+      // tag that loads this file when you change this URL, or a cached copy keeps
+      // asking for a route that no longer exists.
+      try { this.cfg = await (await fetch("/auth/config")).json(); }
       catch (_) { this.cfg = { enabled: false }; }
       // Which sign-in methods this Supabase project actually has switched on. OAuth
       // sends no email, which matters: the built-in mailer is capped at a couple of

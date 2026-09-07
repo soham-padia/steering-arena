@@ -63,6 +63,7 @@ NAV: list[tuple[str, str, str, list[str]]] = [
         "how-to/run-a-blind-behavioural-eval.md",
         "how-to/run-a-job-on-the-aicr-cluster.md",
         "how-to/open-a-new-season.md",
+        "how-to/verify-the-public-surface.md",
     ]),
     ("Reference", "reference", "lookup", [
         "reference/scoring.md",

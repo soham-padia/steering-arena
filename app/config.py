@@ -116,14 +116,26 @@ class Settings(BaseSettings):
     # Browser-safe Supabase key, used ONLY for sign-in. Supabase renamed this concept
     # (anon -> publishable, service_role -> secret) and both formats still work, so
     # accept either name and let browser_key() pick. Whatever lands here is served to
-    # clients by /admin/config, so a SECRET key must never be put in it.
+    # clients by /auth/config, so a SECRET key must never be put in it.
     supabase_publishable_key: str = ""
     supabase_anon_key: str = ""
 
     def browser_key(self) -> str:
         return self.supabase_publishable_key or self.supabase_anon_key
-    # Comma-separated emails allowed to read the demo log at /admin.html. Empty = the
-    # admin view is off entirely (fail closed).
+
+    # Registers the admin surface at all: /admin.html, /admin.css,
+    # /admin/generations, /admin/hide. Off by default and NOT set on the deployed
+    # Space, so those four paths 404 in production. Turn it on locally with
+    #   ADMIN_API=true ADMIN_EMAILS=you@example.com uvicorn app.main:app
+    #
+    # This is separate from admin_emails on purpose. admin_emails decides WHO may
+    # read the log once the routes exist; admin_api decides whether they exist.
+    # Authorization does not depend on this flag — require_admin still verifies the
+    # session against Supabase and checks the allowlist — so leaving it on is not a
+    # hole. Off is simply a smaller surface. See tools/admin/README.md.
+    admin_api: bool = False
+    # Comma-separated emails allowed to read the demo log at /admin.html when
+    # admin_api is on. Empty = the admin view is off entirely (fail closed).
     admin_emails: str = ""
     ip_hash_salt: str = ""
 

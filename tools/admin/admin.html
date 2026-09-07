@@ -10,8 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css?v=10" />
   <link rel="stylesheet" href="/behavior.css?v=4" />
-  <link rel="stylesheet" href="/admin.css?v=1" />
-  <script defer src="/auth.js?v=2"></script>
+  <link rel="stylesheet" href="/admin.css?v=2" />
+  <script defer src="/auth.js?v=3"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="adminLog()" x-init="init()">
@@ -24,16 +24,22 @@
       What people typed into <a href="/behavior.html">TRY A PREFIX</a>, and what the model
       said back. Maintainer only.
     </p>
+    <p class="ad-hint">
+      This page is not served by the public site. It reaches you only because this server
+      was started with <code>ADMIN_API=true</code>; on the deployed Space the same URL is
+      a 404. See <code>tools/admin/README.md</code>.
+    </p>
   </header>
 
   <!-- sign in -->
   <section class="wrap ad-box" x-show="!token" x-cloak>
-    <p class="ad-off" x-show="cfg.admin_enabled === false" x-cloak>
-      Admin access isn't configured on this server. Set <code>ADMIN_EMAILS</code> and
-      <code>SUPABASE_ANON_KEY</code>, then reload.
+    <p class="ad-off" x-show="cfg.enabled === false" x-cloak>
+      Sign-in isn't configured on this server. Set <code>SUPABASE_URL</code> and
+      <code>SUPABASE_PUBLISHABLE_KEY</code> (or <code>SUPABASE_ANON_KEY</code>), plus
+      <code>ADMIN_EMAILS</code>, then reload.
     </p>
 
-    <template x-if="cfg.admin_enabled">
+    <template x-if="cfg.enabled">
       <div>
         <template x-if="authStep !== 'code'">
           <div>
@@ -122,6 +128,12 @@ function adminLog() {
       const r = await fetch(`/admin/generations?${q}`, {
         headers: { Authorization: `Bearer ${this.token}` },
       });
+      // 404 here means the server was started without ADMIN_API, which is how the
+      // public deployment runs. The routes are absent, not merely refusing.
+      if (r.status === 404) {
+        this.err = "The admin API is not enabled on this server (ADMIN_API is unset).";
+        this.rows = []; this.count = 0; return;
+      }
       const j = await r.json();
       if (!r.ok) { this.err = j.error || "Could not load the log."; this.rows = []; this.count = 0; return; }
       this.rows = j.rows; this.count = j.count; this.email = j.email;

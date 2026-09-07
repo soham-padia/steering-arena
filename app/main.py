@@ -636,31 +636,55 @@ def generations_recent(limit: int = 50, arm: str = ""):
     return {"count": len(rows), "rows": rows}
 
 
-@app.get("/admin/config")
-def admin_config() -> dict:
-    """What the sign-in flow needs. The anon key is public by design; the service key is
-    never exposed client-side."""
+@app.get("/auth/config")
+def auth_config() -> dict:
+    """What the browser sign-in flow needs. Deliberately unauthenticated.
+
+    A browser cannot start a Supabase session without the publishable key, so this
+    key is meant to be shipped to clients — `sb_publishable_*` is Supabase's own
+    name for exactly that. The SECRET key is never served: app/db.py builds the
+    server client from `settings.supabase_service_key`.
+
+    What keeps the publishable key harmless is row-level security, not secrecy.
+    `seasons`, `submissions` and `generation_events` all have RLS enabled with no
+    policies, so an anonymous caller reads `[]` and an insert fails with
+    `42501 new row violates row-level security policy`. Both probed against the
+    live project on 2026-09-07. **If you add a policy, re-run those probes** —
+    see `docs/how-to/verify-the-public-surface.md`.
+
+    This lived at `/admin/config` until 2026-09-07. The payload was fine; the path
+    was not. A deliberately-public endpoint sitting under `/admin/*` between two
+    authenticated siblings reads as a leak to anyone who opens it, and it did. The
+    old path is gone rather than aliased, because keeping it would preserve the
+    thing that was wrong with it. `auth.js` is versioned `?v=3` so no browser
+    holding a cached copy keeps asking for the old one.
+
+    It no longer reports whether admin is configured. Nothing public needs to know.
+    """
     return {"enabled": bool(settings.browser_key()),
-            "admin_enabled": bool(userauth.admin_emails(settings) and settings.browser_key()),
             "supabase_url": settings.supabase_url,
             "anon_key": settings.browser_key()}
 
 
-@app.get("/admin/generations")
-def admin_generations(request: Request, limit: int = 200, arm: str = "",
-                      consented: bool = False):
-    try:
-        email = userauth.require_admin(userauth.bearer(request), settings)
-    except userauth.AuthError as e:
-        return JSONResponse(status_code=401, content={"error": str(e)})
-    try:
-        rows = _feed(ADMIN_FIELDS, limit=limit, arm=arm, consented=consented,
-                     include_hidden=True)
-    except Exception:  # noqa: BLE001
-        _log.exception("admin log query failed")
-        return JSONResponse(status_code=503, content={"error": "Could not read the log."})
-    _log.info("admin log read by %s (%d rows)", email, len(rows))
-    return {"email": email, "count": len(rows), "rows": rows}
+# ── the admin surface, absent unless explicitly switched on ──────────────────
+#
+# Everything below is registered ONLY when ADMIN_API is true, which the deployed
+# Space does not set. On the public site /admin.html, /admin.css,
+# /admin/generations and /admin/hide are all 404 — there is no admin surface to
+# find, guess at, or misread as a leak.
+#
+# This is attack-surface removal, not a fix for a breach. The authorization was
+# and remains sound: both routes call userauth.require_admin, which verifies the
+# session against Supabase (failing closed on a missing token, missing config, or
+# an unreachable Supabase) and then requires the email to be on ADMIN_EMAILS. A
+# valid Supabase account was never sufficient, because anyone can make one.
+# Probed live 2026-09-07: both returned 401 unauthenticated.
+#
+# The flag removes the routes; it does not weaken them. Run the view locally with
+#   ADMIN_API=true ADMIN_EMAILS=you@example.com uvicorn app.main:app
+# See tools/admin/README.md.
+
+_ADMIN_DIR = Path(__file__).resolve().parent.parent / "tools" / "admin"
 
 
 class HideIn(BaseModel):
@@ -668,27 +692,75 @@ class HideIn(BaseModel):
     hidden: bool = True
 
 
-@app.post("/admin/hide")
-def admin_hide(body: HideIn, request: Request):
-    """Take a generation out of the public feed without destroying the record."""
-    try:
-        email = userauth.require_admin(userauth.bearer(request), settings)
-    except userauth.AuthError as e:
-        return JSONResponse(status_code=401, content={"error": str(e)})
-    if not body.created_at:
-        return JSONResponse(status_code=400, content={"error": "Which row?"})
-    db = get_db()
-    client = getattr(db, "client", None)
-    if client is None:
-        return JSONResponse(status_code=503, content={"error": "No database configured."})
-    try:
-        client.table("generation_events").update({"hidden": body.hidden}).eq(
-            "created_at", body.created_at).execute()
-    except Exception:  # noqa: BLE001
-        _log.exception("admin hide failed")
-        return JSONResponse(status_code=503, content={"error": "Could not update that row."})
-    _log.info("admin %s set hidden=%s on %s", email, body.hidden, body.created_at)
-    return {"ok": True, "hidden": body.hidden}
+if settings.admin_api:
+
+    @app.get("/admin.html", include_in_schema=False)
+    def admin_page() -> FileResponse:
+        """Served from tools/admin/, which is outside the public static mount.
+
+        The file used to live in web/, which app/main.py mounts as a catch-all, so
+        it was world-reachable by construction. Moving it out is what makes the
+        404 real rather than a rule someone can forget.
+        """
+        return FileResponse(_ADMIN_DIR / "admin.html", media_type="text/html")
+
+    @app.get("/admin.css", include_in_schema=False)
+    def admin_page_css() -> FileResponse:
+        return FileResponse(_ADMIN_DIR / "admin.css", media_type="text/css")
+
+    @app.get("/admin/generations")
+    def admin_generations(request: Request, limit: int = 200, arm: str = "",
+                          consented: bool = False):
+        try:
+            email = userauth.require_admin(userauth.bearer(request), settings)
+        except userauth.AuthError as e:
+            return JSONResponse(status_code=401, content={"error": str(e)})
+        try:
+            rows = _feed(ADMIN_FIELDS, limit=limit, arm=arm, consented=consented,
+                         include_hidden=True)
+        except Exception:  # noqa: BLE001
+            _log.exception("admin log query failed")
+            return JSONResponse(status_code=503, content={"error": "Could not read the log."})
+        _log.info("admin log read by %s (%d rows)", email, len(rows))
+        return {"email": email, "count": len(rows), "rows": rows}
+
+    @app.post("/admin/hide")
+    def admin_hide(body: HideIn, request: Request):
+        """Take a generation out of the public feed without destroying the record."""
+        try:
+            email = userauth.require_admin(userauth.bearer(request), settings)
+        except userauth.AuthError as e:
+            return JSONResponse(status_code=401, content={"error": str(e)})
+        if not body.created_at:
+            return JSONResponse(status_code=400, content={"error": "Which row?"})
+        db = get_db()
+        client = getattr(db, "client", None)
+        if client is None:
+            return JSONResponse(status_code=503, content={"error": "No database configured."})
+        try:
+            client.table("generation_events").update({"hidden": body.hidden}).eq(
+                "created_at", body.created_at).execute()
+        except Exception:  # noqa: BLE001
+            _log.exception("admin hide failed")
+            return JSONResponse(status_code=503, content={"error": "Could not update that row."})
+        _log.info("admin %s set hidden=%s on %s", email, body.hidden, body.created_at)
+        return {"ok": True, "hidden": body.hidden}
+
+else:
+
+    @app.get("/admin.html", include_in_schema=False)
+    @app.get("/admin.css", include_in_schema=False)
+    def admin_page_absent() -> JSONResponse:
+        """Shadow the old public paths so a leftover file cannot serve them.
+
+        Belt and braces. `tools/admin/` is outside the static mount, so with the
+        files moved these paths already 404. But the mount at "/" is a catch-all:
+        anything that reappears under `web/admin.*` — a stray copy, a bad merge, a
+        revert — would be world-readable again with no error anywhere. A route
+        registered before the mount wins, so this makes the 404 a property of the
+        application rather than of the filesystem.
+        """
+        return JSONResponse(status_code=404, content={"error": "Not found."})
 
 
 # Serve the static frontend if present (Phase 3 fills web/). Mounted last.
