@@ -1,0 +1,221 @@
+{
+ "question": "did --n-mutations 3 fix the conjunction, or just search better?",
+ "criterion": "commit 6304f2c, pre-registered: if k=3 helps the disjunctive anti arm as much as the conjunctive pro arm, the effect is generic search improvement and not a conjunction fix",
+ "answer": "The endpoint test says 'generic', the trajectory says otherwise, and the trajectory is the better evidence. At the last matched checkpoint the two ratios coincide (pro 1.276x vs anti 1.26x), which is the pre-registered signature of a generic search improvement. But the two gains have OPPOSITE internal structure. On the conjunction, k=3 makes more and smaller improvements (54 vs 35, mean 0.001251 vs 0.001468) and cuts the longest plateau from 197 iterations to 105 -- it escapes the stall, which is what a conjunction fix looks like. On the disjunction it does the reverse: fewer and larger improvements (31 vs 44, mean 0.005200 vs 0.002821) and a LONGER plateau (188 vs 170), which is added variance, not escape. That also explains the ratio table: anti k=3 jumps early, sits on a plateau while anti k=1 climbs past it across iterations 150-350 (down to 0.858x), then jumps again at the end. So the handoff's conclusion was right in substance and wrong in its evidence: multi-position mutation does something specific to the conjunction, but the endpoint ratio it was argued from cannot show that, and taken alone that ratio argues the opposite.",
+ "baseline_score2": -0.009410522776306607,
+ "matched_iteration_cap": 501,
+ "note": "|LIVE| = |board score in board sign - baseline|, best-so-far, read from history.jsonl at matched iterations so hardware cannot enter",
+ "runs": {
+  "pro_k1": {
+   "run": "score2-2026-09-06T18-53-11Z",
+   "aggregate": "per_layer_min",
+   "anti": false,
+   "n_mutations": null,
+   "best_iter": 450,
+   "final_live": 0.05372,
+   "iters_logged": 752,
+   "roundtrip_ok": false
+  },
+  "pro_k3": {
+   "run": "score2-mut3-2026-09-07T00-17-08Z",
+   "aggregate": "per_layer_min",
+   "anti": false,
+   "n_mutations": 3,
+   "best_iter": 498,
+   "final_live": 0.06969,
+   "iters_logged": 501,
+   "roundtrip_ok": false
+  },
+  "anti_k1": {
+   "run": "score2-anti-2026-09-06T20-16-20Z",
+   "aggregate": "per_layer_max",
+   "anti": true,
+   "n_mutations": null,
+   "best_iter": 408,
+   "final_live": 0.12628,
+   "iters_logged": 501,
+   "roundtrip_ok": false
+  },
+  "anti_k3": {
+   "run": "score2-anti-mut3-2026-09-07T04-17-25Z",
+   "aggregate": "per_layer_max",
+   "anti": true,
+   "n_mutations": 3,
+   "best_iter": 461,
+   "final_live": 0.16336,
+   "iters_logged": 501,
+   "roundtrip_ok": false
+  }
+ },
+ "matched_iteration_live_abs": {
+  "50": {
+   "pro_k1": 0.02504,
+   "pro_k3": 0.02457,
+   "pro_ratio": 0.981,
+   "anti_k1": 0.06026,
+   "anti_k3": 0.08956,
+   "anti_ratio": 1.486
+  },
+  "100": {
+   "pro_k1": 0.03017,
+   "pro_k3": 0.03722,
+   "pro_ratio": 1.233,
+   "anti_k1": 0.07254,
+   "anti_k3": 0.08956,
+   "anti_ratio": 1.235
+  },
+  "150": {
+   "pro_k1": 0.03912,
+   "pro_k3": 0.04508,
+   "pro_ratio": 1.152,
+   "anti_k1": 0.10414,
+   "anti_k3": 0.08956,
+   "anti_ratio": 0.86
+  },
+  "200": {
+   "pro_k1": 0.0453,
+   "pro_k3": 0.05105,
+   "pro_ratio": 1.127,
+   "anti_k1": 0.11024,
+   "anti_k3": 0.10215,
+   "anti_ratio": 0.927
+  },
+  "250": {
+   "pro_k1": 0.0453,
+   "pro_k3": 0.05105,
+   "pro_ratio": 1.127,
+   "anti_k1": 0.11902,
+   "anti_k3": 0.10215,
+   "anti_ratio": 0.858
+  },
+  "300": {
+   "pro_k1": 0.0453,
+   "pro_k3": 0.05715,
+   "pro_ratio": 1.262,
+   "anti_k1": 0.11902,
+   "anti_k3": 0.10215,
+   "anti_ratio": 0.858
+  },
+  "350": {
+   "pro_k1": 0.0453,
+   "pro_k3": 0.06475,
+   "pro_ratio": 1.429,
+   "anti_k1": 0.11902,
+   "anti_k3": 0.10215,
+   "anti_ratio": 0.858
+  },
+  "400": {
+   "pro_k1": 0.04539,
+   "pro_k3": 0.06515,
+   "pro_ratio": 1.435,
+   "anti_k1": 0.11902,
+   "anti_k3": 0.1433,
+   "anti_ratio": 1.204
+  },
+  "450": {
+   "pro_k1": 0.05372,
+   "pro_k3": 0.06856,
+   "pro_ratio": 1.276,
+   "anti_k1": 0.12628,
+   "anti_k3": 0.14748,
+   "anti_ratio": 1.168
+  },
+  "460": {
+   "pro_k1": 0.05372,
+   "pro_k3": 0.06856,
+   "pro_ratio": 1.276,
+   "anti_k1": 0.12628,
+   "anti_k3": 0.1591,
+   "anti_ratio": 1.26
+  }
+ },
+ "k3_over_k1_ratio": {
+  "pro": [
+   0.981,
+   1.233,
+   1.152,
+   1.127,
+   1.127,
+   1.262,
+   1.429,
+   1.435,
+   1.276,
+   1.276
+  ],
+  "anti": [
+   1.486,
+   1.235,
+   0.86,
+   0.927,
+   0.858,
+   0.858,
+   0.858,
+   1.204,
+   1.168,
+   1.26
+  ]
+ },
+ "net_gain_by_window": {
+  "window": 100,
+  "arms": {
+   "pro_k1": [
+    0.02785,
+    0.01513,
+    0.0,
+    9e-05,
+    0.00833,
+    0.0
+   ],
+   "pro_k3": [
+    0.03506,
+    0.01383,
+    0.0061,
+    0.008,
+    0.00455,
+    0.0
+   ],
+   "anti_k1": [
+    0.07039,
+    0.0377,
+    0.00879,
+    0.0,
+    0.00726,
+    0.0
+   ],
+   "anti_k3": [
+    0.08741,
+    0.01259,
+    0.0,
+    0.04115,
+    0.02006,
+    0.0
+   ]
+  }
+ },
+ "trajectory_shape": {
+  "pro_k1": {
+   "n_improvements": 35,
+   "mean_improvement": 0.001468,
+   "largest_improvement": 0.005759,
+   "longest_plateau_iters": 197
+  },
+  "pro_k3": {
+   "n_improvements": 54,
+   "mean_improvement": 0.001251,
+   "largest_improvement": 0.009684,
+   "longest_plateau_iters": 105
+  },
+  "anti_k1": {
+   "n_improvements": 44,
+   "mean_improvement": 0.002821,
+   "largest_improvement": 0.010669,
+   "longest_plateau_iters": 170
+  },
+  "anti_k3": {
+   "n_improvements": 31,
+   "mean_improvement": 0.0052,
+   "largest_improvement": 0.017494,
+   "longest_plateau_iters": 188
+  }
+ }
+}

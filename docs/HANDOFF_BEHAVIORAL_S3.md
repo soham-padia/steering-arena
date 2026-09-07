@@ -215,6 +215,18 @@ Established this session, with artifacts:
   never hard-saturates.
 - **Multi-position mutation is the fix, and it works.** `--n-mutations 3` reaches
   `+0.05715` by iter 300 where k=1 stalled at `+0.04530`.
+
+  > **CORRECTED 2026-09-07.** Both numbers are right and reproduce exactly at iteration
+  > 300, but they do not support the claim built on them. The k=3 **anti** arm — job
+  > `707083`, pre-registered in commit `6304f2c` as the control for precisely this — has
+  > since finished, and its endpoint ratio (1.260×) is indistinguishable from pro's
+  > (1.276×). On the pre-registered criterion that reads as generic search improvement, not
+  > a conjunction fix. **Withdrawn:** a pro-arm-only k=1/k=3 gap as evidence about the
+  > conjunction. **Survives:** k=3 does act specifically on the conjunction, on evidence
+  > this section did not measure — it makes more and smaller improvements on pro (54 vs 35)
+  > and halves the longest plateau (197 → 105 iterations), while on anti it does the
+  > reverse (31 vs 44 improvements, plateau 170 → 188). Opposite shapes, coincidentally
+  > equal endpoints. Full accounting in `data/analysis/season3_k3_control.md`.
 - **Anti is much easier than pro, and mostly for the same reason.** With the aggregate held
   fixed (score1 uses `mean` both ways) the anti/pro ratio is 1.4–1.8×; with `min` vs `max`
   it is 2.9–3.2×. So ~1.9× is the aggregate: a disjunction needs only *one* layer to fail.

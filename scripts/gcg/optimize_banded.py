@@ -47,11 +47,18 @@ def parse_args(argv=None):
                          "candidate move several layers together. Costs acceptance rate.")
     ap.add_argument("--t-sa-scale", type=float, default=1.0,
                     help="multiply the simulated-annealing temperature by this. T_SA is an "
-                         "ABSOLUTE constant inherited from the single-layer upstream, but the "
-                         "objectives have different step scales: score2's median improving "
-                         "step is ~3.4x smaller than score1's, so the same T_SA runs ~3.4x "
-                         "hotter on score2. Measured effect: score2 keeps only 40%% of the "
-                         "ground it gains vs score1's 69%%.")
+                         "ABSOLUTE constant inherited from the single-layer upstream. NOTE: "
+                         "the mechanism this flag was added for is WITHDRAWN (commit "
+                         "23e7e6c). The claim was that score2's median improving step is "
+                         "~3.4x smaller so the same T_SA runs ~3.4x hotter; that gap only "
+                         "exists after iter 384, and through iter 300 the two arms' steps "
+                         "are near-identical (5.99e-4 vs 6.27e-4), so the small late steps "
+                         "are a CONSEQUENCE of saturation, not its cause. The cooled arm "
+                         "came back worse than baseline. What does help a saturating "
+                         "conjunction is --n-mutations, not temperature: see "
+                         "data/analysis/season3_k3_control.md. The flag is kept because "
+                         "'does cooling help on a saturated objective' is still a valid "
+                         "question; it is not a recommended setting.")
     ap.add_argument("--anti", action="store_true",
                     help="optimise the ANTI-HUMAN board: the most NEGATIVE value of the same "
                          "metric. Negates the direction, AND for score2 swaps min->max, "
