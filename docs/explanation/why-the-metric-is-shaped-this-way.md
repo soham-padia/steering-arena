@@ -42,15 +42,14 @@ Sixteen prompts, fixed for the season, in `data/probes/season3.json`. Sampling p
 submission would make two scores on one board incomparable, and a season is *defined* as a
 frozen tuple of model, build, layer, direction and scoring config precisely so a score
 means one thing. The cost is that the objective is overfittable to sixteen prompts by
-construction, which is why the behavioural question is a separate claim.
+construction, which is why behaviour is a separate claim.
 
 ## A baseline that depends only on the probe
 
 The score is a shift, so the probe's own alignment with `d` is subtracted. That term
-depends on the probe alone, so it is computed once per season and never again. A
-submission-dependent baseline — a control string, a matched random prefix — would multiply
-the forward passes per submission, and on a donated quota at $0 that is not efficiency but
-whether the board exists.
+depends on the probe alone, so it is computed once per season. A submission-dependent
+baseline — a matched random prefix, say — multiplies the forward passes per submission,
+and on a donated quota at $0 that is not efficiency but whether the board exists.
 
 ## One layer became a band, and the band is worse on paper
 
@@ -62,33 +61,34 @@ over a four-layer band, chosen **against** the best numbers in its own selection
 (`season3_band_select.md`): the single-layer Season 2 baseline holds the highest margin of
 five candidates at 0.27191, and the band that shipped has 0.23650, 13% lower, with
 confound cosines an order of magnitude larger. That is a deliberate trade against a
-measured failure mode, and it bought a harder target rather than an unbeatable one.
+measured failure mode: a harder target, not an unbeatable one.
 
 ## `mean` and `min`, and why both ship
 
 `banded_mean` gives partial credit — stall on one layer and you still score.
 `per_layer_min` is a conjunction: your score is your worst layer. The conjunction is the
-stronger claim, and `season3_gcg_aggregate_asymmetry.md` measures its cost. Net gain per
-100 search iterations decays +0.045, +0.012, +0.005, +0.005, +0.002 under `min`, because
-once the four layers equalise the argmin oscillates and no single-token edit lifts all
-four at once. The disjunctive `max` of the anti arm never saturates, and about 1.9× of the
-anti/pro gap is attributable to the aggregate swap, not the sign. Both ship: `mean` is
-searchable, `min` is the claim you would rather make.
+stronger claim; `season3_gcg_aggregate_asymmetry.md` measures its cost. Net gain per 100
+search iterations decays +0.045, +0.012, +0.005, +0.005, +0.002 under `min`, because once
+the four layers equalise the argmin oscillates and no single-token edit lifts all four at
+once. The disjunctive `max` of the anti arm never saturates, and about 1.9× of the
+anti/pro gap is attributable to the aggregate swap. Both ship: `mean` is searchable, `min`
+is the claim you would rather make.
 
 ## Why the board does not rank on specificity
 
 `specificity_z` is implemented and computed on every submission, and nothing ranks on it.
 It was meant to demote token soup on the theory that soup is isotropic junk with a lucky
-projection, and `specificity_calibration.md` falsified that: soup is *coherent*, so
-artifacts hold or gain rank under z — `.) {}` moves #17→#10 at z=+1.63 — because these
-strings perturb all sixteen probes coherently in a partially `d`-aligned direction. The
-second reason is structural: the closed form needs linearity in the direction, so it does
-not extend to `per_layer_min`.
+projection; `specificity_calibration.md` falsified that: soup is *coherent*, so artifacts
+hold or gain rank under z — `.) {}` moves #17→#10 at z=+1.63 — because these strings
+perturb all sixteen probes coherently, partially along `d`. The second reason is
+structural: the closed form needs linearity in the direction, so it does not extend to
+`per_layer_min`.
 
 ## Two alternatives rejected, whose measurements lived only in a commit message
 
-Both come from commit `4605eb7`, neither has an analysis file, and this page is now their
-record. **The geometric mean, rejected.** A product over the band looks like a natural
+Both come from commit `4605eb7`. Neither has an analysis file; this page is their record.
+
+**The geometric mean, rejected.** A product over the band looks like a natural
 conjunction, and it fails here for a reason about the corpus rather than the formula.
 Verified against the cached activations, on the seed pairs **99.6%** of texts have the
 same sign at all four band layers: 49.6% all positive, 50.0% all negative, 0.4% mixed. A
@@ -96,8 +96,7 @@ four-way product is therefore positive 99.6% of the time, half of that from four
 *negatives* multiplying. A text that is anti-human at every layer, per-layer cosines
 `[-0.196, -0.175, -0.154, -0.141]`, has a geometric mean of **+0.165** against an
 arithmetic mean of **−0.167**. It ranks the most anti-human text in the corpus as strongly
-pro-human, and because the layers are correlated that is half the corpus, not an edge
-case.
+pro-human, and because the layers correlate that is half the corpus, not an edge case.
 
 That 99.6% carries its own caveat, and the caveat is a live open question about the band
 premise. It is measured on the **seed pairs**, which the direction was **fit** on, at
@@ -113,8 +112,8 @@ four. Measured on a real seed-pair text, per-layer gradient share is `[0.6509, 0
 band layers get signal. It interpolates correctly: at T=0.001 it returns −0.19461 against
 a true min of −0.19600, and at T=10 it returns −0.16652 against a mean of −0.16650.
 `SOFTMIN_T = 0.02`, in `scripts/gcg/gcg_utils.py`. It is a search surrogate and never a
-reported score, because the board computes `min`: gradients only propose candidates, and
-only the recorded number has to be true.
+reported score, because the board computes `min`: gradients propose candidates, and only
+the recorded number has to be true.
 
 It also introduced a reporting bug of the kind that survives review. With a surrogate
 active the run's `score` column was the softmin while `board` was the true min, so the
@@ -128,9 +127,8 @@ Layer 24 was not chosen. All five candidate bands separate held-out pairs at 1.0
 keeps whichever candidate it saw first (`season3_band_select.md`): the layer the whole
 Season 2 board was scored at arrived by iteration order. `layer_concept_profile.md` later
 found L24 is the genuine margin peak, 0.2726 with the highest Cohen's d at 3.3777, so the
-choice was retroactively vindicated on a better criterion than the one that made it. That
-is luck, and worth saying out loud, because a saturated selection metric hands you an
-arbitrary answer without reporting that it did.
+choice was vindicated on a better criterion than the one that made it. That is luck: a
+saturated selection metric hands you an arbitrary answer without reporting that it did.
 
 ## The confound sentence that has to be said in full
 
@@ -146,7 +144,7 @@ overclaimed; state the second alone and you have withdrawn something that surviv
 
 An objective a stranger can recompute on a laptop, that nobody wins by scaling a vector,
 and whose harder variant turned out to predict measured behaviour better than its easier
-one. Every shape above has a named cost: cosine discards magnitude, the frozen probe set
-is overfittable by construction, the shipped band gave up 13% of margin, and the
-conjunction saturates under search. The costs sit beside the reasons, which is the only
-arrangement in which a later reader can tell whether a choice still holds.
+one. Every shape above has a named cost: cosine discards magnitude, the probe set is
+overfittable by construction, the band gave up 13% of margin, and the conjunction
+saturates under search. The costs sit beside the reasons, which is the only arrangement in
+which a later reader can tell whether a choice still holds.
