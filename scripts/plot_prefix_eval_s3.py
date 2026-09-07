@@ -54,17 +54,38 @@ INK, INK2, MUTED = "#0b0b0b", "#52514e", "#8a8985"
 SURFACE = "#fcfcfb"
 GRID = "#e6e5e2"
 RATER = "claude-opus-5/v2"
+ARM = {}   # built by set_theme, because the entries capture the hue values
 
-# arm -> (short label, family hue, marker). Marker carries identity alongside hue so the
-# figure survives full colour blindness and greyscale printing.
-ARM = {
-    "score1_top":   ("score1 top",   BLUE,   "o"),
-    "score2_top":   ("score2 top",   BLUE,   "s"),
-    "pro_coherent": ("pro coherent", AQUA,   "D"),
-    "random32":     ("random 32",    MUTED,  "X"),
-    "score1_anti":  ("score1 anti",  ORANGE, "v"),
-    "score2_anti":  ("score2 anti",  ORANGE, "^"),
-}
+
+def set_theme(dark: bool) -> None:
+    """Swap the whole token set. Dark is SELECTED, not an automatic inversion.
+
+    Re-validated against the surface it will actually sit on, which for the slide deck
+    is pure #000000 (its master background is scheme dk1), not the validator's default
+    #1a1a19. Orange has to move: #eb6834 sits at OKLCH L 0.671, one thousandth over the
+    dark band ceiling of 0.67, so it snaps 2% toward black to #e66633 at L 0.661. Blue
+    and aqua are already in band. The snapped triple passes every check over ALL pairs,
+    not just adjacent: CVD worst min(protan, deutan) dE 8.9 (orange vs aqua),
+    normal-vision worst dE 24.0 (blue vs aqua), contrast 4.76 / 6.31 / 7.46 on black.
+    Verified with _local/validate_palette.py, the repo's port of the skill's validator.
+    """
+    global BLUE, ORANGE, AQUA, INK, INK2, MUTED, SURFACE, GRID, ARM
+    if dark:
+        BLUE, ORANGE, AQUA = "#2a78d6", "#e66633", "#1baf7a"
+        INK, INK2, MUTED = "#f2f1ee", "#c9c7c2", "#8a8985"
+        SURFACE, GRID = "#000000", "#26262a"
+    else:
+        BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
+        INK, INK2, MUTED = "#0b0b0b", "#52514e", "#8a8985"
+        SURFACE, GRID = "#fcfcfb", "#e6e5e2"
+    ARM = {
+        "score1_top":   ("score1 top",   BLUE,   "o"),
+        "score2_top":   ("score2 top",   BLUE,   "s"),
+        "pro_coherent": ("pro coherent", AQUA,   "D"),
+        "random32":     ("random 32",    MUTED,  "X"),
+        "score1_anti":  ("score1 anti",  ORANGE, "v"),
+        "score2_anti":  ("score2 anti",  ORANGE, "^"),
+    }
 
 
 def load():
@@ -184,7 +205,7 @@ def panel_loop(ax, arms, d, fs, ms):
     ax.set_axisbelow(True)
 
 
-def panel_text(ax, arms, d, base_loops, fs):
+def panel_text(ax, arms, d, base_loops, fs, legend_dy):
     """Loops and prefix-vocabulary leakage, both counts out of 50, so one axis serves
     both. Hue stays the arm family; the two measures are separated by hatch."""
     h = 0.36
@@ -225,7 +246,7 @@ def panel_text(ax, arms, d, base_loops, fs):
         Patch(facecolor=MUTED, edgecolor=SURFACE, label="loops (a 4-gram 3+ times)"),
         Patch(facecolor=MUTED, alpha=0.42, edgecolor=MUTED, hatch="////",
               label="contains a word from its own prefix")],
-        loc="upper right", bbox_to_anchor=(1.02, -0.145), ncol=2, frameon=False,
+        loc="upper right", bbox_to_anchor=(1.02, legend_dy), ncol=2, frameon=False,
         fontsize=fs - 2.2, labelcolor=INK2, handlelength=1.5, handleheight=0.9,
         borderpad=0.2, columnspacing=1.2)
 
@@ -267,7 +288,9 @@ def make(stem, figsize, fs, wide, ev, arms, d, base_loops):
                   color=INK2)
     a2.tick_params(labelleft=False)
     panel_loop(b, arms, d, fs, ms)
-    panel_text(c, arms, d, base_loops, fs)
+    # the legend hangs below the axes, so its offset is in AXES fractions and a short
+    # figure needs a bigger one -- at 5.625in tall, -0.145 lands on the x-axis label
+    panel_text(c, arms, d, base_loops, fs, -0.145 if figsize[1] >= 6.5 else -0.30)
 
     n, rated = ev["total_pairs"], ev["raters"][RATER]["rated"]
     # one rater context per emitted batch. Counted from the batch files when the cache
@@ -320,10 +343,22 @@ def make(stem, figsize, fs, wide, ev, arms, d, base_loops):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--dark", action="store_true",
+                    help="also emit prefix_eval_s3_dark.png, sized 10x5.625in to fill a "
+                         "16:9 slide on a black master")
+    a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
+    set_theme(False)
     arms, d, base_loops, ev = load()
     s1, s2 = make("prefix_eval_s3", (11.0, 7.6), 10.4, True, ev, arms, d, base_loops)
     make("prefix_eval_s3_doc", (6.5, 7.2), 7.4, False, ev, arms, d, base_loops)
+    if a.dark:
+        set_theme(True)
+        make("prefix_eval_s3_dark", (10.0, 5.625), 8.0, True, ev, arms, d, base_loops)
+        set_theme(False)
     print(f"  Score 1 vs behaviour: rho {s1[0]:+.3f}, {s1[1]}/15 inversions")
     print(f"  Score 2 vs behaviour: rho {s2[0]:+.3f}, {s2[1]}/15 inversions")
     print("  mechanism.png / mechanism_doc.png (Season 2) are untouched.")
