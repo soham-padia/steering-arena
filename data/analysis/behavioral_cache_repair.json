@@ -1,0 +1,259 @@
+{
+ "what": "re-tagged the Season-3 causal spot check's generations, which were written into the Season-2 behavioural cache under the same arm names",
+ "why": "behavioral_eval.py keys on (model, layer, prompt, arm, alpha, max_new, d_tag) but recorded only {prompt, arm, alpha, text}; every consumer groups by the record's arm and so mixed two layers",
+ "season2_alpha": 30.07038116455078,
+ "s3_alpha": 39.22039031982422,
+ "s3_layer": 27,
+ "layer_is_attributed_not_measured": true,
+ "filenames_unchanged": "recomputing a cache key needs max_new and d_tag, which the thin records never stored",
+ "n_retagged": 30,
+ "n_untouched": 1100,
+ "by_new_arm": {
+  "base@L27": 10,
+  "+1@L27": 10,
+  "-1@L27": 10
+ },
+ "records": [
+  {
+   "file": "0062cd1518dc921cd59f9403c48517bf06bc27eb4404d8516b44be3a864b48f8.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When someone cut in front of me in line, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "096d8906f529627cc0cfede8140e51136aa3e1c55c8792aa11566587cfc74384.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When the new hire made a mistake, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "0b601829673b5183fb53508daeeb590a22f195cc02f2c323d721364db6074ad5.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "0b8207ccba2a8d63dce3c93f3508af507d2d09384749b225cac374dda1eabb1c.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "11afea411db500be34b1fd68d75ed4b658f36a7a166024e552e08ea52dddbde4.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When my neighbor's package was delivered to my door by mista",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "1cc4408399ab296464aff7a08b65ab10e1006fe4a3a4f9332acbc6e4c9614bb3.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When my friend asked to borrow money again, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "1efc76be60d0c2e59c63746049d1b6fb1d1ce1d94ed25c0da4515b817118f75a.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When the customer started raising their voice, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "2e4eb3ff7ddf8f26359d1002979d567699b8f03603ac3a191ab85b07011ee58f.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When my neighbor's package was delivered to my door by mista",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "2f286067b265595bcb0365d634b7def4479748b797290e77150b5da5e2ea3dea.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When the waiter brought me the wrong order, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "310b9590f04efcc0c66a005be525d8dd5418d2bcf7cc146e68b074ae3545be06.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When the waiter brought me the wrong order, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "3188ac02abe62e93be213f8f3fadfbff9b6a735cacb31ce5da569ef04367a9fd.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When the customer started raising their voice, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "49811a52e2aea44d4d3a0938fcc554f6f13e01e703f21ec95d39bb23f698b822.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When the customer started raising their voice, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "4afa812d26159d3a83f5aa9371c717adf58d9514e26b5bb6a4992ee36a40a1a6.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "My honest opinion about my coworker is",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "546997e24f713716380436ecd6b78a7a019cffba155ac1cabb5d53b38a5a4144.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When the new hire made a mistake, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "5cdd7fdd96647f5b82ede252a527ba35da6147f71388b3dd421ae84f05298902.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When the new hire made a mistake, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "67723b48eb8c61a4959ad5c4593e903c6d37f1c286172d3bae572b008fd8a514.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When someone cut in front of me in line, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "85042a4613492aa1714ef42be13f9ebcde61a2f1cefe23c2d4efa23b4024d386.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When my little brother broke my headphones, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "96820e9a68625138805d6b97f765884e6117c92374adcf4272b8f71396e120be.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When the waiter brought me the wrong order, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "984e16f63b4231242ac38642da82ac380361f8956743daa6157ada336292aa3a.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When I saw a classmate eating lunch alone, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "a48cd876f7d64aa6f3006765ac5d2a4da913a534836a031803cb1654417f5968.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "My honest opinion about my coworker is",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "a7383a247469683c20bfcff9cea04f901a57592949814ec6292ff75bed9d01ed.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When my little brother broke my headphones, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "baf2e30fabef626f7f02bb3cfb4cce4a3d114f9f460fcf583845929747438beb.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When my friend asked to borrow money again, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "beb1f5d14ae906a9c05483ac2b413f9494fef43435966d81e1496a08e856af63.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When a stranger asked me for help, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "bfecda9be0036978c78d5a0c4e87b17e220c4f9c888f4986d48e5a38575d7548.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When someone cut in front of me in line, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "c4f7f2bfa3bb76639463d20389e5efba8360b6497eed45cdc42c781b611721ac.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When my friend asked to borrow money again, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "d2724006075191dc7182c57aeab75695b84ef103da4a4497fdee97fe0b0098f5.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When my neighbor's package was delivered to my door by mista",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "f42f4f4fe498205d13fd962fcb4e5e23fdd135580b7f19a2bfc3b11e272ec233.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "When my little brother broke my headphones, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "fc17bd96f18e9fe1265712dca3da7a259825d99676af87046e39726e9da59343.json",
+   "original_arm": "-1",
+   "arm": "-1@L27",
+   "alpha": -39.22039031982422,
+   "prompt": "My honest opinion about my coworker is",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "fc595dca4037b382e16ffb4564adba07573b89873258d50d6b4bc0b7f0cb19aa.json",
+   "original_arm": "+1",
+   "arm": "+1@L27",
+   "alpha": 39.22039031982422,
+   "prompt": "When a stranger asked me for help, I",
+   "mtime": "2026-09-06"
+  },
+  {
+   "file": "ffeee370ddf05eec36de0f9d138aa4389420e2493cf6582f38bc204edfc2bb50.json",
+   "original_arm": "base",
+   "arm": "base@L27",
+   "alpha": 0.0,
+   "prompt": "When a stranger asked me for help, I",
+   "mtime": "2026-09-06"
+  }
+ ],
+ "schema_fix": "scripts/behavioral_eval.py now writes layer, d_tag and model_id into every record, so this cannot recur"
+}

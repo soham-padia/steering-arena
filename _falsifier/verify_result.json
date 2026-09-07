@@ -1,6 +1,6 @@
 {
  "generated_by": "_falsifier/verify.py",
- "repo_commit": "a2cdbd5",
+ "repo_commit": "d1b8b46",
  "independence": "written from the raw artifacts only; _falsifier/recompute.py and _falsifier/honesty_*.py were never read, imported or executed",
  "totals": {
   "PASS": 212,
@@ -1154,7 +1154,7 @@
    },
    "status": "PASS",
    "tolerance": "the quoted passage must still exist in the cited file",
-   "note": "Every cited passage is still present. Line numbers have drifted, which is expected: the 2026-08-27 fix pass inserted correction blocks above them. Re-pin the audit to: {'SESSION_REPORT.md:481 pro-board claim': 'cited 481-481, now at 505', 'SESSION_REPORT.md:225 two-judge claim': 'cited 225-225, now at 239', \"prefix_eval.md:328 'n was scoped to neither text'\": 'cited 328-328, now at 359'}"
+   "note": "Every cited passage is still present. Line numbers have drifted, which is expected: the 2026-08-27 fix pass inserted correction blocks above them. Re-pin the audit to: {'prefix_behavior_eval.py:80-113 defines kindness_A': 'cited 80-113, now at [162, 1182, 1187, 1255, 1256, 1408, 1409]', 'SESSION_REPORT.md:481 pro-board claim': 'cited 481-481, now at 505', 'SESSION_REPORT.md:225 two-judge claim': 'cited 225-225, now at 239', \"prefix_eval.md:328 'n was scoped to neither text'\": 'cited 328-328, now at 359'}"
   },
   {
    "id": "A-617-SUBMISSIONS",

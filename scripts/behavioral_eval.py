@@ -134,7 +134,16 @@ def cmd_generate(args):
                 continue
             steer = None if arm == "base" else (layer, alpha * d)
             text = generate(reader, prompt, args.max_new, steer=steer)
-            fp.write_text(json.dumps({"prompt": prompt, "arm": arm, "alpha": alpha, "text": text}))
+            # The KEY separates experiments by (model, layer, arm, alpha, max_new, d_tag);
+            # the RECORD must too, or a consumer that groups by `arm` mixes them. It did:
+            # the Season-3 layer-27 spot check landed in this cache under the same `+1`,
+            # `-1` and `base` names as the June layer-24 dose run and silently replaced 20
+            # of its generations, which broke two published numbers and 5 verify.py
+            # checks. See scripts/repair_behavioral_cache.py and
+            # data/analysis/behavioral_cache_repair.md.
+            fp.write_text(json.dumps({"prompt": prompt, "arm": arm, "alpha": alpha,
+                                      "text": text, "layer": layer, "d_tag": dtag,
+                                      "model_id": settings.model_id}))
             n_new += 1
             print(f"  [{pi}/{len(prompts)}] {arm:>5}: {text[len(prompt):60+len(prompt)]!r}…", flush=True)
     print(f"\ndone: {n_new} generated, {n_hit} cached")
