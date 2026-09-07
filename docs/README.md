@@ -106,17 +106,20 @@ Four folders, deliberately adversarial. Read at least two before believing anyth
 them, and any reference to them will not resolve. That is also why this page exists: until
 now the project's only entry points were files that never left the maintainer's machine.
 
-## Not written yet
+## What is not here
 
-This set is partial, and it is more useful to say so than to imply otherwise. `tutorials/`
-is empty. `how-to/` has one page of five planned — a cluster-job guide, a GCG-search guide,
-a blind-eval guide and a new-season guide are outstanding. `reference/` is missing
-`seasons.md`, `artifacts.md` and `environments.md`. `explanation/` is missing
-`why-the-metric-is-shaped-this-way.md`, which is where the rejected alternatives belong —
-including the geometric mean that would have ranked the most anti-human text in the corpus
-as strongly pro-human, a measurement that currently survives only in a commit message.
+`tutorials/your-first-submission.md` is deliberately absent: it would restate
+`PROJECT_SPEC.md` §7, and the live API documents itself through `/health` and `/seasons`.
 
-Nine `data/analysis/` JSONs also still have no companion write-up: `layer_concept_profile`,
-`normalization_check`, `causal_layer_curve`, `direction_purity`, `meandiff_ablation` and
-four smaller ones. `REVISIONS_2026-09-05.md` records what those results *mean*; what is
-missing is a page per artifact recording what each one *contains*.
+Every orphaned *analysis* in `data/analysis/` now has a companion write-up — that was not
+true at the start of 2026-09-07, when 17 did not, including
+`season3_gcg_aggregate_asymmetry.json`, which held the whole Part A mechanism result and was
+cited by four files with no prose anywhere. `reference/artifacts.md` accounts for every
+remaining unpaired artifact: they are inputs, rating worksheets, one merged page, and two
+subcommand outputs transcribed inside `steering_ablation.md`.
+
+What is genuinely still open is experiments, not documentation. `REVISIONS_2026-09-05.md` §7
+holds the priority list, and the single highest-value item is named at the end of
+`explanation/the-case-for-the-metric.md`: a string searched against a **random** direction
+to a matched board score, run through the same behavioural protocol. One GCG run and 50
+generations, no NDIF, proposed 2026-08-28 and still not done.

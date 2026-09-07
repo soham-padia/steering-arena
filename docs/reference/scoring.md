@@ -241,16 +241,17 @@ submissions were rescored under Season 3 without resubmission.
 
 **Definition:** the frozen prompts every score is averaged over.
 
-**Value:** 16 prompts, `data/probes/season3.json`. Byte-identical to
-`data/probes/season2.json`, deliberately.
+**Value:** 16 prompts, `data/probes/season3.json`. Its **prompts** are byte-identical to
+`data/probes/season2.json`; the files are not (1426 against 1171 bytes — the `season` and
+`note` fields differ).
 
 **Where it is set:** `app/config.py:probe_set`.
 
 **Source of truth:** the file.
 
 **Failure mode:** editing a probe file that an archived season still points at. Season 3
-got its own copy *because* it is identical — so `season2.json` can never be changed out
-from under a closed board.
+got its own copy *because* the prompts are identical — so `season2.json` can never be
+changed out from under a closed board.
 
 **Positive implication:** holding the probes fixed across the season change keeps the probe
 set from being a fourth simultaneous variable alongside band, direction and aggregate.
