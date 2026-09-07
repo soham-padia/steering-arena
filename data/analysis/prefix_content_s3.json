@@ -1,0 +1,126 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "tag": "s3",
+  "n_base_continuations": 50,
+  "note": "a prefix word counts only if it appears in NO base continuation",
+  "arms": {
+    "base": {
+      "n": 50,
+      "n_distinctive_prefix_words": 0,
+      "continuations_with_a_prefix_word": 0,
+      "verbatim_echo": 0,
+      "top_prefix_words": {},
+      "top5gram": "able to help her find",
+      "top5gram_n_prompts": 4,
+      "emoji": 0,
+      "hashtag": 0,
+      "meta_narration": 0
+    },
+    "score1_top": {
+      "n": 50,
+      "n_distinctive_prefix_words": 20,
+      "continuations_with_a_prefix_word": 22,
+      "verbatim_echo": 0,
+      "top_prefix_words": {
+        "zach": 13,
+        "handy": 4,
+        "wanna": 3,
+        "aboriginal": 3,
+        "passive": 2,
+        "respectful": 2,
+        "respectfully": 2,
+        "cookie": 2
+      },
+      "top5gram": "\"zach's 'cookie' comment was a",
+      "top5gram_n_prompts": 4,
+      "emoji": 1,
+      "hashtag": 4,
+      "meta_narration": 0
+    },
+    "score2_top": {
+      "n": 50,
+      "n_distinctive_prefix_words": 18,
+      "continuations_with_a_prefix_word": 13,
+      "verbatim_echo": 6,
+      "top_prefix_words": {
+        "beck": 11,
+        "picked": 8,
+        "brief": 8,
+        "fran": 7,
+        "texting": 7,
+        "positivity-but": 6,
+        "page": 1
+      },
+      "top5gram": "beck開picked texting franç \"(brief positivity-but",
+      "top5gram_n_prompts": 6,
+      "emoji": 12,
+      "hashtag": 0,
+      "meta_narration": 1
+    },
+    "pro_coherent": {
+      "n": 50,
+      "n_distinctive_prefix_words": 6,
+      "continuations_with_a_prefix_word": 11,
+      "verbatim_echo": 1,
+      "top_prefix_words": {
+        "respond": 9,
+        "sentence": 4,
+        "short": 4,
+        "respect": 3,
+        "compassion": 2,
+        "kindnesz": 1
+      },
+      "top5gram": "him. i was happy to",
+      "top5gram_n_prompts": 5,
+      "emoji": 0,
+      "hashtag": 0,
+      "meta_narration": 7
+    },
+    "random32": {
+      "n": 50,
+      "n_distinctive_prefix_words": 18,
+      "continuations_with_a_prefix_word": 0,
+      "verbatim_echo": 0,
+      "top_prefix_words": {},
+      "top5gram": "was so angry that i",
+      "top5gram_n_prompts": 8,
+      "emoji": 0,
+      "hashtag": 0,
+      "meta_narration": 0
+    },
+    "score1_anti": {
+      "n": 50,
+      "n_distinctive_prefix_words": 18,
+      "continuations_with_a_prefix_word": 19,
+      "verbatim_echo": 0,
+      "top_prefix_words": {
+        "divorce": 19,
+        "proceeding": 1
+      },
+      "top5gram": "i'm not sure if i'm",
+      "top5gram_n_prompts": 11,
+      "emoji": 0,
+      "hashtag": 0,
+      "meta_narration": 0
+    },
+    "score2_anti": {
+      "n": 50,
+      "n_distinctive_prefix_words": 20,
+      "continuations_with_a_prefix_word": 9,
+      "verbatim_echo": 1,
+      "top_prefix_words": {
+        "invoke": 7,
+        "fascist": 1,
+        "vatican": 1,
+        "inv": 1,
+        "ict": 1,
+        "rallies": 1
+      },
+      "top5gram": "i was busy. i was",
+      "top5gram_n_prompts": 9,
+      "emoji": 0,
+      "hashtag": 0,
+      "meta_narration": 0
+    }
+  }
+}

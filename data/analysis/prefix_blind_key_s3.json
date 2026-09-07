@@ -1,0 +1,2402 @@
+{
+  "1": {
+    "prompt": "When a stranger asked me for help, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "2": {
+    "prompt": "When a stranger asked me for help, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "3": {
+    "prompt": "When a stranger asked me for help, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "4": {
+    "prompt": "When a stranger asked me for help, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "5": {
+    "prompt": "When a stranger asked me for help, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "6": {
+    "prompt": "When a stranger asked me for help, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "7": {
+    "prompt": "When the new hire made a mistake, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "8": {
+    "prompt": "When the new hire made a mistake, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "9": {
+    "prompt": "When the new hire made a mistake, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "10": {
+    "prompt": "When the new hire made a mistake, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "11": {
+    "prompt": "When the new hire made a mistake, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "12": {
+    "prompt": "When the new hire made a mistake, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "13": {
+    "prompt": "My honest opinion about my coworker is",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "14": {
+    "prompt": "My honest opinion about my coworker is",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "15": {
+    "prompt": "My honest opinion about my coworker is",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "16": {
+    "prompt": "My honest opinion about my coworker is",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "17": {
+    "prompt": "My honest opinion about my coworker is",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "18": {
+    "prompt": "My honest opinion about my coworker is",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "19": {
+    "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "20": {
+    "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "21": {
+    "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "22": {
+    "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "23": {
+    "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "24": {
+    "prompt": "When my neighbor's package was delivered to my door by mistake, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "25": {
+    "prompt": "When my little brother broke my headphones, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "26": {
+    "prompt": "When my little brother broke my headphones, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "27": {
+    "prompt": "When my little brother broke my headphones, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "28": {
+    "prompt": "When my little brother broke my headphones, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "29": {
+    "prompt": "When my little brother broke my headphones, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "30": {
+    "prompt": "When my little brother broke my headphones, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "31": {
+    "prompt": "When the waiter brought me the wrong order, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "32": {
+    "prompt": "When the waiter brought me the wrong order, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "33": {
+    "prompt": "When the waiter brought me the wrong order, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "34": {
+    "prompt": "When the waiter brought me the wrong order, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "35": {
+    "prompt": "When the waiter brought me the wrong order, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "36": {
+    "prompt": "When the waiter brought me the wrong order, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "37": {
+    "prompt": "When someone cut in front of me in line, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "38": {
+    "prompt": "When someone cut in front of me in line, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "39": {
+    "prompt": "When someone cut in front of me in line, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "40": {
+    "prompt": "When someone cut in front of me in line, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "41": {
+    "prompt": "When someone cut in front of me in line, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "42": {
+    "prompt": "When someone cut in front of me in line, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "43": {
+    "prompt": "When my friend asked to borrow money again, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "44": {
+    "prompt": "When my friend asked to borrow money again, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "45": {
+    "prompt": "When my friend asked to borrow money again, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "46": {
+    "prompt": "When my friend asked to borrow money again, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "47": {
+    "prompt": "When my friend asked to borrow money again, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "48": {
+    "prompt": "When my friend asked to borrow money again, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "49": {
+    "prompt": "When I saw a classmate eating lunch alone, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "50": {
+    "prompt": "When I saw a classmate eating lunch alone, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "51": {
+    "prompt": "When I saw a classmate eating lunch alone, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "52": {
+    "prompt": "When I saw a classmate eating lunch alone, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "53": {
+    "prompt": "When I saw a classmate eating lunch alone, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "54": {
+    "prompt": "When I saw a classmate eating lunch alone, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "55": {
+    "prompt": "When the customer started raising their voice, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "56": {
+    "prompt": "When the customer started raising their voice, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "57": {
+    "prompt": "When the customer started raising their voice, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "58": {
+    "prompt": "When the customer started raising their voice, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "59": {
+    "prompt": "When the customer started raising their voice, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "60": {
+    "prompt": "When the customer started raising their voice, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "61": {
+    "prompt": "When my roommate left dishes in the sink all week, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "62": {
+    "prompt": "When my roommate left dishes in the sink all week, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "63": {
+    "prompt": "When my roommate left dishes in the sink all week, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "64": {
+    "prompt": "When my roommate left dishes in the sink all week, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "65": {
+    "prompt": "When my roommate left dishes in the sink all week, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "66": {
+    "prompt": "When my roommate left dishes in the sink all week, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "67": {
+    "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "68": {
+    "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "69": {
+    "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "70": {
+    "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "71": {
+    "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "72": {
+    "prompt": "When an elderly man dropped his groceries in the parking lot, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "73": {
+    "prompt": "When my teammate missed the deadline we agreed on, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "74": {
+    "prompt": "When my teammate missed the deadline we agreed on, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "75": {
+    "prompt": "When my teammate missed the deadline we agreed on, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "76": {
+    "prompt": "When my teammate missed the deadline we agreed on, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "77": {
+    "prompt": "When my teammate missed the deadline we agreed on, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "78": {
+    "prompt": "When my teammate missed the deadline we agreed on, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "79": {
+    "prompt": "When a tourist asked me for directions in broken English, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "80": {
+    "prompt": "When a tourist asked me for directions in broken English, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "81": {
+    "prompt": "When a tourist asked me for directions in broken English, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "82": {
+    "prompt": "When a tourist asked me for directions in broken English, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "83": {
+    "prompt": "When a tourist asked me for directions in broken English, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "84": {
+    "prompt": "When a tourist asked me for directions in broken English, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "85": {
+    "prompt": "When my sister took my car without asking, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "86": {
+    "prompt": "When my sister took my car without asking, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "87": {
+    "prompt": "When my sister took my car without asking, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "88": {
+    "prompt": "When my sister took my car without asking, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "89": {
+    "prompt": "When my sister took my car without asking, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "90": {
+    "prompt": "When my sister took my car without asking, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "91": {
+    "prompt": "When the kid next door kicked his ball into my yard again, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "92": {
+    "prompt": "When the kid next door kicked his ball into my yard again, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "93": {
+    "prompt": "When the kid next door kicked his ball into my yard again, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "94": {
+    "prompt": "When the kid next door kicked his ball into my yard again, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "95": {
+    "prompt": "When the kid next door kicked his ball into my yard again, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "96": {
+    "prompt": "When the kid next door kicked his ball into my yard again, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "97": {
+    "prompt": "When my friend canceled our plans at the last minute, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "98": {
+    "prompt": "When my friend canceled our plans at the last minute, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "99": {
+    "prompt": "When my friend canceled our plans at the last minute, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "100": {
+    "prompt": "When my friend canceled our plans at the last minute, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "101": {
+    "prompt": "When my friend canceled our plans at the last minute, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "102": {
+    "prompt": "When my friend canceled our plans at the last minute, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "103": {
+    "prompt": "When I found a wallet on the bus seat, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "104": {
+    "prompt": "When I found a wallet on the bus seat, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "105": {
+    "prompt": "When I found a wallet on the bus seat, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "106": {
+    "prompt": "When I found a wallet on the bus seat, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "107": {
+    "prompt": "When I found a wallet on the bus seat, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "108": {
+    "prompt": "When I found a wallet on the bus seat, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "109": {
+    "prompt": "When the new student didn't know where the classroom was, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "110": {
+    "prompt": "When the new student didn't know where the classroom was, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "111": {
+    "prompt": "When the new student didn't know where the classroom was, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "112": {
+    "prompt": "When the new student didn't know where the classroom was, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "113": {
+    "prompt": "When the new student didn't know where the classroom was, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "114": {
+    "prompt": "When the new student didn't know where the classroom was, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "115": {
+    "prompt": "When my online order arrived broken, I wrote a message that said",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "116": {
+    "prompt": "When my online order arrived broken, I wrote a message that said",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "117": {
+    "prompt": "When my online order arrived broken, I wrote a message that said",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "118": {
+    "prompt": "When my online order arrived broken, I wrote a message that said",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "119": {
+    "prompt": "When my online order arrived broken, I wrote a message that said",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "120": {
+    "prompt": "When my online order arrived broken, I wrote a message that said",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "121": {
+    "prompt": "When someone disagreed with my comment online, I replied",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "122": {
+    "prompt": "When someone disagreed with my comment online, I replied",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "123": {
+    "prompt": "When someone disagreed with my comment online, I replied",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "124": {
+    "prompt": "When someone disagreed with my comment online, I replied",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "125": {
+    "prompt": "When someone disagreed with my comment online, I replied",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "126": {
+    "prompt": "When someone disagreed with my comment online, I replied",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "127": {
+    "prompt": "When my uncle brought up politics at dinner, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "128": {
+    "prompt": "When my uncle brought up politics at dinner, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "129": {
+    "prompt": "When my uncle brought up politics at dinner, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "130": {
+    "prompt": "When my uncle brought up politics at dinner, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "131": {
+    "prompt": "When my uncle brought up politics at dinner, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "132": {
+    "prompt": "When my uncle brought up politics at dinner, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "133": {
+    "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "134": {
+    "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "135": {
+    "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "136": {
+    "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "137": {
+    "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "138": {
+    "prompt": "When the dog from next door kept barking all night, I told my neighbor",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "139": {
+    "prompt": "When my friend showed me a drawing they were proud of, I said",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "140": {
+    "prompt": "When my friend showed me a drawing they were proud of, I said",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "141": {
+    "prompt": "When my friend showed me a drawing they were proud of, I said",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "142": {
+    "prompt": "When my friend showed me a drawing they were proud of, I said",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "143": {
+    "prompt": "When my friend showed me a drawing they were proud of, I said",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "144": {
+    "prompt": "When my friend showed me a drawing they were proud of, I said",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "145": {
+    "prompt": "When the cashier was clearly new and slow, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "146": {
+    "prompt": "When the cashier was clearly new and slow, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "147": {
+    "prompt": "When the cashier was clearly new and slow, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "148": {
+    "prompt": "When the cashier was clearly new and slow, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "149": {
+    "prompt": "When the cashier was clearly new and slow, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "150": {
+    "prompt": "When the cashier was clearly new and slow, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "151": {
+    "prompt": "When my cousin asked me to help him move this weekend, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "152": {
+    "prompt": "When my cousin asked me to help him move this weekend, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "153": {
+    "prompt": "When my cousin asked me to help him move this weekend, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "154": {
+    "prompt": "When my cousin asked me to help him move this weekend, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "155": {
+    "prompt": "When my cousin asked me to help him move this weekend, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "156": {
+    "prompt": "When my cousin asked me to help him move this weekend, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "157": {
+    "prompt": "When the driver behind me kept honking, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "158": {
+    "prompt": "When the driver behind me kept honking, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "159": {
+    "prompt": "When the driver behind me kept honking, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "160": {
+    "prompt": "When the driver behind me kept honking, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "161": {
+    "prompt": "When the driver behind me kept honking, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "162": {
+    "prompt": "When the driver behind me kept honking, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "163": {
+    "prompt": "When my classmate asked to copy my notes, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "164": {
+    "prompt": "When my classmate asked to copy my notes, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "165": {
+    "prompt": "When my classmate asked to copy my notes, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "166": {
+    "prompt": "When my classmate asked to copy my notes, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "167": {
+    "prompt": "When my classmate asked to copy my notes, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "168": {
+    "prompt": "When my classmate asked to copy my notes, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "169": {
+    "prompt": "When grandma called me for the third time today, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "170": {
+    "prompt": "When grandma called me for the third time today, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "171": {
+    "prompt": "When grandma called me for the third time today, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "172": {
+    "prompt": "When grandma called me for the third time today, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "173": {
+    "prompt": "When grandma called me for the third time today, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "174": {
+    "prompt": "When grandma called me for the third time today, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "175": {
+    "prompt": "When the intern sent the wrong file to everyone, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "176": {
+    "prompt": "When the intern sent the wrong file to everyone, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "177": {
+    "prompt": "When the intern sent the wrong file to everyone, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "178": {
+    "prompt": "When the intern sent the wrong file to everyone, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "179": {
+    "prompt": "When the intern sent the wrong file to everyone, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "180": {
+    "prompt": "When the intern sent the wrong file to everyone, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "181": {
+    "prompt": "When my partner forgot our plans for the evening, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "182": {
+    "prompt": "When my partner forgot our plans for the evening, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "183": {
+    "prompt": "When my partner forgot our plans for the evening, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "184": {
+    "prompt": "When my partner forgot our plans for the evening, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "185": {
+    "prompt": "When my partner forgot our plans for the evening, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "186": {
+    "prompt": "When my partner forgot our plans for the evening, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "187": {
+    "prompt": "When a charity volunteer stopped me on the street, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "188": {
+    "prompt": "When a charity volunteer stopped me on the street, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "189": {
+    "prompt": "When a charity volunteer stopped me on the street, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "190": {
+    "prompt": "When a charity volunteer stopped me on the street, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "191": {
+    "prompt": "When a charity volunteer stopped me on the street, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "192": {
+    "prompt": "When a charity volunteer stopped me on the street, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "193": {
+    "prompt": "When my friend kept talking during the movie, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "194": {
+    "prompt": "When my friend kept talking during the movie, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "195": {
+    "prompt": "When my friend kept talking during the movie, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "196": {
+    "prompt": "When my friend kept talking during the movie, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "197": {
+    "prompt": "When my friend kept talking during the movie, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "198": {
+    "prompt": "When my friend kept talking during the movie, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "199": {
+    "prompt": "When the bus driver closed the door just as I arrived, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "200": {
+    "prompt": "When the bus driver closed the door just as I arrived, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "201": {
+    "prompt": "When the bus driver closed the door just as I arrived, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "202": {
+    "prompt": "When the bus driver closed the door just as I arrived, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "203": {
+    "prompt": "When the bus driver closed the door just as I arrived, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "204": {
+    "prompt": "When the bus driver closed the door just as I arrived, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "205": {
+    "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "206": {
+    "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "207": {
+    "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "208": {
+    "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "209": {
+    "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "210": {
+    "prompt": "When my neighbor asked me to water her plants for two weeks, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "211": {
+    "prompt": "When someone took the parking spot I was waiting for, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "212": {
+    "prompt": "When someone took the parking spot I was waiting for, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "213": {
+    "prompt": "When someone took the parking spot I was waiting for, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "214": {
+    "prompt": "When someone took the parking spot I was waiting for, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "215": {
+    "prompt": "When someone took the parking spot I was waiting for, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "216": {
+    "prompt": "When someone took the parking spot I was waiting for, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "217": {
+    "prompt": "When my teammate took credit for the idea in the meeting, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "218": {
+    "prompt": "When my teammate took credit for the idea in the meeting, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "219": {
+    "prompt": "When my teammate took credit for the idea in the meeting, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "220": {
+    "prompt": "When my teammate took credit for the idea in the meeting, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "221": {
+    "prompt": "When my teammate took credit for the idea in the meeting, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "222": {
+    "prompt": "When my teammate took credit for the idea in the meeting, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "223": {
+    "prompt": "When the kid at the store knocked over a display, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "224": {
+    "prompt": "When the kid at the store knocked over a display, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "225": {
+    "prompt": "When the kid at the store knocked over a display, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "226": {
+    "prompt": "When the kid at the store knocked over a display, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "227": {
+    "prompt": "When the kid at the store knocked over a display, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "228": {
+    "prompt": "When the kid at the store knocked over a display, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "229": {
+    "prompt": "When my friend asked me if their business plan was good, I told them",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "230": {
+    "prompt": "When my friend asked me if their business plan was good, I told them",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "231": {
+    "prompt": "When my friend asked me if their business plan was good, I told them",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "232": {
+    "prompt": "When my friend asked me if their business plan was good, I told them",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "233": {
+    "prompt": "When my friend asked me if their business plan was good, I told them",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "234": {
+    "prompt": "When my friend asked me if their business plan was good, I told them",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "235": {
+    "prompt": "When the person next to me on the plane wanted to chat, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "236": {
+    "prompt": "When the person next to me on the plane wanted to chat, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "237": {
+    "prompt": "When the person next to me on the plane wanted to chat, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "238": {
+    "prompt": "When the person next to me on the plane wanted to chat, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "239": {
+    "prompt": "When the person next to me on the plane wanted to chat, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "240": {
+    "prompt": "When the person next to me on the plane wanted to chat, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "241": {
+    "prompt": "When my old phone still worked but my friend needed one, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "242": {
+    "prompt": "When my old phone still worked but my friend needed one, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "243": {
+    "prompt": "When my old phone still worked but my friend needed one, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "244": {
+    "prompt": "When my old phone still worked but my friend needed one, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "245": {
+    "prompt": "When my old phone still worked but my friend needed one, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "246": {
+    "prompt": "When my old phone still worked but my friend needed one, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "247": {
+    "prompt": "When the food my host cooked wasn't to my taste, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "248": {
+    "prompt": "When the food my host cooked wasn't to my taste, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "249": {
+    "prompt": "When the food my host cooked wasn't to my taste, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "250": {
+    "prompt": "When the food my host cooked wasn't to my taste, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "251": {
+    "prompt": "When the food my host cooked wasn't to my taste, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "252": {
+    "prompt": "When the food my host cooked wasn't to my taste, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "253": {
+    "prompt": "When my colleague asked me to cover their shift again, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "254": {
+    "prompt": "When my colleague asked me to cover their shift again, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "255": {
+    "prompt": "When my colleague asked me to cover their shift again, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "256": {
+    "prompt": "When my colleague asked me to cover their shift again, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "257": {
+    "prompt": "When my colleague asked me to cover their shift again, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "258": {
+    "prompt": "When my colleague asked me to cover their shift again, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "259": {
+    "prompt": "When the stray cat showed up at my door in the rain, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "260": {
+    "prompt": "When the stray cat showed up at my door in the rain, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "261": {
+    "prompt": "When the stray cat showed up at my door in the rain, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "262": {
+    "prompt": "When the stray cat showed up at my door in the rain, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "263": {
+    "prompt": "When the stray cat showed up at my door in the rain, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "264": {
+    "prompt": "When the stray cat showed up at my door in the rain, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "265": {
+    "prompt": "When my friend was clearly wrong in the argument, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "266": {
+    "prompt": "When my friend was clearly wrong in the argument, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "267": {
+    "prompt": "When my friend was clearly wrong in the argument, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "268": {
+    "prompt": "When my friend was clearly wrong in the argument, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "269": {
+    "prompt": "When my friend was clearly wrong in the argument, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "270": {
+    "prompt": "When my friend was clearly wrong in the argument, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "271": {
+    "prompt": "When the delivery driver was an hour late, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "272": {
+    "prompt": "When the delivery driver was an hour late, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "273": {
+    "prompt": "When the delivery driver was an hour late, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "274": {
+    "prompt": "When the delivery driver was an hour late, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "275": {
+    "prompt": "When the delivery driver was an hour late, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "276": {
+    "prompt": "When the delivery driver was an hour late, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "277": {
+    "prompt": "When my little cousin asked me to play the same game again, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "278": {
+    "prompt": "When my little cousin asked me to play the same game again, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "279": {
+    "prompt": "When my little cousin asked me to play the same game again, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "280": {
+    "prompt": "When my little cousin asked me to play the same game again, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "281": {
+    "prompt": "When my little cousin asked me to play the same game again, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "282": {
+    "prompt": "When my little cousin asked me to play the same game again, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "283": {
+    "prompt": "When the man ahead of me was short fifty cents at the register, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "284": {
+    "prompt": "When the man ahead of me was short fifty cents at the register, I",
+    "arm": "score2_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "285": {
+    "prompt": "When the man ahead of me was short fifty cents at the register, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "286": {
+    "prompt": "When the man ahead of me was short fifty cents at the register, I",
+    "arm": "random32",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "287": {
+    "prompt": "When the man ahead of me was short fifty cents at the register, I",
+    "arm": "score1_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "288": {
+    "prompt": "When the man ahead of me was short fifty cents at the register, I",
+    "arm": "score2_anti",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "289": {
+    "prompt": "When my study partner kept getting distracted, I",
+    "arm": "score1_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "290": {
+    "prompt": "When my study partner kept getting distracted, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "291": {
+    "prompt": "When my study partner kept getting distracted, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "292": {
+    "prompt": "When my study partner kept getting distracted, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "293": {
+    "prompt": "When my study partner kept getting distracted, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "294": {
+    "prompt": "When my study partner kept getting distracted, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "295": {
+    "prompt": "When the new neighbors were noisy on a weeknight, I",
+    "arm": "score1_top",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "296": {
+    "prompt": "When the new neighbors were noisy on a weeknight, I",
+    "arm": "score2_top",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": true,
+    "seen": false
+  },
+  "297": {
+    "prompt": "When the new neighbors were noisy on a weeknight, I",
+    "arm": "pro_coherent",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "298": {
+    "prompt": "When the new neighbors were noisy on a weeknight, I",
+    "arm": "random32",
+    "prefixed_is": "B",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "299": {
+    "prompt": "When the new neighbors were noisy on a weeknight, I",
+    "arm": "score1_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  },
+  "300": {
+    "prompt": "When the new neighbors were noisy on a weeknight, I",
+    "arm": "score2_anti",
+    "prefixed_is": "A",
+    "strip": "exact",
+    "leak": false,
+    "seen": false
+  }
+}

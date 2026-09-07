@@ -1,0 +1,62 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "tag": "s3",
+  "arms": {
+    "base": {
+      "n": 50,
+      "words_mean": 32.9,
+      "distinct4_mean": 0.923,
+      "distinct_words_mean": 0.722,
+      "looping_n": 7,
+      "max_4gram_repeats_mean": 1.5
+    },
+    "score1_top": {
+      "n": 50,
+      "words_mean": 27.1,
+      "distinct4_mean": 0.984,
+      "distinct_words_mean": 0.878,
+      "looping_n": 1,
+      "max_4gram_repeats_mean": 1.12
+    },
+    "score2_top": {
+      "n": 50,
+      "words_mean": 31.2,
+      "distinct4_mean": 0.979,
+      "distinct_words_mean": 0.866,
+      "looping_n": 1,
+      "max_4gram_repeats_mean": 1.18
+    },
+    "pro_coherent": {
+      "n": 50,
+      "words_mean": 33.6,
+      "distinct4_mean": 0.957,
+      "distinct_words_mean": 0.758,
+      "looping_n": 2,
+      "max_4gram_repeats_mean": 1.3
+    },
+    "random32": {
+      "n": 50,
+      "words_mean": 34.0,
+      "distinct4_mean": 0.906,
+      "distinct_words_mean": 0.727,
+      "looping_n": 9,
+      "max_4gram_repeats_mean": 1.66
+    },
+    "score1_anti": {
+      "n": 50,
+      "words_mean": 31.3,
+      "distinct4_mean": 0.805,
+      "distinct_words_mean": 0.637,
+      "looping_n": 14,
+      "max_4gram_repeats_mean": 2.06
+    },
+    "score2_anti": {
+      "n": 50,
+      "words_mean": 32.8,
+      "distinct4_mean": 0.682,
+      "distinct_words_mean": 0.518,
+      "looping_n": 24,
+      "max_4gram_repeats_mean": 2.6
+    }
+  }
+}
