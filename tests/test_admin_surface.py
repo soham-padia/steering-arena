@@ -138,7 +138,7 @@ def test_moderation_is_still_possible_without_the_endpoint():
 def test_auth_config_is_public_and_carries_no_secret(client):
     """A browser cannot start a Supabase session without the publishable key, so
     this endpoint is unauthenticated by design. What keeps it safe is row-level
-    security, not secrecy — see docs/how-to/verify-the-public-surface.md."""
+    security, not secrecy — see the route's own docstring in app/main.py."""
     r = client.get("/auth/config")
     assert r.status_code == 200
     body = r.json()

@@ -66,4 +66,4 @@ Two settled answers, both cheap to re-verify. The normalization objection is clo
 
 ## Cross-links
 
-`REVISIONS_2026-09-05.md` §1 (the withdrawn add/remove asymmetry) and §5; `steering_ablation.md` (carries the inline correction); `meandiff_ablation.md` (the second ablation variant above); `causal_layer_curve.md` (layer dependence of the causal effect); `season3_gcg_ablation.md` (the prefix side); `docs/reference/scoring.md` (what the score reads, and at which layer).
+`REVISIONS_2026-09-05.md` §1 (the withdrawn add/remove asymmetry) and §5; `steering_ablation.md` (carries the inline correction); `meandiff_ablation.md` (the second ablation variant above); `causal_layer_curve.md` (layer dependence of the causal effect); `season3_gcg_ablation.md` (the prefix side); `PROJECT_SPEC.md` §5 (what the score reads, and at which layer).

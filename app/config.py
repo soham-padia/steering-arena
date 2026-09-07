@@ -123,11 +123,6 @@ class Settings(BaseSettings):
     def browser_key(self) -> str:
         return self.supabase_publishable_key or self.supabase_anon_key
 
-    # ADMIN_EMAILS and ADMIN_API were here. Both went with the admin endpoints on
-    # 2026-09-07 — there is no longer anything for an allowlist to gate. If either
-    # is still set in a .env or in the Space's variables it is now inert; delete it
-    # rather than leaving a setting that reads as if it still controls access.
-    # Moderation is `scripts/moderate_generation.py`, which needs the service key.
     ip_hash_salt: str = ""
 
     # ── CAPTCHA (Cloudflare Turnstile) — optional; active only when secret is set ──

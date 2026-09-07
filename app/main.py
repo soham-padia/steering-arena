@@ -598,12 +598,6 @@ def generate_text(body: GenerateIn, request: Request):
 PUBLIC_FIELDS = ["created_at", "arm", "handle", "prompt", "continuation"]
 # Columns introduced by later migrations; dropped from a query if the schema predates them.
 OPTIONAL_COLUMNS = {"hidden", "handle"}
-# ADMIN_FIELDS lived here and was the only other projection. It went with the admin
-# endpoints on 2026-09-07; `scripts/moderate_generation.py` selects its own columns
-# through the service key. PUBLIC_FIELDS is now the only column list the server will
-# serve over HTTP, which is a shorter thing to audit.
-
-
 def _feed(fields, *, limit, arm, consented=False, include_hidden=False):
     """`consented` and `include_hidden` are only ever left at their defaults now that
     the admin feed is gone. They stay because they are what makes the one remaining
@@ -662,8 +656,10 @@ def auth_config() -> dict:
     `seasons`, `submissions` and `generation_events` all have RLS enabled with no
     policies, so an anonymous caller reads `[]` and an insert fails with
     `42501 new row violates row-level security policy`. Both probed against the
-    live project on 2026-09-07. **If you add a policy, re-run those probes** —
-    see `docs/how-to/verify-the-public-surface.md`.
+    live project on 2026-09-07. **If you add a policy, re-run those probes.** Note
+    that a policy-denied read returns 200 with `[]` — PostgREST reserves 403 for
+    table-grant denial — so a status-code check cannot tell locked-down from wide
+    open. Read the body.
 
     This lived at `/admin/config` until 2026-09-07. The payload was fine; the path
     was not. A deliberately-public endpoint sitting under `/admin/*` between two
@@ -678,13 +674,6 @@ def auth_config() -> dict:
             "supabase_url": settings.supabase_url,
             "anon_key": settings.browser_key()}
 
-
-# There is no admin surface. The web admin view and the /admin/* endpoints were
-# removed on 2026-09-07; `scripts/moderate_generation.py` sets `hidden` through the
-# service key instead. The endpoints were sound — require_admin verified the session
-# against Supabase and checked an email allowlist — but they were one misconfigured
-# environment variable away from being public, and a script that needs the service
-# key has no surface to expose at all. git history has the page if you want it.
 
 # Serve the static frontend if present (Phase 3 fills web/). Mounted last.
 _web_dir = Path(__file__).resolve().parent.parent / "web"

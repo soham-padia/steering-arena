@@ -54,11 +54,6 @@ rm -f /tmp/hf_askpass.sh
 
 ## What the Space needs, and what it does NOT
 
-**Rebuild the docs first if you touched `docs/`.** The deploy squashes the whole
-tree, so `web/docs/` ships whatever was last committed — an edited page with no
-rebuild deploys the old HTML silently. `python scripts/build_docs_site.py --check`
-exits non-zero and names the stale pages.
-
 **Needs:** `app/`, `web/`, `data/` (probe sets + direction files the scorer loads),
 `Dockerfile`, `requirements.txt`, and `README.md` — whose YAML frontmatter (`sdk: docker`,
 `app_port: 7860`) is what makes it a Docker Space. Losing that frontmatter breaks the build.

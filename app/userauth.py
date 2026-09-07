@@ -61,12 +61,3 @@ def user_hash(user_id: str, salt: str) -> str:
     return hashlib.sha256(f"{salt}:user:{user_id}".encode()).hexdigest()
 
 
-# `admin_emails()` and `require_admin()` were here. They were the allowlist gate on
-# /admin/generations and /admin/hide, and went with those endpoints on 2026-09-07.
-# Nothing else called them.
-#
-# What that gate got right is worth keeping in mind if an authenticated surface is
-# ever added back: a valid Supabase account was never treated as authorization,
-# because anyone can make one. Verification also asks Supabase rather than checking
-# a JWT locally, so a revoked session stops working at once — that part survives in
-# verify_token(), which /generate still uses.

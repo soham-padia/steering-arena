@@ -35,7 +35,7 @@ number in every Part A run log is merely relative.
 
 **The sign rule that goes with it**, because getting the order wrong is a 2×baseline error:
 `live = sign * best − baseline`. Flip first, subtract once. See
-`docs/reference/scoring.md` and the withdrawal in `season3_prefix_scores.md`.
+`PROJECT_SPEC.md` §5 and the withdrawal in `season3_prefix_scores.md`.
 
 ## The per-probe spread is the interesting part
 
@@ -93,4 +93,4 @@ whole run family comparable to the live board.
 `season3_gcg_aggregate_asymmetry.md` and `season3_k3_control.md` (both convert with these
 constants) · `season3_prefix_scores.md` (the sign-order withdrawal) ·
 `season3_gcg_setup.md` §3 · `docs/HANDOFF_BEHAVIORAL_S3.md` §2 · `season3_directions.md` ·
-`docs/reference/scoring.md`.
+`PROJECT_SPEC.md` §5.

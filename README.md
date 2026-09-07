@@ -17,8 +17,10 @@ language model's internal activations along a fixed "pro-human" direction
 [NDIF](https://ndif.us) via [NNsight](https://nnsight.net) — the server is the
 canonical scoring oracle.
 
-- **Notes on the metric and the seasons:** [`docs/`](docs/README.md) (markdown only
-  — not published on the site).
+- **Research record:** [`data/analysis/`](data/analysis/) — results, each `.md` beside
+  the `.json` a script produced. Start at
+  [`REVISIONS_2026-09-05.md`](data/analysis/REVISIONS_2026-09-05.md) for what survived
+  and what was withdrawn.
 - **Build spec (source of truth):** [`PROJECT_SPEC.md`](PROJECT_SPEC.md)
 - **Phased plan:** [`ROADMAP.md`](ROADMAP.md)
 
