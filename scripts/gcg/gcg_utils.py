@@ -386,3 +386,38 @@ def build_replicas(model, groups, mem_fraction=0.9):
         replicas.append(dispatch_model(rep, device_map=dev_map))
     del model
     return replicas
+
+
+def make_candidates(ctrl_token_ids, topk_idxs, batch_size, n_topk, n_mutations):
+    """A batch of candidate prefixes, each differing from the current one in `n_mutations`
+    DISTINCT positions, drawn from that position's top-k gradient replacements.
+
+    Upstream mutates exactly one position per candidate. That is a poor fit for a
+    CONJUNCTIVE objective: score2 is min over band layers, so once the layers equalise no
+    single-token edit raises all of them at once and the search saturates -- measured in
+    data/analysis/season3_gcg_aggregate_asymmetry.json as net gain per 100 iters decaying
+    +0.045 -> +0.012 -> +0.005 -> +0.005 -> +0.002. Mutating several positions at once lets
+    a candidate move several layers together, which is the move a conjunction requires.
+
+    It is not free: k mutations means k independent draws from top-k, so the chance that
+    ALL of them help falls off with k. Expect a worse acceptance rate bought against the
+    ability to cross a ridge at all. That trade is the thing being measured.
+    """
+    B, N, K = batch_size, ctrl_token_ids.shape[0], n_mutations
+    assert 1 <= K <= N, f"n_mutations must be in [1, {N}], got {K}"
+    candidates = ctrl_token_ids[None].repeat(B, 1)
+    if K == 1:
+        # The upstream call sequence, kept verbatim: same RNG draws in the same order, so a
+        # k=1 run still reproduces the arms already on disk.
+        repl_seq_idx = t.randint(0, N, (B,), device="cpu")
+        repl_topk_idxidx = t.randint(0, n_topk, (B,), device="cpu")
+        candidates[t.arange(B), repl_seq_idx] = topk_idxs[repl_seq_idx, repl_topk_idxidx]
+        return candidates
+    # argsort of uniform noise is a vectorised sample-WITHOUT-replacement. Sampling with
+    # replacement would silently give some candidates fewer than k distinct mutations and
+    # bias the comparison back toward k=1, which is exactly the baseline being tested.
+    pos = t.rand(B, N, device="cpu").argsort(dim=1)[:, :K]
+    pick = t.randint(0, n_topk, (B, K), device="cpu")
+    rows = t.arange(B)[:, None].expand_as(pos)
+    candidates[rows, pos] = topk_idxs[pos, pick]
+    return candidates

@@ -14,7 +14,7 @@
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=192G
-#SBATCH --time=24:00:00
+#SBATCH --time=04:00:00
 #SBATCH --output=/work/neu/p2026_0037_neu/steering-arena/logs/gcg_s2_%j.out
 #SBATCH --error=/work/neu/p2026_0037_neu/steering-arena/logs/gcg_s2_%j.err
 # NOTE: never `set -u` here — it kills the batch shell on this cluster.

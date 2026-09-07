@@ -317,3 +317,63 @@ def test_anti_score1_mean_is_symmetric_so_negating_alone_is_enough():
     t.manual_seed(1)
     cos = t.randn(4, 7)
     assert t.allclose(_aggregate(-cos, MEAN), -_aggregate(cos, MEAN), atol=1e-6)
+
+
+def _fixture_for_candidates():
+    """ctrl ids and a top-k table that shares NO value with them, so a position counts as
+    mutated iff it was actually selected -- otherwise a replacement could coincide with the
+    original and the count would silently under-report."""
+    import torch as t
+    ctrl = t.arange(10, 18)                       # 8 positions, ids 10..17
+    topk = t.arange(100, 132).reshape(8, 4)       # 4 replacements each, ids 100..131
+    return ctrl, topk
+
+
+def test_single_mutation_changes_exactly_one_position():
+    import torch as t
+    from gcg_utils import make_candidates
+
+    ctrl, topk = _fixture_for_candidates()
+    t.manual_seed(0)
+    cand = make_candidates(ctrl, topk, batch_size=64, n_topk=4, n_mutations=1)
+    diff = (cand != ctrl[None]).sum(dim=1)
+    assert (diff == 1).all(), f"expected exactly 1 changed position, got {diff.unique().tolist()}"
+
+
+def test_k_mutations_change_exactly_k_DISTINCT_positions():
+    import torch as t
+    from gcg_utils import make_candidates
+
+    ctrl, topk = _fixture_for_candidates()
+    for k in (2, 3, 5, 8):
+        t.manual_seed(k)
+        cand = make_candidates(ctrl, topk, batch_size=128, n_topk=4, n_mutations=k)
+        diff = (cand != ctrl[None]).sum(dim=1)
+        # distinctness is the point: sampling positions WITH replacement would produce
+        # candidates with fewer than k mutations and quietly bias the arm toward k=1.
+        assert (diff == k).all(), f"k={k}: got {sorted(diff.unique().tolist())}"
+
+
+def test_replacements_come_from_the_mutated_positions_own_topk_row():
+    """A transposed index would still yield k changes while replacing tokens with the
+    gradient's suggestions for the WRONG position -- silently destroying the GCG signal."""
+    import torch as t
+    from gcg_utils import make_candidates
+
+    ctrl, topk = _fixture_for_candidates()
+    t.manual_seed(7)
+    cand = make_candidates(ctrl, topk, batch_size=256, n_topk=4, n_mutations=3)
+    for row in cand:
+        for pos in (row != ctrl).nonzero().flatten().tolist():
+            assert row[pos].item() in topk[pos].tolist(), (
+                f"position {pos} got {row[pos].item()}, not from its own row {topk[pos].tolist()}")
+
+
+def test_n_mutations_is_bounds_checked():
+    import pytest, torch as t
+    from gcg_utils import make_candidates
+
+    ctrl, topk = _fixture_for_candidates()
+    for bad in (0, -1, 9):
+        with pytest.raises(AssertionError):
+            make_candidates(ctrl, topk, batch_size=4, n_topk=4, n_mutations=bad)

@@ -40,6 +40,11 @@ def parse_args(argv=None):
     ap.add_argument("--cand-chunk", type=int, default=4,
                     help="Candidates scored per forward pass. Main memory/speed knob.")
     ap.add_argument("--max-iters", type=int, default=0, help="0 = run until killed")
+    ap.add_argument("--n-mutations", type=int, default=1,
+                    help="positions to mutate per candidate. Upstream is 1. A conjunctive "
+                         "objective (score2 = min over the band) saturates at 1 because no "
+                         "single-token edit lifts every band layer at once; k>1 lets a "
+                         "candidate move several layers together. Costs acceptance rate.")
     ap.add_argument("--t-sa-scale", type=float, default=1.0,
                     help="multiply the simulated-annealing temperature by this. T_SA is an "
                          "ABSOLUTE constant inherited from the single-layer upstream, but the "
@@ -83,7 +88,7 @@ import torch as t  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from gcg_utils import (  # noqa: E402
-    MAX, MEAN, MIN, SOFTMIN, build_replicas, compute_scores_batch, d_tag,
+    MAX, MEAN, MIN, SOFTMIN, build_replicas, compute_scores_batch, d_tag, make_candidates,
     load_banded_direction, load_prompt_suffixes, plan_replica_placement,
     roundtrip_ok, truncate_to_layer,
 )
@@ -121,7 +126,7 @@ DIRS = SIGN * (DIRS / DIRS.norm(dim=-1, keepdim=True))
 D_TAG = d_tag(d_bar if AGGREGATE == MEAN else per_layer)
 MODEL_NAME = "gpt2" if SMOKE else D_META["model_id"]
 
-print(f"role={args.role}{'  ANTI' if ANTI else ''}  aggregate={AGGREGATE}  band={BAND}"
+print(f"role={args.role}{'  ANTI' if ANTI else ''}  aggregate={AGGREGATE}  band={BAND}  mut={args.n_mutations}"
       + (f"  search={SEARCH_AGG}" if SEARCH_AGG != AGGREGATE else ""))
 print(f"direction {D_FILE.name}  d_version={D_META.get('d_version')!r}  tag={D_TAG}")
 
@@ -289,7 +294,7 @@ else:
     # The role alone does not identify the run: an anti arm optimises the SAME role toward
     # the opposite sign, and its logs read positive-is-better like every other arm. Put it
     # in the directory name so the two can never be confused on disk.
-    run_id = (f"{args.role}{'-anti' if ANTI else ''}"
+    run_id = (f"{args.role}{'-anti' if ANTI else ''}{f'-mut{args.n_mutations}' if args.n_mutations > 1 else ''}"
               f"-{dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H-%M-%SZ')}")
     run_dir = Path(args.out_root) / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -344,10 +349,8 @@ while args.max_iters == 0 or iter_idx < args.max_iters:
     topk_vals, topk_idxs = score_grad.topk(N_TOPK_REPL, axis=-1)
 
     with t.inference_mode():
-        repl_seq_idx = t.randint(0, N_CONTROLLED_TOKENS, (BATCH_SIZE_OPTIM,), device="cpu")
-        repl_topk_idxidx = t.randint(0, N_TOPK_REPL, (BATCH_SIZE_OPTIM,), device="cpu")
-        candidates = ctrl_token_ids[None].repeat(BATCH_SIZE_OPTIM, 1)
-        candidates[t.arange(BATCH_SIZE_OPTIM), repl_seq_idx] = topk_idxs[repl_seq_idx, repl_topk_idxidx]
+        candidates = make_candidates(ctrl_token_ids, topk_idxs, BATCH_SIZE_OPTIM,
+                                     N_TOPK_REPL, args.n_mutations)
         cand_scores = score_candidates(candidates)
         assert t.isfinite(cand_scores).all(), "Candidate score is not finite (nan?)"
         best_candidate = candidates[t.argmax(cand_scores)]
@@ -380,7 +383,7 @@ while args.max_iters == 0 or iter_idx < args.max_iters:
         # optimiser maximises, so its own numbers are always positive-is-better; recording
         # both makes the sign unambiguous, which is what _communication/004 was about.
         "board_score_true_sign": SIGN * bscore,
-        "search_aggregate": SEARCH_AGG,
+        "search_aggregate": SEARCH_AGG, "n_mutations": args.n_mutations,
         "d_version": D_META.get("d_version"), "d_tag": D_TAG,
         # `score` is the optimiser's, on the raw ids. `board_score` is what the
         # leaderboard would give, on the re-tokenised string. They differ exactly when the
