@@ -1,0 +1,14 @@
+# Research / analysis layer — NOT installed into the served image.
+#
+# `requirements.txt` is what the Dockerfile builds the HF Space from, and `app/`
+# imports none of this. Installing scipy there would put a research dependency in
+# the serving image for no runtime benefit, so it lives here instead.
+#
+# Needed by: _falsifier/verify.py, _falsifier/recompute.py,
+# _falsifier/honesty_score.py, scripts/prefix_behavior_eval.py,
+# scripts/steering_ablation.py, scripts/transfer_report.py.
+#
+# The test suite does not need it — `pytest tests/` passes without scipy.
+#
+#   python -m pip install -r requirements-research.txt
+scipy==1.17.1

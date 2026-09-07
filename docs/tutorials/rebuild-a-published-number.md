@@ -19,15 +19,16 @@ from what this repository's own prose says, the page says so.
 - A clone of this repository, and a shell in its root.
 - Python 3.11 or newer. This page was run on **Python 3.11.15**.
 - **scipy.** `_falsifier/verify.py` imports `binomtest`, `pearsonr`, `spearmanr`, `wilcoxon`
-  and `t` from `scipy.stats`, and **scipy is not in `requirements.txt`**. Install it:
+  and `t` from `scipy.stats`, and **scipy is not in `requirements.txt`** — that file builds
+  the served image, which needs none of it. Install the research layer:
 
   ```bash
-  python -m pip install scipy
+  python -m pip install -r requirements-research.txt
   ```
 
-  This page ran scipy **1.17.1**, both in the cluster's `steering-arena` conda env and in a
-  fresh venv built from `requirements.txt` plus that one line. Both give byte-identical
-  totals.
+  This page ran scipy **1.17.1**, the version that file pins, both in the cluster's
+  `steering-arena` conda env and in a fresh venv built from `requirements.txt` plus
+  `requirements-research.txt`. Both give byte-identical totals.
 - Nothing else. Steps 1, 2 and 4 use only the standard library.
 
 ---
@@ -102,9 +103,9 @@ data/analysis/season3_band_select.md:58:then confirmed the band is still beatabl
 data/analysis/season3_band_select.md:99:`season3_prefix_scores.md` (the band was beaten at +0.16395).
 data/analysis/season3_gcg_ablation.md:20:which is **+0.16395** (`prefix_eval_arms_s3.json`, run `score1-2026-09-06T19-20-13Z`,
 data/analysis/season3_gcg_ablation.md:169:`season3_prefix_scores.md` (the +0.16395 winner, the random-32 control, and the
-data/analysis/season3_prefix_scores.md:143:is a 34-token string, while the run's own final 32-token string measures **+0.16395**. The
 data/analysis/season3_prefix_scores.md:16:| `score1_top` | **+0.16395** | +0.05001 | 32 | +0.16395 → +0.16395 (gap 0.0e+00) |
 data/analysis/season3_prefix_scores.md:92:| optimised for Score 1 | +0.16395 (100%) | +0.05001 (**77%** of the Score-2 optimum) |
+data/analysis/season3_prefix_scores.md:143:is a 34-token string, while the run's own final 32-token string measures **+0.16395**. The
 ```
 
 Eleven quotations across five documents. Two observations to carry with you:
@@ -186,11 +187,13 @@ git diff _falsifier/verify_result.json
 
 ```
 -  "repo_commit": "d1b8b46",
-+  "repo_commit": "3b221a6",
++  "repo_commit": "18a6493",
 ```
 
-On this run the only change was the recorded commit, because the totals were unchanged. If
-you did not mean to update the committed snapshot, put it back:
+Your right-hand hash will be your own `git rev-parse --short HEAD`, not `18a6493`. On this
+run that field was the *only* change, because the totals were unchanged — which is the
+result you want, and also the reason the diff is easy to miss. If you did not mean to update
+the committed snapshot, put it back:
 
 ```bash
 git checkout _falsifier/verify_result.json
@@ -212,36 +215,42 @@ python3 -c "import json; print(json.load(open('_falsifier/verify_result.json'))[
 {'PASS': 212, 'FIXED': 4, 'UNCHECKABLE': 2}
 ```
 
-212 + 4 + 2 = **218**, matching the `TOTAL` row you just produced. Now ask the prose:
+212 + 4 + 2 = **218**, matching the `TOTAL` row from Step 3. Now ask the prose:
 
 ```bash
-grep -rn "181 checks" _falsifier/README.md SESSION_REPORT.md
+grep -rn "181 checks" _falsifier/README.md SESSION_REPORT.md; echo "exit=$?"
 ```
 
 ```
+exit=1
 ```
 
-No output, and `echo $?` gives `1`. The string is not there in that exact form — the two
-files phrase it differently, so drop the word and search again:
+No matching lines at all. The string is not there in that exact form — the two files phrase
+it differently, so drop the second word and search again:
 
 ```bash
-grep -rn "181" _falsifier/README.md SESSION_REPORT.md _falsifier/2026-08-27-experiment-vs-hypothesis-audit.md
+grep -n "181" _falsifier/README.md SESSION_REPORT.md \
+    _falsifier/2026-08-27-experiment-vs-hypothesis-audit.md | sort
 ```
 
 ```
-_falsifier/README.md:33:- `verify.py`: a 181-check suite written from the raw artifacts only, without reading, importing or
+SESSION_REPORT.md:623:| `verify.py` / `verify_result.json` | **181 independent claim checks**, written from the raw artifacts without reading or executing the recompute and honesty scripts |
 _falsifier/2026-08-27-experiment-vs-hypothesis-audit.md:16:(181 checks total, re-run with `python3 _falsifier/verify.py`, exits 1 while any failure remains).
-SESSION_REPORT.md:218:| `verify.py` / `verify_result.json` | **181 independent claim checks**, written from the raw artifacts without reading or executing the recompute and honesty scripts |
+_falsifier/README.md:33:- `verify.py`: a 181-check suite written from the raw artifacts only, without reading, importing or
 ```
+
+The `| sort` is not decoration. Without it, grep over three explicit paths returns them in
+whichever order the matches finish, and three consecutive runs on this machine gave three
+different orderings. Sort anything you intend to paste into a document.
 
 **There it is.** The artifact says 218. Three prose documents say 181. The artifact wins —
-you just regenerated it, from the raw data, in 2.2 seconds, and it agreed with itself to the
+you regenerated it, from the raw data, in 2.2 seconds, and it agreed with itself to the
 check. The prose was written when the suite had 181 checks and was not updated when 37 more
 were added. That is the repository's arbitration rule in one observation: *the artifact is
 the claim; the prose is a copy of the claim, and copies go stale.*
 
 The same three documents are stale a second way, and this one is more interesting. Read
-`_falsifier/README.md` around line 40:
+`_falsifier/README.md` lines 42-44:
 
 > re-running the suite against the current tree flips five of them from pass to fail. [...]
 > A re-run reports 11 failures rather than 6
@@ -250,15 +259,33 @@ Your run reported **zero** failures and four `FIXED`. Both descriptions were tru
 written; the suite has since grown a `FIXED` status for exactly this case. See **What went
 wrong for you** below for what `FIXED` means and why it is not a failure.
 
-Notice what did *not* go stale. `CLAUDE.md` says `verify.py` has 218 checks;
-`docs/explanation/the-case-for-the-metric.md` says 218. Cross-check with:
+Sweep every check-count claim in the tracked prose to see how far the rot goes:
 
 ```bash
-grep -rnoE "[0-9]{2,4} (numeric )?checks" --include=*.md . | grep -v old_project_docs
+grep -rnoE "[0-9]{2,4} (numeric )?checks" --include=*.md \
+    _falsifier data/analysis docs/explanation SESSION_REPORT.md | sort
 ```
 
-The count in the two documents whose job is to route you to the evidence is current; the
-count in three narrative documents is not. When they disagree, regenerate the artifact.
+```
+_falsifier/2026-08-27-addendum-human-ratings.md:9:27 checks
+_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md:16:181 checks
+_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md:20:122 checks
+data/analysis/REVISIONS_2026-09-05.md:1:05 checks
+docs/explanation/the-case-for-the-metric.md:132:218 checks
+```
+
+Notice what did *not* go stale: `docs/explanation/the-case-for-the-metric.md:132` says 218,
+and 218 is what you measured. The per-file counts hold up too — the audit's own `122 checks`
+(line 20) and the addendum's `27 checks` (line 9) both match their rows in Step 3's table.
+Only the grand total drifted. (`REVISIONS_2026-09-05.md:1:05 checks` is the regex catching
+part of a date, not a claim.)
+
+`CLAUDE.md` also carries the current 218, but do not use it as your cross-check: it is
+excluded at `.gitignore` line 3 and is **not in a clean clone** — verify with
+`git check-ignore -v CLAUDE.md`.
+
+So: the document written to route you to evidence is current, and the three narrative
+documents are not. When they disagree, regenerate the artifact.
 
 ---
 
@@ -266,7 +293,9 @@ count in three narrative documents is not. When they disagree, regenerate the ar
 
 **`ModuleNotFoundError: No module named 'scipy'`**
 `_falsifier/verify.py` line 31 imports from `scipy.stats`, and `requirements.txt` does not
-list scipy. A venv built strictly from `requirements.txt` fails here:
+list scipy — deliberately. That file is what the Dockerfile builds the HF Space from, and
+`app/` imports no scipy, so declaring it there would ship a research dependency in the
+serving image. A venv built strictly from `requirements.txt` therefore fails here:
 
 ```
   File "/home/padia_so_neu/steering-arena/_falsifier/verify.py", line 31, in <module>
@@ -274,8 +303,15 @@ list scipy. A venv built strictly from `requirements.txt` fails here:
 ModuleNotFoundError: No module named 'scipy'
 ```
 
-`python -m pip install scipy` fixes it. With scipy 1.17.1 added, a fresh venv built from
-`requirements.txt` reproduces the `TOTAL 212 0 4 2 218` row exactly.
+Install the research layer, which declares it:
+
+```bash
+python -m pip install -r requirements-research.txt
+```
+
+That pins `scipy==1.17.1`, the version these numbers were produced under. With it, a venv
+built from `requirements.txt` plus `requirements-research.txt` reproduces the
+`TOTAL 212 0 4 2 218` row exactly. `pytest tests/` needs neither.
 
 **`statistics.StatisticsError: no median for empty data` — on a clean clone**
 This is the one that will actually stop you, and it is worse than the brief version of the
@@ -323,8 +359,22 @@ claims false *because they were acted on*. `verify.py` relabels those four from 
 > success. [...] A genuine regression here reappears as `FAIL`, because the fix text would
 > have to be reverted.
 
-The relabelled note keeps the original failure text, so nothing is hidden. Read them with
-`python3 -c "import json; [print(c['status'],'|',c['id']) for c in json.load(open('_falsifier/verify_result.json'))['checks'] if c['status']!='PASS']"`.
+The relabelled note keeps the original failure text — each one reads `FIXED 2026-08-27: ...
+Original note: <the original mismatch>` — so nothing is hidden. List all six non-passing
+checks:
+
+```bash
+python3 -c "import json; [print(c['status'],'|',c['id']) for c in json.load(open('_falsifier/verify_result.json'))['checks'] if c['status']!='PASS']"
+```
+
+```
+FIXED | A-NO-WITHDRAW
+FIXED | A-RANDCTL-NO-DATE
+UNCHECKABLE | A-617-SUBMISSIONS
+FIXED | A-HEADLINE-ON-IT
+UNCHECKABLE | A-WARMTH-SALIENCE
+FIXED | N2-CONTRADICTION
+```
 
 **Two checks come back `UNCHECKABLE`, for a reason worth knowing**
 `A-617-SUBMISSIONS` and `A-WARMTH-SALIENCE`. Neither is about a missing cache. The first

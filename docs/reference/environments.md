@@ -107,6 +107,9 @@ and `/work/neu/p2026_0037_neu/steering-arena/calibration/tokids_transformers-5.1
 records the separate tokenizer check). Note also that these versions are **not**
 `requirements.txt`'s: that pins torch 2.12.0 CPU and numpy 2.2.1 for the Space, and the two
 sets are allowed to differ because only transformers and nnsight affect the numbers.
+`requirements.txt` also omits scipy, which `_falsifier/verify.py` and three analysis scripts
+import as a hard dependency; it is pinned in `requirements-research.txt` instead, so it never
+enters the served image.
 
 **Positive implication:** 61 GB of weights on one 183 GB B200, one GPU, no NDIF calls and no
 quota spent — which is what makes an overnight GCG search free.
