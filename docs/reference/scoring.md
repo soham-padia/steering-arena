@@ -102,7 +102,9 @@ way a local score comes out wrong.
 right and is wrong. This is the single most common reproduction bug in this project.
 
 **Positive implication:** it is one index, it is written down in three places, and once
-you have it right the local and served scorers agree to |gap| ≤ 3.71e-4 with ρ = 1.0.
+you have it right the local and served scorers agree to |gap| ≤ 3.71e-4 with Spearman
+ρ = 0.9999999999999999 over n=50
+(`/work/neu/p2026_0037_neu/steering-arena/calibration/local_vs_ndif_tf5.10.2_sdpa_695054.json`).
 
 ---
 

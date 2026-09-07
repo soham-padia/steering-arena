@@ -143,7 +143,7 @@ library that reads the residual.
 **Value:** **canonical for any published number.** Local B200 runs are for search and
 sweeps; headline results and any "matched board score" get re-scored on NDIF. Local scoring
 is trusted to transfer on the strength of a measured calibration: `|gap|` max **3.71e-4**,
-Spearman **ρ = 1.0**, and **0 rank inversions of 1225** pairs, over 50 stratified Season-2
+Spearman **ρ = 0.9999999999999999**, over 50 stratified Season-2
 submissions.
 
 **Where it is set:** `app/ndif_client.py` for the calls, `app/config.py:ndif_api_key` and
@@ -438,8 +438,8 @@ and move a leaderboard rank.
 
 ## What this buys you
 
-Local search transfers to the canonical scorer — measured at `|gap|` ≤ 3.71e-4, ρ = 1.0 and
-0 rank inversions of 1225, with the artifact committed rather than asserted. That is what
+Local search transfers to the canonical scorer — measured at `|gap|` ≤ 3.71e-4 and Spearman
+ρ = 0.9999999999999999 over n=50, with the artifact recorded rather than asserted. That is what
 makes a $0 GPU search usable at all: you can burn a university allocation overnight on
 `b200-batch`, and the string that wins there is the string that wins on the board. Every
 version, quota and cap above came from a command on this page, so a drift is something you

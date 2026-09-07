@@ -49,7 +49,7 @@ curl -s https://sohampadianeu-steering-arena.hf.space/seasons | python3 -m json.
         },
         {
             "id": 1,
-            "name": "Season 0 — scaffold",
+            "name": "Season 0 \u2014 scaffold",
             "model_id": "OLMo-3-32B",
             "layer": 16,
             "layers": null,
