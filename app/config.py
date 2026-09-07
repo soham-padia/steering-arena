@@ -131,7 +131,18 @@ class Settings(BaseSettings):
 
     # ── Server / deploy ──
     port: int = 7860
-    allowed_origin: str = "*"
+    # Locked to the Space origin (audit M1). Was "*", which let any page on the
+    # internet call /submit and /generate with the caller's cookies and read the
+    # response. Nothing legitimate needs cross-origin access: the frontend in web/
+    # is served by this same app, so every real request is same-origin and never
+    # consults CORS at all.
+    #
+    # A Space environment variable of the same name OVERRIDES this, so check the
+    # Space's variables if the boot log still warns about "*".
+    #
+    # Running the app on a different host means setting ALLOWED_ORIGIN there.
+    # Local development does not: 127.0.0.1 serving its own frontend is same-origin.
+    allowed_origin: str = "https://sohampadianeu-steering-arena.hf.space"
     # Number of trusted reverse-proxy hops in front of the app. The real client
     # IP is the X-Forwarded-For entry inserted by the outermost trusted proxy
     # (counted from the right) — the leftmost entries are client-spoofable. On an

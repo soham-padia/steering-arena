@@ -34,14 +34,17 @@ app = FastAPI(title="Steering Arena", version="0.3.0",
 
 _log = logging.getLogger("steering_arena")
 if settings.allowed_origin == "*":
-    _log.warning("ALLOWED_ORIGIN is '*' — lock it to the Space origin before going public (audit M1).")
-# Production heuristic: a real origin is set. If so, CAPTCHA must be on, or /submit
-# has no bot gate and the NDIF quota is exposed (audit H1, fail-open).
-if settings.allowed_origin != "*" and not settings.turnstile_secret:
-    _log.warning(
-        "PROD origin set but TURNSTILE_SECRET is empty — /submit has NO CAPTCHA; "
-        "the NDIF quota is exposed to bots. Set TURNSTILE_SECRET + TURNSTILE_SITEKEY."
-    )
+    _log.warning("ALLOWED_ORIGIN is '*' — lock it to the Space origin (audit M1). The "
+                 "default is the Space origin, so something is overriding it.")
+# /submit has no CAPTCHA, deliberately: a Turnstile gate was considered and declined,
+# because the global daily ceiling already bounds the worst case and a challenge costs
+# more real players than it stops bots. Audit H1 named CAPTCHA as the mitigation; the
+# ceiling is the mitigation actually chosen. Logged rather than silent so the tradeoff
+# is visible at boot, and at info because it is a decision, not a defect.
+if not settings.turnstile_secret:
+    _log.info("no CAPTCHA on /submit (by decision) — NDIF exposure is bounded by "
+              "global_per_day=%d and generate_global_per_day=%d",
+              settings.global_per_day, settings.generate_global_per_day)
 
 app.add_middleware(
     CORSMiddleware,
