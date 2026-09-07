@@ -1,0 +1,552 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "arms_file": "data/analysis/prefix_eval_arms.json",
+  "tag": "",
+  "backends": [
+    "ndif"
+  ],
+  "arm_names": [
+    "pro_top",
+    "pro_coherent",
+    "anti_top"
+  ],
+  "total_pairs": 150,
+  "raters": {
+    "human": {
+      "rated": 54
+    },
+    "deepseek-v4-pro/v2": {
+      "rated": 118,
+      "baseline_drift": {
+        "identical_across_arms": 5,
+        "prompts": 50,
+        "mean_within_prompt_range": 0.91,
+        "fixed_baseline_scope": "mean over the 3 arms of this experiment (pro_top, pro_coherent, anti_top) of that judge's base rating for the prompt"
+      },
+      "verdict_vs_ratings": {
+        "agree": 109,
+        "contradict": 3
+      }
+    },
+    "claude-opus-5/v2": {
+      "rated": 139,
+      "baseline_drift": {
+        "identical_across_arms": 50,
+        "prompts": 50,
+        "mean_within_prompt_range": 0.0,
+        "fixed_baseline_scope": "mean over the 3 arms of this experiment (pro_top, pro_coherent, anti_top) of that judge's base rating for the prompt"
+      },
+      "verdict_vs_ratings": {
+        "agree": 118,
+        "contradict": 0
+      }
+    }
+  },
+  "arms": {
+    "pro_top": {
+      "human": {
+        "all": {
+          "prefixed_preferred": 14,
+          "base_preferred": 2,
+          "ties": 5,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.875,
+          "sign_test_p": 0.00418
+        },
+        "blind_only": {
+          "prefixed_preferred": 13,
+          "base_preferred": 2,
+          "ties": 5,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.867,
+          "sign_test_p": 0.00739
+        },
+        "no_leak": {
+          "prefixed_preferred": 14,
+          "base_preferred": 2,
+          "ties": 5,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.875,
+          "sign_test_p": 0.00418
+        },
+        "no_loop": {
+          "prefixed_preferred": 12,
+          "base_preferred": 2,
+          "ties": 4,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.857,
+          "sign_test_p": 0.01294
+        }
+      },
+      "deepseek-v4-pro/v2": {
+        "all": {
+          "prefixed_preferred": 31,
+          "base_preferred": 7,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.816,
+          "sign_test_p": 0.00012
+        },
+        "blind_only": {
+          "prefixed_preferred": 27,
+          "base_preferred": 6,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.818,
+          "sign_test_p": 0.00032
+        },
+        "no_leak": {
+          "prefixed_preferred": 31,
+          "base_preferred": 7,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.816,
+          "sign_test_p": 0.00012
+        },
+        "no_loop": {
+          "prefixed_preferred": 25,
+          "base_preferred": 6,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.806,
+          "sign_test_p": 0.00088
+        }
+      },
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 33,
+          "base_preferred": 11,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.75,
+          "sign_test_p": 0.00126
+        },
+        "blind_only": {
+          "prefixed_preferred": 29,
+          "base_preferred": 9,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.763,
+          "sign_test_p": 0.00166
+        },
+        "no_leak": {
+          "prefixed_preferred": 33,
+          "base_preferred": 11,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.75,
+          "sign_test_p": 0.00126
+        },
+        "no_loop": {
+          "prefixed_preferred": 26,
+          "base_preferred": 10,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.722,
+          "sign_test_p": 0.01133
+        }
+      },
+      "kindness": {
+        "deepseek-v4-pro/v2": {
+          "prefixed_mean": 3.64,
+          "base_mean": 2.77,
+          "delta_mean": 0.87,
+          "intensity_mean": 1.79,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00026,
+          "delta_mean_fixed_baseline": 0.637,
+          "p_fixed_baseline": 0.00378,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.003
+        },
+        "claude-opus-5/v2": {
+          "prefixed_mean": 4.07,
+          "base_mean": 3.16,
+          "delta_mean": 0.91,
+          "intensity_mean": 1.55,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00013,
+          "delta_mean_fixed_baseline": 0.91,
+          "p_fixed_baseline": 0.00013,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.16
+        }
+      },
+      "markers": {
+        "deepseek-v4-pro/v2": {
+          "prefixed": {
+            "emoji": 2,
+            "moralizing": 1,
+            "repetition": 1
+          },
+          "base": {
+            "repetition": 7,
+            "cruelty": 2,
+            "off_topic": 2,
+            "incoherent": 3
+          }
+        },
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "emoji": 2,
+            "moralizing": 6,
+            "assistant_mode": 1,
+            "off_topic": 7,
+            "repetition": 1
+          },
+          "base": {
+            "repetition": 13,
+            "cruelty": 2,
+            "off_topic": 8,
+            "assistant_mode": 1
+          }
+        }
+      }
+    },
+    "pro_coherent": {
+      "human": {
+        "all": {
+          "prefixed_preferred": 7,
+          "base_preferred": 6,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.538,
+          "sign_test_p": 1.0
+        },
+        "blind_only": {
+          "prefixed_preferred": 7,
+          "base_preferred": 5,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.583,
+          "sign_test_p": 0.77441
+        },
+        "no_leak": {
+          "prefixed_preferred": 7,
+          "base_preferred": 6,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.538,
+          "sign_test_p": 1.0
+        },
+        "no_loop": {
+          "prefixed_preferred": 6,
+          "base_preferred": 5,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.545,
+          "sign_test_p": 1.0
+        }
+      },
+      "deepseek-v4-pro/v2": {
+        "all": {
+          "prefixed_preferred": 26,
+          "base_preferred": 10,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.722,
+          "sign_test_p": 0.01133
+        },
+        "blind_only": {
+          "prefixed_preferred": 23,
+          "base_preferred": 7,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.767,
+          "sign_test_p": 0.00522
+        },
+        "no_leak": {
+          "prefixed_preferred": 26,
+          "base_preferred": 10,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.722,
+          "sign_test_p": 0.01133
+        },
+        "no_loop": {
+          "prefixed_preferred": 22,
+          "base_preferred": 8,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.733,
+          "sign_test_p": 0.01612
+        }
+      },
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 31,
+          "base_preferred": 12,
+          "ties": 6,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.721,
+          "sign_test_p": 0.0054
+        },
+        "blind_only": {
+          "prefixed_preferred": 29,
+          "base_preferred": 8,
+          "ties": 6,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.784,
+          "sign_test_p": 0.00075
+        },
+        "no_leak": {
+          "prefixed_preferred": 31,
+          "base_preferred": 12,
+          "ties": 6,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.721,
+          "sign_test_p": 0.0054
+        },
+        "no_loop": {
+          "prefixed_preferred": 25,
+          "base_preferred": 9,
+          "ties": 5,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.735,
+          "sign_test_p": 0.00904
+        }
+      },
+      "kindness": {
+        "deepseek-v4-pro/v2": {
+          "prefixed_mean": 3.49,
+          "base_mean": 2.85,
+          "delta_mean": 0.64,
+          "intensity_mean": 1.74,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.0051,
+          "delta_mean_fixed_baseline": 0.487,
+          "p_fixed_baseline": 0.01697,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.003
+        },
+        "claude-opus-5/v2": {
+          "prefixed_mean": 3.73,
+          "base_mean": 3.16,
+          "delta_mean": 0.57,
+          "intensity_mean": 1.29,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00626,
+          "delta_mean_fixed_baseline": 0.57,
+          "p_fixed_baseline": 0.00626,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.16
+        }
+      },
+      "markers": {
+        "deepseek-v4-pro/v2": {
+          "prefixed": {
+            "moralizing": 2,
+            "cruelty": 2,
+            "repetition": 5,
+            "off_topic": 1,
+            "assistant_mode": 3
+          },
+          "base": {
+            "repetition": 6,
+            "cruelty": 2,
+            "off_topic": 2
+          }
+        },
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "assistant_mode": 13,
+            "moralizing": 1,
+            "cruelty": 3,
+            "repetition": 9,
+            "off_topic": 1
+          },
+          "base": {
+            "repetition": 13,
+            "cruelty": 2,
+            "off_topic": 8,
+            "assistant_mode": 1
+          }
+        }
+      }
+    },
+    "anti_top": {
+      "human": {
+        "all": {
+          "prefixed_preferred": 14,
+          "base_preferred": 3,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.824,
+          "sign_test_p": 0.01273
+        },
+        "blind_only": {
+          "prefixed_preferred": 12,
+          "base_preferred": 3,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.8,
+          "sign_test_p": 0.03516
+        },
+        "no_leak": {
+          "prefixed_preferred": 14,
+          "base_preferred": 3,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.824,
+          "sign_test_p": 0.01273
+        },
+        "no_loop": {
+          "prefixed_preferred": 5,
+          "base_preferred": 1,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.833,
+          "sign_test_p": 0.21875
+        }
+      },
+      "deepseek-v4-pro/v2": {
+        "all": {
+          "prefixed_preferred": 5,
+          "base_preferred": 38,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.116,
+          "sign_test_p": 0.0
+        },
+        "blind_only": {
+          "prefixed_preferred": 4,
+          "base_preferred": 33,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.108,
+          "sign_test_p": 0.0
+        },
+        "no_leak": {
+          "prefixed_preferred": 5,
+          "base_preferred": 38,
+          "ties": 1,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.116,
+          "sign_test_p": 0.0
+        },
+        "no_loop": {
+          "prefixed_preferred": 3,
+          "base_preferred": 13,
+          "ties": 0,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.188,
+          "sign_test_p": 0.02127
+        }
+      },
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 11,
+          "base_preferred": 20,
+          "ties": 13,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.355,
+          "sign_test_p": 0.14961
+        },
+        "blind_only": {
+          "prefixed_preferred": 10,
+          "base_preferred": 17,
+          "ties": 12,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.37,
+          "sign_test_p": 0.24779
+        },
+        "no_leak": {
+          "prefixed_preferred": 11,
+          "base_preferred": 20,
+          "ties": 13,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.355,
+          "sign_test_p": 0.14961
+        },
+        "no_loop": {
+          "prefixed_preferred": 5,
+          "base_preferred": 7,
+          "ties": 3,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.417,
+          "sign_test_p": 0.77441
+        }
+      },
+      "kindness": {
+        "deepseek-v4-pro/v2": {
+          "prefixed_mean": 2.53,
+          "base_mean": 3.39,
+          "delta_mean": -0.86,
+          "intensity_mean": 1.85,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.00046,
+          "delta_mean_fixed_baseline": -0.473,
+          "p_fixed_baseline": 0.0164,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.003
+        },
+        "claude-opus-5/v2": {
+          "prefixed_mean": 2.77,
+          "base_mean": 3.16,
+          "delta_mean": -0.39,
+          "intensity_mean": 0.95,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.0277,
+          "delta_mean_fixed_baseline": -0.39,
+          "p_fixed_baseline": 0.0277,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.16
+        }
+      },
+      "markers": {
+        "deepseek-v4-pro/v2": {
+          "prefixed": {
+            "incoherent": 12,
+            "repetition": 25,
+            "off_topic": 4,
+            "cruelty": 1,
+            "moralizing": 1
+          },
+          "base": {
+            "repetition": 2,
+            "cruelty": 2,
+            "off_topic": 1
+          }
+        },
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "incoherent": 8,
+            "repetition": 37,
+            "off_topic": 1,
+            "cruelty": 1
+          },
+          "base": {
+            "repetition": 13,
+            "cruelty": 2,
+            "off_topic": 8,
+            "assistant_mode": 2
+          }
+        }
+      }
+    }
+  },
+  "agreement": {
+    "deepseek-v4-pro/v2 vs claude-opus-5/v2": {
+      "same": 85,
+      "both": 96,
+      "rate": 0.885
+    },
+    "human vs deepseek-v4-pro/v2": {
+      "same": 21,
+      "both": 38,
+      "rate": 0.553
+    },
+    "human vs claude-opus-5/v2": {
+      "same": 27,
+      "both": 37,
+      "rate": 0.73
+    }
+  },
+  "pairs_with_a_looping_side": 51
+}

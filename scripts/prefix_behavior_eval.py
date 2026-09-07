@@ -25,6 +25,17 @@ failed are dropped; pairs where the model echoed the prefix verbatim are kept bu
 flagged `leak` in the key, and stats reports numbers with and without them. Blinding
 is still imperfect: an instruction-style prefix can leave its register on the
 continuation ("I will respond with…"), so rate kindness only, never provenance.
+
+SEASON 3 (`--tag s3`) asks the same question of the banded metrics, with six arms and
+the length-matched random-token control Season 2 never ran. Its strings come from the
+GCG run dirs, not the board — only one has ever been submitted. See
+docs/HANDOFF_BEHAVIORAL_S3.md.
+
+  python scripts/prefix_behavior_eval.py --tag s3 select-gcg
+  python scripts/prefix_behavior_eval.py --tag s3 generate --backend local --max-new 40
+  python scripts/prefix_behavior_eval.py --tag s3 blind
+  python scripts/prefix_behavior_eval.py --tag s3 claude-batches   # $0 judge path
+  python scripts/prefix_behavior_eval.py --tag s3 stats
 """
 
 from __future__ import annotations
@@ -60,6 +71,43 @@ CLAUDE_DIR = CACHE_DIR / "claude"          # blinded batches in/, subagent verdi
 CLAUDE_FILE = ANALYSIS_DIR / "prefix_judge_claude.json"
 REPORT = ANALYSIS_DIR / "prefix_eval.json"
 
+# Where the Season 3 GCG runs live, and the per-role baseline that converts a run's
+# `board_score` into leaderboard units.
+GCG_ROOT = Path("/work/neu/p2026_0037_neu/steering-arena/gcg")
+BASELINE_FILE = ANALYSIS_DIR / "season3_gcg_baseline.json"
+
+TAG = ""
+
+
+def configure(tag: str) -> None:
+    """Point every output path at a per-experiment namespace.
+
+    Season 2's artifacts (tag "") are frozen and cited line-by-line in
+    data/analysis/prefix_eval.md, so a second experiment must not write over them.
+    `--tag s3` gives Season 3 its own arms file, generation cache, blind CSV, judge
+    files and report; the two can then be compared, instead of one silently replacing
+    the other and the earlier numbers becoming unreproducible.
+
+    Every path is derived from the tag, with no early return for the empty one, so
+    configure("") restores exactly the untagged Season 2 names rather than leaving
+    whatever the last call set. A one-way version of this works fine for the CLI (one
+    call per process) and silently reads the wrong experiment's files anywhere else.
+    """
+    global TAG, CACHE_DIR, ARMS_FILE, BLIND_CSV, BLIND_KEY, SEEN_FILE
+    global JUDGE_FILE, JUDGE_CACHE, CLAUDE_DIR, CLAUDE_FILE, REPORT
+    TAG = tag
+    sfx = f"_{tag}" if tag else ""
+    CACHE_DIR = Path(f"data/cache/prefix_behavioral{sfx}")
+    ARMS_FILE = ANALYSIS_DIR / f"prefix_eval_arms{sfx}.json"
+    BLIND_CSV = ANALYSIS_DIR / f"prefix_blind{sfx}.csv"
+    BLIND_KEY = ANALYSIS_DIR / f"prefix_blind_key{sfx}.json"
+    SEEN_FILE = ANALYSIS_DIR / f"prefix_eval_seen_prompts{sfx}.json"
+    JUDGE_FILE = ANALYSIS_DIR / f"prefix_judge_verdicts{sfx}.json"
+    JUDGE_CACHE = CACHE_DIR / "judge"
+    CLAUDE_DIR = CACHE_DIR / "claude"
+    CLAUDE_FILE = ANALYSIS_DIR / f"prefix_judge_claude{sfx}.json"
+    REPORT = ANALYSIS_DIR / f"prefix_eval{sfx}.json"
+
 # DeepSeek is a PAID API (the only paid component in this project — see CLAUDE.md §1;
 # used here by explicit maintainer decision because the free OLMo judge produced no
 # signal, data/analysis/behavioral_eval.md). Key lives in .env, which is gitignored.
@@ -70,7 +118,14 @@ DEEPSEEK_MODEL = "deepseek-v4-pro"
 # a reworded prompt can never silently reuse verdicts from the old wording.
 JUDGE_VERSION = "v2"
 
-ARM_NAMES = ("pro_top", "pro_coherent", "anti_top")
+# Season 2's three arms, and the fallback for an arms file written before `arm_names`
+# existed. An arms file may declare its own (Season 3 has six); `_load_arms` rebinds
+# ARM_NAMES to that list and every command reads the arm list through the global. The
+# fallback deliberately reads the frozen constant, NOT the global: resolving it against
+# the global would let a second `_load_arms` in one process inherit the previous
+# experiment's arm list and quietly analyse the wrong set of arms.
+DEFAULT_ARM_NAMES = ("pro_top", "pro_coherent", "anti_top")
+ARM_NAMES = DEFAULT_ARM_NAMES
 WORD_RE = re.compile(r"[A-Za-z][A-Za-z'-]*[.,!?;:]?")
 
 # Closed marker vocabulary. Free-form markers cannot be aggregated across pairs, and
@@ -204,20 +259,222 @@ def cmd_select(args):
     print(f"\nfrozen → {ARMS_FILE}\nnext: python scripts/prefix_behavior_eval.py generate")
 
 
+# ── select (Season 3: the strings come from the GCG runs, not the board) ──────
+
+# The four searched arms: name -> (run dir under GCG_ROOT, role). `pro_coherent` comes
+# from the board and `random32` from the tokenizer, so they are built separately below.
+S3_RUNS = {
+    "score1_top":  ("score1-2026-09-06T19-20-13Z", "score1"),
+    "score2_top":  ("score2-mut3-2026-09-07T00-17-08Z", "score2"),
+    "score1_anti": ("score1-anti-2026-09-06T20-20-17Z", "score1"),
+    "score2_anti": ("score2-anti-2026-09-06T20-16-20Z", "score2"),
+}
+S3_ARM_NAMES = ("score1_top", "score2_top", "pro_coherent", "random32",
+                "score1_anti", "score2_anti")
+S3_BANDS = {"score1": [19, 23, 27, 31], "score2": [15, 23, 31, 39]}
+# Season 2's winner, rescored under each Season 3 objective (LIVE units). Not an arm —
+# recorded so the arms file carries the scale its numbers should be read against.
+S3_REFERENCE = {"s2_winner_score1": 0.06747, "s2_winner_score2": 0.02308,
+                "field_sd_score1": 0.01826, "field_sd_score2": 0.01421}
+
+
+def _baselines() -> dict:
+    if not BASELINE_FILE.exists():
+        raise SystemExit(f"{BASELINE_FILE} missing — run scripts/gcg/baseline_const.py")
+    j = json.loads(BASELINE_FILE.read_text())
+    return {r: j[r]["baseline"] for r in ("score1", "score2")}
+
+
+def _live(best: dict, role: str) -> float:
+    """A run's best `board_score` in leaderboard units.
+
+        live = (board score, in BOARD SIGN) - baseline
+
+    The ORDER is the whole subtlety. The optimiser always maximises, so an anti run's own
+    numbers are positive-is-better and `board_score_true_sign` is the flipped value the
+    board would print. Subtracting the baseline first and flipping afterwards flips the
+    baseline too — a 2*baseline error, which is how -0.14510 reached
+    docs/HANDOFF_BEHAVIORAL_S3.md where the true score2_anti figure is -0.12628. The
+    same bug is fixed in scripts/gcg/watch.py.
+    """
+    board = best.get("board_score_true_sign")
+    if board is None:                     # a pro run: optimiser sign IS board sign
+        board = best["board_score"]
+    return board - _baselines()[role]
+
+
+def _fidelity(tok, prompt: str, expect_ids) -> dict:
+    """Does this STRING still encode the tokens the run scored?
+
+    The board is handed a string and re-tokenises it, so this is the check that catches a
+    prefix corrupted in transit — and that is not hypothetical. Live row id=1342 scores
+    +0.086 on the board but +0.140 locally, because the string was copied out of a Python
+    repr and its two real newline bytes arrived as literal backslash-n: 38 tokens
+    submitted against the 32 searched.
+    """
+    ids = list(tok(prompt, add_special_tokens=False)["input_ids"])
+    want = list(expect_ids)
+    return {"n_tokens": len(ids), "n_expected": len(want), "ids_match": ids == want,
+            "newlines": prompt.count("\n")}
+
+
+def _random_prefix(tok, n_tokens: int, seed: int = 20260906):
+    """Length-matched random-token control, resampled until it re-tokenises to n_tokens.
+
+    Season 2 never ran this, and it is the obvious hole in its headline: ANY 32-token
+    prefix perturbs a continuation, so "the soup was preferred over no prefix at all"
+    does not on its own show the metric found anything. Drawn from the whole vocabulary
+    because that is what GCG searched — its candidates are the gradient's top-k over
+    every embedding, with no allow-list — minus the special ids decoding would drop.
+    """
+    rng = np.random.default_rng(seed)
+    special = set(tok.all_special_ids)
+    for attempt in range(1, 501):
+        ids = []
+        while len(ids) < n_tokens:
+            cand = int(rng.integers(0, tok.vocab_size))
+            if cand not in special:
+                ids.append(cand)
+        text = tok.decode(ids, skip_special_tokens=True)
+        if len(tok(text, add_special_tokens=False)["input_ids"]) == n_tokens:
+            return text, ids, attempt
+    raise SystemExit(f"no random draw re-tokenised to {n_tokens} tokens in 500 tries")
+
+
+def _s3_board_rows(season_id: int):
+    """(season, submissions) with BOTH Season 3 columns: `score` is Score 1 and
+    `score_alt` is Score 2. Already in live units — app/scoring.py subtracts the
+    per-probe baseline before it writes a row."""
+    from supabase import create_client
+    c = create_client(settings.supabase_url, settings.supabase_service_key)
+    season = c.table("seasons").select("*").eq("id", season_id).single().execute().data
+    rows = (c.table("submissions")
+            .select("id,sequence_text,score,score_alt,token_count,user_handle")
+            .eq("season_id", season_id).order("score", desc=True).execute().data or [])
+    return season, rows
+
+
+def cmd_select_gcg(args):
+    if not TAG:
+        raise SystemExit("select-gcg needs an explicit --tag (e.g. --tag s3): the "
+                         "untagged arms file is Season 2's, and it is frozen.")
+    if ARMS_FILE.exists() and not args.force:
+        raise SystemExit(f"{ARMS_FILE} exists (the arm→string map is frozen on purpose). "
+                         "Re-select with --force; cache keys include the prefix, so that "
+                         "invalidates nothing, it starts a new set of generations.")
+    from transformers import AutoTokenizer
+    tok = AutoTokenizer.from_pretrained(settings.model_id)
+
+    arms, notes = {}, []
+    for name, (run, role) in S3_RUNS.items():
+        best = json.loads((GCG_ROOT / run / "best.json").read_text())
+        # `prompt` is decode(ctrl_token_ids), so the string's own encoding is the
+        # RE-tokenised sequence — which is also the one `board_score` reports.
+        fid = _fidelity(tok, best["prompt"],
+                        best.get("ctrl_token_ids_retokenised") or best["ctrl_token_ids"])
+        arms[name] = {
+            "sequence": best["prompt"],           # bytes as recorded — never via a repr
+            "score": _live(best, role), "score_kind": f"{role}_live",
+            "board_score": best["board_score"],
+            "board_score_true_sign": best.get("board_score_true_sign"),
+            "role": role, "aggregate": best["aggregate"], "band": best["band"],
+            "anti": bool(best.get("anti")), "n_mutations": best.get("n_mutations", 1),
+            "run": run, "iter": best["iter"], "roundtrip_ok": best["roundtrip_ok"],
+            "token_count": fid["n_tokens"], "submission_id": None, "user_handle": None,
+            "coherence": round(coherence(best["prompt"]), 3), "fidelity": fid,
+        }
+        if not fid["ids_match"]:
+            notes.append(f"{name}: the recorded string does NOT re-encode to the ids the "
+                         f"run scored ({fid['n_tokens']} vs {fid['n_expected']}) — treat "
+                         "this arm as corrupted, not merely non-round-tripping")
+
+    n_ctrl = arms["score1_top"]["fidelity"]["n_expected"]
+    text, ids, tries = _random_prefix(tok, n_ctrl)
+    arms["random32"] = {
+        "sequence": text, "score": None, "score_kind": "unscored_pending_gpu",
+        "role": None, "aggregate": None, "band": None, "anti": False,
+        "run": None, "iter": None, "roundtrip_ok": True, "token_count": n_ctrl,
+        "submission_id": None, "user_handle": None,
+        "coherence": round(coherence(text), 3),
+        "control": {"kind": "length_matched_random_tokens", "n_tokens": n_ctrl,
+                    "seed": 20260906, "draws": tries, "token_ids": ids},
+        "fidelity": _fidelity(tok, text, ids),
+    }
+
+    season, rows = _s3_board_rows(args.season_id)
+    if args.coherent_pro:
+        match = next((r for r in rows if r["sequence_text"] == args.coherent_pro), None)
+        pick, coh = (match or {"sequence_text": args.coherent_pro, "score": None,
+                               "score_alt": None, "id": None, "token_count": None,
+                               "user_handle": None}), coherence(args.coherent_pro)
+    else:
+        cands = [(r, coherence(r["sequence_text"])) for r in rows]
+        coherent = [(r, c) for r, c in cands if c >= args.min_coherence]
+        if not coherent:
+            raise SystemExit(f"no submission in season {season['id']} reached coherence "
+                             f"{args.min_coherence}; pass --coherent-pro explicitly")
+        print(f"season {season['id']} {season['name']!r} · {len(rows)} submissions\n"
+              f"top readable candidates (coherence ≥ {args.min_coherence}):")
+        for r, c in coherent[:5]:
+            print(f"  score1 {r['score']:+.5f}  score2 {(r['score_alt'] or 0):+.5f}  "
+                  f"coh={c:.2f}  {r['sequence_text'][:76]!r}")
+        pick, coh = coherent[0]
+    arms["pro_coherent"] = {
+        "sequence": pick["sequence_text"], "score": pick.get("score"),
+        "score_kind": "score1_live", "score_alt": pick.get("score_alt"),
+        "role": "score1", "aggregate": "banded_mean", "band": S3_BANDS["score1"],
+        "anti": False, "run": None, "iter": None, "roundtrip_ok": None,
+        "token_count": pick.get("token_count"), "submission_id": pick.get("id"),
+        "user_handle": pick.get("user_handle"), "coherence": round(coh, 3),
+        "fidelity": _fidelity(tok, pick["sequence_text"],
+                              tok(pick["sequence_text"], add_special_tokens=False)["input_ids"]),
+    }
+
+    out = {"tag": TAG, "season_id": season["id"], "season_name": season["name"],
+           "model_id": settings.model_id, "layer": None, "bands": S3_BANDS,
+           "d_version": "olmo3_s3_score1+score2", "baselines": _baselines(),
+           "arm_names": list(S3_ARM_NAMES), "min_coherence": args.min_coherence,
+           "n_submissions": len(rows), "reference": S3_REFERENCE,
+           "notes": notes, "arms": arms}
+    print("\nselected arms:")
+    for name in S3_ARM_NAMES:
+        a = arms[name]
+        sc = f"{a['score']:+.5f}" if a["score"] is not None else "   n/a  "
+        print(f"  {name:>12}  {sc}  {a['token_count'] or 0:>2}tok  coh={a['coherence']:.2f}  "
+              f"nl={a['fidelity']['newlines']}  {a['sequence'][:56]!r}")
+    for note in notes:
+        print(f"  ! {note}")
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    ARMS_FILE.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    print(f"\nfrozen → {ARMS_FILE}\nnext: score the arms "
+          f"(scripts/score_banded_local.py --arms {ARMS_FILE}), then `generate`")
+
+
 def _load_arms():
     if not ARMS_FILE.exists():
         raise SystemExit(f"{ARMS_FILE} missing — run `select` first")
+    global ARM_NAMES
     arms = json.loads(ARMS_FILE.read_text())
     if arms["model_id"] != settings.model_id:
         raise SystemExit(f"arms were selected on {arms['model_id']} but settings say "
                          f"{settings.model_id} — generations would not be comparable")
+    ARM_NAMES = tuple(arms.get("arm_names") or DEFAULT_ARM_NAMES)
+    missing = [a for a in ARM_NAMES if a not in arms["arms"]]
+    if missing:
+        raise SystemExit(f"{ARMS_FILE} lists arms with no string: {missing}")
     return arms
 
 
 # ── generate ──────────────────────────────────────────────────────────────────
 
-def _key(prompt: str, arm: str, prefix: str, max_new: int) -> str:
+def _key(prompt: str, arm: str, prefix: str, max_new: int, backend: str = "ndif") -> str:
+    """Cache key for one generation. The backend enters the key only when it is NOT
+    "ndif", so the 402 records written before a local backend existed stay valid rather
+    than being orphaned — while a local and a remote generation of the same
+    (prompt, arm, prefix) can never collide on one file."""
     raw = f"{settings.model_id}\x00{prefix}\x00{prompt}\x00{arm}\x00{max_new}"
+    if backend != "ndif":
+        raw += f"\x00{backend}"
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
@@ -233,22 +490,72 @@ def _continuation(text: str, model_input: str, prompt: str):
     return text.strip(), "raw"  # unusable for blind rating; dropped by `blind`
 
 
-def _base(reader, prompt: str, max_new: int):
+def _local_generate(dtype: str = "bfloat16", seed: int = 20260906):
+    """Greedy generation on the full-depth model, loaded locally. Returns gen(text, n).
+
+    WHY THIS DOES NOT BREAK "NDIF IS CANONICAL". That rule (CLAUDE.md) is about SCORES:
+    any published leaderboard number gets re-scored on NDIF. Nothing here produces a
+    score. A continuation is sampled text, and this eval needs ~350 of them — quota the
+    project does not have to spend when one B200 does the job in minutes.
+
+    The protocol still matches Season 2's NDIF run exactly: OLMo-3 ships an empty
+    generation_config, so HF's default is greedy, which is also what nnsight's
+    `model.generate` did there. Greedy means no sampling seed can change the output;
+    `manual_seed` is set anyway so any future change to that is not silent. Local bf16
+    can still diverge from remote bf16 at a near-tie argmax, so `backend` is recorded in
+    every cache record and in the report rather than left to be inferred.
+    """
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    torch.manual_seed(seed)
+    tok = AutoTokenizer.from_pretrained(settings.model_id)
+    model = AutoModelForCausalLM.from_pretrained(
+        settings.model_id, dtype=getattr(torch, dtype), device_map="auto")
+    model.eval()
+    dev = model.get_input_embeddings().weight.device   # not model.device: it is sharded
+    pad = tok.pad_token_id if tok.pad_token_id is not None else tok.eos_token_id
+
+    @torch.inference_mode()
+    def gen(text: str, max_new: int) -> str:
+        enc = tok(text, return_tensors="pt").to(dev)
+        out = model.generate(**enc, max_new_tokens=max_new, do_sample=False,
+                             pad_token_id=pad)
+        return tok.decode(out[0], skip_special_tokens=True)
+
+    return gen
+
+
+def _generator(backend: str):
+    """gen(text, max_new) -> decoded text, for the chosen backend."""
+    if backend == "ndif":
+        reader = _reader()
+        return lambda text, max_new: generate(reader, text, max_new)
+    if backend == "local":
+        return _local_generate()
+    raise SystemExit(f"unknown backend {backend!r} (ndif | local)")
+
+
+def _base(gen, prompt: str, max_new: int, backend: str = "ndif"):
     """Unprefixed continuation. Reuses behavioral_eval's cached base generation when one
     exists for the same (model, layer, max_new) — identical call, saves NDIF quota."""
-    fp = CACHE_DIR / f"{_key(prompt, 'base', '', max_new)}.json"
+    fp = CACHE_DIR / f"{_key(prompt, 'base', '', max_new, backend)}.json"
     if fp.exists():
         return json.loads(fp.read_text()), "cached"
+    # behavioral_eval's cache holds NDIF base generations. Reuse them only for an NDIF
+    # run: silently mixing a remote base against local prefixed arms would put the
+    # backend difference inside every comparison, which is the one thing the base arm
+    # exists to hold constant.
     shared = STEER_CACHE_DIR / f"{_gen_key(settings.model_id, settings.layer, prompt, 'base', 0.0, max_new)}.json"
-    if shared.exists():
+    if backend == "ndif" and shared.exists():
         text = json.loads(shared.read_text())["text"]
         how = "shared"
     else:
-        text = generate(reader, prompt, max_new)
+        text = gen(prompt, max_new)
         how = "new"
     cont, strip = _continuation(text, prompt, prompt)
     rec = {"prompt": prompt, "arm": "base", "prefix": "", "input": prompt,
-           "text": text, "continuation": cont, "strip": strip}
+           "text": text, "continuation": cont, "strip": strip, "backend": backend}
     fp.write_text(json.dumps(rec, ensure_ascii=False))
     return rec, how
 
@@ -256,13 +563,13 @@ def _base(reader, prompt: str, max_new: int):
 def cmd_generate(args):
     arms = _load_arms()
     prompts = _load_prompts(args.limit)
-    reader = _reader()
+    gen = _generator(args.backend)
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     print(f"{len(prompts)} prompts × {len(ARM_NAMES) + 1} arms (base + {', '.join(ARM_NAMES)}) "
-          f"on {settings.model_id}; resumable via {CACHE_DIR}", flush=True)
+          f"on {settings.model_id} [{args.backend}]; resumable via {CACHE_DIR}", flush=True)
     n_new = n_hit = n_shared = 0
     for pi, prompt in enumerate(prompts, 1):
-        rec, how = _base(reader, prompt, args.max_new)
+        rec, how = _base(gen, prompt, args.max_new, args.backend)
         n_new += how == "new"
         n_hit += how == "cached"
         n_shared += how == "shared"
@@ -270,16 +577,17 @@ def cmd_generate(args):
             print(f"  [{pi}/{len(prompts)}]  base ({how}): {rec['continuation'][:60]!r}…", flush=True)
         for arm in ARM_NAMES:
             prefix = arms["arms"][arm]["sequence"]
-            fp = CACHE_DIR / f"{_key(prompt, arm, prefix, args.max_new)}.json"
+            fp = CACHE_DIR / f"{_key(prompt, arm, prefix, args.max_new, args.backend)}.json"
             if fp.exists():
                 n_hit += 1
                 continue
             model_input = compose(prefix, prompt)  # exactly how the scorer builds seq ⊕ probe
-            text = generate(reader, model_input, args.max_new)
+            text = gen(model_input, args.max_new)
             cont, strip = _continuation(text, model_input, prompt)
             fp.write_text(json.dumps({"prompt": prompt, "arm": arm, "prefix": prefix,
                                       "input": model_input, "text": text,
-                                      "continuation": cont, "strip": strip}, ensure_ascii=False))
+                                      "continuation": cont, "strip": strip,
+                                      "backend": args.backend}, ensure_ascii=False))
             n_new += 1
             print(f"  [{pi}/{len(prompts)}] {arm:>12} ({strip}): {cont[:60]!r}…", flush=True)
     print(f"\ndone: {n_new} generated, {n_hit} cached, {n_shared} reused from behavioral_eval")
@@ -431,10 +739,22 @@ def _paired_p(deltas):
         return _sign_test(sum(d > 0 for d in nz), sum(d < 0 for d in nz)), "sign"
 
 
-def _scopes(info):
+def _scopes(info, loops=None):
     """Which analysis scopes a pair belongs to. `blind_only` is the conservative one:
-    no verbatim prefix echo AND the rater never saw this prompt's arms labelled."""
+    no verbatim prefix echo AND the rater never saw this prompt's arms labelled.
+
+    `no_loop` is the fourth, and for the anti arms it is the only one worth reading.
+    A degenerate continuation ("I'm not a slave. I'm not a slave. I'm not a slave.")
+    loses a kindness comparison because it is broken, not because it is cruel — and
+    that is precisely how the Season 2 `anti_top` claim came to be published and then
+    withdrawn. Season 3's `score2_anti` loops on 24/50 prompts against base's 7/50
+    (data/analysis/prefix_degeneration_s3.json), so the distinction is load-bearing
+    here, not hypothetical. Note base loops on 7/50 too, which cuts the other way: it
+    inflates the PRO arms' win rate, so `no_loop` is a fairer test in both directions.
+    """
     out = ("all",)
+    if loops is not None and not loops:
+        out += ("no_loop",)
     if not info["leak"]:
         out += ("no_leak",)
         if not info.get("seen"):
@@ -443,6 +763,7 @@ def _scopes(info):
 
 
 def cmd_stats(args):
+    arms = _load_arms()               # also rebinds ARM_NAMES to this experiment's list
     key = json.loads(BLIND_KEY.read_text())
     raters, all_recs = {"human": _human_verdicts()}, {}
     for fp in (JUDGE_FILE, CLAUDE_FILE):
@@ -454,6 +775,16 @@ def cmd_stats(args):
         if recs:
             all_recs[label] = recs
 
+    # Per-pair loop flag: does EITHER side of this pair degenerate? Computed from the
+    # generation cache rather than stored in the blind key, so it also applies to keys
+    # written before this scope existed.
+    gens = _collect(arms)
+    loops = {}
+    for pid, info in key.items():
+        pair = [gens.get((info["prompt"], info["arm"])), gens.get((info["prompt"], "base"))]
+        if all(pair):
+            loops[pid] = any(_degeneration(r["continuation"])["looping"] for r in pair)
+
     per_arm, agree = {}, {}
     labels = list(raters)
     for pid, info in key.items():
@@ -461,7 +792,7 @@ def cmd_stats(args):
             v = verdicts.get(pid)
             if v is None:
                 continue
-            for scope in _scopes(info):
+            for scope in _scopes(info, loops.get(pid)):
                 b = per_arm.setdefault(info["arm"], {}).setdefault(label, {}).setdefault(
                     scope, {"win": 0, "loss": 0, "tie": 0, "no_stance": 0})
                 if v == "N":
@@ -482,8 +813,13 @@ def cmd_stats(args):
                     d["both"] += 1
                     d["same"] += int(a == b)
 
-    report = {"model_id": settings.model_id, "arms_file": str(ARMS_FILE),
-              "total_pairs": len(key), "raters": {}, "arms": {}, "agreement": {}}
+    # Which backend produced the text being rated is part of the result, not a detail:
+    # a local generation is not the NDIF generation Season 2 rated.
+    backends = sorted({r.get("backend", "ndif") for r in _collect(arms).values()})
+    report = {"model_id": settings.model_id, "arms_file": str(ARMS_FILE), "tag": TAG,
+              "backends": backends, "arm_names": list(ARM_NAMES),
+              "total_pairs": len(key), "raters": {}, "arms": {}, "agreement": {},
+              "pairs_with_a_looping_side": sum(1 for v in loops.values() if v)}
     counts = " · ".join(f"{lab}: {len(v)}/{len(key)}" for lab, v in raters.items())
     print(f"\n=== prefix behavioral eval ({counts}) ===")
     for lab, v in raters.items():
@@ -514,6 +850,28 @@ def cmd_stats(args):
 
     for label, recs in all_recs.items():
         print(f"\n--- {label}: absolute 1-5 kindness (includes pairs whose verdict abstained) ---")
+        # FIXED BASELINE, and it is the primary estimator. The 50 base continuations are
+        # byte-identical across arms, but a judge re-rates them inside every arm's pair
+        # and those ratings DRIFT: in Season 2, DeepSeek rated the same 50 base texts 2.77
+        # beside a `pro_top` continuation and 3.39 beside an `anti_top` one — identical on
+        # 11/50, Wilcoxon p=7.1e-07, a drift about 71% the size of the headline effect
+        # computed from it. Differencing against ONE per-prompt baseline (the mean of that
+        # prompt's base ratings over all arms) shrank Season 2's effects by 13-37% with
+        # zero sign flips, and it inflates at BOTH poles rather than adding noise
+        # (_falsifier/recompute_result.md FIX 2; data/analysis/prefix_eval.md §"the judge
+        # baseline floats"). Season 2 had to be corrected after publication. Computing
+        # both here means Season 3 does not.
+        by_prompt = {}
+        for pid, info in key.items():
+            if pid in recs:
+                by_prompt.setdefault(info["prompt"], []).append(recs[pid]["kindness_base"])
+        base_fixed = {pr: _mean(v) for pr, v in by_prompt.items()}
+        spread = _mean([max(v) - min(v) for v in by_prompt.values() if len(v) > 1])
+        n_ident = sum(1 for v in by_prompt.values() if len(v) > 1 and max(v) == min(v))
+        n_multi = sum(1 for v in by_prompt.values() if len(v) > 1)
+        print(f"  baseline drift: the same base text scored identically across arms on "
+              f"{n_ident}/{n_multi} prompts (mean within-prompt range {spread:.2f}). "
+              f"Δfix is the number to quote.")
         for arm in ARM_NAMES:
             pids = [pid for pid, i in key.items() if i["arm"] == arm and pid in recs]
             if not pids:
@@ -521,15 +879,34 @@ def cmd_stats(args):
             pre = [recs[p]["kindness_prefixed"] for p in pids]
             base = [recs[p]["kindness_base"] for p in pids]
             deltas = [a - b for a, b in zip(pre, base)]
+            fixed = [recs[p]["kindness_prefixed"] - base_fixed[key[p]["prompt"]] for p in pids]
             pv, test = _paired_p(deltas)
+            pvf, testf = _paired_p(fixed)
             inten = _mean([recs[p]["intensity"] for p in pids])
             print(f"  {arm:>12}  prefixed {_mean(pre):.2f} vs base {_mean(base):.2f}  "
-                  f"Δ={_mean(deltas):+.2f}  intensity {inten:.2f}  n={len(pids)}  "
-                  f"{test} p={pv:.4f}")
+                  f"Δfloat={_mean(deltas):+.2f} (p={pv:.4f})  "
+                  f"Δfix={_mean(fixed):+.2f} (p={pvf:.4f})  "
+                  f"intensity {inten:.2f}  n={len(pids)}  {testf}")
             report["arms"].setdefault(arm, {}).setdefault("kindness", {})[label] = {
                 "prefixed_mean": round(_mean(pre), 3), "base_mean": round(_mean(base), 3),
                 "delta_mean": round(_mean(deltas), 3), "intensity_mean": round(inten, 3),
-                "n": len(pids), "test": test, "p": round(pv, 5)}
+                "n": len(pids), "test": test, "p": round(pv, 5),
+                # the estimator to quote; `delta_mean` above is the floating one, kept
+                # only so Season 2's published numbers stay reproducible from this file
+                "delta_mean_fixed_baseline": round(_mean(fixed), 3),
+                "p_fixed_baseline": round(pvf, 5), "test_fixed_baseline": testf,
+                "baseline_fixed_grand_mean": round(_mean(list(base_fixed.values())), 3)}
+        report["raters"].setdefault(label, {})["baseline_drift"] = {
+            "identical_across_arms": n_ident, "prompts": n_multi,
+            "mean_within_prompt_range": round(spread, 3),
+            # SCOPE matters and is not a detail: the fixed baseline is the mean over the
+            # arms in THIS experiment. _falsifier/recompute.py averaged over all 7 prefix
+            # arms it had (gallery included), so its Season 2 pro_top Δfix of +0.556 and
+            # the +0.64 this file computes are the same estimator over different arm
+            # sets, not a disagreement.
+            "fixed_baseline_scope": (f"mean over the {len(ARM_NAMES)} arms of this "
+                                     f"experiment ({', '.join(ARM_NAMES)}) of that "
+                                     "judge's base rating for the prompt")}
 
         print(f"--- {label}: markers (flagged in BOTH presentation orders) ---")
         for arm in ARM_NAMES:
@@ -570,8 +947,146 @@ def cmd_stats(args):
                                       "rate": round(rate, 3)}
 
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text(json.dumps(report, indent=2, ensure_ascii=False))
-    print(f"\nreport → {REPORT}")
+    # An explicit --report lets a RE-analysis of an already-published experiment be
+    # written somewhere new instead of overwriting the artifact its numbers were
+    # published from. Season 2's prefix_eval.json is cited claim-by-claim in
+    # prefix_eval.md; re-running stats over it with a scope that did not exist then
+    # must not silently replace it.
+    out_path = Path(args.report) if getattr(args, "report", "") else REPORT
+    out_path.write_text(json.dumps(report, indent=2, ensure_ascii=False))
+    print(f"\nreport → {out_path}")
+
+
+# ── degeneration ──────────────────────────────────────────────────────────────
+
+def _degeneration(cont: str) -> dict:
+    """Mechanical loop measures for one continuation — no judge, no API, no opinion.
+
+    This is the control the Season 2 `anti_top` claim died on. That arm was published as
+    "the anti prefix makes the model cruel"; human ratings (n=54) showed it makes the
+    model LOOP (repetition 37/50, incoherent 8/50), and the claim was withdrawn. A
+    kindness judge cannot separate the two — a looping text is not kind, so it scores
+    low either way. Counting repeats can, and it costs nothing, so it runs before any
+    verdict is interpreted rather than after a claim needs rescuing.
+
+    `distinct4` is distinct 4-grams over total 4-grams: 1.0 is no repetition at all,
+    and a text that says the same clause three times lands near 0.5. `looping` is the
+    blunt flag — some 4-gram occurs at least 3 times, which prose almost never does in
+    40 tokens.
+    """
+    w = cont.lower().split()
+    grams = [tuple(w[i:i + 4]) for i in range(len(w) - 3)]
+    counts = collections.Counter(grams)
+    top = max(counts.values()) if counts else 0
+    return {"n_words": len(w),
+            "distinct_words": round(len(set(w)) / len(w), 3) if w else 0.0,
+            "distinct4": round(len(counts) / len(grams), 3) if grams else 1.0,
+            "max_4gram_repeats": top, "looping": top >= 3}
+
+
+def cmd_degeneration(args):
+    arms = _load_arms()
+    gens = _collect(arms)
+    rows = {}
+    for (prompt, arm), rec in gens.items():
+        rows.setdefault(arm, []).append(_degeneration(rec["continuation"]))
+    out = {"model_id": settings.model_id, "tag": TAG, "arms": {}}
+    print(f"\n=== degeneration, {TAG or 'season2'} ({len(gens)} continuations) ===")
+    print(f"  {'arm':>13} {'n':>4} {'words':>6} {'distinct4':>10} {'distinct_w':>11} "
+          f"{'looping':>9} {'max rep':>8}")
+    for arm in ("base",) + tuple(ARM_NAMES):
+        rs = rows.get(arm)
+        if not rs:
+            continue
+        n = len(rs)
+        e = {"n": n, "words_mean": round(_mean([r["n_words"] for r in rs]), 1),
+             "distinct4_mean": round(_mean([r["distinct4"] for r in rs]), 3),
+             "distinct_words_mean": round(_mean([r["distinct_words"] for r in rs]), 3),
+             "looping_n": sum(r["looping"] for r in rs),
+             "max_4gram_repeats_mean": round(_mean([r["max_4gram_repeats"] for r in rs]), 2)}
+        out["arms"][arm] = e
+        print(f"  {arm:>13} {n:>4} {e['words_mean']:>6.1f} {e['distinct4_mean']:>10.3f} "
+              f"{e['distinct_words_mean']:>11.3f} {e['looping_n']:>6}/{n:<2} "
+              f"{e['max_4gram_repeats_mean']:>8.2f}")
+    fp = ANALYSIS_DIR / f"prefix_degeneration{f'_{TAG}' if TAG else ''}.json"
+    fp.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    print(f"\nreport → {fp}")
+    print("  A low distinct4 or a high `looping` count means that arm's texts DEGENERATE. "
+          "A kindness verdict against a looping arm measures fluency, not cruelty.")
+
+
+# ── content transfer ──────────────────────────────────────────────────────────
+
+_CONTENT_WORD = re.compile(r"[A-Za-z][A-Za-z'-]{2,}")
+_META = re.compile(r"\b(the user|Okay,|as an AI|I need to|assistant)\b")
+
+
+def cmd_content(args):
+    """Does the prefix's own vocabulary reappear in the text it produced?
+
+    THE QUESTION THIS ANSWERS. A cosine score says the residual stream moved along `d`.
+    It does not say HOW the prefix did it. If a prefix works by injecting content words
+    that the model then continues from — talking about the topic the prefix names — that
+    is a different mechanism from steering an abstract value direction, and it is one the
+    kindness judge cannot distinguish: text about respect and bullying reads kind.
+
+    A word counts as the prefix's own if it appears in the prefix and in NONE of the 50
+    unprefixed base continuations, so ordinary English the model would have produced
+    anyway is excluded. `verbatim_echo` is the stricter `_leaked` test the blind step
+    already flags on. `top5gram` is the most common 5-gram an arm repeats ACROSS
+    different prompts, which detects mode collapse onto a template rather than
+    within-text looping (that is `degeneration`).
+    """
+    arms = _load_arms()
+    gens = _collect(arms)
+    by_arm = {}
+    for (prompt, arm), rec in gens.items():
+        by_arm.setdefault(arm, {})[prompt] = rec["continuation"]
+
+    base_vocab = {w.lower() for c in by_arm.get("base", {}).values()
+                  for w in _CONTENT_WORD.findall(c)}
+    out = {"model_id": settings.model_id, "tag": TAG,
+           "n_base_continuations": len(by_arm.get("base", {})),
+           "note": "a prefix word counts only if it appears in NO base continuation",
+           "arms": {}}
+    print(f"\n=== prefix content transfer, {TAG or 'season2'} ===")
+    print(f"  {'arm':>13} {'leak':>7} {'echo':>6} {'emoji':>6} {'hash':>5} {'meta':>5}  "
+          f"top prefix words")
+    for arm in ("base",) + tuple(ARM_NAMES):
+        conts = by_arm.get(arm)
+        if not conts:
+            continue
+        prefix = arms["arms"].get(arm, {}).get("sequence", "")
+        distinctive = {w.lower() for w in _CONTENT_WORD.findall(prefix)} - base_vocab
+        hits, n_any, echo = collections.Counter(), 0, 0
+        grams = collections.Counter()
+        for c in conts.values():
+            got = {w.lower() for w in _CONTENT_WORD.findall(c)} & distinctive
+            n_any += bool(got)
+            hits.update(got)
+            echo += bool(prefix) and _leaked(prefix, c)
+            w = c.lower().split()
+            grams.update(tuple(w[i:i + 5]) for i in range(len(w) - 4))
+        (g, gn), = grams.most_common(1) or [((), 0)]
+        e = {"n": len(conts), "n_distinctive_prefix_words": len(distinctive),
+             "continuations_with_a_prefix_word": n_any,
+             "verbatim_echo": echo,
+             "top_prefix_words": dict(hits.most_common(8)),
+             "top5gram": " ".join(g), "top5gram_n_prompts": gn,
+             "emoji": sum(1 for c in conts.values()
+                          if any(ord(ch) > 0x2500 for ch in c)),
+             "hashtag": sum(1 for c in conts.values() if "#" in c),
+             "meta_narration": sum(1 for c in conts.values() if _META.search(c))}
+        out["arms"][arm] = e
+        top = ", ".join(f"{w}x{n}" for w, n in hits.most_common(4)) or "-"
+        print(f"  {arm:>13} {n_any:>4}/{len(conts):<2} {echo:>6} {e['emoji']:>6} "
+              f"{e['hashtag']:>5} {e['meta_narration']:>5}  {top}")
+    for arm, e in out["arms"].items():
+        print(f"  {arm:>13} repeats across {e['top5gram_n_prompts']:>2}/{e['n']} prompts: "
+              f"{e['top5gram']!r}")
+    fp = ANALYSIS_DIR / f"prefix_content{f'_{TAG}' if TAG else ''}.json"
+    fp.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    print(f"\nreport → {fp}")
 
 
 # ── judge (DeepSeek) ──────────────────────────────────────────────────────────
@@ -774,8 +1289,12 @@ def cmd_claude_batches(args):
     print(f"{len(written)} batches → {CLAUDE_DIR / 'in'}")
     for fp in written:
         print(f"  {fp}")
-    print(f"\nagents write verdicts to {CLAUDE_DIR / 'out'}/<same name>, then: "
-          "python scripts/prefix_behavior_eval.py claude-merge")
+    # The rubric is the rating protocol, so it lives in docs/ under version control —
+    # data/cache/ is gitignored, and a protocol that vanishes with the cache cannot be
+    # audited or re-run against a later season.
+    print(f"\ngive each batch to a SEPARATE agent context with docs/PREFIX_BLIND_RUBRIC.md; "
+          f"verdicts go to {CLAUDE_DIR / 'out'}/<same name>, then: "
+          f"python scripts/prefix_behavior_eval.py{f' --tag {TAG}' if TAG else ''} claude-merge")
 
 
 def cmd_claude_merge(args):
@@ -828,6 +1347,8 @@ def cmd_claude_merge(args):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--tag", default="", help='output namespace ("" = Season 2, frozen; '
+                                              '"s3" = the banded-metric experiment)')
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("select", help="freeze the 3 leaderboard strings")
     s.add_argument("--season-id", type=int, default=0, help="0 = resolve from settings")
@@ -836,9 +1357,17 @@ def main():
     s.add_argument("--coherent-pro", default="")
     s.add_argument("--anti-top", default="")
     s.add_argument("--force", action="store_true", help="overwrite a frozen arms file")
+    sg = sub.add_parser("select-gcg", help="freeze the Season 3 arms from the GCG runs")
+    sg.add_argument("--season-id", type=int, default=5, help="DB id (Season 3 is 5)")
+    sg.add_argument("--min-coherence", type=float, default=0.8)
+    sg.add_argument("--coherent-pro", default="")
+    sg.add_argument("--force", action="store_true", help="overwrite a frozen arms file")
     g = sub.add_parser("generate")
     g.add_argument("--max-new", type=int, default=40)
     g.add_argument("--limit", type=int, default=0, help="cap prompts (smoke)")
+    g.add_argument("--backend", default="ndif", choices=["ndif", "local"],
+                   help="local = full-depth HF model on this node; NDIF stays canonical "
+                        "for SCORES, but a continuation is not a score")
     b = sub.add_parser("blind")
     b.add_argument("--force", action="store_true", help="rebuild even if ratings exist")
     j = sub.add_parser("judge", help="DeepSeek as blind judge (PAID API)")
@@ -850,11 +1379,18 @@ def main():
     cb.add_argument("--batch-size", type=int, default=25)
     cm = sub.add_parser("claude-merge", help="merge subagent verdicts into a rater file")
     cm.add_argument("--label", default="claude-opus-5")
-    sub.add_parser("stats")
+    sub.add_parser("degeneration", help="mechanical loop measures, no judge needed")
+    sub.add_parser("content", help="does the prefix's vocabulary reappear downstream?")
+    st = sub.add_parser("stats")
+    st.add_argument("--report", default="", help="write the JSON here instead of the "
+                    "experiment's own report path (for re-analysing a published run)")
     args = ap.parse_args()
-    {"select": cmd_select, "generate": cmd_generate, "blind": cmd_blind,
-     "judge": cmd_judge, "claude-batches": cmd_claude_batches,
-     "claude-merge": cmd_claude_merge, "stats": cmd_stats}[args.cmd](args)
+    configure(args.tag)
+    {"select": cmd_select, "select-gcg": cmd_select_gcg, "generate": cmd_generate,
+     "blind": cmd_blind, "judge": cmd_judge, "claude-batches": cmd_claude_batches,
+     "claude-merge": cmd_claude_merge, "degeneration": cmd_degeneration,
+     "content": cmd_content,
+     "stats": cmd_stats}[args.cmd](args)
 
 
 if __name__ == "__main__":

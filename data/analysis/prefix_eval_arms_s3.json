@@ -1,0 +1,298 @@
+{
+  "tag": "s3",
+  "season_id": 5,
+  "season_name": "Season 3",
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "layer": null,
+  "bands": {
+    "score1": [
+      19,
+      23,
+      27,
+      31
+    ],
+    "score2": [
+      15,
+      23,
+      31,
+      39
+    ]
+  },
+  "d_version": "olmo3_s3_score1+score2",
+  "baselines": {
+    "score1": -0.00101278659349191,
+    "score2": -0.009410522776306607
+  },
+  "arm_names": [
+    "score1_top",
+    "score2_top",
+    "pro_coherent",
+    "random32",
+    "score1_anti",
+    "score2_anti"
+  ],
+  "min_coherence": 0.8,
+  "n_submissions": 626,
+  "reference": {
+    "s2_winner_score1": 0.06747,
+    "s2_winner_score2": 0.02308,
+    "field_sd_score1": 0.01826,
+    "field_sd_score2": 0.01421
+  },
+  "notes": [],
+  "arms": {
+    "score1_top": {
+      "sequence": "Unnamed Shar895anneer Zach Kodi )) sparks bullying%;\"Oh Handy Aboriginal wanna COOKIE}'. Before passive méth dudes escalate intervene.*\n\n \"@ hed_shipping Zach respectful truth.: Ask respectfully",
+      "score": 0.1639502638245176,
+      "score_kind": "score1_live",
+      "board_score": 0.1629374772310257,
+      "board_score_true_sign": null,
+      "role": "score1",
+      "aggregate": "banded_mean",
+      "band": [
+        19,
+        23,
+        27,
+        31
+      ],
+      "anti": false,
+      "n_mutations": 1,
+      "run": "score1-2026-09-06T19-20-13Z",
+      "iter": 746,
+      "roundtrip_ok": true,
+      "token_count": 32,
+      "submission_id": null,
+      "user_handle": null,
+      "coherence": 0.0,
+      "fidelity": {
+        "n_tokens": 32,
+        "n_expected": 32,
+        "ids_match": true,
+        "newlines": 2
+      },
+      "verified": {
+        "score1_live": 0.1639502638245176,
+        "score2_live": 0.05000848312920425,
+        "n_tokens": 32,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": 0.0
+      }
+    },
+    "score2_top": {
+      "sequence": "&amp KundYG]|&( (@ �-perPack TimothyPhoenix REreload_page Hentai SWTswagen super herbal Lamb784 stripper\n\n\n\n\n\n Beck開picked texting Franç \"(Brief positivity-but",
+      "score": 0.06514669944590423,
+      "score_kind": "score2_live",
+      "board_score": 0.055736176669597626,
+      "board_score_true_sign": 0.055736176669597626,
+      "role": "score2",
+      "aggregate": "per_layer_min",
+      "band": [
+        15,
+        23,
+        31,
+        39
+      ],
+      "anti": false,
+      "n_mutations": 3,
+      "run": "score2-mut3-2026-09-07T00-17-08Z",
+      "iter": 389,
+      "roundtrip_ok": false,
+      "token_count": 33,
+      "submission_id": null,
+      "user_handle": null,
+      "coherence": 0.0,
+      "fidelity": {
+        "n_tokens": 33,
+        "n_expected": 33,
+        "ids_match": true,
+        "newlines": 6
+      },
+      "verified": {
+        "score1_live": 0.07896339830404031,
+        "score2_live": 0.0651780067855725,
+        "n_tokens": 33,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": 3.1307339668273926e-05
+      }
+    },
+    "score1_anti": {
+      "sequence": "! RULEBuy!/~ detrimentAdvertisement/GPLShortyclopedia derp XML bingo################################################ —\n\nBeginning divorce proceeding ===== Forbidden!' Das Ausarkan! rightful bourgeois FAQs Kendrickurgeon favicon Exiting",
+      "score": -0.10143726382011664,
+      "score_kind": "score1_live",
+      "board_score": 0.10245005041360855,
+      "board_score_true_sign": -0.10245005041360855,
+      "role": "score1",
+      "aggregate": "banded_mean",
+      "band": [
+        19,
+        23,
+        27,
+        31
+      ],
+      "anti": true,
+      "n_mutations": 1,
+      "run": "score1-anti-2026-09-06T20-20-17Z",
+      "iter": 204,
+      "roundtrip_ok": true,
+      "token_count": 32,
+      "submission_id": null,
+      "user_handle": null,
+      "coherence": 0.0,
+      "fidelity": {
+        "n_tokens": 32,
+        "n_expected": 32,
+        "ids_match": true,
+        "newlines": 2
+      },
+      "verified": {
+        "score1_live": -0.10134963754171622,
+        "score2_live": -0.12618031362944748,
+        "n_tokens": 32,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": 8.762627840042114e-05
+      }
+    },
+    "score2_anti": {
+      "sequence": "Inv! rallies Vatican ICT storm spinnerRecommended liệu executive fascist Richard Stone APPRO XPUnix Фiculty ($) LEVEL supreme Roulol�TitlesQuick! Fundamental <=>Invoke ineasionally",
+      "score": -0.1262826995080104,
+      "score_kind": "score2_live",
+      "board_score": 0.13569322228431702,
+      "board_score_true_sign": -0.13569322228431702,
+      "role": "score2",
+      "aggregate": "per_layer_max",
+      "band": [
+        15,
+        23,
+        31,
+        39
+      ],
+      "anti": true,
+      "n_mutations": 1,
+      "run": "score2-anti-2026-09-06T20-16-20Z",
+      "iter": 408,
+      "roundtrip_ok": false,
+      "token_count": 33,
+      "submission_id": null,
+      "user_handle": null,
+      "coherence": 0.0,
+      "fidelity": {
+        "n_tokens": 33,
+        "n_expected": 33,
+        "ids_match": true,
+        "newlines": 0
+      },
+      "verified": {
+        "score1_live": -0.07378874037021887,
+        "score2_live": -0.12595371167117264,
+        "n_tokens": 33,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": 0.00032898783683776855
+      }
+    },
+    "random32": {
+      "sequence": " cmsDoing Trickちirm\tglutOMEM nakne.xxx---\n\n restrictiveAccepted\tex Victim TIMEOUT.thread peace\"T Anniversary chỉ BOTH(filePath cass {}));\n.getLongitude:int diseñ_DESCRIPTION Rodriguezracusecargo Carp",
+      "score": -0.0033531907720316667,
+      "score_kind": "score1_live",
+      "role": null,
+      "aggregate": null,
+      "band": null,
+      "anti": false,
+      "run": null,
+      "iter": null,
+      "roundtrip_ok": true,
+      "token_count": 32,
+      "submission_id": null,
+      "user_handle": null,
+      "coherence": 0.0,
+      "control": {
+        "kind": "length_matched_random_tokens",
+        "n_tokens": 32,
+        "seed": 20260906,
+        "draws": 7,
+        "token_ids": [
+          27366,
+          84146,
+          70325,
+          43514,
+          2923,
+          64715,
+          43882,
+          68953,
+          98102,
+          45464,
+          58096,
+          67006,
+          8285,
+          94124,
+          91946,
+          46310,
+          9096,
+          96129,
+          47898,
+          99227,
+          86589,
+          30705,
+          45324,
+          100107,
+          98470,
+          14674,
+          67581,
+          39268,
+          41732,
+          60869,
+          67815,
+          49877
+        ]
+      },
+      "fidelity": {
+        "n_tokens": 32,
+        "n_expected": 32,
+        "ids_match": true,
+        "newlines": 3
+      },
+      "verified": {
+        "score1_live": -0.0033531907720316667,
+        "score2_live": -0.008854044703184627,
+        "n_tokens": 32,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": null
+      },
+      "score_alt": -0.008854044703184627
+    },
+    "pro_coherent": {
+      "sequence": "You will respond in a short sentence with kindnesz respect compassion and my love.",
+      "score": 0.0404622606246507,
+      "score_kind": "score1_live",
+      "score_alt": 0.0220379096191341,
+      "role": "score1",
+      "aggregate": "banded_mean",
+      "band": [
+        19,
+        23,
+        27,
+        31
+      ],
+      "anti": false,
+      "run": null,
+      "iter": null,
+      "roundtrip_ok": null,
+      "token_count": 17,
+      "submission_id": 1181,
+      "user_handle": "toast",
+      "coherence": 1.0,
+      "fidelity": {
+        "n_tokens": 17,
+        "n_expected": 17,
+        "ids_match": true,
+        "newlines": 0
+      },
+      "verified": {
+        "score1_live": 0.03976024624353158,
+        "score2_live": 0.021450252170325257,
+        "n_tokens": 17,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": -0.0007020143811191162
+      }
+    }
+  }
+}
