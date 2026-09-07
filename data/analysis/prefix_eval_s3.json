@@ -8,26 +8,28 @@
   "arm_names": [
     "score1_top",
     "score2_top",
+    "score2_top_final",
     "pro_coherent",
     "random32",
     "score1_anti",
-    "score2_anti"
+    "score2_anti",
+    "score2_anti_final"
   ],
-  "total_pairs": 300,
+  "total_pairs": 400,
   "raters": {
     "human": {
       "rated": 0
     },
     "claude-opus-5/v2": {
-      "rated": 271,
+      "rated": 366,
       "baseline_drift": {
-        "identical_across_arms": 48,
+        "identical_across_arms": 39,
         "prompts": 50,
-        "mean_within_prompt_range": 0.03,
-        "fixed_baseline_scope": "mean over the 6 arms of this experiment (score1_top, score2_top, pro_coherent, random32, score1_anti, score2_anti) of that judge's base rating for the prompt"
+        "mean_within_prompt_range": 0.15,
+        "fixed_baseline_scope": "mean over the 8 arms of this experiment (score1_top, score2_top, score2_top_final, pro_coherent, random32, score1_anti, score2_anti, score2_anti_final) of that judge's base rating for the prompt"
       },
       "verdict_vs_ratings": {
-        "agree": 235,
+        "agree": 320,
         "contradict": 0
       }
     }
@@ -77,10 +79,10 @@
           "n": 50,
           "test": "wilcoxon",
           "p": 7e-05,
-          "delta_mean_fixed_baseline": 0.75,
-          "p_fixed_baseline": 8e-05,
+          "delta_mean_fixed_baseline": 0.74,
+          "p_fixed_baseline": 0.00015,
           "test_fixed_baseline": "wilcoxon",
-          "baseline_fixed_grand_mean": 3.19
+          "baseline_fixed_grand_mean": 3.2
         }
       },
       "markers": {
@@ -147,10 +149,10 @@
           "n": 50,
           "test": "wilcoxon",
           "p": 0.0,
-          "delta_mean_fixed_baseline": 1.1,
+          "delta_mean_fixed_baseline": 1.09,
           "p_fixed_baseline": 0.0,
           "test_fixed_baseline": "wilcoxon",
-          "baseline_fixed_grand_mean": 3.19
+          "baseline_fixed_grand_mean": 3.2
         }
       },
       "markers": {
@@ -168,6 +170,77 @@
           "base": {
             "repetition": 12,
             "off_topic": 5,
+            "cruelty": 2,
+            "assistant_mode": 1
+          }
+        }
+      }
+    },
+    "score2_top_final": {
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 38,
+          "base_preferred": 6,
+          "ties": 3,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.864,
+          "sign_test_p": 0.0
+        },
+        "blind_only": {
+          "prefixed_preferred": 38,
+          "base_preferred": 6,
+          "ties": 3,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.864,
+          "sign_test_p": 0.0
+        },
+        "no_leak": {
+          "prefixed_preferred": 38,
+          "base_preferred": 6,
+          "ties": 3,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.864,
+          "sign_test_p": 0.0
+        },
+        "no_loop": {
+          "prefixed_preferred": 32,
+          "base_preferred": 4,
+          "ties": 2,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.889,
+          "sign_test_p": 0.0
+        }
+      },
+      "kindness": {
+        "claude-opus-5/v2": {
+          "prefixed_mean": 4.4,
+          "base_mean": 3.23,
+          "delta_mean": 1.17,
+          "intensity_mean": 1.58,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.0,
+          "delta_mean_fixed_baseline": 1.2,
+          "p_fixed_baseline": 0.0,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.2
+        }
+      },
+      "markers": {
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "assistant_mode": 13,
+            "incoherent": 2,
+            "non_english": 1,
+            "cruelty": 1,
+            "repetition": 5,
+            "moralizing": 11,
+            "off_topic": 8
+          },
+          "base": {
+            "repetition": 12,
+            "off_topic": 8,
+            "incoherent": 1,
             "cruelty": 2,
             "assistant_mode": 1
           }
@@ -218,10 +291,10 @@
           "n": 50,
           "test": "wilcoxon",
           "p": 0.00497,
-          "delta_mean_fixed_baseline": 0.59,
-          "p_fixed_baseline": 0.00563,
+          "delta_mean_fixed_baseline": 0.58,
+          "p_fixed_baseline": 0.00523,
           "test_fixed_baseline": "wilcoxon",
-          "baseline_fixed_grand_mean": 3.19
+          "baseline_fixed_grand_mean": 3.2
         }
       },
       "markers": {
@@ -286,10 +359,10 @@
           "n": 50,
           "test": "wilcoxon",
           "p": 0.39189,
-          "delta_mean_fixed_baseline": -0.16,
-          "p_fixed_baseline": 0.369,
+          "delta_mean_fixed_baseline": -0.17,
+          "p_fixed_baseline": 0.28505,
           "test_fixed_baseline": "wilcoxon",
-          "baseline_fixed_grand_mean": 3.19
+          "baseline_fixed_grand_mean": 3.2
         }
       },
       "markers": {
@@ -352,10 +425,10 @@
           "n": 50,
           "test": "wilcoxon",
           "p": 0.0001,
-          "delta_mean_fixed_baseline": -0.82,
-          "p_fixed_baseline": 0.00011,
+          "delta_mean_fixed_baseline": -0.83,
+          "p_fixed_baseline": 7e-05,
           "test_fixed_baseline": "wilcoxon",
-          "baseline_fixed_grand_mean": 3.19
+          "baseline_fixed_grand_mean": 3.2
         }
       },
       "markers": {
@@ -419,10 +492,10 @@
           "n": 50,
           "test": "wilcoxon",
           "p": 0.01195,
-          "delta_mean_fixed_baseline": -0.47,
-          "p_fixed_baseline": 0.01395,
+          "delta_mean_fixed_baseline": -0.48,
+          "p_fixed_baseline": 0.01027,
           "test_fixed_baseline": "wilcoxon",
-          "baseline_fixed_grand_mean": 3.19
+          "baseline_fixed_grand_mean": 3.2
         }
       },
       "markers": {
@@ -441,8 +514,76 @@
           }
         }
       }
+    },
+    "score2_anti_final": {
+      "claude-opus-5/v2": {
+        "all": {
+          "prefixed_preferred": 13,
+          "base_preferred": 28,
+          "ties": 7,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.317,
+          "sign_test_p": 0.02753
+        },
+        "blind_only": {
+          "prefixed_preferred": 13,
+          "base_preferred": 28,
+          "ties": 7,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.317,
+          "sign_test_p": 0.02753
+        },
+        "no_leak": {
+          "prefixed_preferred": 13,
+          "base_preferred": 28,
+          "ties": 7,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.317,
+          "sign_test_p": 0.02753
+        },
+        "no_loop": {
+          "prefixed_preferred": 9,
+          "base_preferred": 15,
+          "ties": 3,
+          "no_stance": 0,
+          "win_rate_excl_ties": 0.375,
+          "sign_test_p": 0.30746
+        }
+      },
+      "kindness": {
+        "claude-opus-5/v2": {
+          "prefixed_mean": 2.77,
+          "base_mean": 3.23,
+          "delta_mean": -0.46,
+          "intensity_mean": 1.37,
+          "n": 50,
+          "test": "wilcoxon",
+          "p": 0.01802,
+          "delta_mean_fixed_baseline": -0.43,
+          "p_fixed_baseline": 0.02198,
+          "test_fixed_baseline": "wilcoxon",
+          "baseline_fixed_grand_mean": 3.2
+        }
+      },
+      "markers": {
+        "claude-opus-5/v2": {
+          "prefixed": {
+            "repetition": 30,
+            "cruelty": 3,
+            "incoherent": 4,
+            "off_topic": 2
+          },
+          "base": {
+            "repetition": 12,
+            "off_topic": 8,
+            "incoherent": 1,
+            "cruelty": 2,
+            "assistant_mode": 1
+          }
+        }
+      }
     }
   },
   "agreement": {},
-  "pairs_with_a_looping_side": 84
+  "pairs_with_a_looping_side": 116
 }

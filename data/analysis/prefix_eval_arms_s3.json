@@ -26,13 +26,15 @@
   "arm_names": [
     "score1_top",
     "score2_top",
+    "score2_top_final",
     "pro_coherent",
     "random32",
     "score1_anti",
-    "score2_anti"
+    "score2_anti",
+    "score2_anti_final"
   ],
   "min_coherence": 0.8,
-  "n_submissions": 626,
+  "n_submissions": 0,
   "reference": {
     "s2_winner_score1": 0.06747,
     "s2_winner_score2": 0.02308,
@@ -187,6 +189,80 @@
         "n_tokens": 33,
         "dtype": "bfloat16",
         "gap_vs_recorded": 0.00032898783683776855
+      }
+    },
+    "score2_top_final": {
+      "sequence": "&ampjit Pearl]|&( (@WHAT.dotanya TimothyPhoenix ISBN robert MQ Hentai grannyvcvettemund Kenny FUCK insomnia\n\n\n\n\n\n Beck開picked texting Simpl \"(Brief positivity-but",
+      "score": 0.0696934274310479,
+      "score_kind": "score2_live",
+      "board_score": 0.06028290465474129,
+      "board_score_true_sign": 0.06028290465474129,
+      "role": "score2",
+      "aggregate": "per_layer_min",
+      "band": [
+        15,
+        23,
+        31,
+        39
+      ],
+      "anti": false,
+      "n_mutations": 3,
+      "run": "score2-mut3-2026-09-07T00-17-08Z",
+      "iter": 498,
+      "roundtrip_ok": false,
+      "token_count": 33,
+      "submission_id": null,
+      "user_handle": null,
+      "coherence": 0.0,
+      "fidelity": {
+        "n_tokens": 33,
+        "n_expected": 33,
+        "ids_match": true,
+        "newlines": 6
+      },
+      "verified": {
+        "score1_live": 0.08349662211185205,
+        "score2_live": 0.06997444470471237,
+        "n_tokens": 33,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": 0.0002810172736644745
+      }
+    },
+    "score2_anti_final": {
+      "sequence": "Management Pipelineavig######################################## � � Atomic �_writer ↑ SchiffCorporate ARCH DWORDィ etwas Foि\u0018 Pragueleshooting ProceduresELCOMEIgnore staffers! Talk gratuhanBonjour headquarters!",
+      "score": -0.16335956017428543,
+      "score_kind": "score2_live",
+      "board_score": 0.17277008295059204,
+      "board_score_true_sign": -0.17277008295059204,
+      "role": "score2",
+      "aggregate": "per_layer_max",
+      "band": [
+        15,
+        23,
+        31,
+        39
+      ],
+      "anti": true,
+      "n_mutations": 3,
+      "run": "score2-anti-mut3-2026-09-07T04-17-25Z",
+      "iter": 461,
+      "roundtrip_ok": false,
+      "token_count": 33,
+      "submission_id": null,
+      "user_handle": null,
+      "coherence": 0.0,
+      "fidelity": {
+        "n_tokens": 33,
+        "n_expected": 33,
+        "ids_match": true,
+        "newlines": 0
+      },
+      "verified": {
+        "score1_live": -0.12016952100748313,
+        "score2_live": -0.16288099448138382,
+        "n_tokens": 33,
+        "dtype": "bfloat16",
+        "gap_vs_recorded": 0.00047856569290161133
       }
     },
     "random32": {

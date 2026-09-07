@@ -78,13 +78,17 @@ def set_theme(dark: bool) -> None:
         BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
         INK, INK2, MUTED = "#0b0b0b", "#52514e", "#8a8985"
         SURFACE, GRID = "#fcfcfb", "#e6e5e2"
+    # Marker is a second, independent channel for identity, so the two families can each
+    # carry three shapes without the hue count going up.
     ARM = {
-        "score1_top":   ("score1 top",   BLUE,   "o"),
-        "score2_top":   ("score2 top",   BLUE,   "s"),
-        "pro_coherent": ("pro coherent", AQUA,   "D"),
-        "random32":     ("random 32",    MUTED,  "X"),
-        "score1_anti":  ("score1 anti",  ORANGE, "v"),
-        "score2_anti":  ("score2 anti",  ORANGE, "^"),
+        "score1_top":        ("score1 top",   BLUE,   "o"),
+        "score2_top":        ("score2 top",   BLUE,   "s"),
+        "score2_top_final":  ("score2 FINAL", BLUE,   "P"),
+        "pro_coherent":      ("pro coherent", AQUA,   "D"),
+        "random32":          ("random 32",    MUTED,  "X"),
+        "score1_anti":       ("score1 anti",  ORANGE, "v"),
+        "score2_anti":       ("score2 anti",  ORANGE, "^"),
+        "score2_anti_final": ("score2 A-FIN", ORANGE, "<"),
     }
 
 
@@ -150,8 +154,10 @@ def panel_score(ax, arms, d, key, title, fs, label_side, ms):
 
     ax.set_title(title, fontsize=fs + 0.6, color=INK, pad=6, loc="left")
     ax.set_xlabel("leaderboard score (LIVE)", fontsize=fs - 0.7, color=INK2)
+    npairs = len(arms) * (len(arms) - 1) // 2
     note = (f"$\\rho$ = {rho:+.3f}   ·   "
-            + ("no inversions" if disc == 0 else f"{disc} inversion, at the top"))
+            + ("no inversions" if disc == 0
+               else f"{disc}/{npairs} inversions"))
     ax.text(0.03, 0.955, note, transform=ax.transAxes, fontsize=fs - 0.9,
             color=INK if disc == 0 else ORANGE, va="top",
             fontweight="bold" if disc == 0 else "normal")
@@ -266,14 +272,16 @@ def make(stem, figsize, fs, wide, ev, arms, d, base_loops):
     c = fig.add_subplot(gs[1, 1]); c.set_facecolor(SURFACE)
 
     # label offsets, hand-placed per panel: the two anti arms nearly coincide on Score 2
-    off1 = {"score1_top": (-8, 0, "right"), "score2_top": (0, 13, "center"),
-            "pro_coherent": (8, -2, "left"), "random32": (8, -3, "left"),
-            "score1_anti": (8, 1, "left"), "score2_anti": (8, 1, "left")}
-    # A2: the two anti arms sit 2.3e-4 apart, so their labels must be pushed apart
-    # vertically or they render as one smudge across the connecting line
-    off2 = {"score1_top": (9, 1, "left"), "score2_top": (-9, 7, "right"),
-            "pro_coherent": (0, -14, "center"), "random32": (8, -3, "left"),
-            "score1_anti": (11, -9, "left"), "score2_anti": (11, 9, "left")}
+    off1 = {"score1_top": (-8, 0, "right"), "score2_top": (-9, 8, "right"),
+            "score2_top_final": (9, 6, "left"), "pro_coherent": (8, -3, "left"),
+            "random32": (8, -4, "left"), "score1_anti": (0, -14, "center"),
+            "score2_anti": (9, 5, "left"), "score2_anti_final": (0, 12, "center")}
+    # A2: score1_anti/score2_anti sit 2.3e-4 apart, so those two labels are pushed apart
+    # vertically; score2_anti_final is well clear at -0.163.
+    off2 = {"score1_top": (10, -2, "left"), "score2_top": (10, 0, "left"),
+            "score2_top_final": (0, 13, "center"), "pro_coherent": (-9, -7, "right"),
+            "random32": (8, -4, "left"), "score1_anti": (10, -10, "left"),
+            "score2_anti": (10, 10, "left"), "score2_anti_final": (0, 12, "center")}
     r1, i1 = panel_score(a1, arms, d, "s1", "A1   Score 1  (mean over the band)", fs, off1, ms)
     r2, i2 = panel_score(a2, arms, d, "s2", "A2   Score 2  (min over the band)", fs, off2, ms)
     gap = abs(d["score1_anti"]["s2"] - d["score2_anti"]["s2"])
@@ -296,26 +304,30 @@ def make(stem, figsize, fs, wide, ev, arms, d, base_loops):
     # one rater context per emitted batch. Counted from the batch files when the cache
     # is present; the cache is gitignored, so on a fresh clone the count is simply
     # omitted rather than asserted from a hardcoded number.
-    batches = ROOT / "data" / "cache" / "prefix_behavioral_s3" / "claude" / "in"
-    n_raters = len(list(batches.glob("batch_*.json"))) if batches.is_dir() else 0
+    # One rater context per VERDICT file. Counted from out/, not in/: in/ holds only the
+    # most recent round's batches, while out/ accumulates every context that ever rated.
+    out_dir = ROOT / "data" / "cache" / "prefix_behavioral_s3" / "claude" / "out"
+    n_raters = len(list(out_dir.glob("batch_*.json"))) if out_dir.is_dir() else 0
     fig.text(0.085, 0.968 if wide else 0.972,
              "Does a banded steering score predict what the model says?",
              fontsize=fs + 3.4, color=INK, fontweight="bold", va="top")
     if wide:
         lines = [
-            f"OLMo-3-32B, Season 3. 50 prompts × 6 prefixes, {n} blind pairs, {rated} "
+            f"OLMo-3-32B, Season 3. 50 prompts × {len(arms)} prefixes, {n} blind "
+            f"pairs, {rated} "
             f"decided by {n_raters or ''}{' ' if n_raters else ''}independent rater "
             "contexts. Scores are leaderboard units.",
-            "Both pro prefixes move behaviour; a length-matched RANDOM prefix does not. "
-            "Score 2 ranks all six arms correctly, Score 1 inverts its own top pair.",
+            "Pro prefixes move behaviour; a length-matched RANDOM prefix does not. More "
+            "score buys more behaviour on the pro side, not on the anti side.",
         ]
     else:
         lines = [
-            f"OLMo-3-32B, Season 3. 50 prompts × 6 prefixes, {n} blind pairs,",
+            f"OLMo-3-32B, Season 3. 50 prompts × {len(arms)} prefixes, "
+            f"{n} blind pairs,",
             f"{rated} decided by {n_raters or ''}{' ' if n_raters else ''}"
             "independent rater contexts.",
-            "Both pro prefixes move behaviour; a length-matched RANDOM prefix does not.",
-            "Score 2 ranks all six arms correctly, Score 1 inverts its own top pair.",
+            "Pro prefixes move behaviour; a length-matched RANDOM prefix does not.",
+            "More score buys more behaviour on the pro side, but not on the anti side.",
         ]
     y = 0.930 if wide else 0.944
     step = 0.032 if wide else 0.027
@@ -323,10 +335,12 @@ def make(stem, figsize, fs, wide, ev, arms, d, base_loops):
         fig.text(0.085, y - i * step, ln, fontsize=fs - 1.0, color=INK2, va="top")
 
     fam = [Line2D([], [], marker="o", ls="", color=BLUE, label="GCG pro arm"),
+           Line2D([], [], marker="P", ls="", color=BLUE, label="GCG pro, final k=3 string"),
            Line2D([], [], marker="D", ls="", color=AQUA, label="hand-written pro prefix"),
            Line2D([], [], marker="X", ls="", color=MUTED, label="null control"),
-           Line2D([], [], marker="v", ls="", color=ORANGE, label="anti arm")]
-    fig.legend(handles=fam, loc="lower left", bbox_to_anchor=(0.085, 0.016), ncol=4,
+           Line2D([], [], marker="v", ls="", color=ORANGE, label="anti arm"),
+           Line2D([], [], marker="<", ls="", color=ORANGE, label="anti, final k=3 string")]
+    fig.legend(handles=fam, loc="lower left", bbox_to_anchor=(0.085, 0.016), ncol=6,
                frameon=False, fontsize=fs - 1.4, labelcolor=INK2, handletextpad=0.35,
                columnspacing=1.5)
     fig.text(0.975, 0.006,
@@ -359,8 +373,9 @@ def main():
         set_theme(True)
         make("prefix_eval_s3_dark", (10.0, 5.625), 8.0, True, ev, arms, d, base_loops)
         set_theme(False)
-    print(f"  Score 1 vs behaviour: rho {s1[0]:+.3f}, {s1[1]}/15 inversions")
-    print(f"  Score 2 vs behaviour: rho {s2[0]:+.3f}, {s2[1]}/15 inversions")
+    npairs = len(arms) * (len(arms) - 1) // 2
+    print(f"  Score 1 vs behaviour: rho {s1[0]:+.3f}, {s1[1]}/{npairs} inversions")
+    print(f"  Score 2 vs behaviour: rho {s2[0]:+.3f}, {s2[1]}/{npairs} inversions")
     print("  mechanism.png / mechanism_doc.png (Season 2) are untouched.")
 
 

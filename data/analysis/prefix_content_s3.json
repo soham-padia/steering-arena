@@ -57,6 +57,25 @@
       "hashtag": 0,
       "meta_narration": 1
     },
+    "score2_top_final": {
+      "n": 50,
+      "n_distinctive_prefix_words": 16,
+      "continuations_with_a_prefix_word": 3,
+      "verbatim_echo": 0,
+      "top_prefix_words": {
+        "brief": 2,
+        "picked": 1,
+        "texting": 1,
+        "beck": 1,
+        "simpl": 1,
+        "isbn": 1
+      },
+      "top5gram": "what is the sum of",
+      "top5gram_n_prompts": 6,
+      "emoji": 1,
+      "hashtag": 0,
+      "meta_narration": 0
+    },
     "pro_coherent": {
       "n": 50,
       "n_distinctive_prefix_words": 6,
@@ -111,13 +130,28 @@
       "top_prefix_words": {
         "invoke": 7,
         "fascist": 1,
-        "vatican": 1,
+        "rallies": 1,
         "inv": 1,
         "ict": 1,
-        "rallies": 1
+        "vatican": 1
       },
       "top5gram": "i was busy. i was",
       "top5gram_n_prompts": 9,
+      "emoji": 0,
+      "hashtag": 0,
+      "meta_narration": 0
+    },
+    "score2_anti_final": {
+      "n": 50,
+      "n_distinctive_prefix_words": 13,
+      "continuations_with_a_prefix_word": 2,
+      "verbatim_echo": 0,
+      "top_prefix_words": {
+        "headquarters": 1,
+        "atomic": 1
+      },
+      "top5gram": "i didn't want to be",
+      "top5gram_n_prompts": 13,
       "emoji": 0,
       "hashtag": 0,
       "meta_narration": 0

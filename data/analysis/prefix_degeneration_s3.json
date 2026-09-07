@@ -26,6 +26,14 @@
       "looping_n": 1,
       "max_4gram_repeats_mean": 1.18
     },
+    "score2_top_final": {
+      "n": 50,
+      "words_mean": 31.7,
+      "distinct4_mean": 0.959,
+      "distinct_words_mean": 0.814,
+      "looping_n": 4,
+      "max_4gram_repeats_mean": 1.26
+    },
     "pro_coherent": {
       "n": 50,
       "words_mean": 33.6,
@@ -57,6 +65,14 @@
       "distinct_words_mean": 0.518,
       "looping_n": 24,
       "max_4gram_repeats_mean": 2.6
+    },
+    "score2_anti_final": {
+      "n": 50,
+      "words_mean": 31.9,
+      "distinct4_mean": 0.831,
+      "distinct_words_mean": 0.618,
+      "looping_n": 18,
+      "max_4gram_repeats_mean": 2.14
     }
   }
 }

@@ -268,9 +268,15 @@ S3_RUNS = {
     "score2_top":  ("score2-mut3-2026-09-07T00-17-08Z", "score2"),
     "score1_anti": ("score1-anti-2026-09-06T20-20-17Z", "score1"),
     "score2_anti": ("score2-anti-2026-09-06T20-16-20Z", "score2"),
+    # The k=3 runs kept improving after the first eval was judged. These two arms take
+    # each run's FINAL best.json, alongside the earlier-frozen score2_top/score2_anti, so
+    # the pair answers a question a replacement would have destroyed: does more score buy
+    # more behaviour, and does a more negative score buy more degeneration?
+    "score2_top_final":  ("score2-mut3-2026-09-07T00-17-08Z", "score2"),
+    "score2_anti_final": ("score2-anti-mut3-2026-09-07T04-17-25Z", "score2"),
 }
-S3_ARM_NAMES = ("score1_top", "score2_top", "pro_coherent", "random32",
-                "score1_anti", "score2_anti")
+S3_ARM_NAMES = ("score1_top", "score2_top", "score2_top_final", "pro_coherent",
+                "random32", "score1_anti", "score2_anti", "score2_anti_final")
 S3_BANDS = {"score1": [19, 23, 27, 31], "score2": [15, 23, 31, 39]}
 # Season 2's winner, rescored under each Season 3 objective (LIVE units). Not an arm —
 # recorded so the arms file carries the scale its numbers should be read against.
@@ -354,6 +360,37 @@ def _s3_board_rows(season_id: int):
     return season, rows
 
 
+def _pick_coherent(tok, rows, season, args):
+    """The highest-scoring readable board entry, or an explicit --coherent-pro override."""
+    if args.coherent_pro:
+        match = next((r for r in rows if r["sequence_text"] == args.coherent_pro), None)
+        pick, coh = (match or {"sequence_text": args.coherent_pro, "score": None,
+                               "score_alt": None, "id": None, "token_count": None,
+                               "user_handle": None}), coherence(args.coherent_pro)
+    else:
+        cands = [(r, coherence(r["sequence_text"])) for r in rows]
+        coherent = [(r, c) for r, c in cands if c >= args.min_coherence]
+        if not coherent:
+            raise SystemExit(f"no submission in season {season['id']} reached coherence "
+                             f"{args.min_coherence}; pass --coherent-pro explicitly")
+        print(f"season {season['id']} {season['name']!r} · {len(rows)} submissions\n"
+              f"top readable candidates (coherence >= {args.min_coherence}):")
+        for r, c in coherent[:5]:
+            print(f"  score1 {r['score']:+.5f}  score2 {(r['score_alt'] or 0):+.5f}  "
+                  f"coh={c:.2f}  {r['sequence_text'][:76]!r}")
+        pick, coh = coherent[0]
+    return {
+        "sequence": pick["sequence_text"], "score": pick.get("score"),
+        "score_kind": "score1_live", "score_alt": pick.get("score_alt"),
+        "role": "score1", "aggregate": "banded_mean", "band": S3_BANDS["score1"],
+        "anti": False, "run": None, "iter": None, "roundtrip_ok": None,
+        "token_count": pick.get("token_count"), "submission_id": pick.get("id"),
+        "user_handle": pick.get("user_handle"), "coherence": round(coh, 3),
+        "fidelity": _fidelity(tok, pick["sequence_text"],
+                              tok(pick["sequence_text"], add_special_tokens=False)["input_ids"]),
+    }
+
+
 def cmd_select_gcg(args):
     if not TAG:
         raise SystemExit("select-gcg needs an explicit --tag (e.g. --tag s3): the "
@@ -365,8 +402,22 @@ def cmd_select_gcg(args):
     from transformers import AutoTokenizer
     tok = AutoTokenizer.from_pretrained(settings.model_id)
 
-    arms, notes = {}, []
+    # FROZEN MEANS FROZEN. A run's best.json keeps improving while the job runs, so
+    # re-selecting would silently move an arm that has already been generated from and
+    # judged -- which is how a published result quietly stops matching its own arms file.
+    # Any arm already in the file is preserved byte-exact unless named in --refresh.
+    prior = json.loads(ARMS_FILE.read_text())["arms"] if ARMS_FILE.exists() else {}
+    refresh = set(a for a in (args.refresh or "").split(",") if a)
+    unknown = refresh - set(S3_ARM_NAMES)
+    if unknown:
+        raise SystemExit(f"--refresh names arms that do not exist: {sorted(unknown)}")
+
+    arms, notes, kept = {}, [], []
     for name, (run, role) in S3_RUNS.items():
+        if name in prior and name not in refresh:
+            arms[name] = prior[name]
+            kept.append(name)
+            continue
         best = json.loads((GCG_ROOT / run / "best.json").read_text())
         # `prompt` is decode(ctrl_token_ids), so the string's own encoding is the
         # RE-tokenised sequence — which is also the one `board_score` reports.
@@ -389,46 +440,32 @@ def cmd_select_gcg(args):
                          "this arm as corrupted, not merely non-round-tripping")
 
     n_ctrl = arms["score1_top"]["fidelity"]["n_expected"]
-    text, ids, tries = _random_prefix(tok, n_ctrl)
-    arms["random32"] = {
-        "sequence": text, "score": None, "score_kind": "unscored_pending_gpu",
-        "role": None, "aggregate": None, "band": None, "anti": False,
-        "run": None, "iter": None, "roundtrip_ok": True, "token_count": n_ctrl,
-        "submission_id": None, "user_handle": None,
-        "coherence": round(coherence(text), 3),
-        "control": {"kind": "length_matched_random_tokens", "n_tokens": n_ctrl,
-                    "seed": 20260906, "draws": tries, "token_ids": ids},
-        "fidelity": _fidelity(tok, text, ids),
-    }
-
-    season, rows = _s3_board_rows(args.season_id)
-    if args.coherent_pro:
-        match = next((r for r in rows if r["sequence_text"] == args.coherent_pro), None)
-        pick, coh = (match or {"sequence_text": args.coherent_pro, "score": None,
-                               "score_alt": None, "id": None, "token_count": None,
-                               "user_handle": None}), coherence(args.coherent_pro)
+    if "random32" in prior and "random32" not in refresh:
+        arms["random32"] = prior["random32"]
+        kept.append("random32")
     else:
-        cands = [(r, coherence(r["sequence_text"])) for r in rows]
-        coherent = [(r, c) for r, c in cands if c >= args.min_coherence]
-        if not coherent:
-            raise SystemExit(f"no submission in season {season['id']} reached coherence "
-                             f"{args.min_coherence}; pass --coherent-pro explicitly")
-        print(f"season {season['id']} {season['name']!r} · {len(rows)} submissions\n"
-              f"top readable candidates (coherence ≥ {args.min_coherence}):")
-        for r, c in coherent[:5]:
-            print(f"  score1 {r['score']:+.5f}  score2 {(r['score_alt'] or 0):+.5f}  "
-                  f"coh={c:.2f}  {r['sequence_text'][:76]!r}")
-        pick, coh = coherent[0]
-    arms["pro_coherent"] = {
-        "sequence": pick["sequence_text"], "score": pick.get("score"),
-        "score_kind": "score1_live", "score_alt": pick.get("score_alt"),
-        "role": "score1", "aggregate": "banded_mean", "band": S3_BANDS["score1"],
-        "anti": False, "run": None, "iter": None, "roundtrip_ok": None,
-        "token_count": pick.get("token_count"), "submission_id": pick.get("id"),
-        "user_handle": pick.get("user_handle"), "coherence": round(coh, 3),
-        "fidelity": _fidelity(tok, pick["sequence_text"],
-                              tok(pick["sequence_text"], add_special_tokens=False)["input_ids"]),
-    }
+        text, ids, tries = _random_prefix(tok, n_ctrl)
+        arms["random32"] = {
+            "sequence": text, "score": None, "score_kind": "unscored_pending_gpu",
+            "role": None, "aggregate": None, "band": None, "anti": False,
+            "run": None, "iter": None, "roundtrip_ok": True, "token_count": n_ctrl,
+            "submission_id": None, "user_handle": None,
+            "coherence": round(coherence(text), 3),
+            "control": {"kind": "length_matched_random_tokens", "n_tokens": n_ctrl,
+                        "seed": 20260906, "draws": tries, "token_ids": ids},
+            "fidelity": _fidelity(tok, text, ids),
+        }
+
+    if "pro_coherent" in prior and "pro_coherent" not in refresh:
+        # Preserved for the same reason as the searched arms, and with an extra one: the
+        # board is live, so a fresh query can return a different top-coherent row and move
+        # this arm without anyone asking for it.
+        arms["pro_coherent"] = prior["pro_coherent"]
+        kept.append("pro_coherent")
+        season, rows = {"id": args.season_id, "name": "Season 3"}, []
+    else:
+        season, rows = _s3_board_rows(args.season_id)
+        arms["pro_coherent"] = _pick_coherent(tok, rows, season, args)
 
     out = {"tag": TAG, "season_id": season["id"], "season_name": season["name"],
            "model_id": settings.model_id, "layer": None, "bands": S3_BANDS,
@@ -444,6 +481,8 @@ def cmd_select_gcg(args):
               f"nl={a['fidelity']['newlines']}  {a['sequence'][:56]!r}")
     for note in notes:
         print(f"  ! {note}")
+    if kept:
+        print(f"  preserved byte-exact from the existing arms file: {', '.join(sorted(kept))}")
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     ARMS_FILE.write_text(json.dumps(out, indent=2, ensure_ascii=False))
     print(f"\nfrozen → {ARMS_FILE}\nnext: score the arms "
@@ -648,6 +687,20 @@ def cmd_blind(args):
     rng = np.random.default_rng(20260824)
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     seen_prompts = _seen_prompts()
+
+    # STABLE PAIR IDS. A pair id is the join key for every verdict already collected, so
+    # renumbering on a rebuild orphans them all. Adding an arm must therefore EXTEND the
+    # existing key: every (prompt, arm) already in it keeps its id AND its A/B
+    # orientation, and new pairs are appended after the highest id. Re-drawing the
+    # orientation would silently invalidate the verdicts too, since a verdict is a letter.
+    old_key = json.loads(BLIND_KEY.read_text()) if BLIND_KEY.exists() else {}
+    prior_pid = {(v["prompt"], v["arm"]): int(k) for k, v in old_key.items()}
+    prior_side = {(v["prompt"], v["arm"]): v["prefixed_is"] for k, v in old_key.items()}
+    next_pid = max(prior_pid.values(), default=0)
+    if prior_pid:
+        print(f"extending {BLIND_KEY.name}: {len(prior_pid)} existing pair id(s) kept with "
+              "their orientation; new pairs appended")
+
     rows, key = [], {}
     pid = 0
     dropped = leaks = seen = 0
@@ -663,8 +716,14 @@ def cmd_blind(args):
             if rec["strip"] == "raw" or not rec["continuation"]:
                 dropped += 1  # prefix could not be stripped → would unblind the rater
                 continue
-            pid += 1
-            prefixed_is_a = bool(rng.integers(2))
+            reused = (prompt, arm) in prior_pid
+            if reused:
+                pid = prior_pid[(prompt, arm)]
+                prefixed_is_a = prior_side[(prompt, arm)] == "A"
+            else:
+                next_pid += 1
+                pid = next_pid
+                prefixed_is_a = bool(rng.integers(2))
             a, b = ((rec, base) if prefixed_is_a else (base, rec))
             rows.append({"pair_id": pid, "prompt": prompt,
                          "text_A": a["continuation"].replace("\n", " "),
@@ -676,6 +735,7 @@ def cmd_blind(args):
                              "prefixed_is": "A" if prefixed_is_a else "B",
                              "strip": rec["strip"], "leak": bool(leak),
                              "seen": prompt in seen_prompts}
+    rows.sort(key=lambda r: r["pair_id"])
     with open(BLIND_CSV, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["pair_id", "prompt", "text_A", "text_B", "rating"])
         w.writeheader()
@@ -1274,6 +1334,24 @@ def cmd_claude_batches(args):
         rows = list(csv.DictReader(f))
     (CLAUDE_DIR / "in").mkdir(parents=True, exist_ok=True)
     (CLAUDE_DIR / "out").mkdir(parents=True, exist_ok=True)
+
+    if args.only_unjudged:
+        # Pair ids are stable across a rebuild (see `blind`), so verdicts already in
+        # out/ stay valid and only genuinely new pairs need a rater. A pair counts as
+        # judged only when BOTH orientations exist; one alone is dropped by `claude-merge`.
+        have = {"fwd": set(), "rev": set()}
+        for fp in (CLAUDE_DIR / "out").glob("batch_*.json"):
+            o = "fwd" if "_fwd_" in fp.name else "rev"
+            data = json.loads(fp.read_text())
+            have[o].update(str(k) for k in (data.get("verdicts") or data))
+        done = have["fwd"] & have["rev"]
+        before = len(rows)
+        rows = [r for r in rows if str(r["pair_id"]) not in done]
+        print(f"{len(done)} pair(s) already judged in both orientations; "
+              f"emitting {len(rows)} of {before}")
+        if not rows:
+            print("nothing to judge")
+            return
     written = []
     for orient in ("fwd", "rev"):
         chunks = [rows[i:i + args.batch_size] for i in range(0, len(rows), args.batch_size)]
@@ -1282,7 +1360,11 @@ def cmd_claude_batches(args):
                       "continuation_A": r["text_A"] if orient == "fwd" else r["text_B"],
                       "continuation_B": r["text_B"] if orient == "fwd" else r["text_A"]}
                      for r in chunk]
-            fp = CLAUDE_DIR / "in" / f"batch_{orient}_{bi:02d}.json"
+            # Name by PAIR RANGE, not by sequence number. A second round emits its own
+            # batch_01, and a rater writing out/batch_fwd_01.json would then overwrite the
+            # first round's verdicts for a completely different set of pairs.
+            lo, hi = chunk[0]["pair_id"], chunk[-1]["pair_id"]
+            fp = CLAUDE_DIR / "in" / f"batch_{orient}_p{lo}-{hi}.json"
             fp.write_text(json.dumps({"orientation": orient, "rubric_version": JUDGE_VERSION,
                                       "pairs": pairs}, indent=2, ensure_ascii=False))
             written.append(fp)
@@ -1361,6 +1443,8 @@ def main():
     sg.add_argument("--season-id", type=int, default=5, help="DB id (Season 3 is 5)")
     sg.add_argument("--min-coherence", type=float, default=0.8)
     sg.add_argument("--coherent-pro", default="")
+    sg.add_argument("--refresh", default="", help="comma list of arms to re-read from "
+                    "their run dir; every other existing arm is preserved byte-exact")
     sg.add_argument("--force", action="store_true", help="overwrite a frozen arms file")
     g = sub.add_parser("generate")
     g.add_argument("--max-new", type=int, default=40)
@@ -1377,6 +1461,8 @@ def main():
                    help="enable v4 thinking (reasoning_effort=low, 1024 max_tokens)")
     cb = sub.add_parser("claude-batches", help="emit blinded batches for subagent judging")
     cb.add_argument("--batch-size", type=int, default=25)
+    cb.add_argument("--only-unjudged", action="store_true",
+                    help="skip pairs that already have verdicts in both orientations")
     cm = sub.add_parser("claude-merge", help="merge subagent verdicts into a rater file")
     cm.add_argument("--label", default="claude-opus-5")
     sub.add_parser("degeneration", help="mechanical loop measures, no judge needed")

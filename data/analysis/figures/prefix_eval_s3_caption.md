@@ -1,33 +1,38 @@
-# Caption for `prefix_eval_s3_doc.png`
+# Captions for the Part A′ figure
 
-Insert the PNG at 100%. It is built at exactly 6.5in, the usable width of a Letter
-page with 1in margins, so every label renders at the size it was set. Then paste one
-of the captions below as normal 10pt document text.
+Three variants, one layout function (`scripts/plot_prefix_eval_s3.py`):
 
-Use `prefix_eval_s3.png` (11in) for a slide instead — same panels, larger marks and a
-two-line header. Do not scale the 6.5in version up to fill a slide; regenerate.
+| file | size | use |
+|---|---|---|
+| `prefix_eval_s3_doc.png` | 6.5in | a Letter page at 1in margins — insert at 100%, labels render at the size they were set |
+| `prefix_eval_s3.png` | 11in | a slide on a light background |
+| `prefix_eval_s3_dark.png` | 10 × 5.625in | full-bleed on a 16:9 slide with a black master (`--dark`) |
 
-Keep the caption OUT of the image, for the same reason as `mechanism_caption.md`: at
-page width, baked-in text lands around 5pt, and a real caption is selectable,
-searchable, and editable without regenerating the figure.
+Do not scale one up to fill another's role; regenerate. The dark variant is a *selected*
+palette re-validated against `#000000`, not an inversion — orange moves from `#eb6834` to
+`#e66633` because the original sits one thousandth over the dark lightness ceiling.
+
+Keep the caption OUT of the image, for the same reason as `mechanism_caption.md`: at page
+width, baked-in text lands around 5pt, and a real caption is selectable, searchable and
+editable without regenerating the figure.
 
 ---
 
-## Use this one (74 words)
+## Use this one (78 words)
 
-> **Season 3's six prefixes, scored by the two banded metrics (A1, A2) against the
-> blind behavioural shift they produce.** Points are joined in score order, so a
-> metric that ranks behaviour correctly draws a rising line: Score 2 has no
-> inversions, Score 1 inverts its own top pair. A length-matched random prefix sits at
-> the origin on both. B removes pairs where either continuation loops — `score2_anti`
-> walks to 0.500. C shows the cost: the prefixes inject their own vocabulary
-> downstream.
+> **Season 3's eight prefixes, scored by the two banded metrics (A1, A2) against the blind
+> behavioural shift they produce.** Points are joined in score order, so a metric that
+> ranks behaviour draws a rising line. Score 2 inverts two of 28 pairs and Score 1 four,
+> including its own top pair. A length-matched random prefix sits at the origin on both.
+> The two `FINAL` arms are the last strings their runs reached: on the pro side more score
+> buys more behaviour, on the anti side it does not. B removes pairs where either
+> continuation loops; C shows what the prefix puts back into the text.
 
-## If space is tight (41 words)
+## If space is tight (43 words)
 
-> **The six prefixes, by banded score (x) against blind behavioural shift (y), joined
-> in score order.** Score 2 ranks all six correctly; Score 1 inverts its top pair. A
-> random prefix does nothing. B: the loop control erases `score2_anti`.
+> **Eight prefixes, by banded score (x) against blind behavioural shift (y), joined in
+> score order.** Score 2 ranks behaviour better than Score 1 (2 versus 4 inverted pairs of
+> 28). A random prefix does nothing. More score buys more behaviour on the pro side only.
 
 ---
 
@@ -35,26 +40,36 @@ searchable, and editable without regenerating the figure.
 
 Add after either caption:
 
-> ρ is six points, four of them optimised against these metrics, so it measures
+> ρ is eight points, six of them optimised against these very metrics, so it measures
 > ordering among these arms and not the metric's validity in general.
 
-That caveat is the one a reviewer will reach for first and it is **not** written
-inside the figure. Everything else — what the arrow in B means, what the hatch in C
-means, the base loop rate — is labelled in the panels. Do not repeat those.
+That caveat is the one a reviewer reaches for first and it is **not** written inside the
+figure. Everything else — what the arrow in B means, what the hatch in C means, the base
+loop rate — is labelled in the panels. Do not repeat those.
 
 ---
 
 ## Why panel A is split in two rather than overlaid
 
-Both objectives are cosine shifts in the same LIVE units, so one shared x-axis would
-be legitimate arithmetic. It was still wrong to draw: each arm would appear twice, and
-the twelve points plus twelve labels collide in the region that carries the whole
-result — the top pair, where the two metrics disagree. Two panels sharing a y-axis
-cost one axis of ink and make the disagreement the thing you see first.
+Both objectives are cosine shifts in the same LIVE units, so one shared x-axis would be
+legitimate arithmetic. It was still wrong to draw: each arm would appear twice, and sixteen
+points plus sixteen labels collide in the region that carries the result. Two panels
+sharing a y-axis cost one axis of ink and make the disagreement the thing you see first.
 
-## Why the two anti arms are annotated rather than separated
+## Why `score2_anti` and `score1_anti` are annotated rather than separated
 
-On Score 2 they differ by 2.3e-4, far inside the run's own noise, so the marks
-genuinely coincide and no jitter would be honest. The dotted callout names the
-coincidence and what follows from it, which is the finding: a Score-2 anti board is
-topped just as well by a Score-1 anti search.
+On Score 2 they differ by 2.3e-4, far inside the run's own noise, so the marks genuinely
+coincide and jitter would be a lie. The dotted callout names the coincidence and what
+follows from it: a Score-2 anti board is topped just as well by a Score-1 anti search.
+`score2_anti_final` at −0.163 is clear of both and needs no such treatment.
+
+## Why hue never means two things
+
+Hue is the arm family in every panel — blue for a GCG pro arm, aqua for the hand-written
+prefix, grey for the null control, orange for an anti arm. The two *objectives* in row A
+and the two *measures* in panel C are separated by line style, marker fill and hatch
+instead, which keeps the categorical set at three chromatic slots. Marker shape is a second
+independent identity channel, which is what lets each family carry three arms without a
+fourth hue: `o`/`s`/`P` for pro, `v`/`^`/`<` for anti. Aqua sits at contrast 2.74 on the
+light surface, under 3:1, so the relief rule applies and every family also carries a direct
+label — identity is never colour alone.

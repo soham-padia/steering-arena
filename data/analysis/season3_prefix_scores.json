@@ -43,6 +43,16 @@
       "gap": 3.1307339668273926e-05,
       "ok": true
     },
+    "score2_top_final": {
+      "n_tokens": 33,
+      "newlines": 6,
+      "score1_live": 0.08349662211185205,
+      "score2_live": 0.06997444470471237,
+      "role": "score2",
+      "recorded": 0.0696934274310479,
+      "gap": 0.0002810172736644745,
+      "ok": true
+    },
     "pro_coherent": {
       "n_tokens": 17,
       "newlines": 0,
@@ -78,6 +88,16 @@
       "role": "score2",
       "recorded": -0.1262826995080104,
       "gap": 0.00032898783683776855,
+      "ok": true
+    },
+    "score2_anti_final": {
+      "n_tokens": 33,
+      "newlines": 0,
+      "score1_live": -0.12016952100748313,
+      "score2_live": -0.16288099448138382,
+      "role": "score2",
+      "recorded": -0.16335956017428543,
+      "gap": 0.00047856569290161133,
       "ok": true
     }
   }
