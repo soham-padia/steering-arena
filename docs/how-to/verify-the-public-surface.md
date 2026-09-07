@@ -104,15 +104,35 @@ printf '%-22s %s\n' "/admin/hide (POST)" \
 /admin.css             404
 /admin/config          404
 /admin/generations     404
-/admin/hide (POST)     404
+/admin/hide (POST)     405
 ```
 
-**Expect 404, not 401.** A `401` means the route exists and is refusing you, which is
-safe but is not what this deployment is meant to look like: `ADMIN_API` is unset in
-production, so those routes are never registered. A `401` therefore means `ADMIN_API`
-got set on the Space — the authorization still holds, but the surface is larger than
-intended. A `200` on `/admin.html` means a copy of the admin page has reappeared inside
-`web/`, which `app/main.py` mounts as a world-readable catch-all.
+**The POST answers 405, and that is correct.** The static mount at `/` catches every
+unmatched POST, so `POST /anything-that-does-not-exist` also answers 405. Check the
+equivalence rather than the number:
+
+```bash
+curl -s -o /dev/null -w 'control POST -> %{http_code}\n' \
+  -X POST "$BASE/definitely-not-a-route" \
+  -H 'content-type: application/json' -d '{}'
+```
+
+```
+control POST -> 405
+```
+
+Equal codes mean the response says nothing about whether an endpoint is behind that
+path, which is the property that matters.
+
+**Expect 404, not 401, on the GETs.** These routes do not exist: the admin view and the
+`/admin/*` endpoints were deleted on 2026-09-07, along with the `ADMIN_API` flag that
+used to make them conditional. The flag was the weak part — one variable in the Space's
+settings would have republished the whole surface.
+
+A `401` is therefore *worse* than it looks: it means a route has been added back and is
+merely refusing you. A `200` on `/admin.html` means a copy of the page has reappeared
+inside `web/`, which `app/main.py` mounts as a world-readable catch-all — no route
+required. Either way, something was reintroduced.
 
 `/admin/config` returning 404 is also load-bearing: it moved to `/auth/config` and was
 deliberately not aliased, so a 200 there means an old build is deployed.
@@ -134,10 +154,11 @@ server reads with the service key, which bypasses RLS.
 **An anonymous insert returns 201.** Same query, looking at `cmd = 'INSERT'`. Until it
 is fixed, the public feed can be written to by anyone.
 
-**An admin path returns 200 or 401.** Check `ADMIN_API` in the Space's variables, and
-run `python -m pytest tests/test_admin_surface.py` in a checkout — one of its tests
-looks for admin files inside `web/` specifically because the static mount makes them
-reachable with no route.
+**An admin path returns 200 or 401.** Something was added back. Run
+`python -m pytest tests/test_admin_surface.py` in a checkout: it asserts absence
+unconditionally, checks the app's own route table for any `/admin` path, looks for
+admin front-end files anywhere in the tree, and confirms `require_admin`,
+`admin_emails`, `ADMIN_API` and `ADMIN_EMAILS` are all still gone.
 
 ## What this buys you
 
@@ -150,7 +171,7 @@ question honestly instead of reasoning from the code.
 ## Cross-links
 
 `app/main.py` (the `/auth/config` docstring records the same probes and their results) ·
-`tools/admin/README.md` (why the admin view sits outside `web/`) ·
+`scripts/moderate_generation.py` (hiding a row now that `/admin/hide` is gone) ·
 `tests/test_admin_surface.py` (the same boundary, pinned in CI) ·
 `db/migrations/0001_init.sql` and `db/migrations/0005_generations.sql` (where RLS is
 enabled) · `docs/how-to/open-a-new-season.md` (the other procedure whose ordering is

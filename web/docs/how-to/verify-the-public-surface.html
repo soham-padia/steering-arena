@@ -133,13 +133,24 @@ printf '%-22s %s\n' "/admin/hide (POST)" \
 /admin.css             404
 /admin/config          404
 /admin/generations     404
-/admin/hide (POST)     404
-</code></pre></figure><p><strong>Expect 404, not 401.</strong> A <code>401</code> means the route exists and is refusing you, which is
-safe but is not what this deployment is meant to look like: <code>ADMIN_API</code> is unset in
-production, so those routes are never registered. A <code>401</code> therefore means <code>ADMIN_API</code>
-got set on the Space — the authorization still holds, but the surface is larger than
-intended. A <code>200</code> on <code>/admin.html</code> means a copy of the admin page has reappeared inside
-<code>web/</code>, which <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/app/main.py" target="_blank" rel="noopener"><code>app/main.py</code></a> mounts as a world-readable catch-all.</p>
+/admin/hide (POST)     405
+</code></pre></figure><p><strong>The POST answers 405, and that is correct.</strong> The static mount at <code>/</code> catches every
+unmatched POST, so <code>POST /anything-that-does-not-exist</code> also answers 405. Check the
+equivalence rather than the number:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">curl -s -o /dev/null -w 'control POST -&gt; %{http_code}\n' \
+  -X POST "$BASE/definitely-not-a-route" \
+  -H 'content-type: application/json' -d '{}'
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>control POST -&gt; 405
+</code></pre></figure><p>Equal codes mean the response says nothing about whether an endpoint is behind that
+path, which is the property that matters.</p>
+<p><strong>Expect 404, not 401, on the GETs.</strong> These routes do not exist: the admin view and the
+<code>/admin/*</code> endpoints were deleted on 2026-09-07, along with the <code>ADMIN_API</code> flag that
+used to make them conditional. The flag was the weak part — one variable in the Space's
+settings would have republished the whole surface.</p>
+<p>A <code>401</code> is therefore <em>worse</em> than it looks: it means a route has been added back and is
+merely refusing you. A <code>200</code> on <code>/admin.html</code> means a copy of the page has reappeared
+inside <code>web/</code>, which <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/app/main.py" target="_blank" rel="noopener"><code>app/main.py</code></a> mounts as a world-readable catch-all — no route
+required. Either way, something was reintroduced.</p>
 <p><code>/admin/config</code> returning 404 is also load-bearing: it moved to <code>/auth/config</code> and was
 deliberately not aliased, so a 200 there means an old build is deployed.</p>
 <h2 id="5-if-a-probe-fails">5. If a probe fails</h2>
@@ -152,10 +163,11 @@ with no policies at all, which denies everything. The board still works because 
 server reads with the service key, which bypasses RLS.</p>
 <p><strong>An anonymous insert returns 201.</strong> Same query, looking at <code>cmd = 'INSERT'</code>. Until it
 is fixed, the public feed can be written to by anyone.</p>
-<p><strong>An admin path returns 200 or 401.</strong> Check <code>ADMIN_API</code> in the Space's variables, and
-run <code>python -m pytest tests/test_admin_surface.py</code> in a checkout — one of its tests
-looks for admin files inside <code>web/</code> specifically because the static mount makes them
-reachable with no route.</p>
+<p><strong>An admin path returns 200 or 401.</strong> Something was added back. Run
+<code>python -m pytest tests/test_admin_surface.py</code> in a checkout: it asserts absence
+unconditionally, checks the app's own route table for any <code>/admin</code> path, looks for
+admin front-end files anywhere in the tree, and confirms <code>require_admin</code>,
+<code>admin_emails</code>, <code>ADMIN_API</code> and <code>ADMIN_EMAILS</code> are all still gone.</p>
 <h2 id="what-this-buys-you">What this buys you</h2>
 <p>Four commands, no credentials, and no repo, that together distinguish &quot;the published
 key is public by design&quot; from &quot;the published key reads the database&quot;. Those two look
@@ -164,7 +176,7 @@ response body separates them. Running these after a deploy is what lets you answ
 question honestly instead of reasoning from the code.</p>
 <h2 id="cross-links">Cross-links</h2>
 <p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/app/main.py" target="_blank" rel="noopener"><code>app/main.py</code></a> (the <code>/auth/config</code> docstring records the same probes and their results) ·
-<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/tools/admin/README.md" target="_blank" rel="noopener"><code>tools/admin/README.md</code></a> (why the admin view sits outside <code>web/</code>) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/moderate_generation.py" target="_blank" rel="noopener"><code>scripts/moderate_generation.py</code></a> (hiding a row now that <code>/admin/hide</code> is gone) ·
 <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/tests/test_admin_surface.py" target="_blank" rel="noopener"><code>tests/test_admin_surface.py</code></a> (the same boundary, pinned in CI) ·
 <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/db/migrations/0001_init.sql" target="_blank" rel="noopener"><code>db/migrations/0001_init.sql</code></a> and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/db/migrations/0005_generations.sql" target="_blank" rel="noopener"><code>db/migrations/0005_generations.sql</code></a> (where RLS is
 enabled) · <a class="xref" href="/docs/how-to/open-a-new-season.html"><code>docs/how-to/open-a-new-season.md</code></a> (the other procedure whose ordering is

@@ -1,5 +1,10 @@
-"""Admin log view — authorization only. The page shows text strangers typed into the
-public demo, so every one of these is about refusing to show it."""
+"""Sign-in verification for the public demo, and what may leave the server.
+
+These used to be the admin log's authorization tests. The admin endpoints were removed
+on 2026-09-07, so the allowlist tests went with them — but the FAIL-CLOSED tests did
+not: they exercised verify_token through require_admin, and verify_token still guards
+/generate. They now call it directly, which is what they were really testing.
+"""
 
 from types import SimpleNamespace
 
@@ -11,7 +16,7 @@ from app import userauth as adminauth
 def settings(**over):
     """Stub with the same browser_key() indirection as app.config.Settings, so these
     tests exercise the real lookup (publishable key preferred, anon accepted)."""
-    base = dict(admin_emails="Boss@Example.com", supabase_url="https://p.supabase.co",
+    base = dict(supabase_url="https://p.supabase.co",
                 supabase_publishable_key="", supabase_anon_key="anon-key")
     base.update(over)
     ns = SimpleNamespace(**base)
@@ -33,21 +38,11 @@ def patch_user(monkeypatch, status, payload=None):
     monkeypatch.setattr(httpx, "get", lambda *a, **k: FakeResponse(status, payload))
 
 
-def test_emails_are_parsed_case_insensitively():
-    assert adminauth.admin_emails(settings(admin_emails=" A@x.com , B@Y.com ")) == {"a@x.com", "b@y.com"}
-
-
 # ── fail closed ──────────────────────────────────────────────
-
-def test_no_allowlist_denies_everyone(monkeypatch):
-    patch_user(monkeypatch, 200, {"id": "u", "email": "boss@example.com"})
-    with pytest.raises(adminauth.AuthError):
-        adminauth.require_admin("tok", settings(admin_emails=""))
-
 
 def test_missing_token_denied():
     with pytest.raises(adminauth.AuthError):
-        adminauth.require_admin("", settings())
+        adminauth.verify_token("", settings())
 
 
 def test_any_verified_account_may_generate(monkeypatch):
@@ -71,8 +66,9 @@ def test_user_hash_is_stable_and_not_the_id():
 
 
 def test_unconfigured_supabase_denied():
+    """No browser key means nothing to verify against, so refuse rather than admit."""
     with pytest.raises(adminauth.AuthError):
-        adminauth.require_admin("tok", settings(supabase_anon_key="", supabase_publishable_key=""))
+        adminauth.verify_token("tok", settings(supabase_anon_key="", supabase_publishable_key=""))
 
 
 def test_supabase_unreachable_denies_rather_than_admits(monkeypatch):
@@ -83,37 +79,16 @@ def test_supabase_unreachable_denies_rather_than_admits(monkeypatch):
 
     monkeypatch.setattr(httpx, "get", boom)
     with pytest.raises(adminauth.AuthError):
-        adminauth.require_admin("tok", settings())
+        adminauth.verify_token("tok", settings())
 
 
 def test_rejected_token_denied(monkeypatch):
     patch_user(monkeypatch, 401, {})
     with pytest.raises(adminauth.AuthError):
-        adminauth.require_admin("expired", settings())
-
-
-def test_valid_token_outside_the_allowlist_denied(monkeypatch):
-    """A real Supabase account is not authorization — anyone can make one."""
-    patch_user(monkeypatch, 200, {"id": "u", "email": "stranger@elsewhere.com"})
-    with pytest.raises(adminauth.AuthError):
-        adminauth.require_admin("tok", settings())
-
-
-# ── the one accept path ──────────────────────────────────────
-
-def test_allowlisted_email_accepted_case_insensitively(monkeypatch):
-    patch_user(monkeypatch, 200, {"id": "u", "email": "BOSS@example.com"})
-    assert adminauth.require_admin("tok", settings()) == "boss@example.com"
+        adminauth.verify_token("expired", settings())
 
 
 # ── what may leave the server ────────────────────────────────
-
-def test_admin_response_fields_exclude_identifiers():
-    from app.main import ADMIN_FIELDS
-    assert "ip_hash" not in ADMIN_FIELDS and "prompt_hash" not in ADMIN_FIELDS
-    assert "user_hash" not in ADMIN_FIELDS
-    assert {"prompt", "continuation", "arm", "research_consent"} <= set(ADMIN_FIELDS)
-
 
 def test_public_feed_shows_a_handle_but_never_an_account():
     """The feed is world-readable. A player-chosen handle is meant to be there; anything

@@ -123,20 +123,11 @@ class Settings(BaseSettings):
     def browser_key(self) -> str:
         return self.supabase_publishable_key or self.supabase_anon_key
 
-    # Registers the admin surface at all: /admin.html, /admin.css,
-    # /admin/generations, /admin/hide. Off by default and NOT set on the deployed
-    # Space, so those four paths 404 in production. Turn it on locally with
-    #   ADMIN_API=true ADMIN_EMAILS=you@example.com uvicorn app.main:app
-    #
-    # This is separate from admin_emails on purpose. admin_emails decides WHO may
-    # read the log once the routes exist; admin_api decides whether they exist.
-    # Authorization does not depend on this flag — require_admin still verifies the
-    # session against Supabase and checks the allowlist — so leaving it on is not a
-    # hole. Off is simply a smaller surface. See tools/admin/README.md.
-    admin_api: bool = False
-    # Comma-separated emails allowed to read the demo log at /admin.html when
-    # admin_api is on. Empty = the admin view is off entirely (fail closed).
-    admin_emails: str = ""
+    # ADMIN_EMAILS and ADMIN_API were here. Both went with the admin endpoints on
+    # 2026-09-07 — there is no longer anything for an allowlist to gate. If either
+    # is still set in a .env or in the Space's variables it is now inert; delete it
+    # rather than leaving a setting that reads as if it still controls access.
+    # Moderation is `scripts/moderate_generation.py`, which needs the service key.
     ip_hash_salt: str = ""
 
     # ── CAPTCHA (Cloudflare Turnstile) — optional; active only when secret is set ──

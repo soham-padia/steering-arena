@@ -1,20 +1,21 @@
-"""The public deployment must expose no admin surface at all.
+"""There is no admin surface — not a disabled one, not a flagged one, none.
 
-`app/main.py` mounts `web/` as a catch-all at "/", so any file in `web/` is
-world-reachable by construction, and any route registered before that mount wins
-over it. Both facts are load-bearing here.
+The web admin view and the `/admin/*` endpoints were removed on 2026-09-07. An
+earlier version of this file tested that they were absent *unless* `ADMIN_API` was
+set. That flag is gone too, because it was the weak part: a checkbox in the Space's
+environment variables would have republished the whole surface, and nothing in the
+deployment would have complained.
 
-These tests pin the boundary in three independent ways, because each one alone
-can be undone by an ordinary mistake:
+So these tests assert absence unconditionally. They also check the two things that
+made the surface easy to republish by accident:
 
-  1. the four admin paths 404 when ADMIN_API is off (the behaviour that matters);
-  2. no admin file sits inside `web/` (so the 404 does not depend on route order);
-  3. /auth/config carries the publishable key and never a secret one.
+  1. `app/main.py` mounts `web/` as a catch-all at "/", so a file dropped in that
+     directory is world-reachable with no route and no error;
+  2. the code that existed only to gate the admin routes is gone, so it cannot be
+     wired back up to a new route by half-remembering that it was safe.
 
-Nothing here tests authorization — tests/test_admin_surface.py is about whether
-the routes EXIST. tests/test_auth.py covers who may use them once they do, and
-that is unaffected by the flag: require_admin still verifies the session against
-Supabase and checks the allowlist.
+`tests/test_auth.py` still covers `verify_token`, which `/generate` uses. Removing
+the allowlist did not remove sign-in.
 """
 
 from pathlib import Path
@@ -25,107 +26,129 @@ from fastapi.testclient import TestClient
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 
-ADMIN_PATHS = ["/admin.html", "/admin.css", "/admin/generations", "/admin/config"]
+GONE_PATHS = ["/admin.html", "/admin.css", "/admin/config",
+              "/admin/generations", "/admin/hide"]
 
 
 @pytest.fixture
 def client():
-    """A client for the app as this environment configures it.
-
-    Note what this fixture does NOT do: it cannot turn ADMIN_API off. The routes
-    are registered at import time from `settings.admin_api`, and `app.main` is
-    already imported by the time a test runs, so monkeypatching the environment
-    here would change nothing and only look like it worked. Instead the tests skip
-    when the flag is on, and say so.
-    """
     import app.main as main
-    if main.settings.admin_api:
-        pytest.skip("ADMIN_API is enabled in this environment (.env or shell); the "
-                    "route tests describe the deployed configuration, where it is unset")
     return TestClient(main.app)
 
 
-# ── 1. the paths are absent ──────────────────────────────────
+# ── 1. nothing answers on an admin path ──────────────────────
 
-@pytest.mark.parametrize("path", ADMIN_PATHS)
-def test_admin_paths_are_absent_by_default(client, path):
-    """404, not 401. A 401 would confirm the endpoint exists."""
-    assert client.get(path).status_code == 404, (
-        f"{path} is reachable on a default-configured server"
-    )
+@pytest.mark.parametrize("path", GONE_PATHS)
+def test_no_admin_path_answers(client, path):
+    """404 for a GET. Never 200, and never 401 — a 401 confirms a route is there."""
+    assert client.get(path).status_code == 404, f"{path} is reachable"
 
 
-def test_admin_hide_is_indistinguishable_from_a_path_that_never_existed(client):
-    """POST /admin/hide must not answer differently from POST /anything-else.
+def test_admin_hide_post_is_indistinguishable_from_a_path_that_never_existed(client):
+    """The removed endpoint was a POST, so a GET alone does not prove it is gone.
 
-    It returns 405, not 404, and that is fine: the static mount at "/" catches every
-    unmatched POST, so `POST /nonsense` returns 405 too. Asserting the two are equal
-    is a stronger claim than asserting a particular number — it says the response
-    carries no information about whether an admin endpoint is behind it. A 401 here
-    would fail this test, and should, because 401 confirms the route exists.
+    It answers 405 rather than 404 because the static mount catches every unmatched
+    POST — `POST /definitely-not-a-route` answers 405 too. Asserting the two are
+    equal is stronger than asserting a number: it says the response carries no
+    information about whether an endpoint is behind it.
     """
     admin = client.post("/admin/hide", json={"created_at": "x", "hidden": True})
     control = client.post("/definitely-not-a-route", json={"created_at": "x"})
     assert admin.status_code == control.status_code
-    assert admin.status_code not in (200, 401, 403), (
-        f"POST /admin/hide answered {admin.status_code}, which tells a caller the "
-        f"endpoint is there"
-    )
+    assert admin.status_code not in (200, 401, 403)
 
 
-def test_the_old_config_path_is_gone_not_aliased(client):
-    """/admin/config moved to /auth/config and was deliberately not aliased.
+def test_no_route_in_the_app_is_registered_under_admin(client):
+    """Absence at the app level, not just at the HTTP level.
 
-    The payload was never the problem; the path was. Keeping an alias would keep
-    the thing that made a public endpoint read as an admin leak.
+    A path can 404 because a route is missing OR because a handler chose to return
+    404. This distinguishes them: the route table itself must contain no /admin
+    path, so there is nothing to accidentally re-enable.
     """
-    assert client.get("/admin/config").status_code == 404
+    import app.main as main
+    admin_routes = [r.path for r in main.app.routes
+                    if getattr(r, "path", "").startswith("/admin")]
+    assert admin_routes == [], f"routes still registered: {admin_routes}"
 
 
-# ── 2. nothing admin-shaped is inside the served directory ───
+# ── 2. nothing admin-shaped can be served by the static mount ─
 
-def test_no_admin_file_is_served_from_web():
-    """`web/` is mounted as a catch-all, so a file here needs no route to leak.
+def test_no_admin_file_exists_anywhere_in_the_repo():
+    """`web/` is a catch-all mount, so a file there needs no route to be public.
 
-    This is the check that does not depend on route ordering. If someone moves the
-    mount above the route definitions, or reverts the move, test 1 can start
-    passing for the wrong reason while this one still fails.
+    Checked across the whole tree rather than only `web/`, because the previous fix
+    moved these files to `tools/admin/` and kept them — which left a page that a
+    single misconfigured variable would serve. They are deleted now; git history has
+    them.
     """
-    stray = sorted(p.name for p in WEB.rglob("admin*") if p.is_file())
-    assert not stray, (
-        f"{stray} sits inside the public static mount. The admin view belongs in "
-        f"tools/admin/, which app/main.py serves only when ADMIN_API is set."
+    stray = sorted(
+        str(p.relative_to(ROOT)) for p in ROOT.rglob("admin*")
+        if p.is_file()
+        and ".git/" not in str(p)
+        and "steering_arena/" not in str(p.relative_to(ROOT))
+        and p.suffix in {".html", ".css", ".js"}
     )
+    assert not stray, f"admin front-end files still present: {stray}"
 
 
-def test_the_admin_view_still_exists_outside_the_mount():
-    """Severing it from the public site must not mean losing it."""
-    for name in ("admin.html", "admin.css", "README.md"):
-        assert (ROOT / "tools" / "admin" / name).is_file(), f"tools/admin/{name} missing"
+# ── 3. the gate code is gone, not merely unused ───────────────
+
+def test_the_allowlist_gate_is_removed():
+    """Leaving require_admin behind invites wiring it to a new route on the belief
+    that it was the safe part. It was sound, but the surface it guarded is what got
+    removed, so the guard goes with it."""
+    from app import userauth
+    for name in ("require_admin", "admin_emails"):
+        assert not hasattr(userauth, name), f"userauth.{name} still exists"
 
 
-# ── 3. what /auth/config may say ─────────────────────────────
+def test_the_admin_settings_are_removed():
+    """A setting that reads as if it controls access, but does not, is worse than no
+    setting. ADMIN_API in particular was one checkbox from republishing everything."""
+    from app.config import Settings
+    fields = set(Settings.model_fields)
+    assert "admin_api" not in fields
+    assert "admin_emails" not in fields
+
+
+def test_only_one_column_projection_can_leave_the_server():
+    """ADMIN_FIELDS was the wider of two projections and is gone; PUBLIC_FIELDS is
+    now the only column list served over HTTP, which is less to audit."""
+    import app.main as main
+    assert not hasattr(main, "ADMIN_FIELDS")
+    assert set(main.PUBLIC_FIELDS) == {"created_at", "arm", "handle", "prompt",
+                                       "continuation"}
+
+
+# ── 4. moderation survived the removal ───────────────────────
+
+def test_moderation_is_still_possible_without_the_endpoint():
+    """`hidden` filters the public feed and nothing else in the app could set it, so
+    deleting /admin/hide without a replacement would have made an abusive row
+    permanent."""
+    script = ROOT / "scripts" / "moderate_generation.py"
+    assert script.is_file(), "scripts/moderate_generation.py is missing"
+    src = script.read_text()
+    for token in ("hide", "unhide", "supabase_service_key", "generation_events"):
+        assert token in src, f"{token!r} missing from the moderation script"
+
+
+# ── 5. what the public site still exposes, on purpose ────────
 
 def test_auth_config_is_public_and_carries_no_secret(client):
-    """The publishable key is meant to ship to browsers; the secret key is not.
-
-    A browser cannot start a Supabase session without the publishable key, so this
-    endpoint is unauthenticated on purpose. What keeps that safe is row-level
-    security, not secrecy — see the route's own docstring.
-    """
+    """A browser cannot start a Supabase session without the publishable key, so
+    this endpoint is unauthenticated by design. What keeps it safe is row-level
+    security, not secrecy — see docs/how-to/verify-the-public-surface.md."""
     r = client.get("/auth/config")
     assert r.status_code == 200
     body = r.json()
-    assert set(body) == {"enabled", "supabase_url", "anon_key"}, (
-        f"unexpected fields in /auth/config: {sorted(body)}"
-    )
+    assert set(body) == {"enabled", "supabase_url", "anon_key"}, sorted(body)
     blob = " ".join(str(v) for v in body.values()).lower()
     for marker in ("service_role", "sb_secret_", "secret_key"):
         assert marker not in blob, f"/auth/config leaked something matching {marker!r}"
 
 
 def test_auth_config_does_not_advertise_admin(client):
-    """Nothing public needs to know whether an admin allowlist is configured."""
     assert "admin_enabled" not in client.get("/auth/config").json()
 
 
@@ -133,12 +156,10 @@ def test_the_frontend_asks_for_the_new_path():
     """A stale fetch URL in auth.js breaks sign-in silently for every visitor."""
     js = (WEB / "auth.js").read_text()
     assert 'fetch("/auth/config")' in js
-    # the old path may still be NAMED in a comment explaining the move; what must not
-    # survive is a call to it
+    # the old path may still be named in a comment explaining the move; a CALL to it
+    # must not survive
     assert 'fetch("/admin/config")' not in js
-    # and every page loading it must bust the cache, or a cached copy keeps
-    # requesting the route that no longer exists
-    for page in list(WEB.glob("*.html")) + [ROOT / "tools/admin/admin.html"]:
+    for page in WEB.glob("*.html"):
         text = page.read_text()
         if "auth.js" in text:
             assert "auth.js?v=3" in text, f"{page.name} loads a stale auth.js version"
