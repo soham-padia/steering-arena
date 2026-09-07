@@ -17,6 +17,9 @@ language model's internal activations along a fixed "pro-human" direction
 [NDIF](https://ndif.us) via [NNsight](https://nnsight.net) — the server is the
 canonical scoring oracle.
 
+- **Documentation:** [`docs/`](docs/README.md) — the metric, the seasons, the
+  withdrawn claims, and how to reproduce a published number. Also published at
+  [/docs/](https://sohampadianeu-steering-arena.hf.space/docs/).
 - **Build spec (source of truth):** [`PROJECT_SPEC.md`](PROJECT_SPEC.md)
 - **Phased plan:** [`ROADMAP.md`](ROADMAP.md)
 

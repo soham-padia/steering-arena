@@ -100,6 +100,32 @@ Four folders, deliberately adversarial. Read at least two before believing anyth
 - **A page that says "I did not run this"** was reconstructed from a committed artifact
   without the analysis being re-run. Believe its transcription, not its atmosphere.
 
+## Reading this on the web
+
+This set is published at
+`https://sohampadianeu-steering-arena.hf.space/docs/`, generated from these files
+by `scripts/build_docs_site.py`. The generated HTML is committed under `web/docs/`
+and served by the same static mount as the board, so the published pages carry no
+server route and the request path never parses markdown.
+
+The markdown here is the source. If the two disagree, the site is stale, which
+happens when someone edits a page and does not rebuild:
+
+```bash
+python scripts/build_docs_site.py --check
+```
+
+That exits non-zero and names every page whose HTML no longer matches its
+markdown. `tests/test_docs_site.py` runs the same check, and skips rather than
+fails if `markdown-it-py` is absent — it is a build dependency, pinned in
+`requirements-research.txt`, and is deliberately not in the image the board runs
+on.
+
+One consequence worth knowing: cross-references in these pages are bare
+backticked paths, not markdown links. The generator turns them into links, but
+only for paths that `git ls-files` tracks. A reference to an untracked file stays
+plain text on the site rather than becoming a broken link.
+
 ## Local-only files
 
 `CLAUDE.md` and `STRUCTURE.md` are **gitignored**. If you cloned this repo you do not have
