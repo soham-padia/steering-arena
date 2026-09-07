@@ -16,6 +16,12 @@ across the swap (position bias, not a preference). Rating protocol:
 prefix strings; all 24 reported honouring that. `scripts/prefix_behavior_eval.py --tag
 s3`, report `prefix_eval_s3.json`. $0 — no NDIF calls, no paid API.
 
+**Figure.** `figures/prefix_eval_s3.png` (11in, for a slide) and
+`figures/prefix_eval_s3_doc.png` (6.5in, for a page), from
+`scripts/plot_prefix_eval_s3.py`, with `figures/prefix_eval_s3_caption.md`. Every
+number in it is read from the four JSONs at run time. The Season 2 figures
+(`mechanism*.png` and the rest) are a different experiment and are untouched.
+
 ## The table
 
 Scores are LIVE (leaderboard units). "preferred" = the blind rater chose the *prefixed*
