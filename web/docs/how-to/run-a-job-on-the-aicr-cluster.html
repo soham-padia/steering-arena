@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How to run a Steering Arena job on the AICR cluster — Steering Arena docs</title>
+<meta name="description" content="Getting a GPU job — a GCG search, a prefix eval, a rescore — from a login shell onto a node," />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/how-to/run-a-job-on-the-aicr-cluster.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="How to run a Steering Arena job on the AICR cluster — Steering Arena docs" />
+<meta property="og:description" content="Getting a GPU job — a GCG search, a prefix eval, a rescore — from a login shell onto a node," />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/how-to/run-a-job-on-the-aicr-cluster.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li class="on"><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-howto">HOW-TO</span></p>
+    <h1 id="how-to-run-a-steering-arena-job-on-the-aicr-cluster">How to run a Steering Arena job on the AICR cluster</h1>
+<p>Getting a GPU job — a GCG search, a prefix eval, a rescore — from a login shell onto a node,
+with its output somewhere that survives and its purpose written down. Every step here has a
+failure mode that has already cost a run.</p>
+<p><strong>Prerequisites:</strong> a login shell on <code>login.aicr.ai</code>, account <code>p2026_0037_neu</code>, and the
+<code>steering-arena</code> conda env. No step needs a GPU on the login node; the model loads on the
+compute node.</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">source ~/startload.sh                 # miniforge + HF_HOME=/scratch/$USER/hf
+conda activate steering-arena         # NOT gpt-trauma, NOT sa-ndif
+python -c "import torch, transformers; print(torch.__version__, transformers.__version__)"
+python ~/trauma-experiment-gpt/bin/runlog.py add \
+  --cmd "sbatch -p rtx-devel slurm/gcg.sbatch score1 32" --why "positive control"
+sbatch -p rtx-devel slurm/gcg.sbatch score1 32
+</code></pre></figure><h2 id="1-load-the-environment-and-print-the-versions">1. Load the environment and print the versions</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">source ~/startload.sh
+conda activate steering-arena
+python -c "import torch, transformers; print(torch.__version__, transformers.__version__)"
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>2.12.1+cu130 5.10.2
+</code></pre></figure><p>Those two numbers are the contract. <code>5.10.2</code> is the validated local reference against NDIF;
+the <code>gpt-trauma</code> env's transformers is a different version and is not the baseline. <code>sa-ndif</code>
+is CPU-only torch and cannot run a local search. See <a class="xref" href="/docs/reference/environments.html"><code>docs/reference/environments.md</code></a> for
+which env holds what.</p>
+<p><code>startload.sh</code> must be <strong>sourced</strong>, not executed, and it prints a warning if <code>$HF_HOME/hub</code>
+is missing.</p>
+<h2 id="2-choose-the-partition-at-submit-time">2. Choose the partition at submit time</h2>
+<p>Both sbatch scripts carry a default partition in their header, and you override it on the
+command line:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch -p rtx-devel  -J gcg-s2 slurm/gcg.sbatch score2 32
+sbatch -p b200-devel          slurm/prefix_behavior_s3.sbatch --limit 3
+</code></pre></figure><ul>
+<li><strong><code>rtx-devel</code></strong> starts fast. Two nodes, a 4-hour wall, ~20 jobs pending.</li>
+<li><strong><code>b200-devel</code></strong> is a <strong>separate QOS pool</strong> with its own per-user GPU cap, so a job here
+does <strong>not</strong> queue behind a job you already have running on <code>rtx-devel</code>. This is the reason
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/slurm/prefix_behavior_s3.sbatch" target="_blank" rel="noopener"><code>slurm/prefix_behavior_s3.sbatch</code></a> pins <code>b200-devel</code> in a comment: it was written to run
+alongside a GCG search. 183 GB per card, which holds the 61 GB of OLMo-3 weights with room
+to spare.</li>
+<li><strong><code>b200-batch</code></strong> currently has <strong>2243 jobs pending</strong> and is effectively unusable. Do not
+submit there and wait.</li>
+</ul>
+<p>The devel wall is 4 hours and it is enforced: job <code>707083</code> on <code>rtx-devel</code> shows <code>TIMEOUT</code> at
+<code>04:00:26</code>. A search that needs longer must checkpoint and resume, not ask for more time.</p>
+<h2 id="3-log-the-job-before-you-submit-it">3. Log the job before you submit it</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python ~/trauma-experiment-gpt/bin/runlog.py add \
+  --cmd "sbatch -p rtx-devel slurm/gcg.sbatch score2 32 --anti" \
+  --why "does the anti arm find a mirror of the score2 winner, or does it loop"
+</code></pre></figure><p>The file is mode <code>644</code>, so invoke it through <code>python</code> — running the path directly gives
+<code>Permission denied</code>. It appends to <code>/work/neu/p2026_0037_neu/runlog/commands.jsonl</code>.</p>
+<h2 id="4-submit-then-watch-the-queue">4. Submit, then watch the queue</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch -p rtx-devel -J gcg-s2-anti slurm/gcg.sbatch score2 32 --anti
+squeue -u $USER -o "%.10i %.12P %.10j %.8T %.14r %.10M"
+</code></pre></figure><p>The first argument to <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/slurm/gcg.sbatch" target="_blank" rel="noopener"><code>slurm/gcg.sbatch</code></a> is the role (<code>score1</code> or <code>score2</code>), the second the
+controlled-token count, and anything after that passes through to
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/gcg/optimize_banded.py" target="_blank" rel="noopener"><code>scripts/gcg/optimize_banded.py</code></a>.</p>
+<h2 id="5-read-the-output-from-work-not-from-home">5. Read the output from <code>/work</code>, not from <code>/home</code></h2>
+<p>Both scripts write their stdout and stderr to
+<code>/work/neu/p2026_0037_neu/steering-arena/logs/&lt;name&gt;_&lt;jobid&gt;.{out,err}</code>, and run artifacts to
+<code>runs/</code>, <code>gcg/</code>, <code>cache/</code> and <code>calibration/</code> under the same directory. That tree is on the
+1.0 TB snapshotted project quota.</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">head -3 /work/neu/p2026_0037_neu/steering-arena/logs/pfx_s3_711936.out
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>node=b0030 job=711936 extra=
+NVIDIA B200, 183359 MiB
+torch 2.12.1+cu130 transformers 5.10.2
+</code></pre></figure><p>Those three lines are the convention: which node, which GPU, which library versions. Check
+them before you believe anything further down the log.</p>
+<p>Weights are separate. Both scripts <code>export HF_HOME=/scratch/$USER/hf</code>, and <code>/scratch</code> is
+<strong>purged after 30 days by mtime with no snapshots</strong>. Re-downloading 61 GB of OLMo-3 is routine
+and is not a data loss; putting a run output there would be.</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">du -sh /scratch/$USER/hf/hub
+</code></pre></figure><h2 id="6-close-the-runlog-entry-with-the-outcome">6. Close the runlog entry with the outcome</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sacct -j 711936 --format=JobID%12,JobName%12,Partition%12,Elapsed%10,State%12,ExitCode -X
+python ~/trauma-experiment-gpt/bin/runlog.py note --job 711936 \
+  --outcome "COMPLETED in 2m13s on b200-devel; 8 arms re-scored, all ok, max gap 7.0e-4"
+</code></pre></figure><p><code>sacct</code> records that a job ran, its state and its wall time. It does not record why you ran
+it or whether the result was usable. The <code>note</code> is the only place that exists.</p>
+<h2 id="what-goes-wrong">What goes wrong</h2>
+<p><strong><code>QOSMaxGRESPerUser</code> as the pending reason.</strong> <code>squeue</code> shows the job <code>PENDING</code> with that
+reason and it does not move. It means you are at the 2-GPU cap for that partition's QOS, not
+that the cluster is full. The caps are per-QOS and <code>rtx-devel</code> and <code>b200-devel</code> are separate
+pools, so resubmit to the other partition rather than waiting:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">scancel &lt;jobid&gt; &amp;&amp; sbatch -p b200-devel slurm/gcg.sbatch score2 32
+</code></pre></figure><p><strong><code>set -u</code> in an sbatch script.</strong> It kills the batch shell on this cluster — the job exits in
+seconds with an empty or near-empty <code>.out</code> file and no Python traceback, because the shell
+died before it reached the <code>python</code> line. Both scripts use <code>set -eo pipefail</code> and carry a
+comment saying so. Do not add <code>-u</code>.</p>
+<p><strong><code>hf download --exclude "*.bin" "*.pt"</code> downloading nothing.</strong> <code>hf</code> parses the second and
+later patterns as <strong>positional filenames</strong>, downloads nothing, and <strong>exits 0</strong>. There is no
+error to catch. Verify every download by bytes on disk:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">du -sh /scratch/$USER/hf/hub/models--allenai--Olmo-3-1125-32B
+</code></pre></figure><p>Expect ~61 GB across 14 shards. <code>huggingface-cli</code> no longer exists; use <code>hf</code>.</p>
+<p><strong><code>/home</code> filling up.</strong> The quota is ~93 GiB and ~72 GiB is already used:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">quota -s | head -5
+</code></pre></figure><p>A <code>Disk quota exceeded</code> from a job that was writing to <code>$HOME</code> leaves a truncated artifact
+that looks like a successful short run. Nothing heavy goes in <code>/home</code> — checkpoints, caches
+and generations go to <code>/work</code>, weights to <code>/scratch</code>.</p>
+<p><strong>A purged <code>/scratch</code>.</strong> The symptom is <code>startload.sh</code> warning that <code>$HF_HOME/hub</code> is missing,
+and then a job failing at model load rather than at submit. The 30-day purge is by <strong>mtime</strong>,
+so weights you have not read in a month are gone even though the directory was there last
+time you looked. Re-download and verify by bytes.</p>
+<h2 id="verify-it-yourself">Verify it yourself</h2>
+<p>The prefix eval has a 3-prompt smoke mode. It loads the real model, so it exercises the env,
+the partition, <code>$HF_HOME</code> and the output path in one submission:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch -p b200-devel slurm/prefix_behavior_s3.sbatch --limit 3
+squeue -u $USER -o "%.10i %.12P %.8T %.14r"
+head -3 /work/neu/p2026_0037_neu/steering-arena/logs/pfx_s3_&lt;jobid&gt;.out
+</code></pre></figure><p>If those three header lines report a node, a GPU with its memory, and
+<code>torch 2.12.1+cu130 transformers 5.10.2</code>, the whole path works and a full run will too.</p>
+<h2 id="cross-links">Cross-links</h2>
+<p><a class="xref" href="/docs/reference/environments.html"><code>docs/reference/environments.md</code></a> (which env, which versions, which storage tier) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/slurm/gcg.sbatch" target="_blank" rel="noopener"><code>slurm/gcg.sbatch</code></a> (the GCG runner and its role/token arguments) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/slurm/prefix_behavior_s3.sbatch" target="_blank" rel="noopener"><code>slurm/prefix_behavior_s3.sbatch</code></a> (two-phase job, and the <code>b200-devel</code> QOS note) ·
+<a class="xref" href="/docs/how-to/search-a-banded-objective-with-gcg.html"><code>docs/how-to/search-a-banded-objective-with-gcg.md</code></a> (what to run once the job starts).</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/how-to/run-a-job-on-the-aicr-cluster.md" target="_blank" rel="noopener"><code>docs/how-to/run-a-job-on-the-aicr-cluster.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#1-load-the-environment-and-print-the-versions">1. Load the environment and print the versions</a></li><li class="l2"><a href="#2-choose-the-partition-at-submit-time">2. Choose the partition at submit time</a></li><li class="l2"><a href="#3-log-the-job-before-you-submit-it">3. Log the job before you submit it</a></li><li class="l2"><a href="#4-submit-then-watch-the-queue">4. Submit, then watch the queue</a></li><li class="l2"><a href="#5-read-the-output-from-work-not-from-home">5. Read the output from /work, not from /home</a></li><li class="l2"><a href="#6-close-the-runlog-entry-with-the-outcome">6. Close the runlog entry with the outcome</a></li><li class="l2"><a href="#what-goes-wrong">What goes wrong</a></li><li class="l2"><a href="#verify-it-yourself">Verify it yourself</a></li><li class="l2"><a href="#cross-links">Cross-links</a></li></ul></aside>
+</div>
+</body>
+</html>

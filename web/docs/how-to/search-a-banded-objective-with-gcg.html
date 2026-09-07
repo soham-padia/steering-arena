@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How to search a banded objective with GCG — Steering Arena docs</title>
+<meta name="description" content="Launching, resuming and reading a GCG + simulated-annealing run against a Season 3 banded" />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/how-to/search-a-banded-objective-with-gcg.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="How to search a banded objective with GCG — Steering Arena docs" />
+<meta property="og:description" content="Launching, resuming and reading a GCG + simulated-annealing run against a Season 3 banded" />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/how-to/search-a-banded-objective-with-gcg.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li class="on"><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-howto">HOW-TO</span></p>
+    <h1 id="how-to-search-a-banded-objective-with-gcg">How to search a banded objective with GCG</h1>
+<p>Launching, resuming and reading a GCG + simulated-annealing run against a Season 3 banded
+objective — Score 1 or Score 2, pro or anti. The run produces a <code>best.json</code> in a run
+directory and nothing more: no submission, no board score, no analysis. Turning that file
+into either is a separate procedure.</p>
+<p><strong>Prerequisites:</strong> the <code>steering-arena</code> conda env — <strong>not</strong> <code>sa-ndif</code>, whose torch is
+CPU-only. Steps 1, 3, 4 and 5 launch the optimiser and need <strong>one B200</strong> with the
+<code>allenai/Olmo-3-1125-32B</code> weights present under <code>$HF_HOME</code> (<code>/scratch/$USER/hf</code>, purged
+after 30 days). Step 6 reads files and needs no GPU. No NDIF calls and no quota are spent
+at any point. Log the job before you launch it:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python ~/trauma-experiment-gpt/bin/runlog.py add --why "score2 GCG, k=3 mutations"
+</code></pre></figure><h2 id="1-pick-the-role">1. Pick the role</h2>
+<p><code>--role score2</code> (the default) is the per-layer <strong>min</strong> over layers <code>{15,23,31,39}</code>, each
+against its own direction — the conjunctive objective, the one the season exists to test.
+<code>--role score1</code> is the banded <strong>mean</strong> over <code>{19,23,27,31}</code> against a single averaged
+direction; it is the positive control, against a target already known to be beatable.</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch slurm/gcg.sbatch score2 32 --n-mutations 3
+</code></pre></figure><p>The sbatch takes the role and the token count <strong>positionally</strong>, in that order, and forwards
+everything after them to the script. The equivalent direct form, for an interactive node:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/gcg/optimize_banded.py --role score2 --n-controlled-tokens 32 --n-mutations 3
+</code></pre></figure><p><code>--max-iters</code> defaults to <code>0</code>, meaning run until killed, so the sbatch's <code>--time=04:00:00</code>
+is what ends the run. <code>--cand-chunk</code> (default 4) is the memory/speed knob; raise it only if
+you have headroom on the card.</p>
+<h2 id="2-note-where-the-run-went">2. Note where the run went</h2>
+<figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>run dir: /work/neu/p2026_0037_neu/steering-arena/gcg/score2-mut3-2026-09-07T00-17-08Z
+</code></pre></figure><p>The name carries the role, <code>-anti</code> when the sign is flipped, <code>-mutN</code> for <code>N &gt; 1</code>, and a
+UTC timestamp. Run directories live on <code>/work</code> and never on <code>/home</code>, which is nearly full.
+You need this path for step 5 and for every downstream step.</p>
+<h2 id="3-search-the-opposite-sign-with---anti">3. Search the opposite sign with <code>--anti</code></h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch slurm/gcg.sbatch score2 32 --anti
+</code></pre></figure><p><code>--anti</code> negates the direction <strong>and, for Score 2, swaps the aggregate from <code>min</code> to
+<code>max</code></strong>, because</p>
+<figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>min_L cos(R, −d) = −max_L cos(R, d)
+</code></pre></figure><p>Negating the direction alone would leave the aggregate as a <code>min</code> over the negated
+cosines, which optimises the model's <strong>best</strong> layer instead of its worst — a different
+objective that still prints plausible-looking, monotonically improving numbers. There is no
+error message for getting this wrong. The <code>-anti</code> in the run-directory name and the <code>anti</code>
+field in every record are there so the two arms can never be confused on disk, since an
+anti run's own logs read positive-is-better like everything else.</p>
+<h2 id="4-use---softmin-search-as-a-search-surrogate-only">4. Use <code>--softmin-search</code> as a search surrogate only</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch slurm/gcg.sbatch score2 32 --softmin-search
+</code></pre></figure><p>Score 2 only. The hard <code>min</code> routes the gradient to one layer per step; the soft-min
+spreads it across all four, weighted toward the weakest. <strong>The reported and recorded scores
+always use the true <code>min</code></strong> — the flag changes only what the search climbs, and the record
+carries both <code>search_score</code> and <code>score</code> so the two never merge. A soft-min number is never
+a reported score. <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/gcg/watch.py" target="_blank" rel="noopener"><code>watch.py</code></a> prints an extra <code>search</code> column while a surrogate is in use.</p>
+<p>A soft-min run and a hard-min run at the same role and token count <em>are</em> comparable to each
+other: same objective, different search. That comparison is the reason the flag exists.</p>
+<h2 id="5-resume-an-interrupted-run">5. Resume an interrupted run</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/gcg/optimize_banded.py --role score2 --n-controlled-tokens 32 --n-mutations 3 \
+  --resume-from /work/neu/p2026_0037_neu/steering-arena/gcg/score2-mut3-2026-09-07T00-17-08Z
+</code></pre></figure><p>Resuming reads <code>latest.json</code> from that directory, restores the control token ids, continues
+the iteration counter, and restores the best-so-far threshold from <code>best.json</code>'s
+<code>board_score</code>. Two assertions fire before any GPU work: the checkpoint's token count must
+match <code>--n-controlled-tokens</code>, and its <code>d_tag</code> must match the direction now loaded — one
+run directory must not contain two objectives. Pass the same role and flags you launched
+with; <code>--resume-from</code> restores the <em>state</em>, not the configuration.</p>
+<h2 id="6-read-the-run">6. Read the run</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/gcg/watch.py                       # one snapshot of every arm
+python scripts/gcg/watch.py --every 120 --for 3600
+</code></pre></figure><p>Read the <strong><code>board</code></strong> column. <code>score</code> is the optimiser's number on the raw token ids and
+almost always runs ahead of it — measured across the eight Season 3 runs, <code>score &gt; board</code>
+on <strong>4219 of 4236</strong> logged iterations, with 17 exceptions — so the difference is
+retokenisation drift rather than progress. It is not guaranteed one-signed, so read the
+gap, do not assume it.</p>
+<p>Three files per run directory:</p>
+<ul>
+<li><strong><code>best.json</code></strong> — the record with the highest <code>board_score</code> seen so far. This is the
+artifact of the run, and the only one you take a string from.</li>
+<li><strong><code>latest.json</code></strong> — the current iteration, overwritten atomically each step. This is what
+<code>--resume-from</code> reads.</li>
+<li><strong><code>history.jsonl</code></strong> — one record per iteration, append-only, for trajectories.</li>
+</ul>
+<p>Every record carries its own provenance: <code>role</code>, <code>band</code>, <code>aggregate</code>, <code>search_aggregate</code>,
+<code>anti</code>, <code>n_mutations</code>, <code>d_version</code>, <code>d_tag</code>, <code>board_score</code>, <code>board_score_true_sign</code>,
+<code>roundtrip_ok</code>, <code>ctrl_token_ids</code> and <code>ctrl_token_ids_retokenised</code>. Read <code>board_score</code> for
+the magnitude and <code>board_score_true_sign</code> when you need the sign an anti entry would show
+on the board.</p>
+<h2 id="what-goes-wrong">What goes wrong</h2>
+<p><strong>Quoting the optimiser's number as a board score.</strong> Neither <code>score</code> nor <code>board_score</code> is a
+leaderboard score. Both drop the per-probe baseline <code>mean_p agg_L cos(probe)</code>, which is
+constant with respect to the prefix and so cannot change which candidate wins. Convert with
+<code>live = sign * best − baseline</code> — <strong>flip the sign first, subtract once.</strong> The other order is
+a 2×baseline error. Constants are in <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_baseline.md" target="_blank" rel="noopener"><code>data/analysis/season3_gcg_baseline.md</code></a>.</p>
+<p><strong>Reading <code>rt_ok=False</code> as a broken guard.</strong> You will see <code>rt_ok=False</code> on nearly every
+iteration and <code>n_not_roundtrip</code> climbing, and that is the guard working. Rejecting
+non-round-tripping candidates was the first design and it rejects essentially everything
+from iteration 0 — GCG's all-<code>!</code> init already merges under BPE — so the guard silently
+disabled itself and <code>best.json</code> was never written at all. The guard now <strong>scores the
+re-tokenised prefix every iteration</strong> instead, over the same probes with the same
+aggregate, and picks <code>best</code> on that number. Nothing to fix; read <code>board</code>.</p>
+<p><strong>Leaving <code>--n-mutations</code> at 1 on Score 2.</strong> Single-position mutation saturates on the
+conjunctive objective at around <strong>+0.045</strong> and then stops moving, because no single-token
+edit lifts every band layer at once. Multi-position mutation is what helps; it costs
+acceptance rate. Numbers and the control in <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_k3_control.md" target="_blank" rel="noopener"><code>data/analysis/season3_k3_control.md</code></a>.</p>
+<p><strong>Reaching for <code>--t-sa-scale</code> to fix saturation.</strong> The cooling mechanism is <strong>refuted, not
+merely unsupported</strong>: the step-size gap it was premised on appears only after iteration 384,
+the two arms' steps are near-identical through iteration 300, and the cooled arm came back
+worse than baseline — the small late steps are a consequence of saturation, not its cause.
+The flag's own help text asserted the withdrawn mechanism as fact until 2026-09-07. It is
+kept because &quot;does cooling help a saturated conjunction&quot; remains a valid question, and it is
+not a recommended setting.</p>
+<p><strong>A cooled arm you cannot identify later.</strong> <code>--t-sa-scale</code> is <strong>not</strong> in the checkpoint
+schema — the record stores <code>n_mutations</code>, <code>band</code>, <code>aggregate</code>, <code>search_aggregate</code> and
+<code>anti</code>, but not the temperature scale, and it is not in the run-directory name either. A
+cooled run is therefore indistinguishable from an uncooled one by its own artifacts. If you
+set it, record the value in the runlog entry and in the run directory yourself, at launch
+time; there is no recovering it afterwards.</p>
+<p><strong><code>set -u</code> in the sbatch script.</strong> It kills the batch shell on this cluster: the job exits
+almost immediately with an empty or truncated <code>.out</code>. <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/slurm/gcg.sbatch" target="_blank" rel="noopener"><code>slurm/gcg.sbatch</code></a> uses <code>set -eo pipefail</code> deliberately. Do not add <code>u</code> when you edit it.</p>
+<h2 id="verify-it-yourself">Verify it yourself</h2>
+<p>Before you trust any number from a run, print what it actually optimised:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 - &lt;&lt;'PY'
+import json
+run = "/work/neu/p2026_0037_neu/steering-arena/gcg/score2-mut3-2026-09-07T00-17-08Z"
+b = json.load(open(f"{run}/best.json"))
+for k in ("role", "band", "aggregate", "search_aggregate", "anti", "n_mutations",
+          "d_version", "d_tag", "iter", "board_score", "board_score_true_sign",
+          "roundtrip_ok"):
+    print(f"{k:24} {b[k]}")
+PY
+</code></pre></figure><p><code>aggregate</code> must be <code>max</code> on a Score 2 anti run and <code>min</code> on a Score 2 pro run. If an anti
+run shows <code>min</code>, the sign handling is wrong and every number in the directory is against the
+wrong objective.</p>
+<h2 id="cross-links">Cross-links</h2>
+<p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/gcg/README.md" target="_blank" rel="noopener"><code>scripts/gcg/README.md</code></a> (the port, the objectives, the retokenisation guard) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_setup.md" target="_blank" rel="noopener"><code>data/analysis/season3_gcg_setup.md</code></a> (how the arms were configured) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_aggregate_asymmetry.md" target="_blank" rel="noopener"><code>data/analysis/season3_gcg_aggregate_asymmetry.md</code></a> (what the two aggregates do differently) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_k3_control.md" target="_blank" rel="noopener"><code>data/analysis/season3_k3_control.md</code></a> (the <code>--n-mutations</code> control) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_baseline.md" target="_blank" rel="noopener"><code>data/analysis/season3_gcg_baseline.md</code></a> (the baseline constants for the conversion) ·
+<a class="xref" href="/docs/how-to/move-a-searched-string-without-corrupting-it.html"><code>docs/how-to/move-a-searched-string-without-corrupting-it.md</code></a> (getting the string out).</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/how-to/search-a-banded-objective-with-gcg.md" target="_blank" rel="noopener"><code>docs/how-to/search-a-banded-objective-with-gcg.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#1-pick-the-role">1. Pick the role</a></li><li class="l2"><a href="#2-note-where-the-run-went">2. Note where the run went</a></li><li class="l2"><a href="#3-search-the-opposite-sign-with---anti">3. Search the opposite sign with --anti</a></li><li class="l2"><a href="#4-use---softmin-search-as-a-search-surrogate-only">4. Use --softmin-search as a search surrogate only</a></li><li class="l2"><a href="#5-resume-an-interrupted-run">5. Resume an interrupted run</a></li><li class="l2"><a href="#6-read-the-run">6. Read the run</a></li><li class="l2"><a href="#what-goes-wrong">What goes wrong</a></li><li class="l2"><a href="#verify-it-yourself">Verify it yourself</a></li><li class="l2"><a href="#cross-links">Cross-links</a></li></ul></aside>
+</div>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Result artifact reference — Steering Arena docs</title>
+<meta name="description" content="Every committed result artifact, one row each, grouped by the question it answers. This page" />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/reference/artifacts.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="Result artifact reference — Steering Arena docs" />
+<meta property="og:description" content="Every committed result artifact, one row each, grouped by the question it answers. This page" />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/reference/artifacts.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li class="on"><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-reference">REFERENCE</span></p>
+    <h1 id="result-artifact-reference">Result artifact reference</h1>
+<p>Every committed result artifact, one row each, grouped by the question it answers. This page
+is a <strong>map, not a copy</strong>: it tells you where a number lives, and it deliberately carries no
+numbers of its own. The repo's rule is one number, one home — quote it from the artifact, not
+from an index. For the numbers themselves, start at <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/REVISIONS_2026-09-05.md" target="_blank" rel="noopener"><code>data/analysis/REVISIONS_2026-09-05.md</code></a>.
+For the scoring quantities, read <a class="xref" href="/docs/reference/scoring.html"><code>docs/reference/scoring.md</code></a>.</p>
+<p>Run this first. It counts what is on disk, needs no GPU and no API key, and every row below
+refers to one of the files it counts:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">ls data/analysis/*.json | wc -l; ls data/analysis/*.md | wc -l
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>46
+38
+</code></pre></figure><p>46 JSON artifacts, 38 write-ups. Three CSVs (<code>data/analysis/*_blind*.csv</code>) and three audit
+JSONs under <code>_falsifier/</code> sit outside those counts and are listed below too.</p>
+<hr />
+<h2 id="how-a-row-reads">How a row reads</h2>
+<p>Each row has the same five columns.</p>
+<ul>
+<li><strong>artifact</strong> — the path, relative to the repo root. <code>data/analysis/</code> is elided in the
+tables; <code>_falsifier/</code> paths are written out.</li>
+<li><strong>written by</strong> — the script and subcommand that produces it. The naming convention is
+<code>data/analysis/X.json</code> ← <code>scripts/X.py</code>, with the GCG artifacts from <code>scripts/gcg/</code>. Where
+a file breaks the convention, the column says what actually writes it.</li>
+<li><strong>interpreted in</strong> — the <code>.md</code> beside it, or <strong>none</strong>. That column is the gap list, and it
+is useful precisely because it is honest: 21 artifacts have no write-up.</li>
+<li><strong>answers</strong> — the question, not the answer.</li>
+<li><strong>cost</strong> — one of <code>$0</code>, <code>GPU</code>, <code>NDIF quota</code>, <code>paid API</code>: the most expensive resource the
+<em>writing step</em> touches directly, not the sum of the pipeline behind it.</li>
+</ul>
+<p>Two consequences of that cost rule, both load-bearing. A <code>stats</code> or <code>report</code> step that reads
+verdicts off disk is <code>$0</code> even when the verdicts cost money — the paid step's cost is
+recorded on the raw verdict file, where it belongs. And the generation caches under
+<code>data/cache/</code> are <strong>gitignored</strong>, so on a fresh clone anything downstream of a generation
+needs the generation re-run first, at <code>GPU</code> or <code>NDIF quota</code>.</p>
+<hr />
+<h2 id="direction-and-band">Direction and band</h2>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>artifact</th>
+<th>written by</th>
+<th>interpreted in</th>
+<th>answers</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/banded_direction.json" target="_blank" rel="noopener"><code>banded_direction.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/banded_direction.py" target="_blank" rel="noopener"><code>scripts/banded_direction.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/banded_direction.md" target="_blank" rel="noopener"><code>banded_direction.md</code></a></td>
+<td>does a band of layers separate the seed pairs better than one layer does?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_band_select.json" target="_blank" rel="noopener"><code>season3_band_select.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/season3_band_select.py" target="_blank" rel="noopener"><code>scripts/season3_band_select.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_band_select.md" target="_blank" rel="noopener"><code>season3_band_select.md</code></a></td>
+<td>which band and which aggregate go into Season 3?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_directions.json" target="_blank" rel="noopener"><code>season3_directions.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/build_season3_directions.py" target="_blank" rel="noopener"><code>scripts/build_season3_directions.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_directions.md" target="_blank" rel="noopener"><code>season3_directions.md</code></a></td>
+<td>what are the two shipped Season 3 directions, and which gates did they pass?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_baseline.json" target="_blank" rel="noopener"><code>season3_gcg_baseline.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/gcg/baseline_const.py" target="_blank" rel="noopener"><code>scripts/gcg/baseline_const.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_baseline.md" target="_blank" rel="noopener"><code>season3_gcg_baseline.md</code></a></td>
+<td>what constant converts a search number into a board number?</td>
+<td><code>GPU</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/direction_purity.json" target="_blank" rel="noopener"><code>direction_purity.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/direction_purity.py" target="_blank" rel="noopener"><code>scripts/direction_purity.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/direction_purity.md" target="_blank" rel="noopener"><code>direction_purity.md</code></a></td>
+<td>is the residual cosine between <code>d</code> and <code>approach</code> load-bearing?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/direction_null.json" target="_blank" rel="noopener"><code>direction_null.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/direction_null.py" target="_blank" rel="noopener"><code>scripts/direction_null.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/direction_null.md" target="_blank" rel="noopener"><code>direction_null.md</code></a></td>
+<td>how much cross-layer cosine structure survives label shuffling?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/layer_concept_profile.json" target="_blank" rel="noopener"><code>layer_concept_profile.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/layer_concept_profile.py" target="_blank" rel="noopener"><code>scripts/layer_concept_profile.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/layer_concept_profile.md" target="_blank" rel="noopener"><code>layer_concept_profile.md</code></a></td>
+<td>at which layers is the concept decodable above its own null?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/layer_profile_all64.json" target="_blank" rel="noopener"><code>layer_profile_all64.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/layer_profile_all64.py" target="_blank" rel="noopener"><code>scripts/layer_profile_all64.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/layer_profile_all64.md" target="_blank" rel="noopener"><code>layer_profile_all64.md</code></a></td>
+<td>the same question over all 64 layers, full- and sliding-attention split apart</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/layer_sweep_prefix.json" target="_blank" rel="noopener"><code>layer_sweep_prefix.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/layer_sweep_prefix.py" target="_blank" rel="noopener"><code>scripts/layer_sweep_prefix.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/layer_sweep_prefix.md" target="_blank" rel="noopener"><code>layer_sweep_prefix.md</code></a></td>
+<td>does the board winner's advantage exist anywhere but the scored layer?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/banded_score_arms.json" target="_blank" rel="noopener"><code>banded_score_arms.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/banded_score_arms.py" target="_blank" rel="noopener"><code>scripts/banded_score_arms.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/banded_direction.md" target="_blank" rel="noopener"><code>banded_direction.md</code></a> (merged)</td>
+<td>who would have won Season 2 if the board had scored over a band?</td>
+<td><code>$0</code></td>
+</tr>
+</tbody>
+</table></div><p>Every <code>.md</code> in these tables sits beside the <code>.json</code> a script produced. If the two disagree,
+<strong>the JSON wins and the <code>.md</code> is a bug</strong> — fix the prose, do not edit the artifact. Eight
+<code>.md</code> files have no <code>.json</code> beside them at all and are prose in their own right, not
+interpretations: <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/REVISIONS_2026-09-05.md" target="_blank" rel="noopener"><code>REVISIONS_2026-09-05.md</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/citations.md" target="_blank" rel="noopener"><code>citations.md</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/cosine_scale.md" target="_blank" rel="noopener"><code>cosine_scale.md</code></a>,
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/raw_examples.md" target="_blank" rel="noopener"><code>raw_examples.md</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_causal_spotcheck.md" target="_blank" rel="noopener"><code>season3_causal_spotcheck.md</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_setup.md" target="_blank" rel="noopener"><code>season3_gcg_setup.md</code></a>,
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/specificity_calibration.md" target="_blank" rel="noopener"><code>specificity_calibration.md</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_random_control_preregistration.md" target="_blank" rel="noopener"><code>steering_random_control_preregistration.md</code></a>.</p>
+<h2 id="search-season-3-part-a">Search (Season 3 Part A)</h2>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>artifact</th>
+<th>written by</th>
+<th>interpreted in</th>
+<th>answers</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_aggregate_asymmetry.json" target="_blank" rel="noopener"><code>season3_gcg_aggregate_asymmetry.json</code></a></td>
+<td>no script recorded — read out of the committed GCG run logs, as its own <code>.md</code> states</td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_aggregate_asymmetry.md" target="_blank" rel="noopener"><code>season3_gcg_aggregate_asymmetry.md</code></a></td>
+<td>why is anti easier to search than pro, and does that need a mechanism?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_k3_control.json" target="_blank" rel="noopener"><code>season3_k3_control.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/gcg/k3_control.py" target="_blank" rel="noopener"><code>scripts/gcg/k3_control.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_k3_control.md" target="_blank" rel="noopener"><code>season3_k3_control.md</code></a></td>
+<td>does multi-position mutation fix the conjunction, and does the anti arm rule out generic search improvement?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_prefix_scores.json" target="_blank" rel="noopener"><code>season3_prefix_scores.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/score_banded_local.py" target="_blank" rel="noopener"><code>scripts/score_banded_local.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_prefix_scores.md" target="_blank" rel="noopener"><code>season3_prefix_scores.md</code></a></td>
+<td>what does each arm score under both Season 3 objectives, in board units?</td>
+<td><code>GPU</code></td>
+</tr>
+</tbody>
+</table></div><h2 id="string-fidelity">String fidelity</h2>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>artifact</th>
+<th>written by</th>
+<th>interpreted in</th>
+<th>answers</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_ablation.json" target="_blank" rel="noopener"><code>season3_gcg_ablation.json</code></a></td>
+<td><code>scripts/gcg/ablate_prompt.py --run &lt;run_dir&gt;</code></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_ablation.md" target="_blank" rel="noopener"><code>season3_gcg_ablation.md</code></a></td>
+<td>which tokens of a GCG winner actually carry the score?</td>
+<td><code>GPU</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_degeneration_s3.json" target="_blank" rel="noopener"><code>prefix_degeneration_s3.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py --tag s3 degeneration</code></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_degeneration_s3.md" target="_blank" rel="noopener"><code>prefix_degeneration_s3.md</code></a></td>
+<td>how often does an arm loop or collapse instead of answering?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_content_s3.json" target="_blank" rel="noopener"><code>prefix_content_s3.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py --tag s3 content</code></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_content_s3.md" target="_blank" rel="noopener"><code>prefix_content_s3.md</code></a></td>
+<td>does the prefix steer, or does the model copy its vocabulary downstream?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/coherence_confound.json" target="_blank" rel="noopener"><code>coherence_confound.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/coherence_confound.py" target="_blank" rel="noopener"><code>scripts/coherence_confound.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/coherence_confound.md" target="_blank" rel="noopener"><code>coherence_confound.md</code></a></td>
+<td>is the behavioural gain a capability-damage artifact rather than steering?</td>
+<td><code>$0</code></td>
+</tr>
+</tbody>
+</table></div><p>Four artifact families are <strong>inputs</strong>, not results, and deliberately have no write-up: the
+blind keys (<code>*_blind_key*.json</code>), the raw judge verdict files (<code>prefix_judge_*.json</code>), the
+arms files (<code>prefix_eval_arms*.json</code>) and the seen-prompts file
+(<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_seen_prompts.json" target="_blank" rel="noopener"><code>prefix_eval_seen_prompts.json</code></a>). Nothing is concluded from them directly, so a <code>.md</code> beside
+one would have nothing to say; they are listed here so you can find the raw records a result
+was computed from.</p>
+<h2 id="behaviour-season-3-part-a">Behaviour (Season 3 Part A′)</h2>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>artifact</th>
+<th>written by</th>
+<th>interpreted in</th>
+<th>answers</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_s3.json" target="_blank" rel="noopener"><code>prefix_eval_s3.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py --tag s3 stats</code></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_s3.md" target="_blank" rel="noopener"><code>prefix_eval_s3.md</code></a></td>
+<td>do the Season 3 winners change judged behaviour, and which score orders the arms?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_arms_s3.json" target="_blank" rel="noopener"><code>prefix_eval_arms_s3.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py --tag s3 select-gcg</code></td>
+<td><strong>none</strong></td>
+<td>which strings are frozen into the six Season 3 arms?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><code>prefix_blind_s3.csv</code></td>
+<td><code>scripts/prefix_behavior_eval.py --tag s3 blind</code></td>
+<td><strong>none</strong></td>
+<td>the blind rating sheet a rater fills in, via <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/rate_blind.py" target="_blank" rel="noopener"><code>scripts/rate_blind.py</code></a></td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_blind_key_s3.json" target="_blank" rel="noopener"><code>prefix_blind_key_s3.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py --tag s3 blind</code></td>
+<td><strong>none</strong></td>
+<td>which blind row was which arm</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_judge_claude_s3.json" target="_blank" rel="noopener"><code>prefix_judge_claude_s3.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py --tag s3 claude-batches</code> then <code>claude-merge</code></td>
+<td><strong>none</strong></td>
+<td>the raw per-pair verdicts of the <code>$0</code> judge path</td>
+<td><code>$0</code></td>
+</tr>
+</tbody>
+</table></div><h2 id="behaviour-season-2">Behaviour (Season 2)</h2>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>artifact</th>
+<th>written by</th>
+<th>interpreted in</th>
+<th>answers</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/behavioral_eval.json" target="_blank" rel="noopener"><code>behavioral_eval.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/behavioral_eval.py" target="_blank" rel="noopener"><code>scripts/behavioral_eval.py</code></a> (<code>generate</code>, then <code>judge</code> — OLMo-as-judge on NDIF)</td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/behavioral_eval.md" target="_blank" rel="noopener"><code>behavioral_eval.md</code></a></td>
+<td>does adding or removing <code>d</code> at the season layer change generation?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+<tr>
+<td><code>behavioral_blind.csv</code></td>
+<td><code>scripts/behavioral_eval.py blind</code></td>
+<td><strong>none</strong></td>
+<td>the blind sheet for the human pass — <strong>gitignored</strong></td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><code>behavioral_blind_key.json</code></td>
+<td><code>scripts/behavioral_eval.py blind</code></td>
+<td><strong>none</strong></td>
+<td>which blind row was which arm — <strong>gitignored</strong>, stays private until the human pass closes</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/behavioral_cache_repair.json" target="_blank" rel="noopener"><code>behavioral_cache_repair.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/repair_behavioral_cache.py" target="_blank" rel="noopener"><code>scripts/repair_behavioral_cache.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/behavioral_cache_repair.md" target="_blank" rel="noopener"><code>behavioral_cache_repair.md</code></a></td>
+<td>which cached generations were mis-keyed, and what did repairing them change?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval.json" target="_blank" rel="noopener"><code>prefix_eval.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py stats</code></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval.md" target="_blank" rel="noopener"><code>prefix_eval.md</code></a></td>
+<td>do the Season 2 board winners change judged behaviour?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_arms.json" target="_blank" rel="noopener"><code>prefix_eval_arms.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py select</code></td>
+<td><strong>none</strong></td>
+<td>which leaderboard strings are frozen into the Season 2 arms</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><code>prefix_blind.csv</code></td>
+<td><code>scripts/prefix_behavior_eval.py blind</code></td>
+<td><strong>none</strong></td>
+<td>the blind rating sheet for Season 2</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_blind_key.json" target="_blank" rel="noopener"><code>prefix_blind_key.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py blind</code></td>
+<td><strong>none</strong></td>
+<td>which blind row was which arm</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_seen_prompts.json" target="_blank" rel="noopener"><code>prefix_eval_seen_prompts.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/prefix_behavior_eval.py" target="_blank" rel="noopener"><code>scripts/prefix_behavior_eval.py</code></a></td>
+<td><strong>none</strong></td>
+<td>which eval prompts had already been seen when the arms were chosen</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_judge_verdicts.json" target="_blank" rel="noopener"><code>prefix_judge_verdicts.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py judge</code></td>
+<td><strong>none</strong></td>
+<td>the raw DeepSeek verdicts, per pair, with billed call and token counts</td>
+<td><code>paid API</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_judge_verdicts_v1.json" target="_blank" rel="noopener"><code>prefix_judge_verdicts_v1.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py judge</code>, rubric v1</td>
+<td><strong>none</strong></td>
+<td>the superseded rubric's raw verdicts, kept rather than overwritten</td>
+<td><code>paid API</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_judge_claude.json" target="_blank" rel="noopener"><code>prefix_judge_claude.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py claude-batches</code> then <code>claude-merge</code></td>
+<td><strong>none</strong></td>
+<td>the raw second-rater verdicts</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_loop_control.json" target="_blank" rel="noopener"><code>prefix_loop_control.json</code></a></td>
+<td><code>scripts/prefix_behavior_eval.py stats --report data/analysis/prefix_loop_control.json</code></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_loop_control.md" target="_blank" rel="noopener"><code>prefix_loop_control.md</code></a></td>
+<td>what happens to the Season 2 result when looped continuations are scoped out?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_gallery_judge.json" target="_blank" rel="noopener"><code>prefix_gallery_judge.json</code></a></td>
+<td><code>scripts/prefix_gallery.py judge</code></td>
+<td><strong>none</strong></td>
+<td>how do the gallery arms score on judged kindness against the frozen rubric?</td>
+<td><code>paid API</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/site_prefixes.json" target="_blank" rel="noopener"><code>site_prefixes.json</code></a></td>
+<td><code>scripts/prefix_gallery.py select</code></td>
+<td><strong>none</strong></td>
+<td>which prefixes the live site may prepend, and which of them are public</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_transfer.json" target="_blank" rel="noopener"><code>prefix_transfer.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/prefix_transfer_eval.py" target="_blank" rel="noopener"><code>scripts/prefix_transfer_eval.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_transfer.md" target="_blank" rel="noopener"><code>prefix_transfer.md</code></a></td>
+<td>does the anti arm's collapse reproduce on the Llama models?</td>
+<td><code>paid API</code></td>
+</tr>
+</tbody>
+</table></div><p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/SESSION_REPORT.md" target="_blank" rel="noopener"><code>SESSION_REPORT.md</code></a> carries an older artifacts table covering Season 2 only. This page extends
+past it rather than replacing it: where the two overlap, they agree; where they differ, this
+page is the one that also knows about Season 3.</p>
+<h2 id="mechanism">Mechanism</h2>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>artifact</th>
+<th>written by</th>
+<th>interpreted in</th>
+<th>answers</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/compile_check.json" target="_blank" rel="noopener"><code>compile_check.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/compile_check.py" target="_blank" rel="noopener"><code>scripts/compile_check.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/compile_check.md" target="_blank" rel="noopener"><code>compile_check.md</code></a></td>
+<td>is the winning string a compilation of <code>d</code> into tokens?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/normalization_check.json" target="_blank" rel="noopener"><code>normalization_check.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/normalization_check.py" target="_blank" rel="noopener"><code>scripts/normalization_check.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/normalization_check.md" target="_blank" rel="noopener"><code>normalization_check.md</code></a></td>
+<td>does RMSNorm mean the model never reads the on-<code>d</code> component?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/causal_layer_curve.json" target="_blank" rel="noopener"><code>causal_layer_curve.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/causal_layer_curve.py" target="_blank" rel="noopener"><code>scripts/causal_layer_curve.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/causal_layer_curve.md" target="_blank" rel="noopener"><code>causal_layer_curve.md</code></a></td>
+<td>does ablation matter at any depth, or only at the layer <code>d</code> was fit on?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation.json" target="_blank" rel="noopener"><code>steering_ablation.json</code></a></td>
+<td><code>scripts/steering_ablation.py report</code></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation.md" target="_blank" rel="noopener"><code>steering_ablation.md</code></a></td>
+<td>does removing <code>d</code> change behaviour more than removing a norm-matched random direction?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation_measure.json" target="_blank" rel="noopener"><code>steering_ablation_measure.json</code></a></td>
+<td><code>scripts/steering_ablation.py measure</code></td>
+<td><strong>none</strong></td>
+<td>how big is the thing being removed?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation_check.json" target="_blank" rel="noopener"><code>steering_ablation_check.json</code></a></td>
+<td><code>scripts/steering_ablation.py check</code></td>
+<td><strong>none</strong></td>
+<td>did the intervention land where it was aimed?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation_blind_key.json" target="_blank" rel="noopener"><code>steering_ablation_blind_key.json</code></a></td>
+<td><code>scripts/steering_ablation.py blind</code></td>
+<td><strong>none</strong></td>
+<td>which blind item was which arm</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_dose.json" target="_blank" rel="noopener"><code>steering_dose.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/steering_dose.py" target="_blank" rel="noopener"><code>scripts/steering_dose.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_dose.md" target="_blank" rel="noopener"><code>steering_dose.md</code></a></td>
+<td>do tokens beat vectors, or was the injection dose wrong?</td>
+<td><code>paid API</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_random_control.json" target="_blank" rel="noopener"><code>steering_random_control.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/steering_random_control.py" target="_blank" rel="noopener"><code>scripts/steering_random_control.py</code></a> (<code>generate</code>, <code>judge</code>, <code>claude-merge</code>, <code>report</code>)</td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_random_control.md" target="_blank" rel="noopener"><code>steering_random_control.md</code></a></td>
+<td>does a random vector of the same norm derail generation as much?</td>
+<td><code>paid API</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/meandiff_ablation.json" target="_blank" rel="noopener"><code>meandiff_ablation.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/meandiff_ablation.py" target="_blank" rel="noopener"><code>scripts/meandiff_ablation.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/meandiff_ablation.md" target="_blank" rel="noopener"><code>meandiff_ablation.md</code></a></td>
+<td>does the meandiff direction ablate like the shipped logistic one?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/transfer_report.json" target="_blank" rel="noopener"><code>transfer_report.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/transfer_report.py" target="_blank" rel="noopener"><code>scripts/transfer_report.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/transfer_report.md" target="_blank" rel="noopener"><code>transfer_report.md</code></a></td>
+<td>does a high-scoring sequence still score on another model using that model's own <code>d</code>?</td>
+<td><code>NDIF quota</code></td>
+</tr>
+</tbody>
+</table></div><h2 id="audit">Audit</h2>
+<div class="table-scroll"><table><thead>
+<tr>
+<th>artifact</th>
+<th>written by</th>
+<th>interpreted in</th>
+<th>answers</th>
+<th>cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify_result.json" target="_blank" rel="noopener"><code>_falsifier/verify_result.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>_falsifier/verify.py</code></a></td>
+<td><strong>none</strong></td>
+<td>which committed claims still match the artifacts they were drawn from?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/recompute_result.json" target="_blank" rel="noopener"><code>_falsifier/recompute_result.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/recompute.py" target="_blank" rel="noopener"><code>_falsifier/recompute.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/recompute_result.md" target="_blank" rel="noopener"><code>_falsifier/recompute_result.md</code></a></td>
+<td>do the published effects survive a fixed per-prompt baseline and the withdrawn arm's removal?</td>
+<td><code>$0</code></td>
+</tr>
+<tr>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/honesty_result.json" target="_blank" rel="noopener"><code>_falsifier/honesty_result.json</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/honesty_score.py" target="_blank" rel="noopener"><code>_falsifier/honesty_score.py</code></a>, over the blind file from <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/honesty_blind.py" target="_blank" rel="noopener"><code>_falsifier/honesty_blind.py</code></a></td>
+<td><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/honesty_result.md" target="_blank" rel="noopener"><code>_falsifier/honesty_result.md</code></a></td>
+<td>does the kindness effect also appear on an honesty-only rubric?</td>
+<td><code>$0</code></td>
+</tr>
+</tbody>
+</table></div><p>All three audit artifacts are <code>$0</code> and stay that way by construction: they re-read committed
+per-item records and make no new generations and no new judge calls. An audit that needed
+compute would not get run often enough to matter.</p>
+<h2 id="the-gap-list-accounted-for">The gap list, accounted for</h2>
+<p>21 rows above read <strong>none</strong> in the <code>interpreted in</code> column, and as of 2026-09-07 not one of
+them is a missing analysis write-up. The accounting:</p>
+<ul>
+<li><strong>13 are inputs or intermediates</strong>, not results, and deliberately have no prose: the four
+blind keys, the four raw judge-verdict files, the two arms files, the seen-prompts file,
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/site_prefixes.json" target="_blank" rel="noopener"><code>site_prefixes.json</code></a> and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_gallery_judge.json" target="_blank" rel="noopener"><code>prefix_gallery_judge.json</code></a>. A key or a per-pair verdict dump is
+evidence for a write-up, not a claim needing one.</li>
+<li><strong>3 are the blind CSVs</strong>, which are rating worksheets. Two of them are gitignored.</li>
+<li><strong><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/banded_score_arms.json" target="_blank" rel="noopener"><code>banded_score_arms.json</code></a> is merged</strong> into <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/banded_direction.md" target="_blank" rel="noopener"><code>banded_direction.md</code></a>, following the precedent
+of <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation.md" target="_blank" rel="noopener"><code>steering_ablation.md</code></a> covering three artifacts under its primary stem.</li>
+<li><strong><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation_check.json" target="_blank" rel="noopener"><code>steering_ablation_check.json</code></a> and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation_measure.json" target="_blank" rel="noopener"><code>steering_ablation_measure.json</code></a> are transcribed in
+full</strong> inside <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/steering_ablation.md" target="_blank" rel="noopener"><code>steering_ablation.md</code></a>, at its &quot;What was removed&quot; and &quot;Manipulation check&quot;
+sections. They are the <code>measure</code> and <code>check</code> subcommands of one script, not separate
+analyses.</li>
+<li><strong><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify_result.json" target="_blank" rel="noopener"><code>_falsifier/verify_result.json</code></a> is the audit output</strong>, regenerated by running
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>verify.py</code></a>, and its prose home is <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/README.md" target="_blank" rel="noopener"><code>_falsifier/README.md</code></a>.</li>
+</ul>
+<p>So every orphaned <em>analysis</em> in <code>data/analysis/</code> now has a companion. That was not true this
+morning: 17 did not, including <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_gcg_aggregate_asymmetry.json" target="_blank" rel="noopener"><code>season3_gcg_aggregate_asymmetry.json</code></a>, which held the whole
+Part A mechanism result and was cited by four other files with no prose anywhere.</p>
+<h2 id="what-this-buys-you">What this buys you</h2>
+<p>Corrections cost nothing here, because per-item records were kept. 14 published effects were
+recomputed with zero new generations and zero new judge calls, and a cache corruption was
+located and repaired with 30 metadata rewrites and no compute at all. The artifact discipline
+is why: the raw records survive the analysis, so a wrong baseline or a withdrawn arm is a
+re-read rather than a re-run. The 21 rows above whose <code>interpreted in</code> column says <strong>none</strong>
+are the standing work list, and they are listed rather than hidden for the same reason.</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/reference/artifacts.md" target="_blank" rel="noopener"><code>docs/reference/artifacts.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#how-a-row-reads">How a row reads</a></li><li class="l2"><a href="#direction-and-band">Direction and band</a></li><li class="l2"><a href="#search-season-3-part-a">Search (Season 3 Part A)</a></li><li class="l2"><a href="#string-fidelity">String fidelity</a></li><li class="l2"><a href="#behaviour-season-3-part-a">Behaviour (Season 3 Part A′)</a></li><li class="l2"><a href="#behaviour-season-2">Behaviour (Season 2)</a></li><li class="l2"><a href="#mechanism">Mechanism</a></li><li class="l2"><a href="#audit">Audit</a></li><li class="l2"><a href="#the-gap-list-accounted-for">The gap list, accounted for</a></li><li class="l2"><a href="#what-this-buys-you">What this buys you</a></li></ul></aside>
+</div>
+</body>
+</html>

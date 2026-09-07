@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How to run a blind behavioural eval on a set of prefixes — Steering Arena docs</title>
+<meta name="description" content="The operator&#x27;s procedure for asking whether a set of prefixes changes what the model says," />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/how-to/run-a-blind-behavioural-eval.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="How to run a blind behavioural eval on a set of prefixes — Steering Arena docs" />
+<meta property="og:description" content="The operator&#x27;s procedure for asking whether a set of prefixes changes what the model says," />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/how-to/run-a-blind-behavioural-eval.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li class="on"><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-howto">HOW-TO</span></p>
+    <h1 id="how-to-run-a-blind-behavioural-eval-on-a-set-of-prefixes">How to run a blind behavioural eval on a set of prefixes</h1>
+<p>The operator's procedure for asking whether a set of prefixes changes what the model <em>says</em>,
+not only where its activations point: freeze the arms, gate them, generate, blind, get them
+rated, merge, and run the statistics. This page covers the operator's side only. <strong>It does
+not contain the rater's instructions</strong> — those are <a class="xref" href="/docs/PREFIX_BLIND_RUBRIC.html"><code>docs/PREFIX_BLIND_RUBRIC.md</code></a>, which you
+hand to the rater and never paraphrase here.</p>
+<p><strong>Prerequisites:</strong> the <code>steering-arena</code> conda env, run from the repo root. Exactly one stage
+needs a GPU — generation, which is the sbatch in step 3 (one B200, ~40 s of model load,
+then 50 prompts × 7 conditions). Everything else — <code>select-gcg</code>, <code>blind</code>, <code>claude-batches</code>,
+<code>claude-merge</code>, <code>degeneration</code>, <code>content</code>, <code>stats</code> — is CPU-only and belongs on
+<code>sh ~/cpu.sh</code> or the login node. No NDIF calls and no quota are spent; a continuation is
+not a score. Generations land in <code>data/cache/prefix_behavioral_s3/</code>, which is <strong>gitignored</strong>.</p>
+<p>Log the GPU job before you launch it:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python ~/trauma-experiment-gpt/bin/runlog.py add --why "Part A' prefix eval, s3 arms"
+</code></pre></figure><h2 id="1-smoke-it-on-three-prompts-first">1. Smoke it on three prompts first</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch slurm/prefix_behavior_s3.sbatch --limit 3
+</code></pre></figure><p>Everything after the script name is forwarded to <code>generate</code>, so <code>--limit 3</code> caps the prompt
+set. This exercises both phases — the fidelity gate and the generation loop — for a few
+minutes of GPU instead of the full run, and the cache it writes is reused by the real run
+rather than thrown away. Read the log at
+<code>/work/neu/p2026_0037_neu/steering-arena/logs/pfx_s3_&lt;jobid&gt;.out</code> and confirm Phase 1
+printed <code>ok</code> for every arm before you spend the full allocation.</p>
+<h2 id="2-freeze-the-arms">2. Freeze the arms</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 select-gcg --season-id 5
+</code></pre></figure><p>This reads the current <code>best.json</code> of each GCG run directory and writes
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_arms_s3.json" target="_blank" rel="noopener"><code>data/analysis/prefix_eval_arms_s3.json</code></a> with eight arms (<code>score1_top</code>, <code>score2_top</code>,
+<code>score2_top_final</code>, <code>pro_coherent</code>, <code>random32</code>, <code>score1_anti</code>, <code>score2_anti</code>,
+<code>score2_anti_final</code>). To pull a newer string for one arm after its run has advanced:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 select-gcg --refresh score2_top_final
+</code></pre></figure><p><code>--refresh</code> takes a comma-separated list, and <strong>every arm not named in it is preserved
+byte-exact.</strong> That is deliberate: <code>best.json</code> keeps improving while a job runs, so a
+re-run must not be able to silently advance a string you have already generated 50
+continuations from. Overwriting the whole file requires <code>--force</code>, and doing so orphans
+every generation already in the cache.</p>
+<h2 id="3-gate-the-arms-and-generate-the-gpu-stage">3. Gate the arms and generate (the GPU stage)</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sbatch slurm/prefix_behavior_s3.sbatch
+</code></pre></figure><p>Two phases on one model load. <strong>Phase 1</strong> re-scores every frozen string under both banded
+objectives and checks it reproduces the number its run recorded
+(<code>scripts/score_banded_local.py --arms … --update-arms</code>); it also fills in the recorded
+score for the <code>random32</code> control, which has none. <strong>Phase 2</strong> generates the continuations —
+50 prompts × 8 prefixed arms plus the unprefixed base, greedy, 40 new tokens.</p>
+<p>Generation is resumable and keyed per <code>(prompt, arm, max_new, backend)</code>, so re-running fills
+gaps rather than redoing work. The equivalent direct form on an interactive node:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 generate --backend local --max-new 40
+</code></pre></figure><p><code>--backend local</code> runs the full-depth HF model on this node. NDIF stays canonical for
+<em>scores</em>; it is not involved in generating text.</p>
+<h2 id="4-build-the-blinded-csv">4. Build the blinded CSV</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 blind
+</code></pre></figure><p>Writes <code>data/analysis/prefix_blind_s3.csv</code> — the rater's file, containing only the
+continuations with the model input stripped, plus the shared eval prompt for context — and
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_blind_key_s3.json" target="_blank" rel="noopener"><code>data/analysis/prefix_blind_key_s3.json</code></a>, the unblinding key, which the rater must never
+see. Pairs where the strip failed are dropped; pairs where the model echoed the prefix
+verbatim are kept and flagged <code>leak</code> in the key. <code>--force</code> rebuilds over existing ratings.</p>
+<h2 id="5-emit-the-batches">5. Emit the batches</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 claude-batches --only-unjudged
+</code></pre></figure><p>Every pair is emitted in <strong>both presentation orders</strong>, split so that no single batch — and
+therefore no single rater context — ever holds both orientations of the same pair. That is
+what makes the swap an independent second opinion instead of a memory test. Batches land in
+<code>data/cache/prefix_behavioral_s3/claude/in/</code>, named by pair range
+(<code>batch_fwd_p1-25.json</code>). <code>--only-unjudged</code> skips pairs that already have verdicts in
+<em>both</em> orientations; a pair with one orientation is re-emitted, because <code>claude-merge</code> drops
+half-judged pairs.</p>
+<h2 id="6-hand-each-batch-to-a-separate-rater-context">6. Hand each batch to a separate rater context</h2>
+<p>Give each batch file, and <a class="xref" href="/docs/PREFIX_BLIND_RUBRIC.html"><code>docs/PREFIX_BLIND_RUBRIC.md</code></a>, to a <strong>separate</strong> agent context —
+one batch per context, no exceptions. Each rater writes its verdicts to
+<code>data/cache/prefix_behavioral_s3/claude/out/</code> under <strong>the same filename</strong> as its input.
+Batches must not be pooled into one context: co-locating two batches recreates the
+cross-orientation leak that step 5 exists to prevent.</p>
+<h2 id="7-merge-the-verdicts">7. Merge the verdicts</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 claude-merge --label claude-opus-5
+</code></pre></figure><p>Merges <code>out/</code> against the unblinding key, un-flips the reversed orientation, averages the
+per-text kindness ratings crosswise, intersects and unions the markers, and writes
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_judge_claude_s3.json" target="_blank" rel="noopener"><code>data/analysis/prefix_judge_claude_s3.json</code></a>. It prints how many pairs were decided, how
+many <strong>abstained on the A/B swap</strong>, and how many are missing an orientation.</p>
+<h2 id="8-run-the-two-mechanical-measures">8. Run the two mechanical measures</h2>
+<p>Neither needs a judge, a GPU, or the network — both read the generation cache:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 degeneration
+python scripts/prefix_behavior_eval.py --tag s3 content
+</code></pre></figure><p><code>degeneration</code> reports word counts, distinct-4gram and distinct-word ratios, a looping flag
+and maximum repetition per arm. <code>content</code> asks whether the prefix's own vocabulary reappears
+downstream — a word counts only if it appears in the prefix and in <strong>none</strong> of the 50
+unprefixed base continuations. Run both before reading the judge results: a kindness verdict
+cannot distinguish steering an abstract direction from injecting topic words, and these two
+are what separate those mechanisms.</p>
+<h2 id="9-run-the-statistics">9. Run the statistics</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/prefix_behavior_eval.py --tag s3 stats
+python scripts/prefix_behavior_eval.py --tag s3 stats --report /tmp/reanalysis.json
+</code></pre></figure><p><code>stats</code> needs the arms file, the blind key, the judge files and the generation cache; it
+computes per-arm win/loss/tie counts per rater, sign tests, inter-rater agreement, and
+scopes results with and without the leak and loop flags. With no <code>--report</code> it writes
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_s3.json" target="_blank" rel="noopener"><code>data/analysis/prefix_eval_s3.json</code></a>, the experiment's own report path. Pass <code>--report</code> when
+re-analysing a published run so the published JSON is not overwritten.</p>
+<h2 id="what-goes-wrong">What goes wrong</h2>
+<p><strong>Omitting <code>--tag s3</code>.</strong> <code>--tag ""</code> is the default and it is the <strong>frozen Season 2
+namespace</strong> — <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_arms.json" target="_blank" rel="noopener"><code>prefix_eval_arms.json</code></a>, <code>prefix_blind.csv</code>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval.json" target="_blank" rel="noopener"><code>prefix_eval.json</code></a>, all cited
+line-by-line in <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval.md" target="_blank" rel="noopener"><code>data/analysis/prefix_eval.md</code></a>. Running <code>generate</code> or <code>blind</code> without the
+tag writes over a published record and makes those numbers unreproducible. Every command in
+this procedure carries the tag; check for it before pressing return, and <code>git status</code>
+afterwards if you are unsure.</p>
+<p><strong>Running <code>stats</code> on a fresh clone.</strong> It fails looking for
+<code>data/cache/prefix_behavioral_s3/</code>, which is gitignored. The generation cache is not in the
+repo and cannot be, so <code>stats</code>, <code>degeneration</code> and <code>content</code> are not reproducible from
+source alone — they require either the cache from <code>/work</code> or a re-run of step 3 on a GPU.
+This is a property of the pipeline, not a misconfiguration.</p>
+<p><strong>Naming a second round's batches by sequence number.</strong> Pair ids are stable across a
+<code>blind</code> rebuild, which is why verdicts already in <code>out/</code> stay valid and <code>--only-unjudged</code>
+works at all. But a second round emitting its own <code>batch_01</code> and a rater writing
+<code>out/batch_fwd_01.json</code> would <strong>overwrite the first round's verdicts for a completely
+different set of pairs</strong>, silently and with no size change to notice. Batch files are named
+by pair range for this reason; keep that convention if you generate them by hand.</p>
+<p><strong>A rater that opens the unblinding key.</strong> The run is invalidated — not weakened, not
+caveated. The rubric names the exact files a rater must not open, and a rater who has seen
+the key cannot un-see which arm a text came from. If it happens, discard that rater's
+verdicts entirely and re-rate those batches in a fresh context; do not attempt to keep the
+pairs you believe were unaffected. Blinding is imperfect even when the procedure holds — an
+instruction-style prefix leaves its register on the continuation — which is why the rubric
+asks for kindness only and never provenance.</p>
+<p><strong>Treating abstentions as missing data.</strong> An abstention is a pair where the two presentation
+orders <strong>disagreed</strong> about which text was kinder. Discarding it is the intended debias: an
+order-dependent verdict measures position bias, not kindness. <code>claude-merge</code> reports
+abstentions separately from missing orientations for exactly this reason, and a high
+abstention rate is a finding about the arm, not a defect in the run.</p>
+<h2 id="verify-it-yourself">Verify it yourself</h2>
+<p>The one check worth running before the GPU stage, because it is what the whole eval rests
+on — that the strings in the arms file are the strings the runs found:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/score_banded_local.py --arms data/analysis/prefix_eval_arms_s3.json
+</code></pre></figure><p>Every arm prints its re-scored value against its recorded one with an <code>ok</code> or <code>MISMATCH</code>
+flag. A <code>MISMATCH</code> is a corrupted string; stop and fix the arm before generating 50
+continuations from it.</p>
+<h2 id="cross-links">Cross-links</h2>
+<p><a class="xref" href="/docs/PREFIX_BLIND_RUBRIC.html"><code>docs/PREFIX_BLIND_RUBRIC.md</code></a> (the rating protocol — the rater's document, not this one) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_s3.md" target="_blank" rel="noopener"><code>data/analysis/prefix_eval_s3.md</code></a> (the Season 3 results) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_degeneration_s3.md" target="_blank" rel="noopener"><code>data/analysis/prefix_degeneration_s3.md</code></a> (the looping measures) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_content_s3.md" target="_blank" rel="noopener"><code>data/analysis/prefix_content_s3.md</code></a> (the content-injection measures) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_loop_control.md" target="_blank" rel="noopener"><code>data/analysis/prefix_loop_control.md</code></a> (the loop control) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/slurm/prefix_behavior_s3.sbatch" target="_blank" rel="noopener"><code>slurm/prefix_behavior_s3.sbatch</code></a> (the two-phase GPU job) ·
+<a class="xref" href="/docs/how-to/move-a-searched-string-without-corrupting-it.html"><code>docs/how-to/move-a-searched-string-without-corrupting-it.md</code></a> (the fidelity gate) ·
+<a class="xref" href="/docs/HANDOFF_BEHAVIORAL_S3.html"><code>docs/HANDOFF_BEHAVIORAL_S3.md</code></a> (why the experiment exists).</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/how-to/run-a-blind-behavioural-eval.md" target="_blank" rel="noopener"><code>docs/how-to/run-a-blind-behavioural-eval.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#1-smoke-it-on-three-prompts-first">1. Smoke it on three prompts first</a></li><li class="l2"><a href="#2-freeze-the-arms">2. Freeze the arms</a></li><li class="l2"><a href="#3-gate-the-arms-and-generate-the-gpu-stage">3. Gate the arms and generate (the GPU stage)</a></li><li class="l2"><a href="#4-build-the-blinded-csv">4. Build the blinded CSV</a></li><li class="l2"><a href="#5-emit-the-batches">5. Emit the batches</a></li><li class="l2"><a href="#6-hand-each-batch-to-a-separate-rater-context">6. Hand each batch to a separate rater context</a></li><li class="l2"><a href="#7-merge-the-verdicts">7. Merge the verdicts</a></li><li class="l2"><a href="#8-run-the-two-mechanical-measures">8. Run the two mechanical measures</a></li><li class="l2"><a href="#9-run-the-statistics">9. Run the statistics</a></li><li class="l2"><a href="#what-goes-wrong">What goes wrong</a></li><li class="l2"><a href="#verify-it-yourself">Verify it yourself</a></li><li class="l2"><a href="#cross-links">Cross-links</a></li></ul></aside>
+</div>
+</body>
+</html>

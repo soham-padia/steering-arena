@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>What the behavioural tests establish — Steering Arena docs</title>
+<meta name="description" content="This project asks two questions that are easy to run together and must be kept apart. This" />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/explanation/what-the-behavioural-tests-establish.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="What the behavioural tests establish — Steering Arena docs" />
+<meta property="og:description" content="This project asks two questions that are easy to run together and must be kept apart. This" />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/explanation/what-the-behavioural-tests-establish.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li class="on"><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-explanation">EXPLANATION</span></p>
+    <h1 id="what-the-behavioural-tests-establish">What the behavioural tests establish</h1>
+<p>This project asks two questions that are easy to run together and must be kept apart. This
+page is about why they are different, what the answers currently are, and which controls
+are load-bearing. It does not tell you how to run anything — for that see
+<a class="xref" href="/docs/how-to/run-a-blind-behavioural-eval.html"><code>docs/how-to/run-a-blind-behavioural-eval.md</code></a> — and it does not index the artifacts; that is
+<a class="xref" href="/docs/reference/withdrawn-claims.html"><code>docs/reference/withdrawn-claims.md</code></a> and the <code>.md</code> files beside each JSON.</p>
+<p>Start here, because the shape of the result is in one file:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 - &lt;&lt;'PY'
+import json
+e = json.load(open("data/analysis/prefix_eval_s3.json"))
+print("arms   :", len(e["arm_names"]))
+print("pairs  :", e["total_pairs"], "| decided:", e["raters"]["claude-opus-5/v2"]["rated"])
+print("looping:", e["pairs_with_a_looping_side"], "pairs had a degenerate side")
+PY
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>arms   : 8
+pairs  : 400 | decided: 366
+looping: 116 pairs had a degenerate side
+</code></pre></figure><p>That last line is the reason this page exists. Nearly a third of the pairs contain a
+broken text, and a kindness judge scores a broken text badly for the wrong reason.</p>
+<h2 id="the-two-questions">The two questions</h2>
+<p><strong>Question 1: can we curate a token sequence that pushes the model's residual stream along
+a fitted pro-human direction, at a chosen depth, read at the last token?</strong></p>
+<p>Answered, and answered at scale. A public leaderboard ran on exactly this for two seasons —
+721 submissions — and Season 3's GCG search reached +0.16395 LIVE against a banded mean and
++0.06997 against a banded min. This question is about <em>where activations point</em>.</p>
+<p><strong>Question 2: does prepending that sequence make the model behave differently?</strong></p>
+<p>This is the one that turned a game back into research, and nobody had answered it for the
+banded metrics. It is about <em>what the model says</em>.</p>
+<p>The two are not the same claim, and conflating them is the failure this project keeps
+guarding against. A cosine is not a behaviour. Season 3's answer to Q1 was never in doubt;
+its answer to Q2 required 450 generations, 400 blind pairs and four separate controls, and
+it came back partly positive with two of its own headline claims withdrawn within days.</p>
+<h2 id="the-controls-in-the-order-that-makes-them-load-bearing">The controls, in the order that makes them load-bearing</h2>
+<p>Each of these exists because a specific way of being wrong was available.</p>
+<p><strong>The length-matched random prefix.</strong> Any 32 tokens perturb a continuation, so &quot;the soup
+was preferred over no prefix&quot; proves nothing on its own. Season 2 never ran this control.
+Season 3 did, drawing 32 random tokens from the same vocabulary GCG searches and resampling
+until they re-tokenise to exactly 32. It is <strong>null on every measure</strong> — 15/34 preferred
+(p=0.61), Δfix −0.17 (p=0.29), null again under the loop scope, and it scores ≈0 on both
+objectives (−0.00335, −0.00885). It also leaks <strong>0 of 50</strong> despite carrying 18 words that
+could leak. This is the control the whole enterprise rests on and the metric passes it.</p>
+<p><strong>The loop control.</strong> A looping text loses a kindness comparison because it is broken, not
+because it is cruel. Season 2 published &quot;the anti prefix makes the model cruel&quot; and withdrew
+it once human ratings showed repetition on 37/50. Season 3 measures degeneration
+mechanically, before any judge runs, and drops pairs where either side loops. It cuts both
+ways: it <em>strengthened</em> the Season 2 pro arms when applied retroactively
+(<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_loop_control.md" target="_blank" rel="noopener"><code>prefix_loop_control.md</code></a>) and it <em>erased</em> <code>score2_anti</code> (11/39, p=0.0095 → 7/14,
+p=1.0000).</p>
+<p><strong>Blinding, and its known blind spot.</strong> The rater sees only the continuation, never the
+prefix, and pairs where the model echoed the prefix verbatim are flagged. The blind spot is
+single tokens: <code>zach</code>×13 leaking into <code>score1_top</code>'s continuations would not trip a 4-gram
+echo check. That does not unblind anyone — the rater never saw a prefix and so cannot know
+what a leak is — but it is why leakage is a <em>mechanism</em> confound rather than a blinding
+failure.</p>
+<p><strong>The A/B swap.</strong> Every pair is judged twice, in both presentation orders, in separate
+contexts that never see both. Disagreement across the swap becomes an abstention rather than
+a coin flip: 34 of 400 here. That converts position bias into lost power instead of false
+signal.</p>
+<p><strong>The fixed baseline.</strong> Season 2 differenced against a baseline re-rated inside each arm's
+own run, and it drifted — the same 50 byte-identical base texts scored 2.77 beside one arm
+and 3.39 beside another. Season 3 computes one baseline per prompt natively. Its own drift
+is 0.15 across eight arms, so Δfloat and Δfix differ by at most 0.03 anywhere.</p>
+<h2 id="what-the-answers-currently-are">What the answers currently are</h2>
+<p><strong>Prefixes do change behaviour.</strong> Three GCG pro arms and one hand-written prefix all move a
+blind rater, all survive the loop control, and the random control does not move it at all.
+The strongest arm reaches 32/36 preferred under the loop scope at p&lt;1e-04.</p>
+<p><strong>More score buys more behaviour — on the pro side only.</strong> Two strings from the same run,
+differing by 7% of score and nothing else that was controlled: the higher one produces
+Δfix +1.20 against +1.09, and the higher intensity, and the higher absolute rating. On the
+anti side the same test fails: a string scoring 29% <em>more</em> negative produces a <em>weaker</em>
+effect and less degeneration, and <code>score1_anti</code> — 23% less extreme on Score 2 — produces
+nearly twice the effect and is the only anti arm to survive the loop control. <strong>The negative
+pole of Score 2 is not a behavioural dose axis.</strong></p>
+<p><strong>The banded <code>min</code> orders behaviour better than the banded <code>mean</code>, and neither does it
+perfectly.</strong> Across eight arms, ρ = +0.929 with 2/28 inversions for Score 2 against +0.857
+and 4/28 for Score 1. Both fail at the anti pole; Score 1 additionally inverts its own top
+pair, where the string scoring 1.96× more produces 62% of the effect.</p>
+<h2 id="what-limits-all-of-it">What limits all of it</h2>
+<p><strong>Content injection, now bounded rather than general.</strong> The prefixes are not opaque —
+<code>score1_top</code> contains legible pro-social English and its own vocabulary reappears in 22 of
+50 continuations, with <code>off_topic</code> at 21/50. For a while that looked like <em>the</em> mechanism.
+It is not: the strongest behavioural arm in the study has the least leakage of any GCG pro
+arm, 3/50 against 13/50, with behaviour up and leakage down fourfold between two strings
+from one run. So injection confounds specific arms and is not the general explanation. It
+still holds wherever leakage is high.</p>
+<p><strong>Much of the effect is reachable by asking.</strong> <code>pro_coherent</code> is a hand-written sentence
+scoring 4.1× lower on Score 1 and it delivers 48% of the strongest arm's behavioural
+effect. Whatever the search buys, it is not the difference between nothing and something.</p>
+<p><strong>One rater family.</strong> Season 2 had two judge models and 54 human ratings, and its human-vs-
+Claude agreement was only 73%. Season 3 has one model rater, by a $0 decision. This is the
+largest open risk in the result, and the blind CSV is committed and ready for human rating.</p>
+<p><strong>One or two strings per objective.</strong> Every per-arm number is n=1 prefix over 50 prompts.
+The dose-response results rest on one pair per side, so &quot;more score&quot; cannot be separated
+from &quot;different string&quot;.</p>
+<p><strong>Do not over-read ρ.</strong> Eight points, six of them optimised against these very metrics.
+The arms are not an independent sample of anything, and one swapped pair moves ρ materially.</p>
+<h2 id="what-this-buys-you">What this buys you</h2>
+<p>A metric with demonstrated behavioural validity, bounded honestly: it moves what the model
+says, a matched random control does not, and the harder of its two variants predicts
+behaviour better than the easier one. Two of the caveats that most limited that claim —
+degeneration explaining the anti pole, and content injection explaining the pro pole — were
+tested rather than assumed, and each came back narrower than feared. Both withdrawals came
+from data the project generated to test its own claims, within days of publishing them.</p>
+<p>The controls are the transferable part. The random-prefix null, the mechanical loop scope,
+the order-swap abstention and the fixed baseline are cheap, judge-free or nearly so, and
+three of the four exist because this project got something wrong first and wrote down what
+it cost.</p>
+<h2 id="where-to-read-next">Where to read next</h2>
+<p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_s3.md" target="_blank" rel="noopener"><code>data/analysis/prefix_eval_s3.md</code></a> for the numbers and their full caveat list ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_degeneration_s3.md" target="_blank" rel="noopener"><code>data/analysis/prefix_degeneration_s3.md</code></a> and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_content_s3.md" target="_blank" rel="noopener"><code>prefix_content_s3.md</code></a> for the two judge-free
+controls · <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_loop_control.md" target="_blank" rel="noopener"><code>data/analysis/prefix_loop_control.md</code></a> for what the loop scope does to Season 2 ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/SESSION_REPORT.md" target="_blank" rel="noopener"><code>SESSION_REPORT.md</code></a> for Season 2's behavioural experiments in full, noting it pre-dates the
+fixed-baseline correction and the loop control · <a class="xref" href="/docs/reference/withdrawn-claims.html"><code>docs/reference/withdrawn-claims.md</code></a> for
+the register · <a class="xref" href="/docs/explanation/the-case-for-the-metric.html"><code>docs/explanation/the-case-for-the-metric.md</code></a> for the strongest honest
+version of the positive case, and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/README.md" target="_blank" rel="noopener"><code>_falsifier/README.md</code></a> for its counterpart. Read those two
+together or neither.</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/explanation/what-the-behavioural-tests-establish.md" target="_blank" rel="noopener"><code>docs/explanation/what-the-behavioural-tests-establish.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#the-two-questions">The two questions</a></li><li class="l2"><a href="#the-controls-in-the-order-that-makes-them-load-bearing">The controls, in the order that makes them load-bearing</a></li><li class="l2"><a href="#what-the-answers-currently-are">What the answers currently are</a></li><li class="l2"><a href="#what-limits-all-of-it">What limits all of it</a></li><li class="l2"><a href="#what-this-buys-you">What this buys you</a></li><li class="l2"><a href="#where-to-read-next">Where to read next</a></li></ul></aside>
+</div>
+</body>
+</html>

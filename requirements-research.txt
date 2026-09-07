@@ -1,4 +1,4 @@
-# Research / analysis layer — NOT installed into the served image.
+# Research / analysis + docs-build layer — NOT installed into the served image.
 #
 # `requirements.txt` is what the Dockerfile builds the HF Space from, and `app/`
 # imports none of this. Installing scipy there would put a research dependency in
@@ -12,3 +12,8 @@
 #
 #   python -m pip install -r requirements-research.txt
 scipy==1.17.1
+
+# Build-time only: renders docs/*.md into web/docs/ via
+# scripts/build_docs_site.py. The generated HTML is committed, so the request
+# path never parses markdown and the Space never installs this.
+markdown-it-py==4.2.0

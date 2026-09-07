@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How to open a new season — Steering Arena docs</title>
+<meta name="description" content="A season is a frozen tuple — (model_id, model_build, layer, d_version, scoring_config)." />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/how-to/open-a-new-season.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="How to open a new season — Steering Arena docs" />
+<meta property="og:description" content="A season is a frozen tuple — (model_id, model_build, layer, d_version, scoring_config)." />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/how-to/open-a-new-season.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li class="on"><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-howto">HOW-TO</span></p>
+    <h1 id="how-to-open-a-new-season">How to open a new season</h1>
+<p>A season is a frozen tuple — <code>(model_id, model_build, layer, d_version, scoring_config)</code>.
+Scores are comparable only within one, so <strong>any</strong> change to any element forces a new season:
+a new <code>d</code>, a new layer or band, a new scoring mode, a new probe set, or an NDIF re-serve that
+shifts scores. Old rows stay attached to their old <code>season_id</code> and are never mixed.</p>
+<p>This page is the order in which to do it. <strong>The order is the whole point</strong> — every step below
+is safe in this position and destructive in a different one.</p>
+<p><strong>Prerequisites:</strong> the <code>steering-arena</code> conda env, <code>SUPABASE_SERVICE_KEY</code> in <code>.env</code>, push
+access to the HF Space, and a direction file already validated by the extraction gates. The
+backfill step needs NDIF quota; nothing else here does.</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/check_season_matches_d.py --d data/directions/d_olmo3_s3_score1.npz
+</code></pre></figure><p>That is the gate. It compares the season row against the <code>.npz</code> metadata field by field, and
+it is the check that would have caught both of the first Season 3 attempt's mistakes — a row
+saying <code>layer=23</code> against a d file saying <code>layer=27</code>, and a <code>d_version</code> that differed by a
+<code>_score1</code> suffix. Both were found by hand.</p>
+<h2 id="1-freeze-the-probe-set-as-a-new-file">1. Freeze the probe set as a new file</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">cp data/probes/season2.json data/probes/season3.json
+# edit the "season" and "note" fields; leave "prompts" untouched
+git add data/probes/season3.json &amp;&amp; git commit -m "freeze the season 3 probe set"
+</code></pre></figure><p>Do this <strong>even when the prompts are byte-identical</strong>. <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/probes/season3.json" target="_blank" rel="noopener"><code>data/probes/season3.json</code></a> carries the
+same 16 prompts as <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/probes/season2.json" target="_blank" rel="noopener"><code>season2.json</code></a>, verbatim and deliberately: Season 3 already changed the
+direction, the layers and the scoring mode, and holding the probes fixed keeps the probe set
+from becoming a fourth simultaneous variable. It is a separate file rather than a reference so
+that <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/probes/season2.json" target="_blank" rel="noopener"><code>season2.json</code></a> can never be edited out from under an archived board.</p>
+<p>The probe set is committed before anything else because <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/check_season_matches_d.py" target="_blank" rel="noopener"><code>scripts/check_season_matches_d.py</code></a>
+fails a season whose <code>probe_set_id</code> file is untracked.</p>
+<h2 id="2-run-the-causal-steering-check-on-the-ranking-direction">2. Run the causal steering check on the ranking direction</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/behavioral_eval.py generate \
+  --d data/directions/d_olmo3_s3_score1.npz --limit 10 --mults 1.0
+</code></pre></figure><p>If adding <code>α·d</code> does not move generations, <code>d</code> is bad and no scoring config rescues it. Only
+the <strong>ranking</strong> direction needs this — Score 2 is informational and does not order the board.
+Record what you ran and how far it was descoped; Season 3's is
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_causal_spotcheck.md" target="_blank" rel="noopener"><code>data/analysis/season3_causal_spotcheck.md</code></a>, a 10-prompt spot check justified by
+<code>cos(d_s3_score1, d_s2_L24) = +0.8688</code>, not the full battery.</p>
+<h2 id="3-deploy-the-code-first">3. Deploy the code first</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">git checkout --orphan space-deploy
+git add -A
+git commit -m "Steering Arena — deploy (squashed from $(git rev-parse --short main))"
+GIT_ASKPASS=/tmp/hf_askpass.sh GIT_TERMINAL_PROMPT=0 git push --force space space-deploy:main
+git checkout main &amp;&amp; git branch -D space-deploy
+curl -s https://sohampadianeu-steering-arena.hf.space/health
+</code></pre></figure><p>The deployed build must be able to score the new objective <strong>before</strong> the database knows the
+season exists. Full procedure and the askpass shim in <a class="xref" href="/docs/DEPLOY.html"><code>docs/DEPLOY.md</code></a>. Opening a season needs
+no environment variables — <code>/health</code>, <code>/season</code> and the scorer all read the active season row
+from Supabase, and the Space's <code>LAYER</code> / <code>D_FILE</code> / <code>SEASON_ID</code> variables are legacy fallbacks
+the database overrides.</p>
+<h2 id="4-run-the-migration-part-that-opens-the-season-inactive">4. Run the migration part that opens the season inactive</h2>
+<p>Run <strong>Part A only</strong> of the migration in the Supabase SQL editor:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">sed -n '/PART A/,/^commit;/p' db/migrations/0009_season3.sql
+</code></pre></figure><p>Part A adds the columns the new season needs, creates the one-active-season index, and inserts
+the row with <code>active = false</code>. Season 2 stays live and visible the whole time. Then confirm:</p>
+<figure class="code" data-lang="sql"><figcaption><span class="lang">sql</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-sql">select id, name, layer, layers, d_version, scoring_mode, active from seasons order by id;
+</code></pre></figure><p>Expect the old season still <code>active = true</code> and the new one <code>active = false</code>.</p>
+<h2 id="5-assert-the-row-matches-the-direction-files">5. Assert the row matches the direction files</h2>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/check_season_matches_d.py --season-id 5 \
+  --d data/directions/d_olmo3_s3_score1.npz \
+  --d data/directions/d_olmo3_s3_score2.npz
+</code></pre></figure><p>It exits 0 only if <code>model_id</code>, <code>layer</code>, <code>d_version</code> and <code>model_build</code> agree between the row
+and every <code>.npz</code>, <code>seasons.layers</code> equals the ranking band, exactly one season is active, the
+probe file exists and is committed, and every <code>d</code> loads finite and unit-norm at the model's
+hidden size. Read-only — it touches no table.</p>
+<p><code>--season-id</code> is the <strong>primary key</strong>, which is not the display number. Get it from the
+<code>select</code> in step 4, never from <code>.env</code>.</p>
+<h2 id="6-backfill-the-carried-over-board">6. Backfill the carried-over board</h2>
+<p>Point <code>.env</code> at the new season's config, then rescore:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash"># .env: SCORING_MODE=banded_mean_multilayer, SCORE1_LAYERS=19,23,27,31,
+#       SCORE2_LAYERS=15,23,31,39, PROBE_SET=data/probes/season3.json
+python scripts/rescore_season.py --from-season-id 4 --to-season-id 5 --limit 5 --dry-run
+python scripts/rescore_season.py --from-season-id 4 --to-season-id 5
+</code></pre></figure><p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/rescore_season.py" target="_blank" rel="noopener"><code>rescore_season.py</code></a> builds its scorer through <code>app.scoring</code> and <code>ResidualReader.from_settings</code>
+— the exact live path — and refuses to start if the settings disagree with the target row:</p>
+<figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>REFUSING TO RESCORE — settings do not match the target season:
+  layer: season 23 vs settings 24
+
+Run scripts/check_season_matches_d.py, and set the bands in .env.
+</code></pre></figure><p>That is what you see when <code>.env</code> is still the old single-layer config: with <code>SCORE1_LAYERS</code>
+empty, <code>settings.banded()</code> is false and the check falls to the single-layer comparison. Fix <code>.env</code>, do not pass a flag around it:
+a rescore that scores differently from the live scorer fills the new board with numbers no
+future submission can be compared against, which breaks the season invariant from the inside.</p>
+<p>The run is resumable on <code>(season_id, norm_key)</code> and re-running it skips what landed. Migrated
+rows keep their original <code>created_at</code> (the board tie-breaks on it), their consent fields, and
+get the sentinel <code>ip_hash = "season1-rescore"</code> so they do not perturb real rate-limit counts.</p>
+<h2 id="7-only-now-flip-it-active">7. Only now flip it active</h2>
+<p>Run <strong>Part B</strong>, which is commented out in the migration on purpose:</p>
+<figure class="code" data-lang="sql"><figcaption><span class="lang">sql</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-sql">begin;
+update seasons set active = false where active = true;
+update seasons set active = true
+  where model_id = 'allenai/Olmo-3-1125-32B' and d_version = 'olmo3_s3_banded';
+commit;
+</code></pre></figure><figure class="code" data-lang="sql"><figcaption><span class="lang">sql</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-sql">select id, name, layers, active from seasons where active;   -- exactly one row, the new season
+select count(*) from submissions where season_id = 4;        -- expect 618, unchanged
+</code></pre></figure><p>The close-then-open order inside the transaction is required; see the failure modes below.</p>
+<h2 id="what-goes-wrong">What goes wrong</h2>
+<p><strong>The ordering trap.</strong> You flip the DB active before the deployed code can score the new
+objective. <code>/submit</code> resolves the active season from the database but scores with whatever the
+deployed build computes, so rows land under the <strong>new</strong> <code>season_id</code> carrying the <strong>old</strong>
+metric. There is no error, nothing in a log, and afterwards those rows are indistinguishable
+from correct ones — the sequence, the handle and the timestamp are all real and only the number
+is wrong. This happened once during the Season 3 build and was caught before any submission
+arrived. Deploy first, flip second.</p>
+<p><strong><code>on conflict ... do update set active = true</code>.</strong> Migration <code>0002</code> used it, and it silently
+<strong>re-opens an existing season</strong> instead of failing on a duplicate tuple — you believe you
+opened a new board and you have reactivated an archived one, with its old rows live again.
+<code>0009</code> has no conflict clause for exactly this reason: a duplicate tuple must fail loudly.</p>
+<p><strong>Two active seasons.</strong> <code>db.get_active_season()</code> does <code>.limit(1)</code> with <strong>no order</strong>, so which
+season the site serves is undefined by PostgREST and can differ between requests. The partial
+unique index <code>seasons_one_active_idx on seasons (active) where active</code> converts that silent
+split-brain into a failed transaction — which is why the old season must be closed <strong>before</strong>
+the new one opens. Reverse the two <code>update</code> statements and the second collides mid-statement
+and the transaction aborts. <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/scripts/check_season_matches_d.py" target="_blank" rel="noopener"><code>check_season_matches_d.py</code></a> reports the same condition as:</p>
+<figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>  FAIL  2 active seasons: [4, 5] — db.get_active_season() does .limit(1) with NO order
+</code></pre></figure><p><strong>Taking the display number for the primary key.</strong> They have never matched. <code>.env</code> says
+<code>SEASON_ID=2</code> while the DB ids are <code>1, 3, 4, 5</code> — <code>2</code> was consumed by an aborted insert, so
+&quot;Season 3&quot; is row <code>id=5</code>. Anything that writes, rescores or queries by season must read the id
+from the <code>seasons</code> table. A <code>--to-season-id 3</code> meant as &quot;Season 3&quot; writes into Season 1.</p>
+<p><strong>Putting a band in <code>seasons.layer</code>.</strong> It is <code>int not null</code> and participates in
+<code>unique (model_id, layer, d_version)</code>, so it cannot hold <code>19,23,27,31</code>. It holds the band's
+median as a <strong>representative</strong> value (<code>23</code> for Season 3) and <code>seasons.layers</code> is authoritative.
+Reading <code>seasons.layer</code> on a multi-layer season gives you one layer of four and no error.</p>
+<h2 id="verify-it-yourself">Verify it yourself</h2>
+<p>One command decides whether the season is coherent, and it costs nothing:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python scripts/check_season_matches_d.py
+</code></pre></figure><p>With no arguments it checks whichever row is <code>active</code>. <code>ALL CHECKS PASS</code> means the live season
+row, its direction files and its probe set agree with each other. Run it after step 4 and again
+after step 7.</p>
+<h2 id="cross-links">Cross-links</h2>
+<p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/db/migrations/0009_season3.sql" target="_blank" rel="noopener"><code>db/migrations/0009_season3.sql</code></a> (the two-part migration, and the notes on ids and <code>layer</code>) ·
+<a class="xref" href="/docs/DEPLOY.html"><code>docs/DEPLOY.md</code></a> (the squashed-orphan deploy, and the ordering trap for the record) ·
+<a class="xref" href="/docs/reference/seasons.html"><code>docs/reference/seasons.md</code></a> (the season table, ids, and what each season froze) ·
+<a class="xref" href="/docs/reference/scoring.html"><code>docs/reference/scoring.md</code></a> (what the scoring config actually is) ·
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_causal_spotcheck.md" target="_blank" rel="noopener"><code>data/analysis/season3_causal_spotcheck.md</code></a> (the steering check as it was actually run).</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/how-to/open-a-new-season.md" target="_blank" rel="noopener"><code>docs/how-to/open-a-new-season.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#1-freeze-the-probe-set-as-a-new-file">1. Freeze the probe set as a new file</a></li><li class="l2"><a href="#2-run-the-causal-steering-check-on-the-ranking-direction">2. Run the causal steering check on the ranking direction</a></li><li class="l2"><a href="#3-deploy-the-code-first">3. Deploy the code first</a></li><li class="l2"><a href="#4-run-the-migration-part-that-opens-the-season-inactive">4. Run the migration part that opens the season inactive</a></li><li class="l2"><a href="#5-assert-the-row-matches-the-direction-files">5. Assert the row matches the direction files</a></li><li class="l2"><a href="#6-backfill-the-carried-over-board">6. Backfill the carried-over board</a></li><li class="l2"><a href="#7-only-now-flip-it-active">7. Only now flip it active</a></li><li class="l2"><a href="#what-goes-wrong">What goes wrong</a></li><li class="l2"><a href="#verify-it-yourself">Verify it yourself</a></li><li class="l2"><a href="#cross-links">Cross-links</a></li></ul></aside>
+</div>
+</body>
+</html>

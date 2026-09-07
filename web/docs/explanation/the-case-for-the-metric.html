@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The case for the metric — Steering Arena docs</title>
+<meta name="description" content="data/analysis/prefix_eval_s3.md, season3_prefix_scores.md," />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/explanation/the-case-for-the-metric.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="The case for the metric — Steering Arena docs" />
+<meta property="og:description" content="data/analysis/prefix_eval_s3.md, season3_prefix_scores.md," />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/explanation/the-case-for-the-metric.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li class="on"><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-explanation">EXPLANATION</span></p>
+    <h1 id="the-case-for-the-metric">The case for the metric</h1>
+<p><strong>Sources:</strong> <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_advocate/POSITIVES.md" target="_blank" rel="noopener"><code>_advocate/POSITIVES.md</code></a> (2026-08-28, Season 2 figures),
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_s3.md" target="_blank" rel="noopener"><code>data/analysis/prefix_eval_s3.md</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_prefix_scores.md" target="_blank" rel="noopener"><code>season3_prefix_scores.md</code></a>,
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_directions.json" target="_blank" rel="noopener"><code>season3_directions.json</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_k3_control.md" target="_blank" rel="noopener"><code>season3_k3_control.md</code></a>, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify_result.json" target="_blank" rel="noopener"><code>_falsifier/verify_result.json</code></a>.</p>
+<p><strong>Rule applied throughout:</strong> every claim cites a number, and every claim carries a line
+saying what would kill it. Claims that cannot be supported are in §7 rather than omitted.
+Where a value has been corrected, the corrected one is used and the superseded one is never
+quoted.</p>
+<p>This is the advocate's page. Its counterpart is <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/README.md" target="_blank" rel="noopener"><code>_falsifier/README.md</code></a>, and
+<code>CLAUDE.md</code> is explicit that reading one without the other gives a systematically distorted
+picture. Read both or neither.</p>
+<p>Start with the number the whole case turns on:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 - &lt;&lt;'PY'
+import json
+s = json.load(open("data/analysis/season3_prefix_scores.json"))["scores"]
+for arm in ("random32", "score2_top_final"):
+    print(f"{arm:&gt;17} score1 {s[arm]['score1_live']:+.5f}  score2 {s[arm]['score2_live']:+.5f}")
+PY
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>         random32 score1 -0.00335  score2 -0.00885
+ score2_top_final score1 +0.08350  score2 +0.06997
+</code></pre></figure><p>A length-matched random prefix is worth roughly nothing on either objective. Everything
+below depends on that being true, and it is measured, not assumed.</p>
+<hr />
+<h2 id="1-it-is-a-transfer-result-and-that-is-the-whole-point">1. It is a transfer result, and that is the whole point</h2>
+<p>The strings were found by optimising a cosine between a frozen model's residual stream and
+a fitted direction. The search never saw a single generation. Then the strings were
+prepended to unrelated prompts and the <em>output</em> changed, under blind pairwise rating: the
+strongest arm at <strong>32/36</strong> preferred with p &lt; 1e-04 under the loop control, and three
+separate GCG pro arms all significant.</p>
+<p>The obvious prior is that a leaderboard scoring internals means nothing about behaviour.
+That prior is now measured and wrong.</p>
+<p><em>What would break it:</em> a rater family disagreeing with this one. Season 2's human-vs-Claude
+agreement was 73%, and Season 3 has one model rater.</p>
+<h2 id="2-the-obvious-debunk-is-measured-and-false">2. The obvious debunk is measured and false</h2>
+<p>&quot;Any 32 tokens of soup perturb a continuation, and a kindness judge will find something.&quot;
+The control had never been run. It is now, drawn from the same vocabulary GCG searches and
+resampled to re-tokenise to exactly 32 tokens, and it is <strong>null on every measure</strong>: 15/34
+preferred (p=0.61), Δfix −0.17 (p=0.29), null again under the loop scope, ≈0 on both
+objectives, and <strong>0 of 50</strong> continuations carry one of its 18 leakable words.</p>
+<p><em>What would break it:</em> more random draws. This is n=1 seeded draw, and a proper null band
+needs about ten.</p>
+<h2 id="3-more-score-buys-more-behaviour-on-a-controlled-pair">3. More score buys more behaviour, on a controlled pair</h2>
+<p>Two strings from the same run, differing by 7% of Score 2 and nothing else that was held
+fixed: the higher-scoring one produces Δfix <strong>+1.20</strong> against <strong>+1.09</strong>, higher judged
+intensity (1.58 against 1.53), and the highest absolute rating of any arm (4.40). The
+metric is not merely correlated with behaviour at the extremes; moving along it moves
+behaviour.</p>
+<p><em>What would break it:</em> a third pro string at an intermediate score that breaks the
+ordering, or a demonstration that the two strings differ in something else that matters.</p>
+<h2 id="4-the-harder-objective-is-the-better-behavioural-proxy">4. The harder objective is the better behavioural proxy</h2>
+<p>Score 2 is a <code>min</code> over four depths against a per-layer direction — a conjunction, and much
+harder to search. Across eight arms it orders behaviour with <strong>ρ = +0.929, 2/28 inversions</strong>
+against Score 1's <strong>+0.857, 4/28</strong>, and Score 1 inverts <strong>its own top pair</strong>: the string
+scoring 1.96× more produces 62% of the effect.</p>
+<p>That is a design result, not a curiosity. Making the objective harder to game also made it
+track behaviour better.</p>
+<p><em>What would break it:</em> it is eight points, six of them optimised against these very
+metrics. An independent sample of prefixes at spread scores could reorder this easily, and
+both metrics already fail at the anti pole.</p>
+<h2 id="5-the-direction-survives-its-confounds-and-season-3-is-the-first-to-remove-the-hard-one">5. The direction survives its confounds, and Season 3 is the first to remove the hard one</h2>
+<p>Both Season 3 directions hit held-out separation <strong>1.000</strong> on 135 contrastive pairs over 40
+splits, with <strong>every audited confound cosine ≤ 0.0072</strong> and <code>per_axis_all_positive: true</code>
+across all 15 seed axes — the weakest axis still clears 0.203 and 0.221. Season 3 is the
+first extraction in the project to orthogonalise <strong><code>approach</code></strong>, which
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/REVISIONS_2026-09-05.md" target="_blank" rel="noopener"><code>REVISIONS_2026-09-05.md</code></a> §4 had flagged as the only audited confound never removed and the
+one that does not decay with depth.</p>
+<p><em>What would break it:</em> the corpus. <code>approach</code> alone separates the seed pairs at 0.824, so a
+probe fit here <em>could</em> have been an approach detector; it happens not to be. Corpus problem,
+not direction problem — and both halves must always be stated together.</p>
+<h2 id="6-a-prefix-is-not-a-compiled-steering-vector-and-that-is-the-most-interesting-result">6. A prefix is not a compiled steering vector, and that is the most interesting result</h2>
+<p>A prefix rotates the layer-24 residual <strong>50.4°</strong> — <em>more</em> than a full <code>+1.0·d</code> injection's
+45.2° — while putting only <strong>0.93 of its 24.25 displacement along <code>d</code></strong>, about 3.8%. It
+achieves more behavioural change than the injection while barely touching the direction it
+was optimised against. Meanwhile ablating <code>d</code> entirely rotates the residual <strong>0.92°</strong> and
+does nothing.</p>
+<p>So the score is a <em>handle</em>, not a mechanism, and the mechanism is somewhere in the other
+96%. The token-level ablation points the same way: the legible pro-social English in the
+Score-1 winner carries about a tenth of its score, and substituting its most offensive
+token for <code>" xyzzy"</code> retains 90%.</p>
+<p><em>What would break it:</em> a string searched against a <strong>random</strong> direction to a matched board
+score that moves behaviour equally. That experiment is still unrun and it is the single
+highest-value thing outstanding.</p>
+<h2 id="7-the-methods-transfer-and-three-of-them-exist-because-this-project-got-it-wrong-first">7. The methods transfer, and three of them exist because this project got it wrong first</h2>
+<ul>
+<li><strong>LLM-judge contrast drift is real, large, signed against the effect, and free to fix.</strong>
+The same 50 byte-identical texts scored 2.77 beside one arm and 3.39 beside another.
+Correcting it shrank 14 effects by 13–37% with zero sign flips.</li>
+<li><strong>A mechanical loop scope beats a judge for detecting degeneration.</strong> It caught
+<code>score2_anti</code> from the text alone, pre-judge, and it <em>strengthened</em> the pro arms when
+applied retroactively to Season 2.</li>
+<li><strong>Per-item records make correction cost nothing.</strong> Every correction above was recomputed
+with zero new generations and zero new judge calls.</li>
+<li><strong>An order-swap turns position bias into abstention</strong> rather than false signal — 34 of 400
+pairs here.</li>
+</ul>
+<h2 id="8-the-withdrawal-record-is-itself-evidence">8. The withdrawal record is itself evidence</h2>
+<p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>_falsifier/verify.py</code></a> holds <strong>218 checks</strong> that recompute published numbers from their
+artifacts and exit non-zero when one stops matching. On 2026-09-07 it caught a cache
+corruption that had silently replaced 20 generations and broken two published numbers, in a
+gitignored directory, with no diff anywhere to show it — and it named the two affected
+numbers precisely enough to repair rather than re-run.</p>
+<p>Twelve claims have been withdrawn or corrected, and in nine of them something substantive
+survived and is recorded next to the failure. Two were caught before publication. Two were
+falsified by data the project generated specifically to test them, within days of
+publishing.</p>
+<p><em>What would break it:</em> a withdrawal that was quietly dropped rather than recorded. The
+register in <a class="xref" href="/docs/reference/withdrawn-claims.html"><code>docs/reference/withdrawn-claims.md</code></a> accounts for every marker in the repo.</p>
+<h2 id="9-the-caveats-came-back-narrower-than-feared">9. The caveats came back narrower than feared</h2>
+<p>Both of the limits that most constrained the headline were tested rather than assumed, and
+neither held in its general form. <strong>Content injection</strong> looked like <em>the</em> mechanism until
+the strongest behavioural arm turned out to have the <em>least</em> leakage of any GCG pro arm —
+3/50 against 13/50, behaviour up and leakage down fourfold. <strong>Degeneration</strong> looked like it
+explained the anti pole monotonically until a 29%-more-negative string degenerated <em>less</em>.</p>
+<p>Each survives in bounded form, named to specific arms. That is a better position than the
+project was in a week ago.</p>
+<hr />
+<h2 id="what-the-advocate-will-not-claim">What the advocate will not claim</h2>
+<ul>
+<li><strong>That the search is worth what it costs.</strong> <code>pro_coherent</code> — a hand-written sentence
+scoring 4.1× lower on Score 1 — delivers <strong>48%</strong> of the strongest arm's behavioural
+effect. Much of this is reachable by asking politely, and nothing here isolates the
+search's marginal contribution.</li>
+<li><strong>That the anti pole means anything behavioural.</strong> Both Score-2 anti arms are null under
+the loop control (p=1.0000 and p=0.3075), and a more extreme score produced a weaker
+effect. Minimising Score 2 does not find cruelty.</li>
+<li><strong>That the metric is validated in general.</strong> Every ρ here is eight points, six of them
+optimised against the metric being tested. That measures ordering among these arms, not
+the metric's validity.</li>
+<li><strong>That Season 3's direction has a causal gate.</strong> <a class="xref" href="/docs/EXTRACTION.html"><code>docs/EXTRACTION.md</code></a> requires one; for
+Season 3 it was descoped to a 10-prompt × 3-arm spot check at layer 27
+(<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_causal_spotcheck.md" target="_blank" rel="noopener"><code>season3_causal_spotcheck.md</code></a>). Decodability is not causal use.</li>
+<li><strong>That anything transfers across models.</strong> Cross-model work exists and claims nothing.</li>
+<li><strong>That one rater family is enough.</strong> It is the largest open risk in the behavioural
+result, and <code>data/analysis/prefix_blind_s3.csv</code> is committed and ready for human rating.</li>
+<li><strong>That &quot;pro-human&quot; is the right name for <code>d</code>.</strong> It separates a corpus that is itself
+confounded, its per-axis structure has no label-shuffled null, and the cross-layer story
+that once supported the &quot;single feature&quot; reading is withdrawn.</li>
+</ul>
+<h2 id="the-one-experiment-that-would-most-change-the-picture">The one experiment that would most change the picture</h2>
+<p>A string searched by GCG against a <strong>random</strong> direction to a matched board score, then run
+through the identical behavioural protocol. If it moves behaviour as much as <code>score2_top</code>
+does, then §1 collapses into &quot;any sufficiently optimised prefix perturbs behaviour&quot; and the
+direction is doing nothing the search could not have got from noise. If it does not, §1 and
+§6 both harden considerably.</p>
+<p>It is cheap — one GCG run and 50 generations, no NDIF — it was proposed in
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_advocate/POSITIVES.md" target="_blank" rel="noopener"><code>_advocate/POSITIVES.md</code></a> §7 on 2026-08-28, and it is still not run. Nothing in this document
+is worth as much as that experiment.</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/explanation/the-case-for-the-metric.md" target="_blank" rel="noopener"><code>docs/explanation/the-case-for-the-metric.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#1-it-is-a-transfer-result-and-that-is-the-whole-point">1. It is a transfer result, and that is the whole point</a></li><li class="l2"><a href="#2-the-obvious-debunk-is-measured-and-false">2. The obvious debunk is measured and false</a></li><li class="l2"><a href="#3-more-score-buys-more-behaviour-on-a-controlled-pair">3. More score buys more behaviour, on a controlled pair</a></li><li class="l2"><a href="#4-the-harder-objective-is-the-better-behavioural-proxy">4. The harder objective is the better behavioural proxy</a></li><li class="l2"><a href="#5-the-direction-survives-its-confounds-and-season-3-is-the-first-to-remove-the-hard-one">5. The direction survives its confounds, and Season 3 is the first to remove the hard one</a></li><li class="l2"><a href="#6-a-prefix-is-not-a-compiled-steering-vector-and-that-is-the-most-interesting-result">6. A prefix is not a compiled steering vector, and that is the most interesting result</a></li><li class="l2"><a href="#7-the-methods-transfer-and-three-of-them-exist-because-this-project-got-it-wrong-first">7. The methods transfer, and three of them exist because this project got it wrong first</a></li><li class="l2"><a href="#8-the-withdrawal-record-is-itself-evidence">8. The withdrawal record is itself evidence</a></li><li class="l2"><a href="#9-the-caveats-came-back-narrower-than-feared">9. The caveats came back narrower than feared</a></li><li class="l2"><a href="#what-the-advocate-will-not-claim">What the advocate will not claim</a></li><li class="l2"><a href="#the-one-experiment-that-would-most-change-the-picture">The one experiment that would most change the picture</a></li></ul></aside>
+</div>
+</body>
+</html>

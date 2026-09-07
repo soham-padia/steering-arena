@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tutorial: rebuild a published number from its artifact — Steering Arena docs</title>
+<meta name="description" content="You will take one published number — +0.16395, the best Score 1 a GCG search reached in" />
+<link rel="canonical" href="https://sohampadianeu-steering-arena.hf.space/docs/tutorials/rebuild-a-published-number.html" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Soham Padia" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Steering Arena" />
+<meta property="og:title" content="Tutorial: rebuild a published number from its artifact — Steering Arena docs" />
+<meta property="og:description" content="You will take one published number — +0.16395, the best Score 1 a GCG search reached in" />
+<meta property="og:url" content="https://sohampadianeu-steering-arena.hf.space/docs/tutorials/rebuild-a-published-number.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/docs.css?v=91816020" />
+<script defer src="/docs.js?v=91816020"></script>
+</head>
+<body class="docs">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="docbar">
+  <div class="docbar-in">
+    <a class="brand" href="/"><span class="coin" aria-hidden="true">●</span> STEERING ARENA</a>
+    <span class="crumb">/ docs</span>
+    <button class="navtoggle" type="button" aria-expanded="false">Menu</button>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sidenav" aria-label="Documentation">
+<p class="navgroup"><span>Start here</span></p><ul>
+<li><a href="/docs/">Overview</a></li>
+</ul>
+<p class="navgroup"><span>Tutorials</span><i>learn by doing</i></p><ul>
+<li><a href="/docs/tutorials/score-a-sequence-yourself.html">Tutorial: compute a steering score yourself</a></li>
+<li class="on"><a href="/docs/tutorials/rebuild-a-published-number.html">Tutorial: rebuild a published number from its artifact</a></li>
+</ul>
+<p class="navgroup"><span>How-to</span><i>one task each</i></p><ul>
+<li><a href="/docs/how-to/move-a-searched-string-without-corrupting-it.html">How to move a searched string without corrupting it</a></li>
+<li><a href="/docs/how-to/search-a-banded-objective-with-gcg.html">How to search a banded objective with GCG</a></li>
+<li><a href="/docs/how-to/run-a-blind-behavioural-eval.html">How to run a blind behavioural eval on a set of prefixes</a></li>
+<li><a href="/docs/how-to/run-a-job-on-the-aicr-cluster.html">How to run a Steering Arena job on the AICR cluster</a></li>
+<li><a href="/docs/how-to/open-a-new-season.html">How to open a new season</a></li>
+</ul>
+<p class="navgroup"><span>Reference</span><i>lookup</i></p><ul>
+<li><a href="/docs/reference/scoring.html">Scoring reference</a></li>
+<li><a href="/docs/reference/seasons.html">Season reference</a></li>
+<li><a href="/docs/reference/artifacts.html">Result artifact reference</a></li>
+<li><a href="/docs/reference/withdrawn-claims.html">Withdrawn and corrected claims</a></li>
+<li><a href="/docs/reference/environments.html">Environment reference</a></li>
+</ul>
+<p class="navgroup"><span>Explanation</span><i>the why</i></p><ul>
+<li><a href="/docs/explanation/what-the-behavioural-tests-establish.html">What the behavioural tests establish</a></li>
+<li><a href="/docs/explanation/why-the-metric-is-shaped-this-way.html">Why the metric is shaped this way</a></li>
+<li><a href="/docs/explanation/the-case-for-the-metric.html">The case for the metric</a></li>
+</ul>
+<p class="navgroup"><span>The dated record</span><i>frozen, not maintained</i></p><ul>
+<li><a href="/docs/EXTRACTION.html">How the direction `d` is extracted (and how to verify it)</a></li>
+<li><a href="/docs/DEPLOY.html">Deploying to the Hugging Face Space</a></li>
+<li><a href="/docs/HANDOFF_BEHAVIORAL_S3.html">Handoff — do the Season 3 GCG winners actually change behavior?</a></li>
+<li><a href="/docs/PREFIX_BLIND_RUBRIC.html">Blind rating task — read this in full before judging anything</a></li>
+</ul>
+<p class="navgroup"><span>Elsewhere</span></p><ul><li><a href="/">The arena ↗</a></li><li><a href="/limitations.html">Limitations ↗</a></li><li><a href="https://github.com/soham-padia/steering-arena" target="_blank" rel="noopener">GitHub ↗</a></li></ul>
+</nav>
+  <main id="main" class="prose">
+    <p class="eyebrow"><span class="badge badge-tutorial">TUTORIAL</span></p>
+    <h1 id="tutorial-rebuild-a-published-number-from-its-artifact">Tutorial: rebuild a published number from its artifact</h1>
+<p>You will take one published number — <code>+0.16395</code>, the best Score 1 a GCG search reached in
+Season 3 — find the JSON that owns it, list every document that quotes it, recompute 218
+independent claim checks without loading a model, and then find a number whose prose has gone
+stale while its artifact moved on. That last step is the point of the exercise: it teaches the
+repository's arbitration rule by making you observe it rather than read it.</p>
+<p><strong>No GPU, no NDIF key, no API key, no cluster account, no cost.</strong> Every command below reads
+committed files. Total wall time is a few seconds.</p>
+<p>Every command and every output on this page was executed. Where a command behaved differently
+from what this repository's own prose says, the page says so.</p>
+<hr />
+<h2 id="step-0-what-you-need">Step 0 — what you need</h2>
+<ul>
+<li>
+<p>A clone of this repository, and a shell in its root.</p>
+</li>
+<li>
+<p>Python 3.11 or newer. This page was run on <strong>Python 3.11.15</strong>.</p>
+</li>
+<li>
+<p><strong>scipy.</strong> <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>_falsifier/verify.py</code></a> imports <code>binomtest</code>, <code>pearsonr</code>, <code>spearmanr</code>, <code>wilcoxon</code>
+and <code>t</code> from <code>scipy.stats</code>, and <strong>scipy is not in <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/requirements.txt" target="_blank" rel="noopener"><code>requirements.txt</code></a></strong> — that file builds
+the served image, which needs none of it. Install the research layer:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python -m pip install -r requirements-research.txt
+</code></pre></figure><p>This page ran scipy <strong>1.17.1</strong>, the version that file pins, both in the cluster's
+<code>steering-arena</code> conda env and in a fresh venv built from <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/requirements.txt" target="_blank" rel="noopener"><code>requirements.txt</code></a> plus
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/requirements-research.txt" target="_blank" rel="noopener"><code>requirements-research.txt</code></a>. Both give byte-identical totals.</p>
+</li>
+<li>
+<p>Nothing else. Steps 1, 2 and 4 use only the standard library.</p>
+</li>
+</ul>
+<hr />
+<h2 id="step-1-pick-the-number-and-read-it-from-its-own-artifact">Step 1 — pick the number, and read it from its own artifact</h2>
+<p>Season 3 scores every prefix under two objectives. <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_prefix_scores.json" target="_blank" rel="noopener"><code>data/analysis/season3_prefix_scores.json</code></a>
+is the artifact that holds them. Print it:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 - &lt;&lt;'PY'
+import json
+o = json.load(open("data/analysis/season3_prefix_scores.json"))
+print("model:", o["model_id"], "| probes:", o["probe_set"], "| tol:", o["tol"])
+print("bands:", o["bands"])
+print()
+print("arm                  score1_live   score2_live       recorded")
+for arm, v in o["scores"].items():
+    rec = v.get("recorded")
+    rec_s = "        -" if rec is None else format(rec, "13.8f")
+    print(format(arm, "&lt;18"), format(v["score1_live"], "13.8f"),
+          format(v["score2_live"], "13.8f"), rec_s)
+PY
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>model: allenai/Olmo-3-1125-32B | probes: season3 | tol: 0.002
+bands: {'score1': [19, 23, 27, 31], 'score2': [15, 23, 31, 39]}
+
+arm                  score1_live   score2_live       recorded
+score1_top            0.16395026    0.05000848    0.16395026
+score2_top            0.07896340    0.06517801    0.06514670
+score2_top_final      0.08349662    0.06997444    0.06969343
+pro_coherent          0.03976025    0.02145025    0.04046226
+random32             -0.00335319   -0.00885404         -
+score1_anti          -0.10134964   -0.12618031   -0.10143726
+score2_anti          -0.07378874   -0.12595371   -0.12628270
+score2_anti_final    -0.12016952   -0.16288099   -0.16335956
+</code></pre></figure><p>Your number is the first cell: <code>score1_top</code>, <code>score1_live = 0.16395026</code>.</p>
+<p>Read the three columns together, because that is what makes this artifact worth trusting.
+<code>score1_live</code> and <code>score2_live</code> are the same string measured under both objectives.
+<code>recorded</code> is what the <em>search</em> wrote down at the time. For <code>score1_top</code> the two agree to
+<code>0.0e+00</code>; for the others they differ by up to <code>-7.0e-04</code>, all inside the artifact's own
+declared <code>tol: 0.002</code>. An artifact that carries its own re-measurement and its own tolerance
+is one you can check. Note also <code>random32</code> has no <code>recorded</code> value — it is a control, never
+searched for, so there is nothing to have recorded.</p>
+<p>The units are LIVE, meaning the per-probe baseline has already been subtracted. See
+<a class="xref" href="/docs/reference/scoring.html"><code>docs/reference/scoring.md</code></a> on LIVE units for why the order of the flip and the subtraction
+matters, and how getting it backwards put two wrong numbers into a handoff.</p>
+<hr />
+<h2 id="step-2-find-the-prose-that-quotes-it">Step 2 — find the prose that quotes it</h2>
+<p>A number in an artifact is inert. A number in prose is a claim. Find every claim resting on
+this one:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">grep -n "0.16395" data/analysis/*.md
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>data/analysis/banded_direction.md:129:**succeeded** — a GCG search against a banded mean reached **+0.16395** LIVE
+data/analysis/banded_direction.md:175:actually shipped), `season3_prefix_scores.md` (the +0.16395 that answers caveat b),
+data/analysis/prefix_eval_s3.md:38:| `score1_top` | **+0.16395** | +0.05001 | 33/40 | 28/33 | 0.0001 | +0.74 | 1 | 22 |
+data/analysis/prefix_eval_s3.md:183:fails at its own top: `score1_top` scores 1.96× `score2_top_final` on Score 1 (+0.16395
+data/analysis/season3_band_select.md:58:then confirmed the band is still beatable (+0.16395 LIVE, `season3_prefix_scores.md`) — so
+data/analysis/season3_band_select.md:99:`season3_prefix_scores.md` (the band was beaten at +0.16395).
+data/analysis/season3_gcg_ablation.md:20:which is **+0.16395** (`prefix_eval_arms_s3.json`, run `score1-2026-09-06T19-20-13Z`,
+data/analysis/season3_gcg_ablation.md:169:`season3_prefix_scores.md` (the +0.16395 winner, the random-32 control, and the
+data/analysis/season3_prefix_scores.md:16:| `score1_top` | **+0.16395** | +0.05001 | 32 | +0.16395 → +0.16395 (gap 0.0e+00) |
+data/analysis/season3_prefix_scores.md:92:| optimised for Score 1 | +0.16395 (100%) | +0.05001 (**77%** of the Score-2 optimum) |
+data/analysis/season3_prefix_scores.md:143:is a 34-token string, while the run's own final 32-token string measures **+0.16395**. The
+</code></pre></figure><p>Eleven quotations across five documents. Two observations to carry with you:</p>
+<ul>
+<li>Every one of them rounds <code>0.16395026</code> to <code>+0.16395</code>, and every one names its source. Two
+cite the JSON's own companion page (<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_prefix_scores.md" target="_blank" rel="noopener"><code>season3_prefix_scores.md</code></a>); one cites a different
+artifact (<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_arms_s3.json" target="_blank" rel="noopener"><code>prefix_eval_arms_s3.json</code></a>) plus a run id. That is the citation habit you are
+meant to copy.</li>
+<li>The two token counts in that output disagree — <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/prefix_eval_s3.md#L38" target="_blank" rel="noopener"><code>prefix_eval_s3.md:38</code></a> shows <code>33/40</code>,
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/season3_prefix_scores.md#L16" target="_blank" rel="noopener"><code>season3_prefix_scores.md:16</code></a> shows <code>32</code>, and Step 1's JSON says <code>n_tokens: 32</code>. They are
+different columns of different tables, not a contradiction, but you cannot know that from
+the grep. This is why you read the artifact before the prose and not after.</li>
+</ul>
+<p>Repeat this for any number you are about to quote. The check costs one <code>grep</code>. Quoting a
+number whose artifact you have not opened is how the withdrawn claims listed in
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/data/analysis/REVISIONS_2026-09-05.md" target="_blank" rel="noopener"><code>data/analysis/REVISIONS_2026-09-05.md</code></a> propagated in the first place.</p>
+<hr />
+<h2 id="step-3-recompute-what-does-not-need-a-model">Step 3 — recompute what does not need a model</h2>
+<p><a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>_falsifier/verify.py</code></a> re-derives every numeric claim in the audit documents from the raw
+committed artifacts. It loads no model, calls no API and touches no network:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 _falsifier/verify.py
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>====================================================================================================
+VERIFY — independent re-derivation of the _falsifier numeric claims
+====================================================================================================
+source document                                              PASS   FAIL  FIXED  UNCHK  total
+----------------------------------------------------------------------------------------------------
+_falsifier/2026-08-27-addendum-human-ratings.md                26      0      1      0     27
+_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md       117      0      3      2    122
+_falsifier/recompute_result.md                                 32      0      0      0     32
+data/analysis/REVISIONS_2026-09-05.md                          17      0      0      0     17
+data/analysis/coherence_confound.md                            20      0      0      0     20
+----------------------------------------------------------------------------------------------------
+TOTAL                                                         212      0      4      2    218
+</code></pre></figure><p>2.2 seconds. Below the table it prints a per-check detail table, then the non-passing checks
+in full, then eleven cross-document inconsistencies (<code>INC-1</code> through <code>INC-11</code>).</p>
+<p>Two things you will observe, both of which the repository's prose describes inaccurately.</p>
+<p><strong>On the exit code.</strong> <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/README.md" target="_blank" rel="noopener"><code>_falsifier/README.md</code></a> and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/SESSION_REPORT.md" target="_blank" rel="noopener"><code>SESSION_REPORT.md</code></a> both say the suite
+&quot;exits 1 while any failure remains&quot;. The implementation is narrower than that phrasing
+suggests — the last line of <code>main()</code> is:</p>
+<figure class="code" data-lang="python"><figcaption><span class="lang">python</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-python">return 0 if counts["FAIL"] == 0 else 1
+</code></pre></figure><p>Only <code>FAIL</code> counts. <code>FIXED</code> and <code>UNCHECKABLE</code> do not. As of this page there are no <code>FAIL</code>s,
+so:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 _falsifier/verify.py &gt; /dev/null 2&gt;&amp;1; echo "EXIT=$?"
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>EXIT=0
+</code></pre></figure><p>If you read the prose and expected <code>1</code>, you would conclude the suite had not run. It ran. A
+nonzero exit here means a genuine regression; a zero exit does not mean every check passed.
+Read the <code>TOTAL</code> row, not the exit code.</p>
+<p><strong>On the side effect.</strong> The run <strong>rewrites <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify_result.json" target="_blank" rel="noopener"><code>_falsifier/verify_result.json</code></a> in place</strong>, and
+that file is tracked in git. It writes the JSON before it prints anything, so a run you
+interrupt has already modified your working tree. Check what changed:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">git diff _falsifier/verify_result.json
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>-  "repo_commit": "d1b8b46",
++  "repo_commit": "18a6493",
+</code></pre></figure><p>Your right-hand hash will be your own <code>git rev-parse --short HEAD</code>, not <code>18a6493</code>. On this
+run that field was the <em>only</em> change, because the totals were unchanged — which is the
+result you want, and also the reason the diff is easy to miss. If you did not mean to update
+the committed snapshot, put it back:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">git checkout _falsifier/verify_result.json
+</code></pre></figure><p>Do that now, before Step 4, so Step 4 reads the committed artifact rather than your own.</p>
+<hr />
+<h2 id="step-4-find-the-stale-prose">Step 4 — find the stale prose</h2>
+<p>Ask the artifact how many checks there are:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 -c "import json; print(json.load(open('_falsifier/verify_result.json'))['totals'])"
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>{'PASS': 212, 'FIXED': 4, 'UNCHECKABLE': 2}
+</code></pre></figure><p>212 + 4 + 2 = <strong>218</strong>, matching the <code>TOTAL</code> row from Step 3. Now ask the prose:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">grep -rn "181 checks" _falsifier/README.md SESSION_REPORT.md; echo "exit=$?"
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>exit=1
+</code></pre></figure><p>No matching lines at all. The string is not there in that exact form — the two files phrase
+it differently, so drop the second word and search again:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">grep -n "181" _falsifier/README.md SESSION_REPORT.md \
+    _falsifier/2026-08-27-experiment-vs-hypothesis-audit.md | sort
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>SESSION_REPORT.md:623:| `verify.py` / `verify_result.json` | **181 independent claim checks**, written from the raw artifacts without reading or executing the recompute and honesty scripts |
+_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md:16:(181 checks total, re-run with `python3 _falsifier/verify.py`, exits 1 while any failure remains).
+_falsifier/README.md:33:- `verify.py`: a 181-check suite written from the raw artifacts only, without reading, importing or
+</code></pre></figure><p>The <code>| sort</code> is not decoration. Without it, grep over three explicit paths returns them in
+whichever order the matches finish, and three consecutive runs on this machine gave three
+different orderings. Sort anything you intend to paste into a document.</p>
+<p><strong>There it is.</strong> The artifact says 218. Three prose documents say 181. The artifact wins —
+you regenerated it, from the raw data, in 2.2 seconds, and it agreed with itself to the
+check. The prose was written when the suite had 181 checks and was not updated when 37 more
+were added. That is the repository's arbitration rule in one observation: <em>the artifact is
+the claim; the prose is a copy of the claim, and copies go stale.</em></p>
+<p>The same three documents are stale a second way, and this one is more interesting. Read
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/README.md" target="_blank" rel="noopener"><code>_falsifier/README.md</code></a> lines 42-44:</p>
+<blockquote>
+<p>re-running the suite against the current tree flips five of them from pass to fail. [...]
+A re-run reports 11 failures rather than 6</p>
+</blockquote>
+<p>Your run reported <strong>zero</strong> failures and four <code>FIXED</code>. Both descriptions were true when
+written; the suite has since grown a <code>FIXED</code> status for exactly this case. See <strong>What went
+wrong for you</strong> below for what <code>FIXED</code> means and why it is not a failure.</p>
+<p>Sweep every check-count claim in the tracked prose to see how far the rot goes:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">grep -rnoE "[0-9]{2,4} (numeric )?checks" --include=*.md \
+    _falsifier data/analysis docs/explanation SESSION_REPORT.md | sort
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>_falsifier/2026-08-27-addendum-human-ratings.md:9:27 checks
+_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md:16:181 checks
+_falsifier/2026-08-27-experiment-vs-hypothesis-audit.md:20:122 checks
+data/analysis/REVISIONS_2026-09-05.md:1:05 checks
+docs/explanation/the-case-for-the-metric.md:132:218 checks
+</code></pre></figure><p>Notice what did <em>not</em> go stale: <a class="xref" href="/docs/explanation/the-case-for-the-metric.html"><code>docs/explanation/the-case-for-the-metric.md:132</code></a> says 218,
+and 218 is what you measured. The per-file counts hold up too — the audit's own <code>122 checks</code>
+(line 20) and the addendum's <code>27 checks</code> (line 9) both match their rows in Step 3's table.
+Only the grand total drifted. (<code>REVISIONS_2026-09-05.md:1:05 checks</code> is the regex catching
+part of a date, not a claim.)</p>
+<p><code>CLAUDE.md</code> also carries the current 218, but do not use it as your cross-check: it is
+excluded at <code>.gitignore</code> line 3 and is <strong>not in a clean clone</strong> — verify with
+<code>git check-ignore -v CLAUDE.md</code>.</p>
+<p>So: the document written to route you to evidence is current, and the three narrative
+documents are not. When they disagree, regenerate the artifact.</p>
+<hr />
+<h2 id="what-went-wrong-for-you">What went wrong for you</h2>
+<p><strong><code>ModuleNotFoundError: No module named 'scipy'</code></strong>
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>_falsifier/verify.py</code></a> line 31 imports from <code>scipy.stats</code>, and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/requirements.txt" target="_blank" rel="noopener"><code>requirements.txt</code></a> does not
+list scipy — deliberately. That file is what the Dockerfile builds the HF Space from, and
+<code>app/</code> imports no scipy, so declaring it there would ship a research dependency in the
+serving image. A venv built strictly from <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/requirements.txt" target="_blank" rel="noopener"><code>requirements.txt</code></a> therefore fails here:</p>
+<figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>  File "/home/padia_so_neu/steering-arena/_falsifier/verify.py", line 31, in &lt;module&gt;
+    from scipy.stats import binomtest, pearsonr, spearmanr, wilcoxon
+ModuleNotFoundError: No module named 'scipy'
+</code></pre></figure><p>Install the research layer, which declares it:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python -m pip install -r requirements-research.txt
+</code></pre></figure><p>That pins <code>scipy==1.17.1</code>, the version these numbers were produced under. With it, a venv
+built from <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/requirements.txt" target="_blank" rel="noopener"><code>requirements.txt</code></a> plus <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/requirements-research.txt" target="_blank" rel="noopener"><code>requirements-research.txt</code></a> reproduces the
+<code>TOTAL 212 0 4 2 218</code> row exactly. <code>pytest tests/</code> needs neither.</p>
+<p><strong><code>statistics.StatisticsError: no median for empty data</code> — on a clean clone</strong>
+This is the one that will actually stop you, and it is worse than the brief version of the
+story. On a <em>fresh</em> clone, <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>verify.py</code></a> does not report <code>UNCHECKABLE</code> for the artifacts it
+cannot find. It <strong>crashes</strong>:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">git clone &lt;this-repo&gt; /tmp/cleanclone &amp;&amp; cd /tmp/cleanclone &amp;&amp; python3 _falsifier/verify.py
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>  File "/tmp/cleanclone/_falsifier/verify.py", line 574, in &lt;dictcomp&gt;
+    meds = {a: st.median([len(v["continuation"]) for v in PBEH[a].values()])
+  File ".../statistics.py", line 565, in median
+    raise StatisticsError("no median for empty data")
+statistics.StatisticsError: no median for empty data
+</code></pre></figure><p>Exit code 1 — but from a traceback, not from a <code>FAIL</code>, which is a third reason not to read
+meaning into the exit code. The cause: <code>PBEH</code> is built from <code>data/cache/prefix_behavioral/</code>,
+and <code>.gitignore</code> line 37 excludes <code>data/cache/</code> entirely. On a clean clone the directory does
+not exist, so every arm is empty and <code>statistics.median</code> refuses. The same holds for
+<code>data/analysis/behavioral_blind.csv</code> and <code>behavioral_blind_key.json</code>, excluded at
+<code>.gitignore</code> lines 65-66 to keep the blind key private until the human rating pass is done —
+<a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py#L1127" target="_blank" rel="noopener"><code>verify.py:1127</code></a> reads that CSV directly. (<code>data/analysis/prefix_blind.csv</code>,
+<code>prefix_blind_s3.csv</code> and <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/honesty_blind.jsonl" target="_blank" rel="noopener"><code>_falsifier/honesty_blind.jsonl</code></a> <em>are</em> tracked, so those checks are
+fine.)</p>
+<p>There is no flag to skip them; <code>verify.py --help</code> offers only <code>--json</code>. Regenerating the
+cache means re-running the behavioural generation on the model, which needs the weights and a
+GPU. <strong>So on a clean clone, Step 3 is not available and Step 4 is your recompute</strong> — read the
+committed <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify_result.json" target="_blank" rel="noopener"><code>_falsifier/verify_result.json</code></a>, which is a full per-check record including the
+inputs and tolerances, and re-run the suite only on a checkout that has the caches.</p>
+<p><strong>Four checks come back <code>FIXED</code>, not <code>PASS</code>, and they are supposed to</strong>
+<code>A-NO-WITHDRAW</code>, <code>A-RANDCTL-NO-DATE</code>, <code>A-HEADLINE-ON-IT</code> and <code>N2-CONTRADICTION</code> assert the
+<strong>pre-fix</strong> state of four <code>data/analysis/</code> documents — for example that four of them
+contained zero occurrences of &quot;withdraw&quot;. They were true when the audit was written at commit
+<code>8c43273</code>. The 2026-08-27 fix pass then deliberately changed that text, which makes the
+claims false <em>because they were acted on</em>. <a class="xref xref-out" href="https://github.com/soham-padia/steering-arena/blob/main/_falsifier/verify.py" target="_blank" rel="noopener"><code>verify.py</code></a> relabels those four from <code>FAIL</code> to
+<code>FIXED</code> and excludes them from the exit code, with the reasoning in a comment at the top of
+<code>main()</code>:</p>
+<blockquote>
+<p>Failing on those would make the suite unusable as a regression gate: it would go red on
+success. [...] A genuine regression here reappears as <code>FAIL</code>, because the fix text would
+have to be reverted.</p>
+</blockquote>
+<p>The relabelled note keeps the original failure text — each one reads <code>FIXED 2026-08-27: ... Original note: &lt;the original mismatch&gt;</code> — so nothing is hidden. List all six non-passing
+checks:</p>
+<figure class="code" data-lang="bash"><figcaption><span class="lang">bash</span><button class="copy" type="button" aria-label="Copy this block">copy</button></figcaption><pre><code class="language-bash">python3 -c "import json; [print(c['status'],'|',c['id']) for c in json.load(open('_falsifier/verify_result.json'))['checks'] if c['status']!='PASS']"
+</code></pre></figure><figure class="code out"><figcaption><span class="lang">output</span></figcaption><pre><code>FIXED | A-NO-WITHDRAW
+FIXED | A-RANDCTL-NO-DATE
+UNCHECKABLE | A-617-SUBMISSIONS
+FIXED | A-HEADLINE-ON-IT
+UNCHECKABLE | A-WARMTH-SALIENCE
+FIXED | N2-CONTRADICTION
+</code></pre></figure><p><strong>Two checks come back <code>UNCHECKABLE</code>, for a reason worth knowing</strong>
+<code>A-617-SUBMISSIONS</code> and <code>A-WARMTH-SALIENCE</code>. Neither is about a missing cache. The first
+cannot be checked because the submissions live in Supabase and there is no per-submission
+export in the repository; the second cannot be checked because no artifact encodes
+prompt-level axis salience, so &quot;warmth is the salient axis&quot; is an unoperationalised claim.
+<code>UNCHECKABLE</code> here means <em>the claim has no artifact</em>, which is a finding about the claim, not
+a gap in the tooling — and it is the strongest reason to prefer a number that has one.</p>
+
+    <hr class="foot-rule" />
+    <footer class="pagefoot">
+      <p>Source: <a href="https://github.com/soham-padia/steering-arena/blob/main/docs/tutorials/rebuild-a-published-number.md" target="_blank" rel="noopener"><code>docs/tutorials/rebuild-a-published-number.md</code></a>.
+      If this page and a committed <code>.json</code> disagree, the JSON wins and the page is
+      a bug.</p>
+      <p class="muted">Steering Arena · <a href="/">the board</a> ·
+      <a href="/docs/">docs index</a></p>
+    </footer>
+  </main>
+  <aside class="onthispage"><p class="navgroup"><span>On this page</span></p><ul><li class="l2"><a href="#step-0-what-you-need">Step 0 — what you need</a></li><li class="l2"><a href="#step-1-pick-the-number-and-read-it-from-its-own-artifact">Step 1 — pick the number, and read it from its own artifact</a></li><li class="l2"><a href="#step-2-find-the-prose-that-quotes-it">Step 2 — find the prose that quotes it</a></li><li class="l2"><a href="#step-3-recompute-what-does-not-need-a-model">Step 3 — recompute what does not need a model</a></li><li class="l2"><a href="#step-4-find-the-stale-prose">Step 4 — find the stale prose</a></li><li class="l2"><a href="#what-went-wrong-for-you">What went wrong for you</a></li></ul></aside>
+</div>
+</body>
+</html>
