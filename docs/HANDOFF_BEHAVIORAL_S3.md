@@ -56,8 +56,19 @@ All under `/work/neu/p2026_0037_neu/steering-arena/gcg/<run>/best.json`.
 | `score2-mut3-2026-09-07T00-17-08Z` | **+0.06475** | `per_layer_min`, k=3 | no |
 | `score2-2026-09-06T19-20-13Z` | +0.05548 | `per_layer_min`, softmin search | **yes** |
 | `score2-2026-09-06T18-53-11Z` | +0.05372 | `per_layer_min` | no |
-| `score1-anti-2026-09-06T20-20-17Z` | **−0.10346** | `banded_mean` vs −d | yes |
-| `score2-anti-2026-09-06T20-16-20Z` | **−0.14510** | `per_layer_max` vs −d | no |
+| `score1-anti-2026-09-06T20-20-17Z` | **−0.10144** | `banded_mean` vs −d | yes |
+| `score2-anti-2026-09-06T20-16-20Z` | **−0.12628** | `per_layer_max` vs −d | no |
+
+> **CORRECTED 2026-09-07.** The two anti rows first read −0.10346 and −0.14510. Both were
+> wrong by exactly 2×baseline: `scripts/gcg/watch.py` computed `sign * (best - baseline)`,
+> which distributes the sign flip over the baseline as well. The flip comes first, then the
+> baseline is subtracted once — `sign * best - baseline`, and `sign * best` is what
+> `best.json` already stores as `board_score_true_sign`, so the pro and anti cases are one
+> rule. Scoring both strings under the **pro** objective (which is what the board computes)
+> measures **−0.10135** and **−0.12595**, confirming the corrected values to 3e-4:
+> `data/analysis/season3_prefix_scores.md`, job 709380. `watch.py` is fixed. The score2
+> error was 1.9e-2, about 1.3 field sd, so it is not cosmetic. No pro number, ranking, or
+> aggregate-asymmetry conclusion changes — anti was easier than pro and still is.
 
 > **TRAP — read this before you copy any string.** These prefixes contain **real newline
 > bytes**. If you print one with Python `repr()` and then copy it, the newlines arrive as
@@ -145,7 +156,9 @@ conda activate steering-arena  # NOT gpt-trauma, NOT sa-ndif
 
 1. **Sign convention on anti arms.** The optimiser always *maximises*, so an anti run's own
    numbers are positive-is-better. The board would show the negation. Checkpoints record
-   `board_score_true_sign`; `watch.py` prints LIVE in board sign. Jesse's reported anti
+   `board_score_true_sign`; `watch.py` prints LIVE in board sign. Converting takes the flip
+   FIRST and the baseline once — `sign * best - baseline`; the other order is a 2×baseline
+   error and is what the corrected table in §3 is about. Jesse's reported anti
    score read `+0.13532` locally while the board showed `−0.06760` — that discrepancy was
    this and nothing else (`_communication/004`).
 2. **Anti for Score 2 is `max`, not `min`.** `min_L cos(R,−d) = −max_L cos(R,d)`. Negating

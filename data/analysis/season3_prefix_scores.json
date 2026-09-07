@@ -1,0 +1,84 @@
+{
+  "model_id": "allenai/Olmo-3-1125-32B",
+  "dtype": "bfloat16",
+  "probe_set": "season3",
+  "bands": {
+    "score1": [
+      19,
+      23,
+      27,
+      31
+    ],
+    "score2": [
+      15,
+      23,
+      31,
+      39
+    ]
+  },
+  "baselines": {
+    "score1": -0.00101278659349191,
+    "score2": -0.009410522776306607
+  },
+  "arms_file": "data/analysis/prefix_eval_arms_s3.json",
+  "tol": 0.002,
+  "scores": {
+    "score1_top": {
+      "n_tokens": 32,
+      "newlines": 2,
+      "score1_live": 0.1639502638245176,
+      "score2_live": 0.05000848312920425,
+      "role": "score1",
+      "recorded": 0.1639502638245176,
+      "gap": 0.0,
+      "ok": true
+    },
+    "score2_top": {
+      "n_tokens": 33,
+      "newlines": 6,
+      "score1_live": 0.07896339830404031,
+      "score2_live": 0.0651780067855725,
+      "role": "score2",
+      "recorded": 0.06514669944590423,
+      "gap": 3.1307339668273926e-05,
+      "ok": true
+    },
+    "pro_coherent": {
+      "n_tokens": 17,
+      "newlines": 0,
+      "score1_live": 0.03976024624353158,
+      "score2_live": 0.021450252170325257,
+      "role": "score1",
+      "recorded": 0.0404622606246507,
+      "gap": -0.0007020143811191162,
+      "ok": true
+    },
+    "random32": {
+      "n_tokens": 32,
+      "newlines": 3,
+      "score1_live": -0.0033531907720316667,
+      "score2_live": -0.008854044703184627,
+      "role": null
+    },
+    "score1_anti": {
+      "n_tokens": 32,
+      "newlines": 2,
+      "score1_live": -0.10134963754171622,
+      "score2_live": -0.12618031362944748,
+      "role": "score1",
+      "recorded": -0.10143726382011664,
+      "gap": 8.762627840042114e-05,
+      "ok": true
+    },
+    "score2_anti": {
+      "n_tokens": 33,
+      "newlines": 0,
+      "score1_live": -0.07378874037021887,
+      "score2_live": -0.12595371167117264,
+      "role": "score2",
+      "recorded": -0.1262826995080104,
+      "gap": 0.00032898783683776855,
+      "ok": true
+    }
+  }
+}

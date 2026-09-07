@@ -90,14 +90,23 @@ def show(rows):
             # always maximises; for an anti arm the board would show the negation. Flip it
             # here so the LIVE column is literally what the leaderboard prints. This is the
             # exact confusion documented in _communication/004.
+            #
+            # ORDER MATTERS, and getting it wrong is a 2*baseline error. Flip FIRST, then
+            # subtract the baseline once. `sign * (best - baseline)` — what this line did
+            # until 2026-09-06 — distributes the sign over the baseline too, so an anti arm
+            # came out at `-best + baseline` instead of `-best - baseline`. That overstated
+            # both anti arms: score1 -0.10346 vs the true -0.10144, and score2 -0.14510 vs
+            # the true -0.12628, the latter ~1.3 field sd. `sign * best` is exactly
+            # best.json's `board_score_true_sign`, so the anti and pro cases are one rule:
+            # live = (board score in board sign) - baseline.
             sign = -1.0 if r["anti"] else 1.0
-            live = sign * (r["best"] - bl[r["role"]])
+            live = sign * r["best"] - bl[r["role"]]
             ref = S2_TOP.get(r["role"]) if not r["anti"] else None
             line += f"{live:>+11.5f}" + (f"{live - ref:>+11.5f}" if ref is not None else " " * 11)
         print(line)
     if bl:
         print("  baseline: " + "  ".join(f"{k} {v:+.5f}" for k, v in sorted(bl.items()))
-              + "     LIVE = BEST board - baseline")
+              + "     LIVE = (BEST board, in board sign) - baseline")
         print("  'vs S2 top' compares LIVE against Season 2's winner rescored under the SAME")
         print("  objective (score1 +0.06747, score2 +0.02308). Positive = we are ahead.")
         if any(r["anti"] for r in rows):
