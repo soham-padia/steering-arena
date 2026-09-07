@@ -24,7 +24,13 @@ from app.queue import ScoringGate
 from app.ratelimit import check_generation_limits, hash_ip
 from app.submission import process_submission, validate_handle
 
-app = FastAPI(title="Steering Arena", version="0.3.0")
+# docs_url/redoc_url/openapi_url are None on purpose. FastAPI serves Swagger UI at
+# /docs, ReDoc at /redoc and the schema at /openapi.json by default, and all three
+# were live and public — /openapi.json enumerated all 12 endpoints including /submit
+# and /generate. Nothing needs them: the API contract lives in PROJECT_SPEC.md §7,
+# and the board's own frontend is the only client.
+app = FastAPI(title="Steering Arena", version="0.3.0",
+              docs_url=None, redoc_url=None, openapi_url=None)
 
 _log = logging.getLogger("steering_arena")
 if settings.allowed_origin == "*":
