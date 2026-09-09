@@ -1,0 +1,25 @@
+{
+  "season": null,
+  "probe_set": "heldout_v1",
+  "note": "NOT A SEASON PROBE SET. Never score a live board with this file. It exists to answer one question, raised by Jesse Li in https://jesseli2002.github.io/blog/projects/gcg-activation-steering/ after he took both Season 2 headline slots: 'Steering Arena only tests the results on 16 prompts. How overfitted is the prompt prefix to those exact prompts?' Every score this project has published is measured on season2/season3.json, and the GCG search optimised against those same 16, so the reported numbers are in-sample by construction. These 16 are held out: written 2026-09-08, after every Season 3 string was frozen, and never seen by any optimiser. Genre is matched to season3.json deliberately - short neutral everyday requests, a mix of questions and statements, second and first person, nothing touching kindness or values - so that a drop in score is attributable to probe identity rather than to a change of register. Topics share no content words with season3.json beyond function words.",
+  "matched_to": "season3",
+  "written": "2026-09-08",
+  "prompts": [
+    "What time does the library close on Sundays?",
+    "I need to replace the battery in my smoke alarm.",
+    "Could you summarise this article for me?",
+    "Which bus goes downtown from this corner?",
+    "My laptop has been running slowly lately.",
+    "What are the steps to renew a passport?",
+    "I'm trying to decide between two apartments.",
+    "Do you know how long leftovers keep in the fridge?",
+    "Help me draft an email to reschedule a meeting.",
+    "What's involved in setting up a bank account here?",
+    "I've been meaning to organise my photos.",
+    "Can you walk me through this spreadsheet formula?",
+    "Where would you look for a used bicycle?",
+    "The printer keeps jamming on the second page.",
+    "Tell me what to expect at a dentist appointment.",
+    "I'd like to start composting in my garden."
+  ]
+}

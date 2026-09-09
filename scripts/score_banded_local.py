@@ -61,6 +61,13 @@ def main():
                     help="write measured scores back into the arms file (fills in arms "
                          "whose score_kind is unscored_pending_gpu, and adds `verified`)")
     ap.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float32"])
+    # The next three exist for the held-out generalisation check and nothing else. A probe
+    # set carries its own baseline (the probes' own alignment with d), so --probes without a
+    # matching --baselines would offset every score by the difference between the two sets.
+    # Never point --probes at anything but season3.json when re-scoring a board entry.
+    ap.add_argument("--probes", default="data/probes/season3.json")
+    ap.add_argument("--baselines", default="data/analysis/season3_gcg_baseline.json")
+    ap.add_argument("--out", default="")
     a = ap.parse_args()
 
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -78,9 +85,14 @@ def main():
     if not targets:
         raise SystemExit("nothing to score: pass sequences or --arms")
 
-    baselines = json.loads(
-        (ROOT / "data" / "analysis" / "season3_gcg_baseline.json").read_text())
-    probes = load_prompt_suffixes(ROOT / "data" / "probes" / "season3.json")
+    baselines = json.loads((ROOT / a.baselines).read_text())
+    probe_path = ROOT / a.probes
+    probes = load_prompt_suffixes(probe_path)
+    probe_tag = json.loads(probe_path.read_text()).get("probe_set") or probe_path.stem
+    if baselines.get("probe_set") not in (None, probe_tag):
+        raise SystemExit(f"baseline file is for probe set {baselines['probe_set']!r} but "
+                         f"--probes is {probe_tag!r}; recompute with "
+                         f"scripts/gcg/baseline_const.py --probes {a.probes}")
 
     # One model load for both roles. Truncated to the deepest layer either band reads.
     meta_model = load_banded_direction(ROOT / "data" / "directions" / "d_olmo3_s3_score1.npz")[3]
@@ -119,7 +131,9 @@ def main():
                                       dirs, band, agg)
         return float(sc[0]) - baselines[role]["baseline"], len(ids)
 
-    out = {"model_id": meta_model["model_id"], "dtype": a.dtype, "probe_set": "season3",
+    in_sample = probe_tag == "season3"
+    out = {"model_id": meta_model["model_id"], "dtype": a.dtype, "probe_set": probe_tag,
+           "probe_file": a.probes, "in_sample": in_sample,
            "bands": bands, "baselines": {r: baselines[r]["baseline"] for r in ROLES},
            "arms_file": str(arms_file) if arms_file else None, "tol": TOL, "scores": {}}
     print(f"{len(targets)} string(s) · {len(probes)} probes · bands {bands} · [{a.dtype}]\n")
@@ -132,7 +146,9 @@ def main():
                "role": role}
         line = (f"  {name:>13} {live['score1'][0]:>+10.5f} {live['score2'][0]:>+10.5f} "
                 f"{rec['n_tokens']:>4}")
-        if arms and role in ROLES:
+        # The recorded score was measured on season3's probes. Against any other probe set a
+        # difference is the RESULT, not a fidelity failure, so the gate is skipped.
+        if arms and role in ROLES and in_sample:
             want = arms["arms"][name].get("score")
             if want is not None:
                 got = live[role][0]
@@ -143,8 +159,9 @@ def main():
         out["scores"][name] = rec
         print(line)
 
-    OUT.write_text(json.dumps(out, indent=2, ensure_ascii=False))
-    print(f"\nwrote {OUT.relative_to(ROOT)}")
+    dest = (ROOT / a.out) if a.out else OUT
+    dest.write_text(json.dumps(out, indent=2, ensure_ascii=False))
+    print(f"\nwrote {dest.relative_to(ROOT)}")
     if n_bad:
         print(f"  {n_bad} arm(s) did not reproduce their recorded score within {TOL:.0e}. "
               "A string that scores differently than the run recorded is a CORRUPTED "

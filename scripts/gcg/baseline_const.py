@@ -29,10 +29,25 @@ from gcg_utils import (MEAN, MIN, _aggregate, load_banded_direction,  # noqa: E4
 
 
 def main():
+    import argparse
+
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    probes = load_prompt_suffixes(ROOT / "data" / "probes" / "season3.json")
-    out = {"probes": len(probes), "probe_set": "season3"}
+    # --probes exists for the held-out generalisation check only. The baseline is a property
+    # of the PROBE SET, not of the direction, so a different probe file needs its own constant
+    # -- reusing season3's would silently offset every score by the difference between the two
+    # sets' own alignment with d.
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--probes", default="data/probes/season3.json")
+    ap.add_argument("--out", default="data/analysis/season3_gcg_baseline.json")
+    # `args`, not `a`: the band loop below rebinds `a` to an activation tensor.
+    args = ap.parse_args()
+
+    probe_path = ROOT / args.probes
+    probes = load_prompt_suffixes(probe_path)
+    tag = json.loads(probe_path.read_text()).get("probe_set") or probe_path.stem
+    out = {"probes": len(probes), "probe_set": tag, "probe_file": args.probes}
     model = tokenizer = None
 
     for role, agg in (("score1", MEAN), ("score2", MIN)):
@@ -77,7 +92,7 @@ def main():
         print(f"  {role:<7} band={band} agg={agg}")
         print(f"          BASELINE = {base:+.6f}   (live = board - this)")
 
-    p = ROOT / "data" / "analysis" / "season3_gcg_baseline.json"
+    p = ROOT / args.out
     p.write_text(json.dumps(out, indent=1))
     print(f"\nwrote {p.relative_to(ROOT)}")
 
