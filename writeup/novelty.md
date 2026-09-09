@@ -240,10 +240,14 @@ and now urgent for a specific reason: against the 13.6% judge flip rate in
 `arXiv:2606.13685`, `score1_top` absorbs 6 flipped verdicts and `score1_anti` absorbs **2**.
 The half of the argument that carries the sign claim does not survive the flip rate the
 literature measures. (2) Re-rate on paraphrase-normalised text, to answer the ρ = +0.881
-problem. (3) Re-run `score1_anti` at **iteration 537** — ~30 min GPU, no search: the shipped
-string is a stale `iter 204` snapshot (0.10245) while the run reached **0.13186**, and the
-iter-537 string does not contain `Kendrick`, so this fixes the magnitude mismatch and tests
-the comedy-register confound at once. (4) The **2×2**: both poles × {fitted, label-shuffled}
+problem. ~~(3) Re-run `score1_anti` at iteration 537.~~ **VOID — retracted the same day.** The
+claim that iterate 204 was a stale snapshot came from reading `history.jsonl`'s `score` column
+(the optimiser objective) instead of `board_score` (the LIVE value): at iter 537 `score` is
+0.13186 but `board_score` is only **0.07105**, against iterate 204's **0.10245**. Iterate 204
+*is* the run's board maximum; nothing is stale and the 62% magnitude gap is real. See the
+retraction in `_falsifier/2026-09-08-behavioural-result-red-team.md` §1. Replacement third
+item: **rate the ~26 decided `score1_anti` pairs by hand**, which is the same 30 minutes and
+tests the register confound directly. (4) The **2×2**: both poles × {fitted, label-shuffled}
 direction. Walsh & Barkett have both poles and no placebo; Mody has both placebos and one
 pole; nobody has both. Nine to ten GPU-hours, and it is the only item a reviewer would call
 the experiment. Full designs with pre-registered decision rules in

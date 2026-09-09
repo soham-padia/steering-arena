@@ -598,11 +598,30 @@ and the anti arm goes to **5-10, p = 0.302**. Stated fairly: that is post-treatm
 conditioning, the same objection §3 raises about `no_loop`, and callous humour could be a
 genuine expression of the construct. What it establishes is an **asymmetry** — pro survives
 every filter (13-1, p = 0.00183 under simultaneous de-leaking and loop-removal), anti survives
-none. (b) **The two arms were selected by different rules:** `prefix_eval_arms_s3.json` ships
+none. ~~(b) **The two arms were selected by different rules:** `prefix_eval_arms_s3.json` ships
 `score1_anti` at `iter 204` (0.10245) from a stale `best.json`, while its `history.jsonl` runs
-to 538 with a max of **0.13186 @ iter 537**; the pro arm shipped its true run max. So the 62%
-magnitude gap is partly a file-selection artifact, and the iter-537 string **does not contain
-`Kendrick`** — re-running it costs 50 generations and tests both problems at once.
+to 538 with a max of **0.13186 @ iter 537**; the pro arm shipped its true run max.~~
+**RETRACTED 2026-09-08, same day, by direct check of the run log. This was wrong, and it was
+wrong in the way this repo has a standing warning about.**
+
+`history.jsonl` carries two different columns. At **iter 537**, `score` = 0.13186 but
+`board_score` = **0.07105**. At **iter 204**, `score` = `board_score` = **0.10245**. `score`
+is the optimiser's internal objective; `board_score` is the LIVE, leaderboard-comparable
+value. The claim above took the maximum of `score` and compared it against a `board_score`.
+Ranked by the board value the run's true maximum **is** iterate 204, which is exactly what
+`best.json` and `prefix_eval_arms_s3.json` ship. Nothing is stale, both arms shipped their run
+maximum, and **the 62% magnitude gap is real, not a file-selection artifact.**
+
+`_local/NEXT_CLAUDE.md` §5 names this failure verbatim — *"LIVE conversion is `sign * best −
+baseline` — flip first, subtract once… It shipped once."* It has now shipped twice, the second
+time inside an audit written to catch exactly this class of error. Recorded rather than
+deleted, per house standard.
+
+What survives from the original finding: **the anti run plateaued early.** Its board score
+peaked at iterate 204 of 538 and did not improve across the remaining 334 iterations, while
+the pro run peaked at 746 of 846. That is a real asymmetry in the two searches and it is
+still worth explaining — but it is not a provenance defect, and re-running iterate 537 would
+ship a *worse* string (0.071 against 0.102), not a better one.
 
 The caveats belong in the same sentence: it survives Holm by 0.00064 and fails Bonferroni
 (§5); the two arms are the pair with the worst topical leakage (§7); they are not matched on

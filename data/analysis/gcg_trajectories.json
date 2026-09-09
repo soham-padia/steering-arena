@@ -1,0 +1,57 @@
+{
+  "runs_root": "/work/neu/p2026_0037_neu/steering-arena/gcg",
+  "arms": {
+    "score1_top": {
+      "run": "score1-2026-09-06T19-20-13Z",
+      "label": "Score 1  pro",
+      "anti": false,
+      "objective": "s1",
+      "n_iters": 847,
+      "last_iter": 846,
+      "peak_iter": 746,
+      "peak_board_signed": 0.16294,
+      "shipped_iter": 746,
+      "shipped_board_signed": 0.16294,
+      "plateau_frac": 0.882
+    },
+    "score2_top": {
+      "run": "score2-mut3-2026-09-07T00-17-08Z",
+      "label": "Score 2  pro",
+      "anti": false,
+      "objective": "s2",
+      "n_iters": 502,
+      "last_iter": 501,
+      "peak_iter": 498,
+      "peak_board_signed": 0.06028,
+      "shipped_iter": 389,
+      "shipped_board_signed": 0.05574,
+      "plateau_frac": 0.994
+    },
+    "score1_anti": {
+      "run": "score1-anti-2026-09-06T20-20-17Z",
+      "label": "Score 1  anti",
+      "anti": true,
+      "objective": "s1",
+      "n_iters": 539,
+      "last_iter": 538,
+      "peak_iter": 204,
+      "peak_board_signed": -0.10245,
+      "shipped_iter": 204,
+      "shipped_board_signed": -0.10245,
+      "plateau_frac": 0.379
+    },
+    "score2_anti": {
+      "run": "score2-anti-2026-09-06T20-16-20Z",
+      "label": "Score 2  anti",
+      "anti": true,
+      "objective": "s2",
+      "n_iters": 502,
+      "last_iter": 501,
+      "peak_iter": 408,
+      "peak_board_signed": -0.13569,
+      "shipped_iter": 408,
+      "shipped_board_signed": -0.13569,
+      "plateau_frac": 0.814
+    }
+  }
+}

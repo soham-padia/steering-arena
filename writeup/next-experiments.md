@@ -269,13 +269,20 @@ first; if it is under ~50 per axis, report the null as exact rather than sampled
 displacement?
 
 **What it could kill.** The claim that the sign-flip contrast is well-controlled.
-`score1_top` reaches +0.16395 and `score1_anti` −0.10135 — 62%. **Corrected 2026-09-08:** the
-gap is largely a **file-selection artifact**, not a search ceiling. `prefix_eval_arms_s3.json`
-ships `score1_anti` at `iter 204` (0.10245) from a stale `best.json`, while its `history.jsonl`
-runs to 538 with a max of **0.13186 @ iter 537**; the pro arm shipped its true run max. Matched
-at the anti run's real best the gap is **81%**, not 62%. (The "anti search is 1.603× more
-efficient" figure is also withdrawn — it is a window statistic over iterations 50–200 that
-decays and crosses 1.0 at ≈ iteration 420.)
+`score1_top` reaches +0.16395 and `score1_anti` −0.10135 — **62%, and that gap is real.**
+
+> A "corrected" version of this paragraph briefly claimed the gap was a file-selection
+> artifact, on the grounds that `score1_anti` shipped a stale `iter 204` snapshot while the run
+> reached 0.13186 at iter 537. **Retracted the same day.** That compared `history.jsonl`'s
+> `score` column against a `board_score`: at iter 537 `board_score` is **0.07105**, against
+> iterate 204's **0.10245**. Iterate 204 is the run's board maximum and `best.json` is correct.
+> The "anti search is 1.603× more efficient" figure remains withdrawn for the separate reason
+> given in `_falsifier/2026-09-08-...` §8.
+
+**What is real and still unexplained:** the anti run's board score peaked at iterate 204 of 538
+and never improved over the remaining 334 iterations, while the pro run peaked at 746 of 846.
+The searches plateaued at very different points, which is worth a look before any
+matched-magnitude claim.
 
 **Design.** Extract the iterate at |LIVE| ≈ 0.101 from the winning run's `history.jsonl` —
 `season3_gcg_ablation.md` already demonstrates exactly this, recovering iterate 420 at
