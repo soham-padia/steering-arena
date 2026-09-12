@@ -272,3 +272,17 @@ footer { padding: 26px 0 48px; text-align: center; font-size: 8px; color: var(--
 .newfeature:hover { border-color: var(--cyan); }
 .newfeature:hover .nf-go { background: var(--ink); }
 .newfeature:focus-visible { outline: 4px solid var(--cyan); outline-offset: 4px; }
+
+/* Folded rules. HOW TO PLAY carries ~400 words; two bullets answer "what am I doing
+   here" and the other eight are reference. They sit behind this rather than above the
+   play area, so the first screen is the board and the form, not the rulebook. */
+.more-rules { margin: 10px 0 0; }
+.more-rules > summary {
+  font-family: var(--pixel); font-size: 9px; color: var(--cyan);
+  background: var(--panel-2); border: 3px solid #2b2860;
+  padding: 9px 10px; cursor: pointer; list-style: none; display: inline-block;
+}
+.more-rules > summary::-webkit-details-marker { display: none; }
+.more-rules > summary:hover { color: var(--ink); }
+.more-rules[open] > summary { color: #1a0a12; background: var(--gold); border-color: #b9911a; }
+.more-rules > ul { margin-top: 14px; }
