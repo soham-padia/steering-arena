@@ -29,8 +29,20 @@ class ResidualReader:
         self.backend = backend
 
     @classmethod
-    def build(cls, model_id: str, backend: str = "ndif", *, ndif_key: str = "", prepend_bos: bool = True) -> "ResidualReader":
-        """Explicit constructor (used by the offline extraction/validation scripts)."""
+    def build(cls, model_id: str, backend: str = "ndif", *, ndif_key: str = "",
+              prepend_bos: bool = True, device_map: str = "cpu",
+              dtype: str = "") -> "ResidualReader":
+        """Explicit constructor (used by the offline extraction/validation scripts).
+
+        `device_map` applies to the LOCAL backend only and defaults to "cpu", which is what
+        the Space and CI want: the local path exists there to run a tiny model with no GPU.
+        An offline caller scoring the real 32B on a GPU node passes device_map="auto" and
+        dtype="bfloat16" -- that is the only difference between the two, and it keeps local
+        scoring on the same code path as NDIF instead of a second implementation of the same
+        metric. bf16 matters: the local-vs-NDIF calibration
+        (calibration/local_vs_ndif_tf5.10.2_sdpa_695054.json, max |gap| 3.71e-4) was measured
+        at bf16, so scoring in fp32 would be comparing against a bound established elsewhere.
+        """
         import nnsight
         from nnsight import LanguageModel
 
@@ -40,7 +52,12 @@ class ResidualReader:
                 # In-memory only (set_default_api_key writes the key to disk).
                 nnsight.CONFIG.API.APIKEY = ndif_key
             return cls(LanguageModel(model_id), prepend_bos=prepend_bos, remote=True, backend=backend)
-        return cls(LanguageModel(model_id, device_map="cpu"), prepend_bos=prepend_bos, remote=False, backend=backend)
+        kw = {"device_map": device_map}
+        if dtype:
+            import torch
+            kw["torch_dtype"] = getattr(torch, dtype)
+        return cls(LanguageModel(model_id, **kw), prepend_bos=prepend_bos,
+                   remote=False, backend=backend)
 
     @classmethod
     def from_settings(cls, settings) -> "ResidualReader":

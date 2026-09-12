@@ -7,7 +7,7 @@ anything relevant -- or whether it is load-bearing at all. This measures it.
 Reports LIVE-equivalent scores (baseline subtracted), so every number is comparable to a
 leaderboard entry rather than to the optimiser's internal readout.
 
-    python scripts/gcg/ablate_prompt.py --run <run_dir>
+    python scripts/prefix_ablate.py --run <run_dir>
 
 Writes data/analysis/season3_gcg_ablation.json.
 """
@@ -18,14 +18,21 @@ import json
 import sys
 from pathlib import Path
 
-import numpy as np
-import torch as t
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gcg_utils import (MEAN, MIN, compute_scores_batch,  # noqa: E402
-                       load_banded_direction, load_prompt_suffixes, truncate_to_layer)
+from app import scoring  # noqa: E402
+from app.ndif_client import ResidualReader  # noqa: E402
+
+# FRAME CHANGE, 2026-09-13. This used to score in the OPTIMISER's frame: prefix embeddings
+# concatenated with pre-embedded " " + probe suffixes, then a stored baseline subtracted.
+# It now scores in the BOARD's frame via app.scoring.banded_shift, which composes
+# f"{seq} {probe}" and re-tokenises the whole string -- the canonical definition, and what
+# this file's own docstring always claimed it was doing. Re-running will therefore shift the
+# committed numbers in season3_gcg_ablation.json slightly (the join tokenises once rather
+# than at an embedding seam). The structural findings on that page -- non-additivity, the
+# span split, no single load-bearing token -- are ratios and do not depend on the frame.
 
 
 def main():
@@ -34,44 +41,30 @@ def main():
     ap.add_argument("--run", required=True, help="a gcg run dir containing best.json")
     a = ap.parse_args()
 
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-
     best = json.loads((Path(a.run) / "best.json").read_text())
     role, ids = best["role"], list(best["ctrl_token_ids"])
-    d, per, band, meta = load_banded_direction(
+    d, per, band, meta = scoring.load_banded_direction(
         ROOT / "data" / "directions" / f"d_olmo3_s3_{role}.npz")
-    agg = MEAN if role == "score1" else MIN
-    dirs = t.tensor(d[None] if agg == MEAN else per, dtype=t.float32)
-    dirs = dirs / dirs.norm(dim=-1, keepdim=True)
-    baseline = json.loads((ROOT / "data" / "analysis" / "season3_gcg_baseline.json").read_text())[role]["baseline"]
+    agg = scoring.BANDED_MEAN if role == "score1" else scoring.PER_LAYER_MIN
 
-    tok = AutoTokenizer.from_pretrained(meta["model_id"])
-    if tok.pad_token is None:
-        tok.pad_token = tok.eos_token
-    tok.padding_side = "right"
-    model = AutoModelForCausalLM.from_pretrained(meta["model_id"], dtype=t.bfloat16, device_map="auto")
-    model.eval()
-    truncate_to_layer(model, max(band))
-    trunk = model.base_model
+    reader = ResidualReader.build(meta["model_id"], "local", prepend_bos=True,
+                                  device_map="auto", dtype="bfloat16")
+    fn = reader.batch_last_resids_layers
+    tok = reader.tokenizer
 
-    probes = load_prompt_suffixes(ROOT / "data" / "probes" / "season3.json")
-    enc = tok([" " + p for p in probes], padding=True, return_tensors="pt", add_special_tokens=False)
-    dev = model.get_input_embeddings().weight.device
-    sfx_embed = model.get_input_embeddings()(enc["input_ids"].to(dev))
-    ntok = enc["attention_mask"].sum(axis=1)
+    probes = scoring.load_probes(ROOT / "data" / "probes" / "season3.json")
+    base_units = scoring.banded_baseline(probes, fn, band)
+    baseline = float(scoring._band_cosines(base_units, d, per, agg).mean())
 
     def live(seq):
-        """LIVE-equivalent score for a token-id sequence: re-tokenised, baseline removed."""
+        """LIVE score for a token-id sequence: decoded, then scored as the board would."""
         if not seq:
             return float("nan")
-        rt = tok(tok.decode(seq, skip_special_tokens=True), add_special_tokens=False)["input_ids"]
-        if not rt:
+        s = tok.decode(seq, skip_special_tokens=True)
+        if not tok(s, add_special_tokens=False)["input_ids"]:
             return float("nan")
-        with t.inference_mode():
-            ce = model.get_input_embeddings()(t.tensor([rt], device=dev))
-            sc = compute_scores_batch(trunk, ce, sfx_embed, enc["attention_mask"], ntok,
-                                      dirs, band, agg)
-        return float(sc[0]) - baseline
+        return float(scoring.banded_shift(s, probes, fn, band, base_units, d,
+                                          per_layer=per, aggregate=agg))
 
     base = live(ids)
     out = {"role": role, "band": band, "baseline": baseline, "original": base,

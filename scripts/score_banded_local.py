@@ -13,14 +13,21 @@ counterpart, and it is what verifies a prefix still means what a run recorded:
   * it always scores the PRO objective, so an anti arm's number comes out in board sign
     with the baseline subtracted exactly ONCE. Subtracting it in the optimiser frame and
     flipping afterwards flips the baseline too -- a 2*baseline error worth up to ~1.3 field
-    sd on score2, which is the bug this script exists to catch (see scripts/gcg/watch.py).
+    sd on score2, which is the bug this script exists to catch.
   * every number is LIVE (baseline removed), so it is directly comparable to a leaderboard
     entry rather than to the optimiser's internal readout.
 
-NDIF stays canonical for anything published (CLAUDE.md). Local transformers 5.10.2 / sdpa /
-bf16 matched canonical NDIF scores to |gap| <= 3.71e-4, Spearman rho = 1.0, 0 rank
-inversions of 1225 (calibration/local_vs_ndif_tf5.10.2_sdpa_695054.json) -- which is what
-makes a local number usable as a CHECK rather than as a second opinion of unknown quality.
+ONE METRIC, TWO BACKENDS. This calls `app.scoring` -- the same pure functions the server
+uses -- through `ResidualReader` on the local backend, so a local score and an NDIF score
+are now the SAME code with a different residual source rather than two implementations that
+happen to agree. `calibration/local_vs_ndif_tf5.10.2_sdpa_695054.json` (max |gap| 3.71e-4,
+Spearman 1.0, 0 rank inversions of 1225) is therefore a statement about the backends.
+NDIF stays canonical for anything published (CLAUDE.md).
+
+NO BASELINE FILE. `app.scoring.banded_shift` computes the probes' own alignment from the
+probe set it is handed, so the LIVE conversion cannot be paired with the wrong constant.
+The old `--baselines` flag existed to stop exactly that and is gone with the failure mode:
+swapping `--probes` now recomputes the baseline by construction.
 
     python scripts/score_banded_local.py "be honest and own mistakes"
     python scripts/score_banded_local.py --arms data/analysis/prefix_eval_arms_s3.json
@@ -35,15 +42,13 @@ import json
 import sys
 from pathlib import Path
 
-import torch as t
-
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "scripts" / "gcg"))
-from gcg_utils import (MEAN, MIN, compute_scores_batch,  # noqa: E402
-                       load_banded_direction, load_prompt_suffixes, truncate_to_layer)
+from app import scoring  # noqa: E402
+from app.ndif_client import ResidualReader  # noqa: E402
 
 ROLES = ("score1", "score2")
+AGG = {"score1": scoring.BANDED_MEAN, "score2": scoring.PER_LAYER_MIN}
 OUT = ROOT / "data" / "analysis" / "season3_prefix_scores.json"
 # A local re-score of a string the same optimiser already scored on the same weights should
 # land within noise. Wider than the 3.71e-4 local/NDIF bound because the GCG runs may have
@@ -61,16 +66,15 @@ def main():
                     help="write measured scores back into the arms file (fills in arms "
                          "whose score_kind is unscored_pending_gpu, and adds `verified`)")
     ap.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float32"])
-    # The next three exist for the held-out generalisation check and nothing else. A probe
-    # set carries its own baseline (the probes' own alignment with d), so --probes without a
-    # matching --baselines would offset every score by the difference between the two sets.
-    # Never point --probes at anything but season3.json when re-scoring a board entry.
-    ap.add_argument("--probes", default="data/probes/season3.json")
-    ap.add_argument("--baselines", default="data/analysis/season3_gcg_baseline.json")
+    ap.add_argument("--device-map", default="auto",
+                    help='"auto" for a GPU node; "cpu" with --model for a plumbing smoke test')
+    ap.add_argument("--model", default="",
+                    help="override the model id (smoke tests use a tiny one)")
+    ap.add_argument("--probes", default="data/probes/season3.json",
+                    help="the probe set. Its own baseline is recomputed from it, so this is "
+                         "safe to change -- see the held-out generalisation check.")
     ap.add_argument("--out", default="")
     a = ap.parse_args()
-
-    from transformers import AutoModelForCausalLM, AutoTokenizer
 
     arms_file = Path(a.arms) if a.arms else None
     arms = json.loads(arms_file.read_text()) if arms_file else None
@@ -85,56 +89,40 @@ def main():
     if not targets:
         raise SystemExit("nothing to score: pass sequences or --arms")
 
-    baselines = json.loads((ROOT / a.baselines).read_text())
     probe_path = ROOT / a.probes
-    probes = load_prompt_suffixes(probe_path)
+    probes = scoring.load_probes(probe_path)
     probe_tag = json.loads(probe_path.read_text()).get("probe_set") or probe_path.stem
-    if baselines.get("probe_set") not in (None, probe_tag):
-        raise SystemExit(f"baseline file is for probe set {baselines['probe_set']!r} but "
-                         f"--probes is {probe_tag!r}; recompute with "
-                         f"scripts/gcg/baseline_const.py --probes {a.probes}")
 
-    # One model load for both roles. Truncated to the deepest layer either band reads.
-    meta_model = load_banded_direction(ROOT / "data" / "directions" / "d_olmo3_s3_score1.npz")[3]
-    bands = {r: load_banded_direction(
-        ROOT / "data" / "directions" / f"d_olmo3_s3_{r}.npz")[2] for r in ROLES}
-    tok = AutoTokenizer.from_pretrained(meta_model["model_id"])
-    if tok.pad_token is None:
-        tok.pad_token = tok.eos_token
-    tok.padding_side = "right"          # compute_scores_batch gathers the last REAL token
-    model = AutoModelForCausalLM.from_pretrained(
-        meta_model["model_id"], dtype=getattr(t, a.dtype), device_map="auto")
-    model.eval()
-    truncate_to_layer(model, max(max(b) for b in bands.values()))
-    trunk = model.base_model
-    dev = model.get_input_embeddings().weight.device
+    # One direction file per role; they may declare different bands.
+    dirs = {r: scoring.load_banded_direction(
+        ROOT / "data" / "directions" / f"d_olmo3_s3_{r}.npz") for r in ROLES}
+    bands = {r: dirs[r][2] for r in ROLES}
+    model_id = a.model or dirs["score1"][3]["model_id"]
 
-    # Probes carry the leading space of the board's f"{seq} {probe}" composition.
-    enc = tok([" " + p for p in probes], padding=True, return_tensors="pt",
-              add_special_tokens=False)
-    sfx_embed = model.get_input_embeddings()(enc["input_ids"].to(dev))
-    ntok = enc["attention_mask"].sum(axis=1)
+    # prepend_bos matches the server's setting. It is a no-op on OLMo-3 (bos_token=None,
+    # add_bos_token=False), which is why the two backends can share it unexamined.
+    reader = ResidualReader.build(model_id, "local", prepend_bos=True,
+                                  device_map=a.device_map, dtype=a.dtype)
+    fn = reader.batch_last_resids_layers
+    tok = reader.tokenizer
+
+    # Constant per (probes, band): the probes' own alignment, one batched forward each.
+    base = {r: scoring.banded_baseline(probes, fn, bands[r]) for r in ROLES}
 
     def score(seq: str, role: str) -> tuple[float, int]:
         """(live score, n tokens the board would see) for one string under one role."""
-        d, per, band, _ = load_banded_direction(
-            ROOT / "data" / "directions" / f"d_olmo3_s3_{role}.npz")
-        agg = MEAN if role == "score1" else MIN
-        dirs = t.tensor(d[None] if agg == MEAN else per, dtype=t.float32)
-        dirs = dirs / dirs.norm(dim=-1, keepdim=True)
+        d, per, band, _ = dirs[role]
         ids = tok(seq, add_special_tokens=False)["input_ids"]
         if not ids:
             raise SystemExit(f"{seq!r} tokenises to nothing")
-        with t.inference_mode():
-            ce = model.get_input_embeddings()(t.tensor([ids], device=dev))
-            sc = compute_scores_batch(trunk, ce, sfx_embed, enc["attention_mask"], ntok,
-                                      dirs, band, agg)
-        return float(sc[0]) - baselines[role]["baseline"], len(ids)
+        live = scoring.banded_shift(seq, probes, fn, band, base[role], d,
+                                    per_layer=per, aggregate=AGG[role])
+        return float(live), len(ids)
 
     in_sample = probe_tag == "season3"
-    out = {"model_id": meta_model["model_id"], "dtype": a.dtype, "probe_set": probe_tag,
-           "probe_file": a.probes, "in_sample": in_sample,
-           "bands": bands, "baselines": {r: baselines[r]["baseline"] for r in ROLES},
+    out = {"model_id": model_id, "dtype": a.dtype, "probe_set": probe_tag,
+           "probe_file": a.probes, "in_sample": in_sample, "backend": "local/nnsight",
+           "bands": bands,
            "arms_file": str(arms_file) if arms_file else None, "tol": TOL, "scores": {}}
     print(f"{len(targets)} string(s) · {len(probes)} probes · bands {bands} · [{a.dtype}]\n")
     print(f"  {'name':>13} {'score1':>10} {'score2':>10} {'tok':>4}  recorded / re-scored")

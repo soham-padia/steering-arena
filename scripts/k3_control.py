@@ -16,7 +16,7 @@ endpoints is exactly the error that produced the withdrawn T_SA mechanism
 (`season3_gcg_aggregate_asymmetry.json`), and `docs/HANDOFF_BEHAVIORAL_S3.md` §7 closes
 with the lesson: check the trajectory, not the endpoint.
 
-    python scripts/gcg/k3_control.py
+    python scripts/k3_control.py
 
 Writes data/analysis/season3_k3_control.json. No GPU, no NDIF, reads committed run logs.
 """
@@ -25,7 +25,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 GCG = Path("/work/neu/p2026_0037_neu/steering-arena/gcg")
 OUT = ROOT / "data" / "analysis" / "season3_k3_control.json"
 
@@ -51,7 +51,7 @@ def live_abs(rec: dict, baseline: float) -> float:
     `board_score_true_sign` is the board-sign score; it is absent from the runs that
     predate the field, where the arm is pro and the optimiser sign IS the board sign.
     The baseline is subtracted once, after the flip -- the other order is a 2*baseline
-    error (see scripts/gcg/watch.py).
+    error (see scripts/gcg_watch.py).
     """
     board = rec.get("board_score_true_sign")
     if board is None:

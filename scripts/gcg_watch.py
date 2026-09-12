@@ -1,7 +1,7 @@
 """Live table across the running GCG arms.
 
-    python scripts/gcg/watch.py            # one snapshot
-    python scripts/gcg/watch.py --every 120 --for 3600
+    python scripts/gcg_watch.py            # one snapshot
+    python scripts/gcg_watch.py --every 120 --for 3600
 
 WHICH NUMBER TO READ. `board` -- the objective on the RE-TOKENISED prefix, i.e. what the
 leaderboard would compute. `score` is the optimiser's own number on the raw token ids and
@@ -32,7 +32,7 @@ LINE = re.compile(
     r"iter_idx=(\d+).*?(?:search ([-+\d.]+), )?score ([-+\d.]+), board ([-+\d.]+).*?([\d.]+)s")
 
 
-BASELINE_FILE = Path(__file__).resolve().parents[2] / "data" / "analysis" / "season3_gcg_baseline.json"
+BASELINE_FILE = Path(__file__).resolve().parents[1] / "data" / "analysis" / "season3_gcg_baseline.json"
 
 
 def baselines():

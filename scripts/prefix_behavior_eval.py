@@ -286,7 +286,7 @@ S3_REFERENCE = {"s2_winner_score1": 0.06747, "s2_winner_score2": 0.02308,
 
 def _baselines() -> dict:
     if not BASELINE_FILE.exists():
-        raise SystemExit(f"{BASELINE_FILE} missing — run scripts/gcg/baseline_const.py")
+        raise SystemExit(f"{BASELINE_FILE} missing — run scripts/gcg_baseline.py")
     j = json.loads(BASELINE_FILE.read_text())
     return {r: j[r]["baseline"] for r in ("score1", "score2")}
 
@@ -301,7 +301,7 @@ def _live(best: dict, role: str) -> float:
     board would print. Subtracting the baseline first and flipping afterwards flips the
     baseline too — a 2*baseline error, which is how -0.14510 reached
     docs/HANDOFF_BEHAVIORAL_S3.md where the true score2_anti figure is -0.12628. The
-    same bug is fixed in scripts/gcg/watch.py.
+    same bug is fixed in scripts/gcg_watch.py.
     """
     board = best.get("board_score_true_sign")
     if board is None:                     # a pro run: optimiser sign IS board sign

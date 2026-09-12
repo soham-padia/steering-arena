@@ -18,14 +18,10 @@ import json
 import sys
 from pathlib import Path
 
-import numpy as np
-import torch as t
-
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gcg_utils import (MEAN, MIN, _aggregate, load_banded_direction,  # noqa: E402
-                       load_prompt_suffixes, truncate_to_layer)
+from app import scoring  # noqa: E402
+from app.ndif_client import ResidualReader  # noqa: E402
 
 
 def main():
@@ -45,50 +41,34 @@ def main():
     args = ap.parse_args()
 
     probe_path = ROOT / args.probes
-    probes = load_prompt_suffixes(probe_path)
+    probes = scoring.load_probes(probe_path)
     tag = json.loads(probe_path.read_text()).get("probe_set") or probe_path.stem
     out = {"probes": len(probes), "probe_set": tag, "probe_file": args.probes}
-    model = tokenizer = None
+    reader = None
 
-    for role, agg in (("score1", MEAN), ("score2", MIN)):
-        d, per, band, meta = load_banded_direction(
+    for role, agg in (("score1", scoring.BANDED_MEAN), ("score2", scoring.PER_LAYER_MIN)):
+        d, per, band, meta = scoring.load_banded_direction(
             ROOT / "data" / "directions" / f"d_olmo3_s3_{role}.npz")
-        dirs = t.tensor(d[None] if agg == MEAN else per, dtype=t.float32)
-        dirs = dirs / dirs.norm(dim=-1, keepdim=True)
 
-        if model is None:
-            tokenizer = AutoTokenizer.from_pretrained(meta["model_id"])
-            model = AutoModelForCausalLM.from_pretrained(
-                meta["model_id"], dtype=t.bfloat16, device_map="auto")
-            model.eval()
-            truncate_to_layer(model, 39)   # deepest layer across both bands
-            blocks = model.base_model.layers
+        if reader is None:
+            reader = ResidualReader.build(meta["model_id"], "local", prepend_bos=True,
+                                          device_map="auto", dtype="bfloat16")
 
-        # Probes are scored EXACTLY as the board composes them: the leading space is the
-        # f"{seq} {probe}" join, minus the (absent) prefix.
-        cap = {}
-        hs = [blocks[L].register_forward_hook(
-            lambda m, i, o, L=L: cap.__setitem__(L, o[0] if isinstance(o, tuple) else o))
-            for L in band]
-        try:
-            per_probe = []
-            for p in probes:
-                enc = tokenizer(" " + p, return_tensors="pt", add_special_tokens=False)
-                with t.inference_mode():
-                    model.base_model(**{k: v.to(model.device) for k, v in enc.items()})
-                cos = []
-                for j, L in enumerate(band):
-                    a = cap[L][0, -1, :].cpu().float()
-                    dv = dirs[0] if agg == MEAN else dirs[j]
-                    cos.append((a @ dv) / a.norm())
-                per_probe.append(_aggregate(t.stack(cos)[:, None], agg).item())
-        finally:
-            for h in hs:
-                h.remove()
+        # LEADING SPACE, DELIBERATELY. This file produces the constant that converts the
+        # OPTIMISER's number to a board number (live = board_score - BASELINE), and the
+        # optimiser embeds its suffixes as " " + probe, so the baseline must be measured on
+        # the same string. app/scoring.py's own baseline reads the BARE probe, because there
+        # the join space belongs to compose(seq, probe) -- a different and equally correct
+        # quantity for a different frame. They are not interchangeable: dropping the space
+        # here silently changes every historical LIVE conversion in gcg_watch.py,
+        # k3_control.py and the run logs, which were computed against the spaced form.
+        units = scoring.banded_baseline([" " + p for p in probes],
+                                        reader.batch_last_resids_layers, band)
+        per_probe = scoring._band_cosines(units, d, per, agg)
 
-        base = float(np.mean(per_probe))
+        base = float(per_probe.mean())
         out[role] = {"band": band, "aggregate": agg, "baseline": base,
-                     "per_probe": [round(x, 6) for x in per_probe]}
+                     "per_probe": [round(float(x), 6) for x in per_probe]}
         print(f"  {role:<7} band={band} agg={agg}")
         print(f"          BASELINE = {base:+.6f}   (live = board - this)")
 

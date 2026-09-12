@@ -42,7 +42,7 @@ python -c "import torch,transformers;print('torch',torch.__version__,'transforme
 cd "$HOME/steering-arena"
 
 echo "=== 1/3  baseline for the HELD-OUT probe set ==="
-python -u scripts/gcg/baseline_const.py \
+python -u scripts/gcg_baseline.py \
   --probes data/probes/heldout_v1.json \
   --out    data/analysis/heldout_baseline.json
 
