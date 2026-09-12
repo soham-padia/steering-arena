@@ -47,11 +47,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=11" />
+  <link rel="stylesheet" href="/styles.css?v=12" />
   <!-- Self-hosted Alpine.js (no external CDN — works offline + no third-party block).
        app.js defines arena() first, then Alpine initializes. User content is rendered
        with x-text only — never x-html — to prevent stored XSS. -->
   <script defer src="/app.js?v=12"></script>
+  <script defer src="/dlconfirm.js?v=1"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="arena()" x-init="init()">
@@ -251,8 +252,10 @@
     <h2>THE DATA</h2>
     <p class="muted">Everything the results rest on is downloadable. No account, no request form.</p>
     <div class="row">
-      <a class="btn" href="/seed-pairs.jsonl" download>⬇ SEED PAIRS (135 contrastive pairs)</a>
-      <a class="btn" href="/generations.jsonl" download>⬇ GENERATIONS (the behavior study)</a>
+      <a class="btn" href="/seed-pairs.jsonl" download
+         data-gh="https://github.com/soham-padia/steering-arena/blob/main/data/seed_pairs.jsonl" data-size="41 KB">⬇ SEED PAIRS (135 contrastive pairs)</a>
+      <a class="btn" href="/generations.jsonl" download
+         data-gh="https://github.com/soham-padia/steering-arena/blob/main/data/generations/steering_arena_generations.jsonl" data-size="158 KB">⬇ GENERATIONS (the behavior study)</a>
     </div>
     <p class="muted" style="margin-top:14px">Also in the repo, versioned so it outlives this Space and can be cited by commit:</p>
     <ul class="rules-list">

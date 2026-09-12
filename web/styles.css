@@ -286,3 +286,19 @@ footer { padding: 26px 0 48px; text-align: center; font-size: 8px; color: var(--
 .more-rules > summary:hover { color: var(--ink); }
 .more-rules[open] > summary { color: #1a0a12; background: var(--gold); border-color: #b9911a; }
 .more-rules > ul { margin-top: 14px; }
+
+/* Download confirmation. See web/dlconfirm.js -- a bare <a download> gave no warning and
+   no idea what was arriving, and for research artifacts the repo copy is usually what the
+   reader actually wants. */
+.dlc-veil { position: fixed; inset: 0; background: rgba(6,4,16,.82); z-index: 90;
+  display: flex; align-items: center; justify-content: center; padding: 20px; }
+.dlc-veil[hidden] { display: none; }
+.dlc-box { background: var(--panel); border: 3px solid #2b2860; padding: 20px;
+  max-width: 560px; width: 100%; }
+.dlc-box h2 { font-family: var(--pixel); font-size: 11px; color: var(--gold);
+  margin: 0 0 12px; }
+.dlc-what { font-family: var(--term); font-size: 17px; color: var(--ink); margin: 0 0 10px; }
+.dlc-why { font-family: var(--term); font-size: 15px; color: #8f93b5; margin: 0 0 16px;
+  line-height: 1.4; }
+.dlc-row { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+.dlc-row .dlc-gh[hidden] { display: none; }

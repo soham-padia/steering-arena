@@ -12,10 +12,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=11" />
+  <link rel="stylesheet" href="/styles.css?v=12" />
   <link rel="stylesheet" href="/behavior.css?v=9" />
   <script defer src="/auth.js?v=3"></script>
   <script defer src="/seasonbar.js?v=1"></script>
+  <script defer src="/dlconfirm.js?v=1"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body x-data="tapes()" x-init="load()">
@@ -324,7 +325,8 @@
       Every generation behind this page is in the repository:
       <a href="https://github.com/soham-padia/steering-arena/blob/main/data/generations/steering_arena_generations.jsonl" target="_blank" rel="noopener">steering_arena_generations.jsonl</a>
       — 50 prompts &times; 5 prefixes, raw and unedited.
-      <a href="https://raw.githubusercontent.com/soham-padia/steering-arena/main/data/generations/steering_arena_generations.jsonl" download>Download</a>.
+      <a href="https://raw.githubusercontent.com/soham-padia/steering-arena/main/data/generations/steering_arena_generations.jsonl" download
+         data-gh="https://github.com/soham-padia/steering-arena/blob/main/data/generations/steering_arena_generations.jsonl" data-size="158 KB">Download</a>.
     </p>
     <template x-for="f in data.fighters" :key="'t' + f.id">
       <div class="bh-tape" :class="`accent-${f.accent}`">
@@ -392,10 +394,12 @@
     <p>
       Featured examples here skip the crudest passages; the dataset does not, so it stays
       complete for anyone checking the work.
-      <a href="https://raw.githubusercontent.com/soham-padia/steering-arena/main/data/generations/steering_arena_generations.jsonl" download>Download all 250 generations</a>, or
+      <a href="https://raw.githubusercontent.com/soham-padia/steering-arena/main/data/generations/steering_arena_generations.jsonl" download
+         data-gh="https://github.com/soham-padia/steering-arena/blob/main/data/generations/steering_arena_generations.jsonl" data-size="158 KB">Download all 250 generations</a>, or
       <a href="https://github.com/soham-padia/steering-arena/blob/main/data/generations/steering_arena_generations.jsonl" target="_blank" rel="noopener">browse them on GitHub</a>. The file is
       versioned there, so it outlives this Space and can be cited by commit. This server
-      also mirrors it at <a href="/generations.jsonl" download>/generations.jsonl</a>.
+      also mirrors it at <a href="/generations.jsonl" download
+         data-gh="https://github.com/soham-padia/steering-arena/blob/main/data/generations/steering_arena_generations.jsonl" data-size="158 KB">/generations.jsonl</a>.
     </p>
     <p class="bh-links">
       <a href="/behavior-reproducibility.html">Behavior method</a>

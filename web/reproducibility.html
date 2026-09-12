@@ -15,8 +15,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=11" />
+  <link rel="stylesheet" href="/styles.css?v=12" />
   <script defer src="/seasonbar.js?v=1"></script>
+  <script defer src="/dlconfirm.js?v=1"></script>
   <script defer src="/alpine.min.js"></script>
 </head>
 <body>
@@ -80,7 +81,8 @@
       <p class="muted">The direction is built from <b>135 contrastive pairs</b> across <b>15 human-values axes</b> (accountability, boundaries, conflict resolution, empathy, fairness, feedback, inclusion, integrity, leadership, learning, ownership, privacy, respect, safety, trust). Each pair is <code>{axis, prompt, chosen, rejected}</code> — a more pro-human response and a less pro-human one.</p>
       <p class="muted">Pairs are deliberately <em>de-confounded</em>: <b>length-matched</b> (chosen vs rejected within ~1 word on average, so the direction can't just learn "length"), negatives kept plausible (not cartoonish), domains varied (work / personal / civic / online), and ASCII-only.</p>
       <div class="row">
-        <a class="btn" href="/seed-pairs.jsonl" download>⬇ DOWNLOAD SEED PAIRS (.jsonl)</a>
+        <a class="btn" href="/seed-pairs.jsonl" download
+         data-gh="https://github.com/soham-padia/steering-arena/blob/main/data/seed_pairs.jsonl" data-size="41 KB">⬇ DOWNLOAD SEED PAIRS (.jsonl)</a>
         <a class="mini" href="https://github.com/soham-padia/steering-arena/blob/main/data/seed_pairs.jsonl" target="_blank" rel="noopener">VIEW ON GITHUB</a>
       </div>
     </section>
